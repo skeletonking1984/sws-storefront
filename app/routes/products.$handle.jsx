@@ -8,8 +8,11 @@ import {
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
 import {ProductPrice} from '~/components/ProductPrice';
-import {ProductImage} from '~/components/ProductImage';
+import {ProductGallery} from '~/components/ProductGallery';
 import {ProductForm} from '~/components/ProductForm';
+import {ProductHighlights} from '~/components/ProductHighlights';
+import {EtsyRatingBadge} from '~/components/EtsyRating';
+import {EtsyReviews} from '~/components/EtsyReviews';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 /**
@@ -103,31 +106,32 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml} = product;
+  const {title, description, descriptionHtml} = product;
+  const media = product.media?.nodes ?? [];
 
   return (
     <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
-        <ProductForm
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-        />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
+      <div className="product-top">
+        <ProductGallery media={media} />
+        <div className="product-main">
+          <h1>{title}</h1>
+          <EtsyRatingBadge compact />
+          <ProductPrice
+            price={selectedVariant?.price}
+            compareAtPrice={selectedVariant?.compareAtPrice}
+          />
+          <ProductForm
+            productOptions={productOptions}
+            selectedVariant={selectedVariant}
+          />
+          <ProductHighlights title={title} description={description} />
+        </div>
       </div>
+      <div className="product-description">
+        <h2>Description</h2>
+        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+      </div>
+      <EtsyReviews />
       <Analytics.ProductView
         data={{
           products: [
@@ -194,6 +198,31 @@ const PRODUCT_FRAGMENT = `#graphql
     description
     encodedVariantExistence
     encodedVariantAvailability
+    media(first: 10) {
+      nodes {
+        __typename
+        ... on MediaImage {
+          id
+          image {
+            id
+            url
+            altText
+            width
+            height
+          }
+        }
+        ... on Video {
+          id
+          previewImage {
+            url
+          }
+          sources {
+            url
+            mimeType
+          }
+        }
+      }
+    }
     options {
       name
       optionValues {
