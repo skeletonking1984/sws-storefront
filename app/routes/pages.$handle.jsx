@@ -1,5 +1,14 @@
 import {useLoaderData} from 'react-router';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {FaqAccordion} from '~/components/FaqAccordion';
+import {HowItWorksSteps} from '~/components/HowItWorksSteps';
+import {ContactPage} from '~/components/ContactPage';
+
+const CUSTOM_LAYOUTS = {
+  'faq-frequently-asked-questions': (page) => <FaqAccordion html={page.body} />,
+  'how-it-works': (page) => <HowItWorksSteps html={page.body} />,
+  contact: () => <ContactPage />,
+};
 
 /**
  * @type {Route.MetaFunction}
@@ -64,13 +73,18 @@ function loadDeferredData({context}) {
 export default function Page() {
   /** @type {LoaderReturnData} */
   const {page} = useLoaderData();
+  const customLayout = CUSTOM_LAYOUTS[page.handle];
 
   return (
     <div className="page">
       <header>
         <h1>{page.title}</h1>
       </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+      {customLayout ? (
+        <main>{customLayout(page)}</main>
+      ) : (
+        <main dangerouslySetInnerHTML={{__html: page.body}} />
+      )}
     </div>
   );
 }

@@ -1,7 +1,9 @@
+import {useState} from 'react';
 import {Link, useLoaderData} from 'react-router';
 import {Image, getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {BLOG_CATEGORIES, categorizeArticle} from '~/lib/blogCategories';
 
 /**
  * @type {Route.MetaFunction}
@@ -30,7 +32,7 @@ export async function loader(args) {
  */
 async function loadCriticalData({context, request, params}) {
   const paginationVariables = getPaginationVariables(request, {
-    pageBy: 4,
+    pageBy: 24,
   });
 
   if (!params.blogHandle) {
@@ -70,19 +72,47 @@ export default function Blog() {
   /** @type {LoaderReturnData} */
   const {blog} = useLoaderData();
   const {articles} = blog;
+  const [activeCategory, setActiveCategory] = useState(null);
 
   return (
     <div className="blog">
       <h1>{blog.title}</h1>
+      <p className="blog-subhead">
+        Setup guides, product spotlights, and stream trends.
+      </p>
+      <div className="blog-category-filter">
+        <button
+          type="button"
+          className={`blog-category-pill${activeCategory === null ? ' active' : ''}`}
+          onClick={() => setActiveCategory(null)}
+        >
+          All
+        </button>
+        {BLOG_CATEGORIES.map((cat) => (
+          <button
+            key={cat.key}
+            type="button"
+            className={`blog-category-pill${activeCategory === cat.key ? ' active' : ''}`}
+            onClick={() => setActiveCategory(cat.key)}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
       <div className="blog-grid">
         <PaginatedResourceSection connection={articles}>
-          {({node: article, index}) => (
-            <ArticleItem
-              article={article}
-              key={article.id}
-              loading={index < 2 ? 'eager' : 'lazy'}
-            />
-          )}
+          {({node: article, index}) => {
+            const category = categorizeArticle(article);
+            if (activeCategory && category.key !== activeCategory) return null;
+            return (
+              <ArticleItem
+                article={article}
+                category={category}
+                key={article.id}
+                loading={index < 2 ? 'eager' : 'lazy'}
+              />
+            );
+          }}
         </PaginatedResourceSection>
       </div>
     </div>
@@ -92,10 +122,11 @@ export default function Blog() {
 /**
  * @param {{
  *   article: ArticleItemFragment;
+ *   category: {key: string; label: string};
  *   loading?: HTMLImageElement['loading'];
  * }}
  */
-function ArticleItem({article, loading}) {
+function ArticleItem({article, category, loading}) {
   const publishedAt = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'long',
@@ -115,7 +146,9 @@ function ArticleItem({article, loading}) {
             />
           </div>
         )}
+        <span className="blog-article-category">{category.label}</span>
         <h3>{article.title}</h3>
+        {article.excerpt && <p className="blog-article-excerpt">{article.excerpt}</p>}
         <small>{publishedAt}</small>
       </Link>
     </div>
@@ -164,6 +197,8 @@ const BLOGS_QUERY = `#graphql
       name
     }
     contentHtml
+    excerpt(truncateAt: 120)
+    tags
     handle
     id
     image {
