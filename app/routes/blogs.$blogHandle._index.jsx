@@ -99,22 +99,20 @@ export default function Blog() {
           </button>
         ))}
       </div>
-      <div className="blog-grid">
-        <PaginatedResourceSection connection={articles}>
-          {({node: article, index}) => {
-            const category = categorizeArticle(article);
-            if (activeCategory && category.key !== activeCategory) return null;
-            return (
-              <ArticleItem
-                article={article}
-                category={category}
-                key={article.id}
-                loading={index < 2 ? 'eager' : 'lazy'}
-              />
-            );
-          }}
-        </PaginatedResourceSection>
-      </div>
+      <PaginatedResourceSection connection={articles} resourcesClassName="blog-grid">
+        {({node: article, index}) => {
+          const category = categorizeArticle(article);
+          if (activeCategory && category.key !== activeCategory) return null;
+          return (
+            <ArticleItem
+              article={article}
+              category={category}
+              key={article.id}
+              loading={index < 2 ? 'eager' : 'lazy'}
+            />
+          );
+        }}
+      </PaginatedResourceSection>
     </div>
   );
 }

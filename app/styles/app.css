@@ -1755,6 +1755,7 @@ button.reset:hover:not(:has(> *)) {
   background: var(--sws-card);
   border: 1px solid var(--sws-border);
   border-radius: 16px;
+  min-width: 0;
   overflow: hidden;
   transition: transform 0.2s, border-color 0.2s;
 }
@@ -1775,10 +1776,16 @@ button.reset:hover:not(:has(> *)) {
   aspect-ratio: 3/2;
   display: block;
   margin: -1rem -1rem 0.85rem;
+  overflow: hidden;
+  width: 100%;
 }
 
 .blog-article-image img {
+  display: block;
   height: 100%;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
   border-radius: 0;
 }
 
