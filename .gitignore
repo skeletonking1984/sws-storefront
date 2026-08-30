@@ -3,3 +3,4 @@
 
 .shopify
 dist/
+.env
