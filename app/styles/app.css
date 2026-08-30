@@ -938,6 +938,41 @@ button.reset:hover:not(:has(> *)) {
   margin-bottom: 1.5rem;
 }
 
+/*
+* --------------------------------------------------
+* routes/_index — commission callout
+* --------------------------------------------------
+*/
+.commission-callout {
+  background: var(--sws-bg-alt);
+  border-top: 1px solid var(--sws-border);
+  border-bottom: 1px solid var(--sws-border);
+  padding: 3rem 2rem;
+}
+
+.commission-callout-inner {
+  margin: 0 auto;
+  max-width: 640px;
+  text-align: center;
+}
+
+.commission-callout h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.commission-callout p {
+  color: var(--sws-sub);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.commission-callout-cta-row {
+  display: flex;
+  justify-content: center;
+}
+
 .recommended-products-grid {
   display: grid;
   grid-gap: 1.5rem;

@@ -49,8 +49,21 @@ async function loadCriticalData({context}) {
  * @param {Route.LoaderArgs}
  */
 function loadDeferredData({context}) {
+  // Storefront API's `query:` search doesn't support a `handle:` field
+  // filter (that's Admin-only), so fetch each favorite by handle directly
+  // via aliases in one request, in our curated Etsy-favorites order.
   const recommendedProducts = context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY)
+    .query(RECOMMENDED_PRODUCTS_QUERY, {
+      variables: Object.fromEntries(
+        FAN_FAVORITE_HANDLES.map((h, i) => [`handle${i}`, h]),
+      ),
+    })
+    .then((response) => {
+      const nodes = FAN_FAVORITE_HANDLES.map(
+        (_, i) => response[`product${i}`],
+      ).filter(Boolean);
+      return {products: {nodes}};
+    })
     .catch((error) => {
       // Log query errors, but don't throw them so the page can still render
       console.error(error);
@@ -62,6 +75,22 @@ function loadDeferredData({context}) {
   };
 }
 
+/**
+ * Curated from real StreamWidgetShop Etsy data (etsy_list_active_listings,
+ * sorted by num_favorers), matched to their Shopify handles. Update this
+ * list periodically as Etsy favorites shift.
+ */
+const FAN_FAVORITE_HANDLES = [
+  'neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only',
+  'combo-goal-widget-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
+  'dreamy-moon-cloud-glass-goal-widget-customisable-for-twitch-and-tiktok-studio',
+  'cute-peach-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-tiktok-studio-streamelements-streamlabs-obs',
+  'spooky-cauldron-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements',
+  'boba-drink-cute-fruit-drink-goal-widget-for-twitch-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
+  'cute-rabbit-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
+  'goth-spell-book-spooky-vibes-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
+];
+
 export default function Homepage() {
   /** @type {LoaderReturnData} */
   const data = useLoaderData();
@@ -70,7 +99,27 @@ export default function Homepage() {
       {data.isShopLinked ? null : <MockShopNotice />}
       <Hero collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
+      <CustomCommissionCallout />
     </div>
+  );
+}
+
+function CustomCommissionCallout() {
+  return (
+    <section className="commission-callout">
+      <div className="commission-callout-inner">
+        <h2>Don&apos;t see your vibe?</h2>
+        <p>
+          We build fully custom chat and goal widgets to match your exact
+          stream aesthetic &mdash; your colors, your characters, your theme.
+        </p>
+        <div className="commission-callout-cta-row">
+          <Link className="hero-cta" to="/pages/contact">
+            Get a custom widget &mdash; $85 flat
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -194,13 +243,26 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       height
     }
   }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    products(first: 8, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...RecommendedProduct
-      }
-    }
+  query RecommendedProducts (
+    $country: CountryCode
+    $language: LanguageCode
+    $handle0: String!
+    $handle1: String!
+    $handle2: String!
+    $handle3: String!
+    $handle4: String!
+    $handle5: String!
+    $handle6: String!
+    $handle7: String!
+  ) @inContext(country: $country, language: $language) {
+    product0: product(handle: $handle0) { ...RecommendedProduct }
+    product1: product(handle: $handle1) { ...RecommendedProduct }
+    product2: product(handle: $handle2) { ...RecommendedProduct }
+    product3: product(handle: $handle3) { ...RecommendedProduct }
+    product4: product(handle: $handle4) { ...RecommendedProduct }
+    product5: product(handle: $handle5) { ...RecommendedProduct }
+    product6: product(handle: $handle6) { ...RecommendedProduct }
+    product7: product(handle: $handle7) { ...RecommendedProduct }
   }
 `;
 
