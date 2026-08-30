@@ -1,12 +1,51 @@
+import {useState} from 'react';
 import {Link} from 'react-router';
 
-const SUPPORT_EMAIL = 'support@streamwidgetshop.com';
+const SUPPORT_EMAIL = 'streamwidgetshop@gmail.com';
+
+// Shopify's built-in contact-form endpoint. Works on any store regardless
+// of theme — this is the same pipe that delivers to Settings > Notifications
+// > "General" contact recipient. Posted via fetch(no-cors) so the visitor
+// stays on our branded page instead of bouncing to the myshopify.com domain.
+const STORE_DOMAIN = '72470e-33.myshopify.com';
 
 /**
  * The Shopify "Contact" page has no body content configured, so this
  * renders a real, working contact experience instead of a blank page.
  */
 export function ContactPage() {
+  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+
+    setStatus('sending');
+    try {
+      const body = new URLSearchParams();
+      body.set('form_type', 'contact');
+      body.set('utf8', '✓');
+      body.set('contact[name]', data.get('name'));
+      body.set('contact[email]', data.get('email'));
+      body.set('contact[body]', data.get('message'));
+
+      // no-cors: we can't read the response, but the request still reaches
+      // Shopify's server and gets processed — this is the standard pattern
+      // for posting to Shopify's contact endpoint from off-domain.
+      await fetch(`https://${STORE_DOMAIN}/contact`, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body,
+      });
+      setStatus('sent');
+      form.reset();
+    } catch {
+      setStatus('error');
+    }
+  }
+
   return (
     <div className="contact-page">
       <p className="contact-intro">
@@ -14,12 +53,49 @@ export function ContactPage() {
         custom? We respond within 4 hours.
       </p>
 
-      <a
-        className="hero-cta contact-email-cta"
-        href={`mailto:${SUPPORT_EMAIL}`}
-      >
-        Email {SUPPORT_EMAIL}
-      </a>
+      {status === 'sent' ? (
+        <div className="contact-form-success">
+          <h3>Message sent!</h3>
+          <p>
+            Thanks for reaching out — we'll get back to you within 4 hours.
+            You can also email us directly at{' '}
+            <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
+          </p>
+        </div>
+      ) : (
+        <form className="contact-form" onSubmit={handleSubmit}>
+          <div className="contact-form-row">
+            <label htmlFor="contact-name">Name</label>
+            <input id="contact-name" name="name" type="text" required />
+          </div>
+          <div className="contact-form-row">
+            <label htmlFor="contact-email">Email</label>
+            <input id="contact-email" name="email" type="email" required />
+          </div>
+          <div className="contact-form-row">
+            <label htmlFor="contact-message">Message</label>
+            <textarea id="contact-message" name="message" rows={5} required />
+          </div>
+          <button
+            type="submit"
+            className="hero-cta"
+            disabled={status === 'sending'}
+          >
+            {status === 'sending' ? 'Sending…' : 'Send message'}
+          </button>
+          {status === 'error' && (
+            <p className="contact-form-error">
+              Something went wrong — email us directly at{' '}
+              <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> instead.
+            </p>
+          )}
+        </form>
+      )}
+
+      <p className="contact-alt-email">
+        Prefer email? Reach us at{' '}
+        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+      </p>
 
       <div className="contact-links-grid">
         <Link to="/pages/faq-frequently-asked-questions" className="contact-link-card">

@@ -4,3 +4,4 @@
 .shopify
 dist/
 .env
+node_modules/
