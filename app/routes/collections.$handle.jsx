@@ -1,8 +1,10 @@
+import {useState} from 'react';
 import {redirect, useLoaderData} from 'react-router';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
+import {CollectionFilterBar} from '~/components/CollectionFilterBar';
 
 /**
  * @type {Route.MetaFunction}
@@ -33,8 +35,11 @@ async function loadCriticalData({context, params, request}) {
   const {handle} = params;
   const {storefront} = context;
   const paginationVariables = getPaginationVariables(request, {
-    pageBy: 8,
+    pageBy: 24,
   });
+  const url = new URL(request.url);
+  const activeType = url.searchParams.get('type') || '';
+  const filters = activeType ? [{tag: activeType}] : [];
 
   if (!handle) {
     throw redirect('/collections');
@@ -42,7 +47,7 @@ async function loadCriticalData({context, params, request}) {
 
   const [{collection}] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
-      variables: {handle, ...paginationVariables},
+      variables: {handle, filters, ...paginationVariables},
       // Add other queries here, so that they are loaded in parallel
     }),
   ]);
@@ -58,6 +63,7 @@ async function loadCriticalData({context, params, request}) {
 
   return {
     collection,
+    activeType,
   };
 }
 
@@ -73,23 +79,37 @@ function loadDeferredData({context}) {
 
 export default function Collection() {
   /** @type {LoaderReturnData} */
-  const {collection} = useLoaderData();
+  const {collection, activeType} = useLoaderData();
+  const [searchTerm, setSearchTerm] = useState('');
 
   return (
     <div className="collection">
       <h1>{collection.title}</h1>
       <p className="collection-description">{collection.description}</p>
+      <CollectionFilterBar
+        activeType={activeType}
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+      />
       <PaginatedResourceSection
         connection={collection.products}
         resourcesClassName="products-grid"
       >
-        {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
-          />
-        )}
+        {({node: product, index}) => {
+          if (
+            searchTerm &&
+            !product.title.toLowerCase().includes(searchTerm.toLowerCase())
+          ) {
+            return null;
+          }
+          return (
+            <ProductItem
+              key={product.id}
+              product={product}
+              loading={index < 8 ? 'eager' : undefined}
+            />
+          );
+        }}
       </PaginatedResourceSection>
       <Analytics.CollectionView
         data={{
@@ -141,6 +161,7 @@ const COLLECTION_QUERY = `#graphql
     $last: Int
     $startCursor: String
     $endCursor: String
+    $filters: [ProductFilter!]
   ) @inContext(country: $country, language: $language) {
     collection(handle: $handle) {
       id
@@ -151,7 +172,8 @@ const COLLECTION_QUERY = `#graphql
         first: $first,
         last: $last,
         before: $startCursor,
-        after: $endCursor
+        after: $endCursor,
+        filters: $filters
       ) {
         nodes {
           ...ProductItem

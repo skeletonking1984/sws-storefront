@@ -205,22 +205,34 @@ function OrderSearchForm({currentFilters}) {
 function OrderItem({order}) {
   const fulfillmentStatus = flattenConnection(order.fulfillments)[0]?.status;
   return (
-    <>
-      <fieldset>
-        <Link to={`/account/orders/${btoa(order.id)}`}>
-          <strong>#{order.number}</strong>
+    <div className="order-card">
+      <div className="order-card-header">
+        <Link to={`/account/orders/${btoa(order.id)}`} className="order-card-number">
+          #{order.number}
         </Link>
-        <p>{new Date(order.processedAt).toDateString()}</p>
-        {order.confirmationNumber && (
-          <p>Confirmation: {order.confirmationNumber}</p>
-        )}
-        <p>{order.financialStatus}</p>
-        {fulfillmentStatus && <p>{fulfillmentStatus}</p>}
         <Money data={order.totalPrice} />
-        <Link to={`/account/orders/${btoa(order.id)}`}>View Order →</Link>
-      </fieldset>
-      <br />
-    </>
+      </div>
+      <p className="order-card-date">
+        {new Date(order.processedAt).toDateString()}
+      </p>
+      {order.confirmationNumber && (
+        <p className="order-card-meta">
+          Confirmation: {order.confirmationNumber}
+        </p>
+      )}
+      <div className="order-card-status">
+        <span className="order-status-badge">{order.financialStatus}</span>
+        {fulfillmentStatus && (
+          <span className="order-status-badge">{fulfillmentStatus}</span>
+        )}
+      </div>
+      <Link
+        to={`/account/orders/${btoa(order.id)}`}
+        className="order-card-link"
+      >
+        View Order →
+      </Link>
+    </div>
   );
 }
 

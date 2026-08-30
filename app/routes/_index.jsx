@@ -3,6 +3,7 @@ import {Suspense} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
 import {MockShopNotice} from '~/components/MockShopNotice';
+import {EtsyRatingBadge, SHOP_STATS} from '~/components/EtsyRating';
 
 /**
  * @type {Route.MetaFunction}
@@ -67,29 +68,9 @@ export default function Homepage() {
   return (
     <div className="home">
       {data.isShopLinked ? null : <MockShopNotice />}
-      <Hero />
-      <FeaturedCollection collection={data.featuredCollection} />
+      <Hero collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
     </div>
-  );
-}
-
-function Hero() {
-  return (
-    <section className="hero">
-      <div className="hero-inner">
-        <h1>
-          Overlays that make people <span className="sws-holo">stop scrolling.</span>
-        </h1>
-        <p>
-          Animated chat and goal widgets built for Twitch, YouTube, and
-          multistream. Instant download, drop into OBS in minutes.
-        </p>
-        <Link className="hero-cta" to="/collections/all">
-          Shop widgets
-        </Link>
-      </div>
-    </section>
   );
 }
 
@@ -98,25 +79,47 @@ function Hero() {
  *   collection: FeaturedCollectionFragment;
  * }}
  */
-function FeaturedCollection({collection}) {
-  if (!collection) return null;
+function Hero({collection}) {
   const image = collection?.image;
   return (
-    <Link
-      className="featured-collection"
-      to={`/collections/${collection.handle}`}
-    >
-      {image && (
-        <div className="featured-collection-image">
-          <Image
-            data={image}
-            sizes="100vw"
-            alt={image.altText || collection.title}
-          />
+    <section className="hero">
+      <div className="hero-grid">
+        <div className="hero-copy">
+          <h1>
+            Overlays that make people{' '}
+            <span className="sws-holo">stop scrolling.</span>
+          </h1>
+          <p>
+            Animated chat and goal widgets built for Twitch, YouTube, and
+            multistream. Instant download, drop into OBS in minutes.
+          </p>
+          <div className="hero-cta-row">
+            <Link className="hero-cta" to="/collections/all">
+              Shop widgets
+            </Link>
+            <EtsyRatingBadge />
+          </div>
+          <p className="hero-social-proof">
+            {SHOP_STATS.soldCount.toLocaleString()}+ widgets sold ·{' '}
+            {SHOP_STATS.favoriteCount.toLocaleString()} favorites on Etsy
+          </p>
         </div>
-      )}
-      <h1>{collection.title}</h1>
-    </Link>
+
+        {image && collection && (
+          <Link
+            className="hero-visual"
+            to={`/collections/${collection.handle}`}
+          >
+            <Image
+              data={image}
+              sizes="(min-width: 45em) 480px, 100vw"
+              alt={image.altText || collection.title}
+            />
+            <span className="hero-visual-label">{collection.title}</span>
+          </Link>
+        )}
+      </div>
+    </section>
   );
 }
 
@@ -131,7 +134,7 @@ function RecommendedProducts({products}) {
       className="recommended-products"
       aria-labelledby="recommended-products"
     >
-      <h2 id="recommended-products">Recommended Products</h2>
+      <h2 id="recommended-products">Fan favorites</h2>
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={products}>
           {(response) => (
@@ -145,7 +148,6 @@ function RecommendedProducts({products}) {
           )}
         </Await>
       </Suspense>
-      <br />
     </section>
   );
 }
@@ -194,7 +196,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   }
   query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
+    products(first: 8, sortKey: UPDATED_AT, reverse: true) {
       nodes {
         ...RecommendedProduct
       }

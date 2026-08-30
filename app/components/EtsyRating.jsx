@@ -5,10 +5,16 @@
  * rating — Etsy doesn't expose a reliable per-listing sample size for every
  * product). Update SHOP_RATING when it's next pulled from the Etsy API.
  */
-const SHOP_RATING = {
+export const SHOP_RATING = {
   average: 4.75,
   count: 981,
   url: 'https://www.etsy.com/shop/StreamWidgetShop/reviews',
+};
+
+/** Shop-wide Etsy stats, for trust strips (e.g. homepage hero). */
+export const SHOP_STATS = {
+  soldCount: 7383,
+  favoriteCount: 1249,
 };
 
 export function EtsyRatingBadge({compact = false}) {

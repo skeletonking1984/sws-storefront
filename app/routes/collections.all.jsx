@@ -1,7 +1,14 @@
-import {useLoaderData} from 'react-router';
+import {Form, Link, useLoaderData, useSearchParams} from 'react-router';
 import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
+
+const WIDGET_TYPES = [
+  {label: 'All', tag: ''},
+  {label: 'Chat widgets', tag: 'Chat_widget'},
+  {label: 'Goal widgets', tag: 'Goal_Widget'},
+  {label: 'VTuber assets', tag: 'Vtuber_asset'},
+];
 
 /**
  * @type {Route.MetaFunction}
@@ -31,16 +38,26 @@ export async function loader(args) {
 async function loadCriticalData({context, request}) {
   const {storefront} = context;
   const paginationVariables = getPaginationVariables(request, {
-    pageBy: 8,
+    pageBy: 24,
   });
+  const url = new URL(request.url);
+  const activeType = url.searchParams.get('type') || '';
+  const searchQuery = url.searchParams.get('q') || '';
+
+  const queryParts = [];
+  if (activeType) queryParts.push(`tag:${activeType}`);
+  if (searchQuery) queryParts.push(`(title:*${searchQuery}* OR tag:*${searchQuery}*)`);
 
   const [{products}] = await Promise.all([
     storefront.query(CATALOG_QUERY, {
-      variables: {...paginationVariables},
+      variables: {
+        ...paginationVariables,
+        query: queryParts.length ? queryParts.join(' AND ') : undefined,
+      },
     }),
     // Add other queries here, so that they are loaded in parallel
   ]);
-  return {products};
+  return {products, activeType, searchQuery};
 }
 
 /**
@@ -55,23 +72,68 @@ function loadDeferredData({context}) {
 
 export default function Collection() {
   /** @type {LoaderReturnData} */
-  const {products} = useLoaderData();
+  const {products, activeType, searchQuery} = useLoaderData();
+  const [searchParams] = useSearchParams();
+
+  const typeHref = (tag) => {
+    const params = new URLSearchParams(searchParams);
+    if (tag) {
+      params.set('type', tag);
+    } else {
+      params.delete('type');
+    }
+    const query = params.toString();
+    return query ? `/collections/all?${query}` : '/collections/all';
+  };
 
   return (
     <div className="collection">
       <h1>Products</h1>
-      <PaginatedResourceSection
-        connection={products}
-        resourcesClassName="products-grid"
-      >
-        {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
+      <div className="collection-filter-bar">
+        <div className="collection-filter-types">
+          {WIDGET_TYPES.map(({label, tag}) => (
+            <Link
+              key={label}
+              to={typeHref(tag)}
+              className={`collection-filter-type${
+                activeType === tag ? ' active' : ''
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+        <Form method="get" className="collection-filter-search-form">
+          {activeType && <input type="hidden" name="type" value={activeType} />}
+          <input
+            type="search"
+            name="q"
+            className="collection-filter-search"
+            placeholder="Search all widgets..."
+            defaultValue={searchQuery}
+            aria-label="Search all products"
           />
-        )}
-      </PaginatedResourceSection>
+        </Form>
+      </div>
+      {products.nodes.length === 0 ? (
+        <p className="collection-empty">
+          No widgets match that search.{' '}
+          <Link to="/collections/all">Clear filters →</Link>
+        </p>
+      ) : (
+        <PaginatedResourceSection
+          connection={products}
+          resourcesClassName="products-grid"
+        >
+          {({node: product, index}) => (
+            <ProductItem
+              key={product.id}
+              product={product}
+              loading={index < 8 ? 'eager' : undefined}
+            />
+          )}
+        </PaginatedResourceSection>
+      )}
     </div>
   );
 }
@@ -112,8 +174,9 @@ const CATALOG_QUERY = `#graphql
     $last: Int
     $startCursor: String
     $endCursor: String
+    $query: String
   ) @inContext(country: $country, language: $language) {
-    products(first: $first, last: $last, before: $startCursor, after: $endCursor) {
+    products(first: $first, last: $last, before: $startCursor, after: $endCursor, query: $query) {
       nodes {
         ...CollectionItem
       }
