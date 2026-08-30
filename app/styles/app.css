@@ -1603,13 +1603,37 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .product-platform-badge {
+  align-items: center;
   background: var(--sws-card);
   border: 1px solid var(--sws-border);
   border-radius: 999px;
   color: var(--sws-accent-2);
+  display: inline-flex;
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 0.3rem 0.75rem;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem 0.3rem 0.5rem;
+}
+
+.platform-icon {
+  fill: currentColor;
+  flex-shrink: 0;
+  height: 14px;
+  width: 14px;
+}
+
+.platform-icon-monogram {
+  align-items: center;
+  background: var(--sws-accent-2);
+  border-radius: 50%;
+  color: #0a0a12;
+  display: inline-flex;
+  font-size: 0.55rem;
+  font-weight: 800;
+  height: 16px;
+  justify-content: center;
+  letter-spacing: -0.02em;
+  width: 16px;
 }
 
 .product-highlights-list {

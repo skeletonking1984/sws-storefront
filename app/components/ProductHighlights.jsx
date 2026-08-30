@@ -1,4 +1,5 @@
 import {detectPlatforms} from '~/lib/platforms';
+import {PlatformIcon} from '~/components/PlatformIcon';
 
 /**
  * Etsy-style "Highlights" block: platform badges + scannable digital-good
@@ -15,6 +16,7 @@ export function ProductHighlights({title, description}) {
         <div className="product-platforms">
           {platforms.map((platform) => (
             <span key={platform} className="product-platform-badge">
+              <PlatformIcon platform={platform} />
               {platform}
             </span>
           ))}
