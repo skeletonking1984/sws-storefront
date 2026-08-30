@@ -1263,9 +1263,20 @@ button.reset:hover:not(:has(> *)) {
   border-color: var(--sws-accent-1);
 }
 
-.product-item img {
+.product-item-image {
+  aspect-ratio: 1 / 1;
+  background: var(--sws-bg);
   border-radius: 10px;
   margin-bottom: 0.75rem;
+  overflow: hidden;
+  width: 100%;
+}
+
+.product-item-image img {
+  border-radius: 10px;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
 }
 
 .product-item h4 {
@@ -1406,11 +1417,6 @@ button.reset:hover:not(:has(> *)) {
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-item-width), 1fr));
   margin-bottom: 2rem;
   padding: 0 2rem;
-}
-
-.product-item img {
-  height: auto;
-  width: 100%;
 }
 
 /*
