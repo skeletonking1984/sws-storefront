@@ -97,7 +97,7 @@ export default function Homepage() {
   return (
     <div className="home">
       {data.isShopLinked ? null : <MockShopNotice />}
-      <p style={{textAlign: 'center', padding: '0.5rem'}}>Hello world</p>
+      <p style={{textAlign: 'center', padding: '0.5rem'}}>Auny the Wise</p>
       <Hero collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
       <CustomCommissionCallout />
