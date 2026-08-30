@@ -1,4 +1,6 @@
-# Shopify Hydrogen development
+@CLAUDE.md
+
+## Shopify Hydrogen development
 
 This storefront is scaffolded from Shopify's Hydrogen skeleton template. See the README for framework-specific details.
 
