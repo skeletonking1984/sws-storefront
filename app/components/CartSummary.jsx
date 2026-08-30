@@ -99,18 +99,22 @@ function CartDiscounts({
 
       {/* Show an input to apply a discount */}
       <UpdateDiscountForm discountCodes={codes}>
-        <div>
+        <div className="cart-code-form">
           <label htmlFor={discountCodeInputId} className="sr-only">
             Discount code
           </label>
           <input
             id={discountCodeInputId}
+            className="cart-code-input"
             type="text"
             name="discountCode"
             placeholder="Discount code"
           />
-          &nbsp;
-          <button type="submit" aria-label="Apply discount code">
+          <button
+            className="cart-code-apply"
+            type="submit"
+            aria-label="Apply discount code"
+          >
             Apply
           </button>
         </div>
@@ -222,19 +226,20 @@ function CartGiftCard({giftCardCodes, giftCardHeadingId, giftCardInputId}) {
       )}
 
       <AddGiftCardForm fetcherKey="gift-card-add">
-        <div>
+        <div className="cart-code-form">
           <label htmlFor={giftCardInputId} className="sr-only">
             Gift card code
           </label>
           <input
             id={giftCardInputId}
+            className="cart-code-input"
             type="text"
             name="giftCardCode"
             placeholder="Gift card code"
             ref={giftCardCodeInput}
           />
-          &nbsp;
           <button
+            className="cart-code-apply"
             type="submit"
             disabled={giftCardAddFetcher.state !== 'idle'}
             aria-label="Apply gift card code"
