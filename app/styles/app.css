@@ -849,36 +849,49 @@ button.reset:hover:not(:has(> *)) {
   margin: 0;
 }
 
-.hero-visual {
-  border-radius: 20px;
+.hero-collage {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+  margin: 0 auto;
+  max-width: 420px;
+  padding: 1rem;
+}
+
+.hero-collage-item {
+  aspect-ratio: 1 / 1;
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 16px;
   display: block;
   overflow: hidden;
-  position: relative;
-  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.hero-visual img {
-  aspect-ratio: 1 / 1;
-  border-radius: 20px;
+.hero-collage-item:nth-child(1) {
+  transform: rotate(-3deg) translateY(6px);
+}
+.hero-collage-item:nth-child(2) {
+  transform: rotate(2deg) translateY(-8px);
+}
+.hero-collage-item:nth-child(3) {
+  transform: rotate(2deg) translateY(4px);
+}
+.hero-collage-item:nth-child(4) {
+  transform: rotate(-2deg) translateY(-4px);
+}
+
+.hero-collage-item:hover {
+  box-shadow: 0 12px 32px -8px var(--sws-accent-1);
+  transform: rotate(0deg) translateY(-6px) scale(1.03);
+  z-index: 1;
+}
+
+.hero-collage-item img {
   display: block;
-  height: auto;
-  object-fit: cover;
+  height: 100%;
+  object-fit: contain;
   width: 100%;
-  @media (min-width: 45em) {
-    aspect-ratio: 4 / 3;
-  }
-}
-
-.hero-visual-label {
-  background: rgba(10, 10, 18, 0.75);
-  border-radius: 999px;
-  bottom: 1rem;
-  color: var(--sws-text);
-  font-size: 0.85rem;
-  font-weight: 700;
-  left: 1rem;
-  padding: 0.4rem 0.9rem;
-  position: absolute;
 }
 
 /*
@@ -1524,6 +1537,25 @@ button.reset:hover:not(:has(> *)) {
   max-height: min(560px, 90vw);
   overflow-y: auto;
   width: 64px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sws-border) transparent;
+}
+
+.product-gallery-thumbs::-webkit-scrollbar {
+  width: 5px;
+}
+
+.product-gallery-thumbs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.product-gallery-thumbs::-webkit-scrollbar-thumb {
+  background: var(--sws-border);
+  border-radius: 999px;
+}
+
+.product-gallery-thumbs::-webkit-scrollbar-thumb:hover {
+  background: var(--sws-accent-1);
 }
 
 .product-gallery-thumb {

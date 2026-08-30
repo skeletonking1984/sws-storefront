@@ -22,10 +22,13 @@ export function ProductItem({product, loading}) {
       to={variantUrl}
     >
       {image && (
+        // No aspectRatio prop: it makes Hydrogen add `crop=center` to the
+        // CDN URL, which force-crops this catalog's mostly-non-square
+        // source art. The wrapper handles square framing via object-fit:
+        // contain instead, so the full image stays visible.
         <div className="product-item-image">
           <Image
             alt={image.altText || product.title}
-            aspectRatio="1/1"
             data={image}
             loading={loading}
             sizes="(min-width: 45em) 400px, 100vw"

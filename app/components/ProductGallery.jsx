@@ -82,11 +82,16 @@ export function ProductGallery({media}) {
             ))}
           </video>
         ) : active?.image ? (
+          // No aspectRatio prop here on purpose: Hydrogen's <Image> adds a
+          // `crop=center` param to Shopify's CDN URL whenever aspectRatio is
+          // set, which force-crops non-square source art (most of this
+          // catalog's images are landscape, not 1:1) and chops off content.
+          // The container below handles square framing via object-fit:
+          // contain instead, so nothing gets cropped.
           <Image
             data={active.image}
             alt={active.image.altText || ''}
             sizes="(min-width: 45em) 50vw, 100vw"
-            aspectRatio="1/1"
           />
         ) : null}
 

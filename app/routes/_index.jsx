@@ -31,14 +31,8 @@ export async function loader(args) {
  * @param {Route.LoaderArgs}
  */
 async function loadCriticalData({context}) {
-  const [{collections}] = await Promise.all([
-    context.storefront.query(FEATURED_COLLECTION_QUERY),
-    // Add other queries here, so that they are loaded in parallel
-  ]);
-
   return {
     isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
-    featuredCollection: collections.nodes[0],
   };
 }
 
@@ -97,8 +91,7 @@ export default function Homepage() {
   return (
     <div className="home">
       {data.isShopLinked ? null : <MockShopNotice />}
-      <p style={{textAlign: 'center', padding: '0.5rem'}}>Auny the Wise</p>
-      <Hero collection={data.featuredCollection} />
+      <Hero products={data.recommendedProducts} />
       <RecommendedProducts products={data.recommendedProducts} />
       <CustomCommissionCallout />
     </div>
@@ -116,7 +109,7 @@ function CustomCommissionCallout() {
         </p>
         <div className="commission-callout-cta-row">
           <Link className="hero-cta" to="/pages/contact">
-            Get a custom widget &mdash; starting at $300
+            Get a custom setup &mdash; starting at $300
           </Link>
         </div>
       </div>
@@ -126,11 +119,10 @@ function CustomCommissionCallout() {
 
 /**
  * @param {{
- *   collection: FeaturedCollectionFragment;
+ *   products: Promise<RecommendedProductsQuery | null>;
  * }}
  */
-function Hero({collection}) {
-  const image = collection?.image;
+function Hero({products}) {
   return (
     <section className="hero">
       <div className="hero-grid">
@@ -155,19 +147,31 @@ function Hero({collection}) {
           </p>
         </div>
 
-        {image && collection && (
-          <Link
-            className="hero-visual"
-            to={`/collections/${collection.handle}`}
-          >
-            <Image
-              data={image}
-              sizes="(min-width: 45em) 480px, 100vw"
-              alt={image.altText || collection.title}
-            />
-            <span className="hero-visual-label">{collection.title}</span>
-          </Link>
-        )}
+        <Suspense fallback={<div className="hero-collage" />}>
+          <Await resolve={products}>
+            {(response) => {
+              const nodes = response?.products?.nodes ?? [];
+              if (!nodes.length) return null;
+              return (
+                <div className="hero-collage">
+                  {nodes.slice(0, 4).map((product) => (
+                    <Link
+                      key={product.id}
+                      to={`/products/${product.handle}`}
+                      className="hero-collage-item"
+                    >
+                      <Image
+                        data={product.featuredImage}
+                        alt={product.featuredImage?.altText || product.title}
+                        sizes="180px"
+                      />
+                    </Link>
+                  ))}
+                </div>
+              );
+            }}
+          </Await>
+        </Suspense>
       </div>
     </section>
   );
@@ -201,29 +205,6 @@ function RecommendedProducts({products}) {
     </section>
   );
 }
-
-const FEATURED_COLLECTION_QUERY = `#graphql
-  fragment FeaturedCollection on Collection {
-    id
-    title
-    image {
-      id
-      url
-      altText
-      width
-      height
-    }
-    handle
-  }
-  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    collections(first: 1, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...FeaturedCollection
-      }
-    }
-  }
-`;
 
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   fragment RecommendedProduct on Product {
@@ -268,6 +249,5 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
 `;
 
 /** @typedef {import('./+types/_index').Route} Route */
-/** @typedef {import('storefrontapi.generated').FeaturedCollectionFragment} FeaturedCollectionFragment */
 /** @typedef {import('storefrontapi.generated').RecommendedProductsQuery} RecommendedProductsQuery */
 /** @typedef {ReturnType<typeof useLoaderData<typeof loader>>} LoaderReturnData */

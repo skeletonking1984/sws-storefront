@@ -1,3 +1,5 @@
+import streamElementsLogo from '~/assets/streamelements.png';
+
 // Real brand marks (path data from simple-icons, CC0), used here in the
 // standard "works with X" nominative sense to indicate compatibility.
 const ICON_PATHS = {
@@ -15,11 +17,21 @@ const ICON_PATHS = {
 
 /**
  * Real brand icon for a supported streaming platform, or a monogram badge
- * for platforms without a usable public icon asset (StreamElements isn't
- * in the simple-icons library; VTuber isn't a brand at all).
+ * for platforms without a usable public icon asset (VTuber isn't a brand).
  * @param {{platform: string}}
  */
 export function PlatformIcon({platform}) {
+  if (platform === 'StreamElements') {
+    return (
+      <img
+        className="platform-icon"
+        src={streamElementsLogo}
+        alt=""
+        aria-hidden="true"
+      />
+    );
+  }
+
   const path = ICON_PATHS[platform];
   if (path) {
     return (
