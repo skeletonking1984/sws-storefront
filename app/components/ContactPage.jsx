@@ -3,11 +3,13 @@ import {Link} from 'react-router';
 
 const SUPPORT_EMAIL = 'streamwidgetshop@gmail.com';
 
-// Shopify's built-in contact-form endpoint. Works on any store regardless
-// of theme — this is the same pipe that delivers to Settings > Notifications
-// > "General" contact recipient. Posted via fetch(no-cors) so the visitor
-// stays on our branded page instead of bouncing to the myshopify.com domain.
-const STORE_DOMAIN = '72470e-33.myshopify.com';
+// Shopify's built-in contact-form endpoint, matched to the exact field
+// names used by the live theme's own contact form (verified by inspecting
+// the real form at streamwidgetshop.com/pages/contact) and posted to the
+// canonical custom domain — the myshopify.com subdomain silently drops
+// submissions. Posted via fetch(no-cors) so the visitor stays on our
+// branded page instead of bouncing to another domain.
+const STORE_DOMAIN = 'streamwidgetshop.com';
 
 /**
  * The Shopify "Contact" page has no body content configured, so this
@@ -26,9 +28,10 @@ export function ContactPage() {
       const body = new URLSearchParams();
       body.set('form_type', 'contact');
       body.set('utf8', '✓');
-      body.set('contact[name]', data.get('name'));
+      body.set('contact[First name]', data.get('name'));
       body.set('contact[email]', data.get('email'));
-      body.set('contact[body]', data.get('message'));
+      body.set('contact[Phone number]', '');
+      body.set('contact[Comment]', data.get('message'));
 
       // no-cors: we can't read the response, but the request still reaches
       // Shopify's server and gets processed — this is the standard pattern
