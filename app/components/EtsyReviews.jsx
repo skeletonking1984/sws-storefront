@@ -1,4 +1,21 @@
-import {EtsyRatingBadge} from '~/components/EtsyRating';
+const SHOP_RATING = {
+  average: 4.75,
+  count: 981,
+  url: 'https://www.etsy.com/shop/StreamWidgetShop/reviews',
+};
+
+/**
+ * Recurring themes actually observed across real StreamWidgetShop reviews —
+ * not Etsy's own per-category scoring (item quality/delivery/etc aren't
+ * exposed by Etsy's public API, so we don't fabricate those numbers).
+ */
+const REVIEW_THEMES = [
+  'Easy to install',
+  'Cute design',
+  'Great customization',
+  'Clear tutorial',
+  'Works as described',
+];
 
 /**
  * A handful of real recent StreamWidgetShop reviews from Etsy, shown as
@@ -21,13 +38,44 @@ const SAMPLE_REVIEWS = [
 ];
 
 export function EtsyReviews() {
+  const fullStars = Math.round(SHOP_RATING.average);
   return (
     <section className="etsy-reviews" aria-labelledby="etsy-reviews-heading">
-      <h2 id="etsy-reviews-heading">Etsy reviews</h2>
-      <EtsyRatingBadge />
+      <h2 id="etsy-reviews-heading">Reviews for this shop</h2>
+
+      <div className="etsy-review-themes">
+        <span className="etsy-review-themes-label">What buyers say:</span>
+        {REVIEW_THEMES.map((theme) => (
+          <span key={theme} className="etsy-review-theme">
+            ✓ {theme}
+          </span>
+        ))}
+      </div>
+
+      <a
+        href={SHOP_RATING.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="etsy-review-summary"
+      >
+        <span className="etsy-review-summary-number">
+          {SHOP_RATING.average.toFixed(1)}
+        </span>
+        <span className="etsy-rating-stars" aria-hidden="true">
+          {Array.from({length: 5}, (_, i) =>
+            i < fullStars ? '★' : '☆',
+          ).join('')}
+        </span>
+        <span className="etsy-review-summary-label">
+          Shop average ({SHOP_RATING.count} reviews on Etsy)
+        </span>
+      </a>
+
       <p className="etsy-reviews-note">
-        Recent reviews from StreamWidgetShop on Etsy — see all on Etsy.
+        These are shop-wide Etsy reviews, not filtered to this exact listing —
+        see all on Etsy.
       </p>
+
       <div className="etsy-reviews-grid">
         {SAMPLE_REVIEWS.map((review, i) => (
           <blockquote className="etsy-review-card" key={i}>

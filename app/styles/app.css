@@ -810,7 +810,7 @@ button.reset:hover:not(:has(> *)) {
 */
 .product-gallery {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   gap: 0.75rem;
 }
 
@@ -827,7 +827,7 @@ button.reset:hover:not(:has(> *)) {
 .product-gallery-video {
   border-radius: 16px;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   width: 100%;
 }
 
@@ -881,7 +881,7 @@ button.reset:hover:not(:has(> *)) {
 
 .product-gallery-thumb img {
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   width: 100%;
 }
 
@@ -993,6 +993,48 @@ button.reset:hover:not(:has(> *)) {
   font-size: 1.2rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
+}
+
+.etsy-review-themes {
+  align-items: center;
+  color: var(--sws-sub);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  gap: 0.6rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.etsy-review-themes-label {
+  color: var(--sws-text);
+  font-weight: 700;
+}
+
+.etsy-review-theme {
+  white-space: nowrap;
+}
+
+.etsy-review-summary {
+  align-items: baseline;
+  color: var(--sws-text);
+  display: flex;
+  gap: 0.6rem;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.etsy-review-summary:hover {
+  color: var(--sws-accent-2);
+}
+
+.etsy-review-summary-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.etsy-review-summary-label {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
 }
 
 .etsy-reviews-note {
