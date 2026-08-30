@@ -109,14 +109,14 @@ function CustomCommissionCallout() {
   return (
     <section className="commission-callout">
       <div className="commission-callout-inner">
-        <h2>Don&apos;t see your vibe?</h2>
+        <h2>Premium Overlays + Widgets Custom Design</h2>
         <p>
           We build fully custom chat and goal widgets to match your exact
           stream aesthetic &mdash; your colors, your characters, your theme.
         </p>
         <div className="commission-callout-cta-row">
           <Link className="hero-cta" to="/pages/contact">
-            Get a custom widget &mdash; $85 flat
+            Get a custom widget &mdash; starting at $300
           </Link>
         </div>
       </div>

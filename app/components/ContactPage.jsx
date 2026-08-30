@@ -107,8 +107,8 @@ export function ContactPage() {
           <p>Step-by-step guide to get any widget live in under a minute.</p>
         </Link>
         <Link to="/" className="contact-link-card">
-          <h3>Want something custom?</h3>
-          <p>We build fully custom chat and goal widgets — $85 flat.</p>
+          <h3>Premium Overlays + Widgets Custom Design</h3>
+          <p>We build fully custom chat and goal widgets — starting at $300.</p>
         </Link>
       </div>
     </div>
