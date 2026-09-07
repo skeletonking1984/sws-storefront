@@ -9,7 +9,7 @@ import {BLOG_CATEGORIES, categorizeArticle} from '~/lib/blogCategories';
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
-  return [{title: `Hydrogen | ${data?.blog.title ?? ''} blog`}];
+  return [{title: `${data?.blog.title ?? ''} | Stream Widget Shop Blog`}];
 };
 
 /**

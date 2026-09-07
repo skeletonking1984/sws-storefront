@@ -6,7 +6,14 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
  * @type {Route.MetaFunction}
  */
 export const meta = () => {
-  return [{title: `Hydrogen | Blogs`}];
+  return [
+    {title: 'Blog | Stream Widget Shop'},
+    {
+      name: 'description',
+      content:
+        'Guides on animated Twitch chat widgets, goal widgets, OBS setup, and stream overlay design.',
+    },
+  ];
 };
 
 /**

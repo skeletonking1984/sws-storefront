@@ -15,7 +15,14 @@ const WIDGET_TYPES = [
  * @type {Route.MetaFunction}
  */
 export const meta = () => {
-  return [{title: `Hydrogen | Products`}];
+  return [
+    {title: 'All Widgets | Stream Widget Shop'},
+    {
+      name: 'description',
+      content:
+        'Browse every animated chat and goal widget: Twitch, YouTube, Kick, and multistream. Instant digital download.',
+    },
+  ];
 };
 
 /**

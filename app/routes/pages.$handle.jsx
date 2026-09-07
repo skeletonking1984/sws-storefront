@@ -14,7 +14,7 @@ const CUSTOM_LAYOUTS = {
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
-  return [{title: `Hydrogen | ${data?.page.title ?? ''}`}];
+  return [{title: `${data?.page.title ?? ''} | Stream Widget Shop`}];
 };
 
 /**

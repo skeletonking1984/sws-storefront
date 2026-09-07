@@ -11,7 +11,15 @@ import logo from '~/assets/logo.png';
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
-  return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
+  return [
+    {title: `${data?.collection.title ?? ''} | Stream Widget Shop`},
+    {
+      name: 'description',
+      content:
+        data?.collection.description ||
+        `Animated ${data?.collection.title ?? ''} widgets for Twitch, YouTube, and multistream. Instant digital download.`,
+    },
+  ];
 };
 
 /**
