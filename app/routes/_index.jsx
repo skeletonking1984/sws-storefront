@@ -1,10 +1,12 @@
 import {Await, useLoaderData, Link} from 'react-router';
 import {Suspense} from 'react';
+import {Image, Money} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge, SHOP_STATS} from '~/components/EtsyRating';
 import {SAMPLE_REVIEWS, SHOP_RATING} from '~/components/EtsyReviews';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {EmailCapture} from '~/components/EmailCapture';
+import {useVariantUrl} from '~/lib/variants';
 import logo from '~/assets/logo.png';
 import heroWidgets from '~/assets/hero-widgets.webp';
 
@@ -87,9 +89,31 @@ function loadDeferredData({context}) {
     .then((response) => response?.collection?.products?.nodes ?? null)
     .catch(() => null);
 
+  // "Kits and overlay packs" fetches four specific products by handle, same
+  // aliased product(handle:) pattern as RECOMMENDED_PRODUCTS_QUERY. Some of
+  // these may be brand new listings that resolve to null for a while after
+  // creation in Shopify Admin, so the section below skips nulls and hides
+  // itself entirely if nothing resolves. This never blocks the page.
+  const kitsAndOverlayPacks = context.storefront
+    .query(KITS_AND_OVERLAY_PACKS_QUERY, {
+      variables: Object.fromEntries(
+        KITS_AND_OVERLAY_PACKS_HANDLES.map((h, i) => [`handle${i}`, h]),
+      ),
+    })
+    .then((response) =>
+      KITS_AND_OVERLAY_PACKS_HANDLES.map((_, i) => response[`product${i}`]).filter(
+        Boolean,
+      ),
+    )
+    .catch((error) => {
+      console.error(error);
+      return [];
+    });
+
   return {
     recommendedProducts,
     topWidgets,
+    kitsAndOverlayPacks,
   };
 }
 
@@ -109,6 +133,18 @@ const FAN_FAVORITE_HANDLES = [
   'boba-drink-cute-fruit-drink-goal-widget-for-twitch-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
   'cute-rabbit-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
   'goth-spell-book-spooky-vibes-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
+];
+
+/**
+ * Handles for the "Kits and overlay packs" homepage band. Two of these
+ * (the two "stream kit" bundles) are being created in Shopify Admin
+ * alongside this change and may resolve to null for a few minutes.
+ */
+const KITS_AND_OVERLAY_PACKS_HANDLES = [
+  'spooky-stream-kit',
+  'celestial-stream-kit',
+  'multistream-chat-widget-pack',
+  'demon-samurai-stream-overlay-pack-animated-katana-goal-bar-multistream-chat-alerts-digital-download',
 ];
 
 /** Sticker chips for "Shop by vibe", linking into the all-products search. */
@@ -140,6 +176,7 @@ export default function Homepage() {
     <div className="home">
       <Hero />
       <ShopByVibe />
+      <KitsAndOverlayPacks kits={data.kitsAndOverlayPacks} />
       <TopWidgets
         topWidgets={data.topWidgets}
         fallback={data.recommendedProducts}
@@ -231,6 +268,139 @@ function ShopByVibe() {
         ))}
       </div>
     </section>
+  );
+}
+
+/** Strips tags from a plain-text/HTML string and collapses whitespace. */
+function stripHtml(text) {
+  return text
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** First sentence of `text`, capped at 110 characters. */
+function firstSentenceHook(text) {
+  if (!text) return null;
+  const clean = stripHtml(text);
+  if (!clean) return null;
+  const match = clean.match(/^[^.!?]*[.!?]/);
+  const sentence = (match ? match[0] : clean).trim();
+  if (sentence.length <= 110) return sentence;
+  return `${sentence.slice(0, 109).trimEnd()}...`;
+}
+
+/** Maps a product's productType to the sticker tag shown on its kit card. */
+function kitTagLabel(productType) {
+  const normalized = (productType || '').toLowerCase();
+  if (normalized.includes('overlay')) return 'OVERLAY PACK';
+  if (normalized.includes('bundle')) return 'KIT';
+  return null;
+}
+
+/** "Save $X", or null if there's no compareAtPrice or it isn't a real discount. */
+function formatSavings(price, compareAtPrice) {
+  if (!price || !compareAtPrice) return null;
+  const priceAmount = parseFloat(price.amount);
+  const compareAmount = parseFloat(compareAtPrice.amount);
+  const diff = compareAmount - priceAmount;
+  if (!(diff > 0)) return null;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: price.currencyCode,
+    minimumFractionDigits: diff % 1 === 0 ? 0 : 2,
+  }).format(diff);
+}
+
+/**
+ * @param {{
+ *   kits: Promise<any[]>;
+ * }}
+ */
+function KitsAndOverlayPacks({kits}) {
+  return (
+    <Suspense fallback={null}>
+      <Await resolve={kits}>
+        {(nodes) => {
+          const products = (nodes || []).filter(Boolean);
+          if (!products.length) return null;
+          return (
+            <section className="kits-band" aria-labelledby="kits-heading">
+              <p className="sws-section-eyebrow kits-eyebrow">
+                Save with a kit
+              </p>
+              <h2 id="kits-heading" className="sws-section-heading kits-heading">
+                Whole-stream looks in one download
+              </h2>
+              <div className="kits-grid">
+                {products.map((product) => (
+                  <KitCard key={product.id} product={product} />
+                ))}
+              </div>
+              <div className="kits-band-links">
+                <Link
+                  className="sws-btn sws-btn-ghost"
+                  to="/collections/bundles"
+                >
+                  See all kits
+                </Link>
+                <Link
+                  className="sws-btn sws-btn-ghost"
+                  to="/collections/overlays"
+                >
+                  All overlays
+                </Link>
+              </div>
+            </section>
+          );
+        }}
+      </Await>
+    </Suspense>
+  );
+}
+
+function KitCard({product}) {
+  const variantUrl = useVariantUrl(product.handle);
+  const variant = product.selectedOrFirstAvailableVariant;
+  const price = variant?.price;
+  const compareAtPrice = variant?.compareAtPrice;
+  const savings = formatSavings(price, compareAtPrice);
+  const tagLabel = kitTagLabel(product.productType);
+  const hook = firstSentenceHook(product.description);
+
+  return (
+    <Link className="kit-card" to={variantUrl} prefetch="intent">
+      {product.featuredImage && (
+        <div className="kit-card-image">
+          {tagLabel && <span className="kit-card-tag">{tagLabel}</span>}
+          <Image
+            alt={product.featuredImage.altText || product.title}
+            data={product.featuredImage}
+            sizes="(min-width: 45em) 600px, 100vw"
+          />
+        </div>
+      )}
+      <div className="kit-card-body">
+        <h3>{product.title}</h3>
+        {hook && <p className="kit-card-hook">{hook}</p>}
+        <div className="kit-card-footer">
+          {price && (
+            <span className="kit-card-price-pill">
+              {compareAtPrice && (
+                <s className="kit-card-compare-price">
+                  <Money data={compareAtPrice} />
+                </s>
+              )}
+              <Money data={price} />
+            </span>
+          )}
+          {savings && (
+            <span className="kit-card-savings">Save {savings}</span>
+          )}
+        </div>
+      </div>
+    </Link>
   );
 }
 
@@ -384,6 +554,44 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     product5: product(handle: $handle5) { ...RecommendedProduct }
     product6: product(handle: $handle6) { ...RecommendedProduct }
     product7: product(handle: $handle7) { ...RecommendedProduct }
+  }
+`;
+
+const KITS_AND_OVERLAY_PACKS_QUERY = `#graphql
+  fragment KitOrOverlayPackProduct on Product {
+    id
+    title
+    handle
+    productType
+    description
+    featuredImage {
+      id
+      url
+      altText
+    }
+    selectedOrFirstAvailableVariant {
+      price {
+        amount
+        currencyCode
+      }
+      compareAtPrice {
+        amount
+        currencyCode
+      }
+    }
+  }
+  query KitsAndOverlayPacks (
+    $country: CountryCode
+    $language: LanguageCode
+    $handle0: String!
+    $handle1: String!
+    $handle2: String!
+    $handle3: String!
+  ) @inContext(country: $country, language: $language) {
+    product0: product(handle: $handle0) { ...KitOrOverlayPackProduct }
+    product1: product(handle: $handle1) { ...KitOrOverlayPackProduct }
+    product2: product(handle: $handle2) { ...KitOrOverlayPackProduct }
+    product3: product(handle: $handle3) { ...KitOrOverlayPackProduct }
   }
 `;
 

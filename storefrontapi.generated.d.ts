@@ -485,6 +485,97 @@ export type RecommendedProductsQuery = {
   >;
 };
 
+export type KitOrOverlayPackProductFragment = Pick<
+  StorefrontAPI.Product,
+  'id' | 'title' | 'handle' | 'productType' | 'description'
+> & {
+  featuredImage?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+  >;
+  selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+    price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+    compareAtPrice?: StorefrontAPI.Maybe<
+      Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+    >;
+  }>;
+};
+
+export type KitsAndOverlayPacksQueryVariables = StorefrontAPI.Exact<{
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+  handle0: StorefrontAPI.Scalars['String']['input'];
+  handle1: StorefrontAPI.Scalars['String']['input'];
+  handle2: StorefrontAPI.Scalars['String']['input'];
+  handle3: StorefrontAPI.Scalars['String']['input'];
+}>;
+
+export type KitsAndOverlayPacksQuery = {
+  product0?: StorefrontAPI.Maybe<
+    Pick<
+      StorefrontAPI.Product,
+      'id' | 'title' | 'handle' | 'productType' | 'description'
+    > & {
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+      >;
+      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+        compareAtPrice?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+        >;
+      }>;
+    }
+  >;
+  product1?: StorefrontAPI.Maybe<
+    Pick<
+      StorefrontAPI.Product,
+      'id' | 'title' | 'handle' | 'productType' | 'description'
+    > & {
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+      >;
+      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+        compareAtPrice?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+        >;
+      }>;
+    }
+  >;
+  product2?: StorefrontAPI.Maybe<
+    Pick<
+      StorefrontAPI.Product,
+      'id' | 'title' | 'handle' | 'productType' | 'description'
+    > & {
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+      >;
+      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+        compareAtPrice?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+        >;
+      }>;
+    }
+  >;
+  product3?: StorefrontAPI.Maybe<
+    Pick<
+      StorefrontAPI.Product,
+      'id' | 'title' | 'handle' | 'productType' | 'description'
+    > & {
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+      >;
+      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+        compareAtPrice?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+        >;
+      }>;
+    }
+  >;
+};
+
 export type TopWidgetsCollectionQueryVariables = StorefrontAPI.Exact<{
   handle: StorefrontAPI.Scalars['String']['input'];
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
@@ -1419,6 +1510,10 @@ interface GeneratedQueryTypes {
   '#graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    handle\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    featuredImage {\n      id\n      url\n      altText\n    }\n  }\n  query RecommendedProducts (\n    $country: CountryCode\n    $language: LanguageCode\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n    $handle5: String!\n    $handle6: String!\n    $handle7: String!\n  ) @inContext(country: $country, language: $language) {\n    product0: product(handle: $handle0) { ...RecommendedProduct }\n    product1: product(handle: $handle1) { ...RecommendedProduct }\n    product2: product(handle: $handle2) { ...RecommendedProduct }\n    product3: product(handle: $handle3) { ...RecommendedProduct }\n    product4: product(handle: $handle4) { ...RecommendedProduct }\n    product5: product(handle: $handle5) { ...RecommendedProduct }\n    product6: product(handle: $handle6) { ...RecommendedProduct }\n    product7: product(handle: $handle7) { ...RecommendedProduct }\n  }\n': {
     return: RecommendedProductsQuery;
     variables: RecommendedProductsQueryVariables;
+  };
+  '#graphql\n  fragment KitOrOverlayPackProduct on Product {\n    id\n    title\n    handle\n    productType\n    description\n    featuredImage {\n      id\n      url\n      altText\n    }\n    selectedOrFirstAvailableVariant {\n      price {\n        amount\n        currencyCode\n      }\n      compareAtPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n  query KitsAndOverlayPacks (\n    $country: CountryCode\n    $language: LanguageCode\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n  ) @inContext(country: $country, language: $language) {\n    product0: product(handle: $handle0) { ...KitOrOverlayPackProduct }\n    product1: product(handle: $handle1) { ...KitOrOverlayPackProduct }\n    product2: product(handle: $handle2) { ...KitOrOverlayPackProduct }\n    product3: product(handle: $handle3) { ...KitOrOverlayPackProduct }\n  }\n': {
+    return: KitsAndOverlayPacksQuery;
+    variables: KitsAndOverlayPacksQueryVariables;
   };
   '#graphql\n  query TopWidgetsCollection(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      products(first: 6) {\n        nodes {\n          id\n          title\n          handle\n          priceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n          featuredImage {\n            id\n            url\n            altText\n          }\n        }\n      }\n    }\n  }\n': {
     return: TopWidgetsCollectionQuery;

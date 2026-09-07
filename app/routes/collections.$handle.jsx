@@ -104,6 +104,7 @@ export default function Collection() {
         activeType={activeType}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
+        collectionHandle={collection.handle}
       />
       {!hasMatches && (
         <div className="collection-empty">

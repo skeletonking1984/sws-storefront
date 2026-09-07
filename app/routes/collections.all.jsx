@@ -2,14 +2,8 @@ import {Form, Link, useLoaderData, useSearchParams} from 'react-router';
 import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
+import {TAG_TYPES, CATEGORY_LINKS} from '~/components/CollectionFilterBar';
 import logo from '~/assets/logo.png';
-
-const WIDGET_TYPES = [
-  {label: 'All', tag: ''},
-  {label: 'Chat widgets', tag: 'Chat_widget'},
-  {label: 'Goal widgets', tag: 'Goal_Widget'},
-  {label: 'VTuber assets', tag: 'Vtuber_asset'},
-];
 
 /**
  * @type {Route.MetaFunction}
@@ -99,13 +93,22 @@ export default function Collection() {
       <h1>Products</h1>
       <div className="collection-filter-bar">
         <div className="collection-filter-types">
-          {WIDGET_TYPES.map(({label, tag}) => (
+          {TAG_TYPES.map(({label, tag}) => (
             <Link
               key={label}
               to={typeHref(tag)}
               className={`collection-filter-type${
                 activeType === tag ? ' active' : ''
               }`}
+            >
+              {label}
+            </Link>
+          ))}
+          {CATEGORY_LINKS.map(({label, handle}) => (
+            <Link
+              key={label}
+              to={`/collections/${handle}`}
+              className="collection-filter-type"
             >
               {label}
             </Link>

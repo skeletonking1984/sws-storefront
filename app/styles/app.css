@@ -1452,6 +1452,176 @@ button.reset:hover:not(:has(> *)) {
 
 /*
 * --------------------------------------------------
+* routes/_index — Kits and overlay packs
+* --------------------------------------------------
+*/
+.kits-band {
+  background: linear-gradient(
+    180deg,
+    rgba(183, 157, 242, 0.08),
+    rgba(183, 157, 242, 0) 60%
+  );
+  border-top: 1px solid var(--sws-border);
+  border-bottom: 1px solid var(--sws-border);
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.kits-band .kits-eyebrow {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.kits-band .kits-heading {
+  font-family: var(--font-display);
+  margin: 0 auto 2rem;
+  max-width: 640px;
+  padding: 0;
+}
+
+.kits-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr;
+  margin: 0 auto;
+  max-width: 1100px;
+  text-align: left;
+  @media (min-width: 45em) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.kit-card {
+  background: var(--sws-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
+  display: block;
+  overflow: hidden;
+  padding: 1.25rem;
+  text-decoration: none;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.kit-card:hover {
+  border-color: var(--sws-border-strong);
+  box-shadow: 0 20px 48px -20px rgba(242, 166, 216, 0.35);
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kit-card {
+    transition: none;
+  }
+  .kit-card:hover {
+    transform: none;
+  }
+}
+
+.kit-card-image {
+  aspect-ratio: 16 / 10;
+  background: radial-gradient(
+      circle at 50% 45%,
+      rgba(183, 157, 242, 0.28),
+      transparent 65%
+    ),
+    var(--sws-bg);
+  border-radius: 14px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.kit-card-image img {
+  border-radius: 14px;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.kit-card-tag {
+  background: var(--sws-cream);
+  border: 2px solid var(--sws-ink);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0 var(--sws-outline);
+  color: var(--sws-ink);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 800;
+  left: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  position: absolute;
+  text-transform: uppercase;
+  top: 0.75rem;
+  z-index: 1;
+}
+
+.kit-card-body h3 {
+  color: var(--sws-text);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin: 0 0 0.5rem;
+}
+
+.kit-card-hook {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+.kit-card-footer {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.kit-card-price-pill {
+  align-items: center;
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-holo-1);
+  display: inline-flex;
+  font-weight: 800;
+  gap: 0.5rem;
+  padding: 0.3rem 0.85rem;
+}
+
+.kit-card-compare-price {
+  color: var(--sws-sub);
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.kit-card-savings {
+  background: linear-gradient(
+    90deg,
+    var(--sws-holo-1),
+    var(--sws-holo-2),
+    var(--sws-holo-3),
+    var(--sws-holo-4)
+  );
+  background-size: 300% auto;
+  border-radius: var(--radius-pill);
+  color: var(--sws-ink);
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 0.25rem 0.7rem;
+}
+
+.kits-band-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/*
+* --------------------------------------------------
 * routes/_index — Works with strip
 * --------------------------------------------------
 */
