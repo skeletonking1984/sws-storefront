@@ -6,3 +6,9 @@ dist/
 .env
 node_modules/
 screenshots/
+
+# Hero composite: raw widget captures + the full-res PNG master are source
+# inputs, regenerate with `node hero/compose.mjs`. Only the .webp actually
+# used on the site (app/assets/hero-widgets.webp) is committed.
+hero/*.png
+app/assets/hero-widgets.png

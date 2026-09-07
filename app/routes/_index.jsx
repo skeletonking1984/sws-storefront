@@ -1,12 +1,12 @@
 import {Await, useLoaderData, Link} from 'react-router';
 import {Suspense} from 'react';
-import {Image} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge, SHOP_STATS} from '~/components/EtsyRating';
 import {SAMPLE_REVIEWS, SHOP_RATING} from '~/components/EtsyReviews';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {EmailCapture} from '~/components/EmailCapture';
 import logo from '~/assets/logo.png';
+import heroWidgets from '~/assets/hero-widgets.webp';
 
 /**
  * @type {Route.MetaFunction}
@@ -138,7 +138,7 @@ export default function Homepage() {
   const data = useLoaderData();
   return (
     <div className="home">
-      <Hero products={data.recommendedProducts} />
+      <Hero />
       <ShopByVibe />
       <TopWidgets
         topWidgets={data.topWidgets}
@@ -152,12 +152,7 @@ export default function Homepage() {
   );
 }
 
-/**
- * @param {{
- *   products: Promise<RecommendedProductsQuery | null>;
- * }}
- */
-function Hero({products}) {
+function Hero() {
   return (
     <section className="hero">
       <div className="hero-grid">
@@ -195,59 +190,24 @@ function Hero({products}) {
           </div>
         </div>
 
-        <Suspense fallback={<div className="hero-stream-frame" />}>
-          <Await resolve={products}>
-            {(response) => {
-              const nodes = response?.products?.nodes ?? [];
-              // Prefer a product with a real video for the live preview;
-              // fall back to the first product's featured image.
-              const videoProduct = nodes.find((p) =>
-                p.media?.nodes?.some((n) => n.__typename === 'Video'),
-              );
-              const featured = videoProduct ?? nodes[0];
-              if (!featured) return null;
-              const video = videoProduct?.media?.nodes?.find(
-                (n) => n.__typename === 'Video',
-              );
-              return (
-                <div className="hero-stream-frame">
-                  <div className="hero-stream-scanline" aria-hidden="true" />
-                  {video ? (
-                    <video
-                      className="hero-stream-media"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      poster={video.previewImage?.url}
-                    >
-                      {video.sources?.map((source) => (
-                        <source
-                          key={source.url}
-                          src={source.url}
-                          type={source.mimeType}
-                        />
-                      ))}
-                    </video>
-                  ) : (
-                    <Image
-                      className="hero-stream-media"
-                      data={featured.featuredImage}
-                      alt={featured.featuredImage?.altText || featured.title}
-                      sizes="(min-width: 55em) 700px, 100vw"
-                    />
-                  )}
-                  <Link
-                    to={`/products/${featured.handle}`}
-                    className="hero-stream-label sws-chip"
-                  >
-                    Live preview: Neon Chat + Goal
-                  </Link>
-                </div>
-              );
-            }}
-          </Await>
-        </Suspense>
+        <div className="hero-stream-frame">
+          <div className="hero-stream-scanline" aria-hidden="true" />
+          <img
+            className="hero-stream-media"
+            src={heroWidgets}
+            alt="Real Stream Widget Shop widgets composited on a stream backdrop: neon animated chat and goal, a moon jar tip goal, a star goal bar, and a Y2K sticker chat"
+            width={1600}
+            height={1000}
+            loading="eager"
+            fetchPriority="high"
+          />
+          <Link
+            to="/collections/top-widgets"
+            className="hero-stream-label sws-chip"
+          >
+            Real widgets. Real chat. Drop into OBS.
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -402,21 +362,6 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       id
       url
       altText
-    }
-    media(first: 10) {
-      nodes {
-        __typename
-        ... on Video {
-          id
-          previewImage {
-            url
-          }
-          sources {
-            url
-            mimeType
-          }
-        }
-      }
     }
   }
   query RecommendedProducts (
