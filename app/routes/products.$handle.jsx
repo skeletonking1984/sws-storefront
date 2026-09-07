@@ -14,6 +14,7 @@ import {ProductHighlights} from '~/components/ProductHighlights';
 import {EtsyRatingBadge} from '~/components/EtsyRating';
 import {EtsyReviews} from '~/components/EtsyReviews';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {formatProductDescription} from '~/lib/productDescription';
 
 /**
  * @type {Route.MetaFunction}
@@ -108,6 +109,7 @@ export default function Product() {
 
   const {title, description, descriptionHtml} = product;
   const media = product.media?.nodes ?? [];
+  const formattedDescription = formatProductDescription(descriptionHtml, title);
 
   return (
     <div className="product">
@@ -129,7 +131,10 @@ export default function Product() {
       </div>
       <div className="product-description">
         <h2>Description</h2>
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+        <div
+          className="product-description-body"
+          dangerouslySetInnerHTML={{__html: formattedDescription}}
+        />
       </div>
       <EtsyReviews />
       <Analytics.ProductView

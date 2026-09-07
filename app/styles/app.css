@@ -1905,6 +1905,89 @@ button.reset:hover:not(:has(> *)) {
   margin-bottom: 0.75rem;
 }
 
+/* Normalized description body. Markup comes from lib/productDescription.js:
+   h3 section headings, ul/li for the feature lists, p for prose. */
+.product-description-body {
+  color: var(--sws-sub);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.product-description-body > * + * {
+  margin-top: 0.85rem;
+}
+
+.product-description-body p {
+  max-width: 68ch;
+}
+
+.product-description-body strong,
+.product-description-body b {
+  color: var(--sws-text);
+  font-weight: 700;
+}
+
+.product-description-body h3 {
+  align-items: baseline;
+  color: var(--sws-text);
+  display: flex;
+  font-size: 0.8rem;
+  font-weight: 800;
+  gap: 0.5rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Air above each new section, but not above the very first one. */
+.product-description-body > h3 + * {
+  margin-top: 0.6rem;
+}
+
+.product-description-body > * + h3 {
+  border-top: 1px solid var(--sws-border);
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+}
+
+.product-description-body ul {
+  display: grid;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.product-description-body li {
+  align-items: baseline;
+  display: grid;
+  gap: 0.6rem;
+  /* Fixed icon column so wrapped text lines up under itself, not under the emoji. */
+  grid-template-columns: 1.35rem 1fr;
+}
+
+.product-description-body .pd-icon {
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* Lists that carry no emoji get a conventional bullet in the same column. */
+.product-description-body .pd-plain .pd-icon::before {
+  color: var(--sws-accent-3);
+  content: '•';
+}
+
+.product-description-body a {
+  color: var(--sws-accent-2);
+}
+
+@media (min-width: 45em) {
+  /* Lists of short labels only. Full sentences stay in one column. */
+  .product-description-body .pd-compact {
+    column-gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+}
+
 .etsy-reviews {
   border-top: 1px solid var(--sws-border);
   padding-top: 2rem;
