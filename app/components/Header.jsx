@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Suspense, useState} from 'react';
 import {Await, NavLink, useAsyncValue} from 'react-router';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
@@ -18,8 +18,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
         style={activeLinkStyle}
         end
       >
-        <img src={logo} alt="" />
-        <strong className="sws-holo">{shop.name}</strong>
+        <BrandMark shopName={shop.name} />
       </NavLink>
       <HeaderMenu
         menu={menu}
@@ -29,6 +28,22 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
       />
       <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
     </header>
+  );
+}
+
+/**
+ * The logo PNG is the brand mark: no text wordmark next to it. If the image
+ * itself ever fails to load, fall back to the holo text so the brand is
+ * never blank.
+ * @param {{shopName: string}}
+ */
+function BrandMark({shopName}) {
+  const [imgFailed, setImgFailed] = useState(false);
+  if (imgFailed) {
+    return <strong className="sws-holo">{shopName}</strong>;
+  }
+  return (
+    <img src={logo} alt={shopName} onError={() => setImgFailed(true)} />
   );
 }
 

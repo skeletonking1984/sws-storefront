@@ -6,6 +6,7 @@ import {EtsyRatingBadge, SHOP_STATS} from '~/components/EtsyRating';
 import {SAMPLE_REVIEWS, SHOP_RATING} from '~/components/EtsyReviews';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {EmailCapture} from '~/components/EmailCapture';
+import logo from '~/assets/logo.png';
 
 /**
  * @type {Route.MetaFunction}
@@ -161,6 +162,7 @@ function Hero({products}) {
     <section className="hero">
       <div className="hero-grid">
         <div className="hero-copy">
+          <img src={logo} alt="Stream Widget Shop" className="hero-logo" />
           <h1 className="sws-glow">
             Widgets that make chat <span className="sws-holo">pop.</span>
           </h1>
@@ -197,24 +199,50 @@ function Hero({products}) {
           <Await resolve={products}>
             {(response) => {
               const nodes = response?.products?.nodes ?? [];
-              const chatWidget = nodes[0];
-              const goalWidget = nodes[1];
-              if (!chatWidget && !goalWidget) return null;
+              // Prefer a product with a real video for the live preview;
+              // fall back to the first product's featured image.
+              const videoProduct = nodes.find((p) =>
+                p.media?.nodes?.some((n) => n.__typename === 'Video'),
+              );
+              const featured = videoProduct ?? nodes[0];
+              if (!featured) return null;
+              const video = videoProduct?.media?.nodes?.find(
+                (n) => n.__typename === 'Video',
+              );
               return (
                 <div className="hero-stream-frame">
                   <div className="hero-stream-scanline" aria-hidden="true" />
-                  {chatWidget && (
-                    <HeroWidgetMedia
-                      product={chatWidget}
-                      className="hero-widget-chat"
+                  {video ? (
+                    <video
+                      className="hero-stream-media"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      poster={video.previewImage?.url}
+                    >
+                      {video.sources?.map((source) => (
+                        <source
+                          key={source.url}
+                          src={source.url}
+                          type={source.mimeType}
+                        />
+                      ))}
+                    </video>
+                  ) : (
+                    <Image
+                      className="hero-stream-media"
+                      data={featured.featuredImage}
+                      alt={featured.featuredImage?.altText || featured.title}
+                      sizes="(min-width: 55em) 700px, 100vw"
                     />
                   )}
-                  {goalWidget && (
-                    <HeroWidgetMedia
-                      product={goalWidget}
-                      className="hero-widget-goal"
-                    />
-                  )}
+                  <Link
+                    to={`/products/${featured.handle}`}
+                    className="hero-stream-label sws-chip"
+                  >
+                    Live preview: Neon Chat + Goal
+                  </Link>
                 </div>
               );
             }}
@@ -222,35 +250,6 @@ function Hero({products}) {
         </Suspense>
       </div>
     </section>
-  );
-}
-
-/**
- * Renders a product's video if it has one, otherwise its featured image,
- * composited into the hero mock stream frame.
- * @param {{product: any; className: string}}
- */
-function HeroWidgetMedia({product, className}) {
-  const video = product.media?.nodes?.find((n) => n.__typename === 'Video');
-  return (
-    <Link
-      to={`/products/${product.handle}`}
-      className={`hero-widget-media ${className}`}
-    >
-      {video ? (
-        <video autoPlay loop muted playsInline poster={video.previewImage?.url}>
-          {video.sources?.map((source) => (
-            <source key={source.url} src={source.url} type={source.mimeType} />
-          ))}
-        </video>
-      ) : (
-        <Image
-          data={product.featuredImage}
-          alt={product.featuredImage?.altText || product.title}
-          sizes="280px"
-        />
-      )}
-    </Link>
   );
 }
 
@@ -404,7 +403,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       url
       altText
     }
-    media(first: 1) {
+    media(first: 10) {
       nodes {
         __typename
         ... on Video {

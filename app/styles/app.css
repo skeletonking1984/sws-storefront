@@ -67,9 +67,15 @@ body {
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
+  /* Forces body to own a stacking context so the fixed, negative
+     z-index aurora/star pseudo-elements below paint ON TOP of this
+     opaque background instead of being buried under it at the root
+     stacking context (fixed elements otherwise escape straight to the
+     root and lose to body's own box). */
+  isolation: isolate;
 }
 
-/* Aurora blobs: slow drift, subtle, never fights product art. */
+/* Aurora blobs: slow drift, clearly visible, never fights product art. */
 body::before {
   content: '';
   position: fixed;
@@ -77,13 +83,14 @@ body::before {
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(circle at 18% 22%, rgba(183, 157, 242, 0.16), transparent 42%),
-    radial-gradient(circle at 82% 18%, rgba(242, 166, 216, 0.13), transparent 46%),
-    radial-gradient(circle at 50% 92%, rgba(127, 230, 255, 0.1), transparent 46%);
+    radial-gradient(circle at 16% 20%, rgba(183, 157, 242, 0.34), transparent 60%),
+    radial-gradient(circle at 84% 14%, rgba(240, 80, 154, 0.3), transparent 62%),
+    radial-gradient(circle at 78% 68%, rgba(127, 230, 255, 0.26), transparent 58%),
+    radial-gradient(circle at 22% 86%, rgba(242, 166, 216, 0.24), transparent 60%);
   animation: sws-aurora-drift 40s ease-in-out infinite alternate;
 }
 
-/* Sparse twinkling stars, CSS only. */
+/* Twinkling star field, CSS only, layered sizes for depth. */
 body::after {
   content: '';
   position: fixed;
@@ -91,16 +98,29 @@ body::after {
   z-index: -1;
   pointer-events: none;
   background-image:
-    radial-gradient(1px 1px at 12% 22%, #fff, transparent),
-    radial-gradient(1px 1px at 68% 8%, #fff, transparent),
-    radial-gradient(1.5px 1.5px at 82% 62%, #fff, transparent),
-    radial-gradient(1px 1px at 32% 78%, #fff, transparent),
-    radial-gradient(1px 1px at 92% 38%, #fff, transparent),
-    radial-gradient(1.5px 1.5px at 6% 62%, #fff, transparent),
-    radial-gradient(1px 1px at 48% 46%, #fff, transparent);
+    radial-gradient(1px 1px at 6% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 24% 34%, #fff, transparent),
+    radial-gradient(1px 1px at 41% 6%, #fff, transparent),
+    radial-gradient(1px 1px at 58% 28%, #fff, transparent),
+    radial-gradient(1px 1px at 73% 52%, #fff, transparent),
+    radial-gradient(1px 1px at 89% 18%, #fff, transparent),
+    radial-gradient(1px 1px at 14% 68%, #fff, transparent),
+    radial-gradient(1px 1px at 33% 88%, #fff, transparent),
+    radial-gradient(1px 1px at 52% 62%, #fff, transparent),
+    radial-gradient(1px 1px at 96% 74%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 12% 44%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 46% 20%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 67% 8%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 82% 82%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 8% 90%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 62% 70%, #fff, transparent),
+    radial-gradient(2.2px 2.2px at 28% 56%, #fff, transparent),
+    radial-gradient(2.2px 2.2px at 91% 42%, #fff, transparent),
+    radial-gradient(2.2px 2.2px at 38% 8%, #fff, transparent),
+    radial-gradient(2.2px 2.2px at 75% 30%, #fff, transparent);
   background-repeat: repeat;
-  background-size: 340px 340px;
-  opacity: 0.4;
+  background-size: 260px 260px;
+  opacity: 0.7;
   animation: sws-twinkle 6s ease-in-out infinite alternate;
 }
 
@@ -115,10 +135,10 @@ body::after {
 
 @keyframes sws-twinkle {
   from {
-    opacity: 0.22;
+    opacity: 0.55;
   }
   to {
-    opacity: 0.48;
+    opacity: 0.85;
   }
 }
 
@@ -473,6 +493,7 @@ button.reset:hover:not(:has(> *)) {
     )
     1;
   display: flex;
+  flex-wrap: nowrap;
   gap: 0.75rem;
   height: var(--header-height);
   padding: 0 1rem;
@@ -487,43 +508,36 @@ button.reset:hover:not(:has(> *)) {
 .header-brand {
   align-items: center;
   display: flex;
-  flex-shrink: 1;
+  flex-shrink: 0;
   gap: 0.6rem;
   min-width: 0;
 }
 
 .header-brand img {
-  width: 40px;
+  width: auto;
   height: 40px;
   border-radius: 0;
   flex-shrink: 0;
   filter: drop-shadow(0 0 10px rgba(242, 166, 216, 0.4));
   @media (min-width: 45em) {
-    width: 44px;
-    height: 44px;
+    height: 48px;
   }
 }
 
+/* Text wordmark is a fallback only: the logo PNG carries the brand now.
+   Shown only if the image itself fails to load (see Header.jsx). */
 .header-brand strong {
-  display: none;
   font-family: var(--font-display);
   font-weight: 800;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
+  font-size: 1.1rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  @media (min-width: 30em) {
-    display: block;
-    font-size: 0.95rem;
-  }
-  @media (min-width: 45em) {
-    font-size: 1.2rem;
-    letter-spacing: 0.03em;
-  }
 }
 
 .header-menu-mobile-toggle {
-  @media (min-width: 48em) {
+  @media (min-width: 68.75em) {
     display: none;
   }
 }
@@ -601,9 +615,13 @@ button.reset:hover:not(:has(> *)) {
 
 .header-menu-desktop {
   display: none;
-  grid-gap: 1rem;
-  @media (min-width: 45em) {
+  flex-wrap: nowrap;
+  grid-gap: 0.5rem;
+  @media (min-width: 68.75em) {
     display: flex;
+    margin-left: 2rem;
+  }
+  @media (min-width: 78em) {
     grid-gap: 1rem;
     margin-left: 3rem;
   }
@@ -615,10 +633,14 @@ button.reset:hover:not(:has(> *)) {
   color: var(--sws-sub);
   cursor: pointer;
   font-weight: 700;
-  padding: 0.45rem 1rem;
+  padding: 0.45rem 0.85rem;
   position: relative;
   text-decoration: none;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+  @media (min-width: 78em) {
+    padding: 0.45rem 1rem;
+  }
 }
 
 .header-menu-item:hover {
@@ -669,7 +691,10 @@ button.reset:hover:not(:has(> *)) {
 
 .header-icon-label {
   display: none;
-  @media (min-width: 60em) {
+  /* Stays hidden through the 1100px nav-collapse point (icons alone are
+     enough room there) and only reappears once the desktop nav has
+     breathing room again. */
+  @media (min-width: 82em) {
     display: inline;
   }
 }
@@ -1202,6 +1227,19 @@ button.reset:hover:not(:has(> *)) {
   }
 }
 
+/* Consistent section rhythm: 56px apart on mobile, 96px on desktop. Hero
+   is full viewport height already, so it needs no extra top gap. */
+.home > section {
+  margin-top: 56px;
+  @media (min-width: 45em) {
+    margin-top: 96px;
+  }
+}
+
+.home > section:first-child {
+  margin-top: 0;
+}
+
 /*
 * --------------------------------------------------
 * routes/_index — Hero
@@ -1223,24 +1261,40 @@ button.reset:hover:not(:has(> *)) {
   display: grid;
   gap: 2.5rem;
   margin: 0 auto;
-  max-width: 1180px;
+  max-width: 1320px;
   position: relative;
   text-align: center;
   width: 100%;
   z-index: 1;
   @media (min-width: 55em) {
-    grid-template-columns: 1.05fr 0.95fr;
+    gap: 3.5rem;
+    grid-template-columns: 0.85fr 1.15fr;
     text-align: left;
   }
 }
 
+.hero-logo {
+  display: block;
+  filter: drop-shadow(0 0 22px rgba(240, 80, 154, 0.5))
+    drop-shadow(0 0 42px rgba(127, 230, 255, 0.3));
+  margin: 0 auto 1.5rem;
+  width: 260px;
+  @media (min-width: 55em) {
+    margin: 0 0 1.75rem;
+    width: 420px;
+  }
+}
+
 .hero-copy h1 {
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   font-weight: 800;
-  line-height: 1.12;
+  line-height: 1.1;
   margin: 0 0 1rem;
   @media (min-width: 45em) {
     font-size: 3.2rem;
+  }
+  @media (min-width: 64em) {
+    font-size: 4rem;
   }
 }
 
@@ -1283,8 +1337,8 @@ button.reset:hover:not(:has(> *)) {
   opacity: 0.5;
 }
 
-/* Mock stream frame: dark 16:9 "game" panel with the real chat + goal
-   widgets composited on top, tilted like a sticker. */
+/* Mock stream frame: dark 16:9 "game" panel with a real product video or
+   image playing full-bleed inside it, tilted like a sticker. */
 .hero-stream-frame {
   aspect-ratio: 16 / 9;
   background: linear-gradient(155deg, #140b23, #0b0713 70%);
@@ -1292,11 +1346,14 @@ button.reset:hover:not(:has(> *)) {
   border-radius: var(--radius-card);
   box-shadow: 0 30px 60px -20px rgba(10, 5, 20, 0.7), 0 0 60px -20px rgba(127, 230, 255, 0.15);
   margin: 0 auto;
-  max-width: 560px;
+  max-width: 900px;
   overflow: hidden;
   position: relative;
   transform: rotate(3deg);
   width: 100%;
+  @media (min-width: 55em) {
+    max-width: none;
+  }
 }
 
 .hero-stream-scanline {
@@ -1308,33 +1365,27 @@ button.reset:hover:not(:has(> *)) {
     transparent 3px
   );
   inset: 0;
+  pointer-events: none;
   position: absolute;
+  z-index: 1;
 }
 
-.hero-widget-media {
+.hero-stream-media {
   display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
   position: absolute;
-}
-
-.hero-widget-media img,
-.hero-widget-media video {
-  display: block;
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
-  height: auto;
-  object-fit: contain;
   width: 100%;
 }
 
-.hero-widget-chat {
-  bottom: 6%;
-  left: 6%;
-  width: 44%;
-}
-
-.hero-widget-goal {
-  right: 6%;
-  top: 8%;
-  width: 34%;
+.hero-stream-label {
+  bottom: 14px;
+  font-size: 0.75rem;
+  left: 14px;
+  padding: 0.4rem 0.85rem;
+  position: absolute;
+  z-index: 2;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1349,7 +1400,7 @@ button.reset:hover:not(:has(> *)) {
 * --------------------------------------------------
 */
 .shop-by-vibe {
-  padding: 2.5rem 2rem 1rem;
+  padding: 0 2rem 1rem;
   text-align: center;
 }
 
@@ -1383,7 +1434,7 @@ button.reset:hover:not(:has(> *)) {
 * --------------------------------------------------
 */
 .top-widgets {
-  padding: 3rem 0;
+  padding: 0 0 3rem;
 }
 
 .top-widgets-grid {
@@ -1407,7 +1458,7 @@ button.reset:hover:not(:has(> *)) {
 .works-with {
   border-top: 1px solid var(--sws-border);
   border-bottom: 1px solid var(--sws-border);
-  padding: 2rem;
+  padding: 1.5rem 2rem;
   text-align: center;
 }
 
@@ -1448,7 +1499,7 @@ button.reset:hover:not(:has(> *)) {
 * --------------------------------------------------
 */
 .home-reviews {
-  padding: 3rem 2rem;
+  padding: 0 2rem 3rem;
 }
 
 .home-reviews .sws-section-heading {
@@ -1888,7 +1939,7 @@ button.reset:hover:not(:has(> *)) {
 * --------------------------------------------------
 */
 .commission-callout {
-  padding: 3rem 2rem;
+  padding: 0 2rem 3rem;
 }
 
 .commission-callout-inner {

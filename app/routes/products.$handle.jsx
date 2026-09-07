@@ -40,6 +40,24 @@ export const meta = ({data}) => {
 };
 
 /**
+ * Some titles in this catalog mention both words (e.g. "Sakura Floral Chat
+ * Widget ... Chat Goal, VTuber Streamer"), so a plain "does it contain
+ * goal?" test misclassifies real chat widgets as goal widgets. Whichever
+ * word appears first in the title is the more reliable signal of what the
+ * product actually is.
+ * @param {string} title
+ * @returns {'goal' | 'chat' | null}
+ */
+function widgetKindFromTitle(title) {
+  const goalIndex = title.search(/goal/i);
+  const chatIndex = title.search(/chat/i);
+  if (goalIndex === -1 && chatIndex === -1) return null;
+  if (goalIndex === -1) return 'chat';
+  if (chatIndex === -1) return 'goal';
+  return goalIndex < chatIndex ? 'goal' : 'chat';
+}
+
+/**
  * @param {Route.LoaderArgs} args
  */
 export async function loader(args) {
@@ -98,11 +116,7 @@ function loadDeferredData({context, params}, product) {
   // "More Chat/Goal widgets": same widget kind, same real catalog data,
   // filtered client-side to exclude the current product. Title text is the
   // reliable signal here (see CLAUDE.md on product tags being unreliable).
-  const kind = /goal/i.test(product.title)
-    ? 'goal'
-    : /chat/i.test(product.title)
-      ? 'chat'
-      : null;
+  const kind = widgetKindFromTitle(product.title);
 
   const relatedProducts = kind
     ? storefront
@@ -111,7 +125,15 @@ function loadDeferredData({context, params}, product) {
         })
         .then((response) =>
           (response.products?.nodes ?? [])
-            .filter((p) => p.handle !== params.handle)
+            // The Storefront search query above is fuzzy and can leak in
+            // the other widget kind (e.g. "chat" results inside a "goal"
+            // search). Titles like "Sakura Floral Chat Widget ... Chat
+            // Goal" mention both words, so a plain substring test still
+            // misclassifies them — re-run the same first-word-wins check
+            // used for the current product before trusting a result.
+            .filter(
+              (p) => p.handle !== params.handle && widgetKindFromTitle(p.title) === kind,
+            )
             .slice(0, 4),
         )
         .catch(() => [])
@@ -152,7 +174,10 @@ export default function Product() {
   const {title, description, descriptionHtml} = product;
   const media = product.media?.nodes ?? [];
   const formattedDescription = formatProductDescription(descriptionHtml, title);
-  const widgetKind = /goal/i.test(title) ? 'Goal' : /chat/i.test(title) ? 'Chat' : null;
+  const kindLabel = widgetKindFromTitle(title);
+  const widgetKind = kindLabel
+    ? kindLabel.charAt(0).toUpperCase() + kindLabel.slice(1)
+    : null;
 
   return (
     <div className="product">
@@ -354,7 +379,7 @@ const RELATED_PRODUCTS_QUERY = `#graphql
     $language: LanguageCode
     $query: String
   ) @inContext(country: $country, language: $language) {
-    products(first: 8, query: $query) {
+    products(first: 16, query: $query) {
       nodes {
         id
         title
