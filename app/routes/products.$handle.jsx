@@ -30,7 +30,7 @@ export const meta = ({data}) => {
       name: 'description',
       content:
         data?.product.seo?.description ||
-        `${title} — animated stream widget, instant digital download for Twitch, YouTube, and multistream.`,
+        `${title}: animated stream widget, instant digital download for Twitch, YouTube, and multistream.`,
     },
     {
       rel: 'canonical',

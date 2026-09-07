@@ -5,7 +5,7 @@ import {detectPlatforms} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
 
 /**
- * A product is tagged "Chat" or "Goal" here purely from its title text —
+ * A product is tagged "Chat" or "Goal" here purely from its title text,
  * the same signal CLAUDE.md documents as more reliable than the product
  * tags themselves for this catalog.
  * @param {string} title

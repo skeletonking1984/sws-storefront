@@ -2,6 +2,7 @@ import {Form, Link, useLoaderData, useSearchParams} from 'react-router';
 import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
+import logo from '~/assets/logo.png';
 
 const WIDGET_TYPES = [
   {label: 'All', tag: ''},
@@ -116,10 +117,13 @@ export default function Collection() {
         </Form>
       </div>
       {products.nodes.length === 0 ? (
-        <p className="collection-empty">
-          No widgets match that search.{' '}
-          <Link to="/collections/all">Clear filters →</Link>
-        </p>
+        <div className="collection-empty">
+          <img src={logo} alt="" />
+          <p>
+            No widgets match that search.{' '}
+            <Link to="/collections/all">Clear filters →</Link>
+          </p>
+        </div>
       ) : (
         <PaginatedResourceSection
           connection={products}

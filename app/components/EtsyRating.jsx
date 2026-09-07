@@ -2,7 +2,7 @@
  * Shop-level Etsy rating, shown as a trust signal on product pages.
  *
  * This is the aggregate StreamWidgetShop rating on Etsy (not a per-listing
- * rating — Etsy doesn't expose a reliable per-listing sample size for every
+ * rating, Etsy doesn't expose a reliable per-listing sample size for every
  * product). Update SHOP_RATING when it's next pulled from the Etsy API.
  */
 export const SHOP_RATING = {

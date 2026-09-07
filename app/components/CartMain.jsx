@@ -96,7 +96,7 @@ function CartEmpty({hidden = false}) {
         started!
       </p>
       <Link
-        className="hero-cta"
+        className="sws-btn sws-btn-primary"
         to="/collections/all"
         onClick={close}
         prefetch="viewport"

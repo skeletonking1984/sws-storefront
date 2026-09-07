@@ -5,6 +5,7 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
 import {CollectionFilterBar} from '~/components/CollectionFilterBar';
+import logo from '~/assets/logo.png';
 
 /**
  * @type {Route.MetaFunction}
@@ -82,6 +83,11 @@ export default function Collection() {
   const {collection, activeType} = useLoaderData();
   const [searchTerm, setSearchTerm] = useState('');
 
+  const matchesSearch = (product) =>
+    !searchTerm ||
+    product.title.toLowerCase().includes(searchTerm.toLowerCase());
+  const hasMatches = collection.products.nodes.some(matchesSearch);
+
   return (
     <div className="collection">
       <h1>{collection.title}</h1>
@@ -91,15 +97,18 @@ export default function Collection() {
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
       />
+      {!hasMatches && (
+        <div className="collection-empty">
+          <img src={logo} alt="" />
+          <p>No widgets match &ldquo;{searchTerm}&rdquo; in this collection.</p>
+        </div>
+      )}
       <PaginatedResourceSection
         connection={collection.products}
         resourcesClassName="products-grid"
       >
         {({node: product, index}) => {
-          if (
-            searchTerm &&
-            !product.title.toLowerCase().includes(searchTerm.toLowerCase())
-          ) {
+          if (!matchesSearch(product)) {
             return null;
           }
           return (

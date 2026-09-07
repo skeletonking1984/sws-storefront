@@ -25,7 +25,7 @@ export default async function handleRequest(
     // Product videos are served from the store's own custom domain
     // (streamwidgetshop.com/cdn/shop/videos/...), not cdn.shopify.com.
     // Hydrogen's CSP helper has no mediaSrc option, and media-src falls
-    // back to default-src per the CSP spec, so extend that instead —
+    // back to default-src per the CSP spec, so extend that instead,
     // without this, video playback silently fails with no console error.
     defaultSrc: ["'self'", 'https://cdn.shopify.com', 'https://shopify.com', 'https://streamwidgetshop.com'],
   });

@@ -1,6 +1,6 @@
 import {useState} from 'react';
 
-// Same canonical custom domain as ContactPage.jsx — the myshopify.com
+// Same canonical custom domain as ContactPage.jsx, the myshopify.com
 // subdomain silently drops submissions. form_type=customer creates/updates
 // a Shopify customer record from just an email, no account required.
 const STORE_DOMAIN = 'streamwidgetshop.com';
@@ -8,7 +8,7 @@ const STORE_DOMAIN = 'streamwidgetshop.com';
 /**
  * "Get the next drop first" email capture, posted straight to Shopify's
  * customer form endpoint. Promises a 10% code (WELCOME10, created in
- * Admin) — see LAUNCH.md for whether that code exists yet.
+ * Admin), see LAUNCH.md for whether that code exists yet.
  */
 export function EmailCapture() {
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error

@@ -6,7 +6,7 @@ const SUPPORT_EMAIL = 'streamwidgetshop@gmail.com';
 // Shopify's built-in contact-form endpoint, matched to the exact field
 // names used by the live theme's own contact form (verified by inspecting
 // the real form at streamwidgetshop.com/pages/contact) and posted to the
-// canonical custom domain — the myshopify.com subdomain silently drops
+// canonical custom domain, the myshopify.com subdomain silently drops
 // submissions. Posted via fetch(no-cors) so the visitor stays on our
 // branded page instead of bouncing to another domain.
 const STORE_DOMAIN = 'streamwidgetshop.com';
@@ -34,7 +34,7 @@ export function ContactPage() {
       body.set('contact[Comment]', data.get('message'));
 
       // no-cors: we can't read the response, but the request still reaches
-      // Shopify's server and gets processed — this is the standard pattern
+      // Shopify's server and gets processed, this is the standard pattern
       // for posting to Shopify's contact endpoint from off-domain.
       await fetch(`https://${STORE_DOMAIN}/contact`, {
         method: 'POST',
@@ -60,7 +60,7 @@ export function ContactPage() {
         <div className="contact-form-success">
           <h3>Message sent!</h3>
           <p>
-            Thanks for reaching out — we'll get back to you within 4 hours.
+            Thanks for reaching out. We'll get back to you within 4 hours.
             You can also email us directly at{' '}
             <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
           </p>
@@ -81,14 +81,14 @@ export function ContactPage() {
           </div>
           <button
             type="submit"
-            className="hero-cta"
+            className="sws-btn sws-btn-primary"
             disabled={status === 'sending'}
           >
-            {status === 'sending' ? 'Sending…' : 'Send message'}
+            {status === 'sending' ? 'Sending...' : 'Send message'}
           </button>
           {status === 'error' && (
             <p className="contact-form-error">
-              Something went wrong — email us directly at{' '}
+              Something went wrong. Email us directly at{' '}
               <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> instead.
             </p>
           )}
@@ -103,7 +103,7 @@ export function ContactPage() {
       <div className="contact-links-grid">
         <Link to="/pages/faq-frequently-asked-questions" className="contact-link-card">
           <h3>Have a quick question?</h3>
-          <p>Check the FAQ — setup, compatibility, orders, and refunds.</p>
+          <p>Check the FAQ for setup, compatibility, orders, and refunds.</p>
         </Link>
         <Link to="/pages/how-it-works" className="contact-link-card">
           <h3>Need setup help?</h3>
@@ -111,7 +111,7 @@ export function ContactPage() {
         </Link>
         <Link to="/" className="contact-link-card">
           <h3>Premium Overlays + Widgets Custom Design</h3>
-          <p>We build fully custom chat and goal widgets — starting at $300.</p>
+          <p>We build fully custom chat and goal widgets, starting at $300.</p>
         </Link>
       </div>
     </div>

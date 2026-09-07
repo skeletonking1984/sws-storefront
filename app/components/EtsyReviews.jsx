@@ -5,7 +5,7 @@ export const SHOP_RATING = {
 };
 
 /**
- * Recurring themes actually observed across real StreamWidgetShop reviews —
+ * Recurring themes actually observed across real StreamWidgetShop reviews,
  * not Etsy's own per-category scoring (item quality/delivery/etc aren't
  * exposed by Etsy's public API, so we don't fabricate those numbers).
  */
@@ -19,7 +19,7 @@ const REVIEW_THEMES = [
 
 /**
  * A handful of real recent StreamWidgetShop reviews from Etsy, shown as
- * social proof. These are shop-wide (not filtered to this exact listing) —
+ * social proof. These are shop-wide (not filtered to this exact listing),
  * labeled honestly rather than implied as this-product-specific.
  */
 export const SAMPLE_REVIEWS = [
@@ -72,7 +72,7 @@ export function EtsyReviews() {
       </a>
 
       <p className="etsy-reviews-note">
-        These are shop-wide Etsy reviews, not filtered to this exact listing —
+        These are shop-wide Etsy reviews, not filtered to this exact listing,
         see all on Etsy.
       </p>
 
