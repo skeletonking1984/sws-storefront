@@ -10,27 +10,123 @@
   --grid-item-width: 320px;
   --header-height: 72px;
 
-  /* brand palette */
-  --sws-bg: #0a0a12;
-  --sws-bg-alt: #0f0f1a;
-  --sws-card: #15151f;
-  --sws-border: #26243a;
-  --sws-text: #f2f0ff;
-  --sws-sub: #a8a4c4;
-  --sws-accent-1: #ff5fd3;
-  --sws-accent-2: #5fd3ff;
-  --sws-accent-3: #c9a8ff;
-  --sws-font: 'Segoe UI', system-ui, sans-serif;
+  /*
+   * Sticker brand palette — deep space purple with a chunky holographic
+   * sticker sitting on top. See DESIGN.md for the source direction.
+   */
+  --sws-bg: #0b0713;
+  --sws-bg-alt: #180f28;
+  --sws-card: rgba(28, 18, 48, 0.72);
+  --sws-card-solid: #1c1230;
+  --sws-border: rgba(183, 157, 242, 0.22);
+  --sws-border-strong: rgba(183, 157, 242, 0.4);
+  --sws-text: #f3ecff;
+  --sws-sub: #a89ec4;
+
+  /* holo gradient stops, cyan to lavender to pink to hot pink to mint */
+  --sws-holo-1: #7fe6ff;
+  --sws-holo-2: #b79df2;
+  --sws-holo-3: #f2a6d8;
+  --sws-holo-4: #f0509a;
+  --sws-holo-5: #87cfb2;
+
+  /* generic accent aliases, kept so existing component rules still work */
+  --sws-accent-1: var(--sws-holo-4);
+  --sws-accent-2: var(--sws-holo-1);
+  --sws-accent-3: var(--sws-holo-2);
+
+  /* cream sticker chrome, borrowed from the Widget Stage HUD */
+  --sws-cream: #fef8e8;
+  --sws-ink: #1a1024;
+  --sws-outline: #010101;
+
+  --font-display: 'Baloo 2', system-ui, -apple-system, sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
+  --sws-font: var(--font-body);
+
+  --radius-card: 18px;
+  --radius-pill: 999px;
 
   /* generic aliases used across the skeleton's existing rules */
   --color-dark: var(--sws-bg);
   --color-light: var(--sws-text);
 }
 
-body {
+* {
+  box-sizing: border-box;
+}
+
+html {
   background: var(--sws-bg);
+}
+
+body {
+  background: linear-gradient(180deg, var(--sws-bg) 0%, var(--sws-bg-alt) 100%);
   color: var(--sws-text);
   font-family: var(--sws-font);
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Aurora blobs: slow drift, subtle, never fights product art. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -20%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(183, 157, 242, 0.16), transparent 42%),
+    radial-gradient(circle at 82% 18%, rgba(242, 166, 216, 0.13), transparent 46%),
+    radial-gradient(circle at 50% 92%, rgba(127, 230, 255, 0.1), transparent 46%);
+  animation: sws-aurora-drift 40s ease-in-out infinite alternate;
+}
+
+/* Sparse twinkling stars, CSS only. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, #fff, transparent),
+    radial-gradient(1px 1px at 68% 8%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 82% 62%, #fff, transparent),
+    radial-gradient(1px 1px at 32% 78%, #fff, transparent),
+    radial-gradient(1px 1px at 92% 38%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 6% 62%, #fff, transparent),
+    radial-gradient(1px 1px at 48% 46%, #fff, transparent);
+  background-repeat: repeat;
+  background-size: 340px 340px;
+  opacity: 0.4;
+  animation: sws-twinkle 6s ease-in-out infinite alternate;
+}
+
+@keyframes sws-aurora-drift {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(-4%, 3%) scale(1.08);
+  }
+}
+
+@keyframes sws-twinkle {
+  from {
+    opacity: 0.22;
+  }
+  to {
+    opacity: 0.48;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
 }
 
 a {
@@ -41,13 +137,22 @@ img {
   border-radius: 10px;
 }
 
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+}
+
 .sws-holo {
   background: linear-gradient(
     90deg,
-    var(--sws-accent-1),
-    var(--sws-accent-3),
-    var(--sws-accent-2),
-    var(--sws-accent-1)
+    var(--sws-holo-1),
+    var(--sws-holo-2),
+    var(--sws-holo-3),
+    var(--sws-holo-4),
+    var(--sws-holo-5),
+    var(--sws-holo-1)
   );
   background-size: 300% auto;
   -webkit-background-clip: text;
@@ -56,10 +161,121 @@ img {
   animation: sws-holo-shift 6s linear infinite;
 }
 
+.sws-glow {
+  text-shadow: 0 0 18px rgba(242, 166, 216, 0.45), 0 0 36px rgba(127, 230, 255, 0.25);
+}
+
 @keyframes sws-holo-shift {
   to {
     background-position: 300% center;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sws-holo {
+    animation: none;
+  }
+}
+
+/*
+* --------------------------------------------------
+* Sticker button + chip system
+* --------------------------------------------------
+*/
+.sws-btn {
+  align-items: center;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-display);
+  font-weight: 800;
+  gap: 0.5rem;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  white-space: nowrap;
+}
+
+.sws-btn-primary {
+  background: linear-gradient(
+    100deg,
+    var(--sws-holo-1),
+    var(--sws-holo-2),
+    var(--sws-holo-3),
+    var(--sws-holo-4)
+  );
+  background-size: 260% auto;
+  border: 3px solid var(--sws-ink);
+  box-shadow: 0 0 0 1px var(--sws-outline), 0 10px 26px -10px rgba(240, 80, 154, 0.65);
+  color: var(--sws-ink);
+  padding: 0.85rem 2rem;
+}
+
+.sws-btn-primary:hover {
+  background-position: 100% center;
+  box-shadow: 0 0 0 1px var(--sws-outline), 0 14px 32px -10px rgba(127, 230, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.sws-btn-ghost {
+  background: rgba(243, 236, 255, 0.04);
+  border: 2px solid var(--sws-border-strong);
+  color: var(--sws-text);
+  padding: 0.8rem 1.85rem;
+}
+
+.sws-btn-ghost:hover {
+  border-color: var(--sws-holo-1);
+  color: var(--sws-holo-1);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sws-btn-primary,
+  .sws-btn-ghost {
+    transition: none;
+  }
+  .sws-btn-primary:hover,
+  .sws-btn-ghost:hover {
+    transform: none;
+  }
+}
+
+.sws-chip {
+  align-items: center;
+  background: var(--sws-cream);
+  border: 2px solid var(--sws-ink);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0 var(--sws-outline);
+  color: var(--sws-ink);
+  display: inline-flex;
+  font-weight: 800;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  text-decoration: none;
+  transition: transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.sws-chip:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sws-chip {
+    transition: none;
+  }
+  .sws-chip:hover {
+    transform: none;
+  }
+}
+
+.sws-glass-card {
+  background: var(--sws-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
 }
 
 /*
