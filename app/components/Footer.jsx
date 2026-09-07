@@ -22,6 +22,14 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}) {
                 multistream.
               </p>
               <SocialLinks />
+              <a
+                className="footer-etsy-link"
+                href="https://www.etsy.com/shop/StreamWidgetShop"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Also on Etsy →
+              </a>
             </div>
             {footer?.menu && header.shop.primaryDomain?.url && (
               <FooterMenu
