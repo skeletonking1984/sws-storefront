@@ -28,6 +28,10 @@ export default async function handleRequest(
     // back to default-src per the CSP spec, so extend that instead,
     // without this, video playback silently fails with no console error.
     defaultSrc: ["'self'", 'https://cdn.shopify.com', 'https://shopify.com', 'https://streamwidgetshop.com'],
+    // Brand fonts (Baloo 2 + Nunito) come from Google Fonts. Without these two
+    // the stylesheet is blocked and the whole site silently falls back to system font.
+    styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.shopify.com', 'https://fonts.googleapis.com'],
+    fontSrc: ["'self'", 'https://cdn.shopify.com', 'https://fonts.gstatic.com'],
   });
 
   const body = await renderToReadableStream(
