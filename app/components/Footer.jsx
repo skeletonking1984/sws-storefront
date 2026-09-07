@@ -1,5 +1,7 @@
 import {Suspense} from 'react';
 import {Await, NavLink} from 'react-router';
+import {SocialLinks} from '~/components/SocialLinks';
+import logo from '~/assets/logo.png';
 
 /**
  * @param {FooterProps}
@@ -10,6 +12,17 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}) {
       <Await resolve={footerPromise}>
         {(footer) => (
           <footer className="footer">
+            <div className="footer-top">
+              <div className="footer-brand">
+                <img src={logo} alt="" />
+                <span className="sws-holo">Stream Widget Shop</span>
+              </div>
+              <p className="footer-tagline">
+                Animated chat and goal widgets for Twitch, YouTube, and
+                multistream.
+              </p>
+              <SocialLinks />
+            </div>
             {footer?.menu && header.shop.primaryDomain?.url && (
               <FooterMenu
                 menu={footer.menu}

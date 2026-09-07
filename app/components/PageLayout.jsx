@@ -1,9 +1,10 @@
 import {Await, Link} from 'react-router';
 import {Suspense, useId} from 'react';
-import {Aside} from '~/components/Aside';
+import {Aside, useAside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
 import {Header, HeaderMenu} from '~/components/Header';
 import {CartMain} from '~/components/CartMain';
+import {SocialLinks} from '~/components/SocialLinks';
 import {
   SEARCH_ENDPOINT,
   SearchFormPredictive,
@@ -150,16 +151,27 @@ function SearchAside() {
  * }}
  */
 function MobileMenuAside({header, publicStoreDomain}) {
+  const {close} = useAside();
   return (
     header.menu &&
     header.shop.primaryDomain?.url && (
-      <Aside type="mobile" heading="MENU">
+      <Aside type="mobile" heading="Menu">
         <HeaderMenu
           menu={header.menu}
           viewport="mobile"
           primaryDomainUrl={header.shop.primaryDomain.url}
           publicStoreDomain={publicStoreDomain}
         />
+        <div className="mobile-menu-footer">
+          <Link
+            to="/account"
+            onClick={close}
+            className="mobile-menu-account-link"
+          >
+            My account
+          </Link>
+          <SocialLinks />
+        </div>
       </Aside>
     )
   );
