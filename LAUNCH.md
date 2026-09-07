@@ -122,3 +122,11 @@ Left for a follow-up pass (not done here, out of strict visual-redesign scope or
 - AI hero concepts rejected by Todd. Hero now a composite of REAL widgets rendered via showcase capture-raw.mjs (neon chat + goal, moon jar, star bar, Y2K chat), hero/hero.html + compose.mjs, output app/assets/hero-widgets.webp. Nits left: star bar overlaps jar lid, chat could be larger.
 - Categories + menu shipped (see above). Header nav picks up the Shopify menu after a dev restart (CacheLong on header query).
 - Next: SEO helper (meta/OG/canonical/JSON-LD/favicon), list bundles on Shopify, Widgets dropdown in header, attach 8 missing digital files (Todd).
+
+#### Bundles on Shopify
+- All 3 bundles created ACTIVE with productType Bundle, priced/tagged/described per spec, and published to Online Store, Stream Widget Shop Headless, and SWS Storefront. Bundles smart collection is no longer empty.
+- spooky-stream-kit -> products/bundles/01-spooky-stream-kit/upload/Spooky-Stream-Kit.zip
+- celestial-stream-kit -> products/bundles/02-celestial-stream-kit/upload/Celestial-Stream-Kit.zip, products/bundles/02-celestial-stream-kit/upload/Celestial-Stream-Kit-Guides.zip, products/bundles/02-celestial-stream-kit/upload/Celestial-Stream-Kit-Decorations.zip
+- multistream-chat-widget-pack -> products/bundles/03-multistream-chat-pack/upload/Multistream-Chat-Pack.zip
+- Todd/Auny: attach the zip(s) above per product manually in Admin > Apps > Digital Products (no public API for this app).
+- Known issue: a second Claude session was building these same 3 products concurrently in this session's scratchpad. Net effect was harmless (same price/tags/productType/publications landed twice, values matched), but each product now has its uploaded media doubled - the correct, alt-labeled set is first in the gallery (hero image still correct/primary), followed by a duplicate unlabeled set of the same images+video. Left in place per the no-delete rule; someone with Admin access should remove the unlabeled duplicates (Spooky: 26 media total, expect 13; Celestial: 28, expect 14; Multistream: 32, expect 16).
