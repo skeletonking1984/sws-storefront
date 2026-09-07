@@ -85,6 +85,6 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
   - robots.txt and sitemap.xml are correct and self-referencing the current host already (no myshopify.com hardcoding found anywhere in `app/`), no action needed there.
 
 #### Blockers found 2026-09-07 (need Todd)
-- **No digital delivery app installed.** Installed apps: Bill Pay, Store Migration, Claude Connector, SWS Hydrogen Storefront. Nothing delivers the zip after checkout. A buyer today gets nothing. Install Shopify "Digital Downloads" (free) or SendOwl, then every active product needs its file attached. This is the #1 blocker to sales.
+- **Digital delivery**: Shopify Digital Products app IS installed (first-party, not visible via appInstallations API; no public API, files attach manually in Admin). 8 of the 16 top products created/reactivated today have no asset: Multistream Chat (PastelMultistreamchat.zip), Star Goal (streamelements.zip, StarGoalWidgetStreamlabs.zip, 2 PDFs), Y2K Sticker (Y2KMultiChatCode.zip + PDF), Moon Jar (MoontipjarFixedStreamelements.zip), Saber Neon (NeonChatandGoalCodefile.zip + PDF), Neon Multistream (MultistreamChatWidget-Final.zip + PDF), Soul Blade (SoulBladeOverlayPack.zip), Sakura Glassy (SakuraGlassyChatWidget.zip + PDF). Todd/Auny upload from Etsy listing manager.
 - Soul Blade Etsy price is 15.99 live (memory said 29.99). Shopify set to 15.99 to match. Confirm intended price.
 - Create discount code WELCOME10 for the homepage email capture.

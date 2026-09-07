@@ -1,4 +1,4 @@
-const SHOP_RATING = {
+export const SHOP_RATING = {
   average: 4.75,
   count: 981,
   url: 'https://www.etsy.com/shop/StreamWidgetShop/reviews',
@@ -22,7 +22,7 @@ const REVIEW_THEMES = [
  * social proof. These are shop-wide (not filtered to this exact listing) —
  * labeled honestly rather than implied as this-product-specific.
  */
-const SAMPLE_REVIEWS = [
+export const SAMPLE_REVIEWS = [
   {
     rating: 5,
     text: "You can edit the star's colour and also the size, it's super cute and matches my stream really well, plus I can't wait to see the star come back together when the goal is reached! Love it, thank you so much.",
