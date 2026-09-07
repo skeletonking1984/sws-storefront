@@ -151,8 +151,6 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
       id
       altText
       url
-      width
-      height
     }
     priceRange {
       minVariantPrice {

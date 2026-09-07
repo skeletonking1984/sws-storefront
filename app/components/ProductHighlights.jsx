@@ -13,15 +13,19 @@ export function ProductHighlights({title, description}) {
   return (
     <div className="product-highlights">
       {platforms.length > 0 && (
-        <div className="product-platforms">
-          {platforms.map((platform) => (
-            <span key={platform} className="product-platform-badge">
-              <PlatformIcon platform={platform} />
-              {platform}
-            </span>
-          ))}
-        </div>
+        <>
+          <p className="product-highlights-label">Instant download, works with</p>
+          <div className="product-platforms">
+            {platforms.map((platform) => (
+              <span key={platform} className="product-platform-badge">
+                <PlatformIcon platform={platform} />
+                {platform}
+              </span>
+            ))}
+          </div>
+        </>
       )}
+      <p className="product-highlights-label">What you get</p>
       <ul className="product-highlights-list">
         <li>⚡ Instant digital download after purchase</li>
         <li>🎨 {customizable ? 'Customizable colors & fonts' : 'Ready to use out of the box'}</li>

@@ -403,8 +403,6 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       id
       url
       altText
-      width
-      height
     }
     media(first: 1) {
       nodes {
@@ -468,8 +466,6 @@ const TOP_WIDGETS_COLLECTION_QUERY = `#graphql
             id
             url
             altText
-            width
-            height
           }
         }
       }

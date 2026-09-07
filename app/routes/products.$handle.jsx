@@ -1,4 +1,5 @@
-import {useLoaderData} from 'react-router';
+import {Await, Link, useLoaderData} from 'react-router';
+import {Suspense} from 'react';
 import {
   getSelectedProductOptions,
   Analytics,
@@ -11,8 +12,10 @@ import {ProductPrice} from '~/components/ProductPrice';
 import {ProductGallery} from '~/components/ProductGallery';
 import {ProductForm} from '~/components/ProductForm';
 import {ProductHighlights} from '~/components/ProductHighlights';
+import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge} from '~/components/EtsyRating';
 import {EtsyReviews} from '~/components/EtsyReviews';
+import {FaqAccordion} from '~/components/FaqAccordion';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {formatProductDescription} from '~/lib/productDescription';
 
@@ -20,8 +23,15 @@ import {formatProductDescription} from '~/lib/productDescription';
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
+  const title = data?.product.title ?? '';
   return [
-    {title: `Hydrogen | ${data?.product.title ?? ''}`},
+    {title: `${title} | Stream Widget Shop`},
+    {
+      name: 'description',
+      content:
+        data?.product.seo?.description ||
+        `${title} — animated stream widget, instant digital download for Twitch, YouTube, and multistream.`,
+    },
     {
       rel: 'canonical',
       href: `/products/${data?.product.handle}`,
@@ -33,11 +43,13 @@ export const meta = ({data}) => {
  * @param {Route.LoaderArgs} args
  */
 export async function loader(args) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
-
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
+
+  // Kick off non-critical data (related products, FAQ) without blocking
+  // the response. Needs the product's title to decide the widget kind, so
+  // it starts after critical data rather than in parallel with it.
+  const deferredData = loadDeferredData(args, criticalData.product);
 
   return {...deferredData, ...criticalData};
 }
@@ -80,16 +92,46 @@ async function loadCriticalData({context, params, request}) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  * @param {Route.LoaderArgs}
  */
-function loadDeferredData({context, params}) {
-  // Put any API calls that is not critical to be available on first page render
-  // For example: product reviews, product recommendations, social feeds.
+function loadDeferredData({context, params}, product) {
+  const {storefront} = context;
 
-  return {};
+  // "More Chat/Goal widgets": same widget kind, same real catalog data,
+  // filtered client-side to exclude the current product. Title text is the
+  // reliable signal here (see CLAUDE.md on product tags being unreliable).
+  const kind = /goal/i.test(product.title)
+    ? 'goal'
+    : /chat/i.test(product.title)
+      ? 'chat'
+      : null;
+
+  const relatedProducts = kind
+    ? storefront
+        .query(RELATED_PRODUCTS_QUERY, {
+          variables: {query: `title:*${kind}*`},
+        })
+        .then((response) =>
+          (response.products?.nodes ?? [])
+            .filter((p) => p.handle !== params.handle)
+            .slice(0, 4),
+        )
+        .catch(() => [])
+    : Promise.resolve([]);
+
+  // Real site FAQ, reused on the PDP so buyers see setup answers without
+  // leaving the product page.
+  const faq = storefront
+    .query(PRODUCT_FAQ_PAGE_QUERY, {
+      cache: storefront.CacheLong(),
+    })
+    .then((response) => response?.page?.body ?? null)
+    .catch(() => null);
+
+  return {relatedProducts, faq};
 }
 
 export default function Product() {
   /** @type {LoaderReturnData} */
-  const {product} = useLoaderData();
+  const {product, relatedProducts, faq} = useLoaderData();
 
   // Optimistically selects a variant with given available variant information
   const selectedVariant = useOptimisticVariant(
@@ -110,23 +152,24 @@ export default function Product() {
   const {title, description, descriptionHtml} = product;
   const media = product.media?.nodes ?? [];
   const formattedDescription = formatProductDescription(descriptionHtml, title);
+  const widgetKind = /goal/i.test(title) ? 'Goal' : /chat/i.test(title) ? 'Chat' : null;
 
   return (
     <div className="product">
       <div className="product-top">
         <ProductGallery media={media} />
-        <div className="product-main">
+        <div className="product-main sws-glass-card">
           <h1>{title}</h1>
           <EtsyRatingBadge compact />
           <ProductPrice
             price={selectedVariant?.price}
             compareAtPrice={selectedVariant?.compareAtPrice}
           />
+          <ProductHighlights title={title} description={description} />
           <ProductForm
             productOptions={productOptions}
             selectedVariant={selectedVariant}
           />
-          <ProductHighlights title={title} description={description} />
         </div>
       </div>
       <div className="product-description">
@@ -136,7 +179,40 @@ export default function Product() {
           dangerouslySetInnerHTML={{__html: formattedDescription}}
         />
       </div>
+      <Suspense fallback={null}>
+        <Await resolve={faq}>
+          {(faqHtml) =>
+            faqHtml ? (
+              <div className="product-faq">
+                <h2>Setup questions</h2>
+                <FaqAccordion html={faqHtml} />
+                <Link to="/pages/faq-frequently-asked-questions" className="product-faq-link">
+                  See all FAQs →
+                </Link>
+              </div>
+            ) : null
+          }
+        </Await>
+      </Suspense>
       <EtsyReviews />
+      <Suspense fallback={null}>
+        <Await resolve={relatedProducts}>
+          {(nodes) =>
+            nodes && nodes.length > 0 ? (
+              <div className="product-related">
+                <h2>
+                  More {widgetKind ? `${widgetKind} widgets` : 'widgets'}
+                </h2>
+                <div className="product-related-grid">
+                  {nodes.map((related) => (
+                    <ProductItem key={related.id} product={related} />
+                  ))}
+                </div>
+              </div>
+            ) : null
+          }
+        </Await>
+      </Suspense>
       <Analytics.ProductView
         data={{
           products: [
@@ -169,8 +245,6 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
       id
       url
       altText
-      width
-      height
     }
     price {
       amount
@@ -212,8 +286,6 @@ const PRODUCT_FRAGMENT = `#graphql
             id
             url
             altText
-            width
-            height
           }
         }
         ... on Video {
@@ -271,6 +343,47 @@ const PRODUCT_QUERY = `#graphql
     }
   }
   ${PRODUCT_FRAGMENT}
+`;
+
+// "More Chat/Goal widgets": reuses the query:title trick (Storefront API
+// has no reliable tag search for this catalog, see CLAUDE.md) to find same
+// kind products. Client-side filter drops the current product.
+const RELATED_PRODUCTS_QUERY = `#graphql
+  query RelatedProducts(
+    $country: CountryCode
+    $language: LanguageCode
+    $query: String
+  ) @inContext(country: $country, language: $language) {
+    products(first: 8, query: $query) {
+      nodes {
+        id
+        title
+        handle
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        featuredImage {
+          id
+          altText
+          url
+        }
+      }
+    }
+  }
+`;
+
+// Reuses the real site FAQ page body on the PDP (see pages.$handle.jsx for
+// the same page rendered in full).
+const PRODUCT_FAQ_PAGE_QUERY = `#graphql
+  query ProductFaqPage($country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    page(handle: "faq-frequently-asked-questions") {
+      body
+    }
+  }
 `;
 
 /** @typedef {import('./+types/products.$handle').Route} Route */

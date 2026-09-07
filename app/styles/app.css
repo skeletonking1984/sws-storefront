@@ -492,13 +492,17 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .header-brand strong {
+  display: none;
   font-family: var(--font-display);
-  font-size: 0.95rem;
   font-weight: 800;
   letter-spacing: 0.02em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  @media (min-width: 30em) {
+    display: block;
+    font-size: 0.95rem;
+  }
   @media (min-width: 45em) {
     font-size: 1.2rem;
     letter-spacing: 0.03em;
@@ -947,30 +951,48 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .add-to-cart-button {
-  background: linear-gradient(90deg, var(--sws-accent-1), var(--sws-accent-3));
-  border: none;
-  border-radius: 999px;
-  color: #0a0a12;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 700;
-  padding: 0.95rem 2rem;
+  font-size: 1.05rem;
   width: 100%;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
   @media (min-width: 45em) {
     width: auto;
   }
 }
 
-.add-to-cart-button:not(:disabled):hover {
-  box-shadow: 0 8px 24px -8px var(--sws-accent-1);
-  transform: translateY(-1px);
-}
-
 .add-to-cart-button:disabled {
   background: var(--sws-border);
+  border-color: var(--sws-border-strong);
+  box-shadow: none;
   color: var(--sws-sub);
   cursor: not-allowed;
+}
+
+/* Sticky "Add to cart" on mobile: the button itself pins to the bottom of
+   the viewport so it's reachable no matter how far the buyer has scrolled.
+   Variant pickers (when a product has any) stay in normal flow above it. */
+@media (max-width: 44.99em) {
+  .add-to-cart-button {
+    background: linear-gradient(
+      100deg,
+      var(--sws-holo-1),
+      var(--sws-holo-2),
+      var(--sws-holo-3),
+      var(--sws-holo-4)
+    );
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    border-radius: 0;
+    border-width: 0;
+    border-top: 3px solid var(--sws-ink);
+    padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom, 0px));
+    width: 100%;
+    z-index: 15;
+  }
+
+  .product {
+    padding-bottom: 5.5rem;
+  }
 }
 
 .cart-checkout-button {
@@ -1121,28 +1143,42 @@ button.reset:hover:not(:has(> *)) {
 
 /*
 * --------------------------------------------------
-* routes/__index
+* routes/_index — shared section styles
 * --------------------------------------------------
 */
-.hero {
-  padding: 2.5rem 1.25rem 3rem;
-  position: relative;
+.sws-section-eyebrow {
+  color: var(--sws-sub);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sws-section-heading {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 1.5rem;
+  padding: 0 2rem;
   @media (min-width: 45em) {
-    padding: 4.5rem 2rem;
+    font-size: 1.9rem;
   }
 }
 
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: radial-gradient(
-      ellipse at 50% -10%,
-      rgba(255, 95, 211, 0.18),
-      transparent 60%
-    ),
-    radial-gradient(ellipse at 80% 30%, rgba(95, 211, 255, 0.12), transparent 55%);
+/*
+* --------------------------------------------------
+* routes/_index — Hero
+* --------------------------------------------------
+*/
+.hero {
+  align-items: center;
+  display: flex;
+  min-height: calc(100vh - var(--header-height));
+  padding: 2.5rem 1.25rem 3rem;
+  position: relative;
+  @media (min-width: 45em) {
+    padding: 3rem 2rem;
+  }
 }
 
 .hero-grid {
@@ -1150,23 +1186,24 @@ button.reset:hover:not(:has(> *)) {
   display: grid;
   gap: 2.5rem;
   margin: 0 auto;
-  max-width: 1100px;
+  max-width: 1180px;
   position: relative;
   text-align: center;
+  width: 100%;
   z-index: 1;
   @media (min-width: 55em) {
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 1.05fr 0.95fr;
     text-align: left;
   }
 }
 
 .hero-copy h1 {
-  font-size: 2rem;
-  font-weight: 900;
-  line-height: 1.15;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.12;
   margin: 0 0 1rem;
   @media (min-width: 45em) {
-    font-size: 2.6rem;
+    font-size: 3.2rem;
   }
 }
 
@@ -1175,7 +1212,7 @@ button.reset:hover:not(:has(> *)) {
   font-size: 1.05rem;
   margin: 0 0 1.5rem;
   @media (min-width: 45em) {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
 }
 
@@ -1184,73 +1221,317 @@ button.reset:hover:not(:has(> *)) {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 1rem;
+  justify-content: center;
+  margin-bottom: 1.25rem;
   @media (min-width: 55em) {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
+
+.hero-trust-row {
+  align-items: center;
+  color: var(--sws-sub);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  gap: 0.5rem;
+  justify-content: center;
+  @media (min-width: 55em) {
+    justify-content: flex-start;
+  }
+}
+
+.hero-trust-sep {
+  opacity: 0.5;
+}
+
+/* Mock stream frame: dark 16:9 "game" panel with the real chat + goal
+   widgets composited on top, tilted like a sticker. */
+.hero-stream-frame {
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(155deg, #140b23, #0b0713 70%);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 30px 60px -20px rgba(10, 5, 20, 0.7), 0 0 60px -20px rgba(127, 230, 255, 0.15);
+  margin: 0 auto;
+  max-width: 560px;
+  overflow: hidden;
+  position: relative;
+  transform: rotate(3deg);
+  width: 100%;
+}
+
+.hero-stream-scanline {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03) 0,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  inset: 0;
+  position: absolute;
+}
+
+.hero-widget-media {
+  display: block;
+  position: absolute;
+}
+
+.hero-widget-media img,
+.hero-widget-media video {
+  display: block;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
+  height: auto;
+  object-fit: contain;
+  width: 100%;
+}
+
+.hero-widget-chat {
+  bottom: 6%;
+  left: 6%;
+  width: 44%;
+}
+
+.hero-widget-goal {
+  right: 6%;
+  top: 8%;
+  width: 34%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-stream-frame {
+    transform: none;
+  }
+}
+
+/*
+* --------------------------------------------------
+* routes/_index — Shop by vibe
+* --------------------------------------------------
+*/
+.shop-by-vibe {
+  padding: 2.5rem 2rem 1rem;
+  text-align: center;
+}
+
+.shop-by-vibe .sws-section-eyebrow {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.vibe-chip-row {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-start;
+  margin: 0 auto;
+  max-width: 1100px;
+  overflow-x: auto;
+  padding: 0.25rem;
+  scrollbar-width: none;
+  @media (min-width: 60em) {
+    justify-content: center;
+    overflow-x: visible;
+  }
+}
+
+.vibe-chip-row::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+* --------------------------------------------------
+* routes/_index — Top widgets
+* --------------------------------------------------
+*/
+.top-widgets {
+  padding: 3rem 0;
+}
+
+.top-widgets-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  padding: 0 2rem;
+  @media (min-width: 40em) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 65em) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/*
+* --------------------------------------------------
+* routes/_index — Works with strip
+* --------------------------------------------------
+*/
+.works-with {
+  border-top: 1px solid var(--sws-border);
+  border-bottom: 1px solid var(--sws-border);
+  padding: 2rem;
+  text-align: center;
+}
+
+.works-with-label {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin: 0 0 1.25rem;
+  text-transform: uppercase;
+}
+
+.works-with-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.75rem;
+  justify-content: center;
+}
+
+.works-with-item {
+  align-items: center;
+  color: var(--sws-sub);
+  display: inline-flex;
+  font-size: 0.85rem;
+  font-weight: 700;
+  gap: 0.5rem;
+}
+
+.works-with-item .platform-icon {
+  height: 20px;
+  width: 20px;
+}
+
+/*
+* --------------------------------------------------
+* routes/_index — Reviews as chat bubbles
+* --------------------------------------------------
+*/
+.home-reviews {
+  padding: 3rem 2rem;
+}
+
+.home-reviews .sws-section-heading {
+  padding: 0;
+  text-align: center;
+}
+
+.home-reviews-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin: 0 auto 1.5rem;
+  max-width: 1000px;
+}
+
+.chat-bubble-review {
+  background: var(--sws-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
+  border-top-left-radius: 4px;
+  padding: 1.1rem 1.25rem;
+}
+
+.chat-bubble-review-head {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.chat-bubble-review-name {
+  color: var(--sws-holo-1);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.chat-bubble-review-stars {
+  color: #ffd166;
+  font-size: 0.85rem;
+}
+
+.chat-bubble-review p {
+  color: var(--sws-text);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.home-reviews-link {
+  color: var(--sws-sub);
+  display: block;
+  font-size: 0.9rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.home-reviews-link:hover {
+  color: var(--sws-holo-1);
+}
+
+/*
+* --------------------------------------------------
+* routes/_index — Email capture
+* --------------------------------------------------
+*/
+.email-capture {
+  padding: 1rem 2rem 4rem;
+}
+
+.email-capture-inner {
+  margin: 0 auto;
+  max-width: 640px;
+  padding: 2.25rem;
+  text-align: center;
+}
+
+.email-capture-inner h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 0.6rem;
+}
+
+.email-capture-inner > p {
+  color: var(--sws-sub);
+  margin: 0 0 1.25rem;
+}
+
+.email-capture-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: center;
+  @media (min-width: 40em) {
     flex-direction: row;
   }
 }
 
-.hero-cta {
-  background: linear-gradient(90deg, var(--sws-accent-1), var(--sws-accent-3));
-  border: none;
-  border-radius: 999px;
-  color: #0a0a12;
-  display: inline-block;
-  font-weight: 700;
-  padding: 0.85rem 2rem;
-  text-decoration: none;
-  white-space: nowrap;
+.email-capture-form input {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.2rem;
 }
 
-.hero-social-proof {
-  color: var(--sws-sub);
-  font-size: 0.85rem;
+.email-capture-success {
+  color: var(--sws-holo-5);
+  font-weight: 700;
   margin: 0;
 }
 
-.hero-collage {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr 1fr;
-  margin: 0 auto;
-  max-width: 420px;
-  padding: 1rem;
-}
-
-.hero-collage-item {
-  aspect-ratio: 1 / 1;
-  background: var(--sws-card);
-  border: 1px solid var(--sws-border);
-  border-radius: 16px;
-  display: block;
-  overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.hero-collage-item:nth-child(1) {
-  transform: rotate(-3deg) translateY(6px);
-}
-.hero-collage-item:nth-child(2) {
-  transform: rotate(2deg) translateY(-8px);
-}
-.hero-collage-item:nth-child(3) {
-  transform: rotate(2deg) translateY(4px);
-}
-.hero-collage-item:nth-child(4) {
-  transform: rotate(-2deg) translateY(-4px);
-}
-
-.hero-collage-item:hover {
-  box-shadow: 0 12px 32px -8px var(--sws-accent-1);
-  transform: rotate(0deg) translateY(-6px) scale(1.03);
-  z-index: 1;
-}
-
-.hero-collage-item img {
-  display: block;
-  height: 100%;
-  object-fit: contain;
-  width: 100%;
+.email-capture-error {
+  color: var(--sws-holo-4);
+  margin: 0.75rem 0 0;
 }
 
 /*
@@ -1564,25 +1845,12 @@ button.reset:hover:not(:has(> *)) {
   margin: 0;
 }
 
-.recommended-products {
-  padding: 0 2rem 3rem;
-}
-
-.recommended-products h2 {
-  font-size: 1.6rem;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-}
-
 /*
 * --------------------------------------------------
 * routes/_index — commission callout
 * --------------------------------------------------
 */
 .commission-callout {
-  background: var(--sws-bg-alt);
-  border-top: 1px solid var(--sws-border);
-  border-bottom: 1px solid var(--sws-border);
   padding: 3rem 2rem;
 }
 
@@ -1592,16 +1860,26 @@ button.reset:hover:not(:has(> *)) {
   text-align: center;
 }
 
+.commission-callout-inner.sws-chip-panel {
+  background: var(--sws-cream);
+  border: 3px solid var(--sws-ink);
+  border-radius: var(--radius-card);
+  box-shadow: 4px 4px 0 var(--sws-outline);
+  padding: 2.5rem 2rem;
+}
+
 .commission-callout h2 {
+  color: var(--sws-ink);
   font-size: 1.6rem;
   font-weight: 800;
   margin-bottom: 0.75rem;
 }
 
 .commission-callout p {
-  color: var(--sws-sub);
+  color: var(--sws-ink);
   font-size: 1rem;
   margin-bottom: 1.5rem;
+  opacity: 0.85;
 }
 
 .commission-callout-cta-row {
@@ -1609,60 +1887,110 @@ button.reset:hover:not(:has(> *)) {
   justify-content: center;
 }
 
-.recommended-products-grid {
-  display: grid;
-  grid-gap: 1.5rem;
-  grid-template-columns: repeat(2, 1fr);
-  @media (min-width: 45em) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.recommended-product img {
-  height: auto;
-}
-
 .product-item {
   background: var(--sws-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--sws-border);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   display: block;
   overflow: hidden;
-  padding: 0.75rem;
+  padding: 0.85rem;
   text-decoration: none;
-  transition: transform 0.2s, border-color 0.2s;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 .product-item:hover {
+  border-color: var(--sws-border-strong);
+  box-shadow: 0 16px 40px -18px rgba(242, 166, 216, 0.35);
   transform: translateY(-4px);
-  border-color: var(--sws-accent-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-item {
+    transition: none;
+  }
+  .product-item:hover {
+    transform: none;
+  }
 }
 
 .product-item-image {
   aspect-ratio: 1 / 1;
-  background: var(--sws-bg);
-  border-radius: 10px;
-  margin-bottom: 0.75rem;
+  background: radial-gradient(circle at 50% 45%, rgba(183, 157, 242, 0.22), transparent 65%),
+    var(--sws-bg);
+  border-radius: 12px;
+  margin-bottom: 0.85rem;
   overflow: hidden;
+  position: relative;
   width: 100%;
 }
 
 .product-item-image img {
-  border-radius: 10px;
+  border-radius: 12px;
   height: 100%;
   object-fit: contain;
   width: 100%;
 }
 
+.product-item-tag {
+  border: 2px solid var(--sws-ink);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0 var(--sws-outline);
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 800;
+  left: 0.6rem;
+  padding: 0.2rem 0.6rem;
+  position: absolute;
+  text-transform: uppercase;
+  top: 0.6rem;
+  z-index: 1;
+}
+
+.product-item-tag.tag-chat {
+  background: var(--sws-holo-1);
+  color: var(--sws-ink);
+}
+
+.product-item-tag.tag-goal {
+  background: var(--sws-holo-3);
+  color: var(--sws-ink);
+}
+
 .product-item h4 {
   color: var(--sws-text);
   font-size: 0.95rem;
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.55rem;
 }
 
-.product-item small {
-  color: var(--sws-accent-2);
-  font-weight: 700;
+.product-item-footer {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.product-item-price-pill {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-holo-1);
+  font-weight: 800;
+  padding: 0.2rem 0.7rem;
+}
+
+.product-item-platforms {
+  align-items: center;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.product-item-platforms .platform-icon,
+.product-item-platforms .platform-icon-monogram {
+  color: var(--sws-sub);
+  height: 13px;
+  width: 13px;
 }
 
 /*
@@ -1841,7 +2169,9 @@ button.reset:hover:not(:has(> *)) {
   flex-direction: column;
   gap: 0.9rem;
   min-width: 0;
+  padding: 1.25rem;
   @media (min-width: 45em) {
+    padding: 1.75rem;
     position: sticky;
     top: 6rem;
   }
@@ -2013,11 +2343,20 @@ button.reset:hover:not(:has(> *)) {
   padding: 1rem 0;
 }
 
+.product-highlights-label {
+  color: var(--sws-sub);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+}
+
 .product-platforms {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .product-platform-badge {
@@ -2169,6 +2508,57 @@ button.reset:hover:not(:has(> *)) {
   }
 }
 
+/*
+* --------------------------------------------------
+* routes/products.$handle — FAQ + related widgets
+* --------------------------------------------------
+*/
+.product-faq {
+  border-top: 1px solid var(--sws-border);
+  margin: 2.5rem 0;
+  max-width: 760px;
+  padding-top: 2rem;
+}
+
+.product-faq h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.product-faq-link {
+  color: var(--sws-holo-1);
+  display: inline-block;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  text-decoration: none;
+}
+
+.product-faq-link:hover {
+  color: var(--sws-holo-3);
+}
+
+.product-related {
+  border-top: 1px solid var(--sws-border);
+  margin: 2.5rem 0;
+  padding-top: 2rem;
+}
+
+.product-related h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+}
+
+.product-related-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(2, 1fr);
+  @media (min-width: 45em) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .etsy-reviews {
   border-top: 1px solid var(--sws-border);
   padding-top: 2rem;
@@ -2256,23 +2646,24 @@ button.reset:hover:not(:has(> *)) {
   margin: 0;
 }
 
-.product-price-on-sale {
-  display: flex;
-  grid-gap: 0.5rem;
-  color: var(--sws-accent-2);
-  font-size: 1.4rem;
+.product-price-on-sale,
+.product-price {
+  align-items: center;
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-holo-1);
+  display: inline-flex;
+  font-size: 1.3rem;
   font-weight: 800;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  width: fit-content;
 }
 
 .product-price-on-sale s {
   color: var(--sws-sub);
   opacity: 0.6;
-}
-
-.product-price {
-  color: var(--sws-accent-2);
-  font-size: 1.4rem;
-  font-weight: 800;
 }
 
 .product-options h5 {
