@@ -23,6 +23,23 @@ Full origin/context for this decision lives in Linear: **[BAT-131](https://linea
 
 Dark theme, holographic pink/purple/blue gradient accents (`.sws-holo` class + `--sws-accent-1/2/3` tokens). Logo at `app/assets/logo.png`. This matches SWS's Etsy/social identity — don't diverge without checking with Todd.
 
+## Swapping the logo
+
+One command takes a single logo image and writes every asset the site needs:
+
+```bash
+npm run logo -- ~/Downloads/new-logo.png
+```
+
+It writes `app/assets/logo.png` (horizontal lockup, header and footer), `logo-stacked.png` (hero), `favicon.png`, `apple-touch-icon.png`, `mark.png`, and a contact sheet at `screenshots/logo-qa.png` showing the result at the real render sizes. Then hard reload (Cmd+Shift+R), because the dev server serves these paths without a cache-busting hash.
+
+Two things it handles that are easy to get wrong by hand:
+
+- **Keying the dark plate.** Generated logos arrive on flat near-black. Dropped in as-is that is a black box on the purple site. The key uses a knee, not a straight brightness ramp: anything brighter than `KNEE` is fully opaque at its true colour, only dimmer pixels ramp into transparency. A plain brightness-to-alpha key leaves a `#7C3AED` purple at about 93% opacity and the whole mark reads washed out.
+- **The header is 44px tall.** A stacked lockup at 44px puts the wordmark around 8px and it turns to mush, so the script builds a horizontal lockup (mark left, wordmark right) for the header and footer and keeps the stacked one for the hero.
+
+`FLOOR` must stay above the source's compression noise. webp and jpg leave faint speckle in the black plate; if it survives the key it registers as a few-pixel band of "art" at the image edge and gets picked as the mark. Source files live in `content/brand/logo-v2/`.
+
 ## Data quirks specific to this catalog (learned the hard way — don't re-derive)
 
 - **Product tags are unreliable for anything except `Chat_widget`/`Goal_Widget`**, and even those needed a bulk cleanup (88 of 206 products had wrong tags, fixed via `tagsAdd`/`tagsRemove` on 2026-08-30). If tag-based filtering looks wrong again, cross-check the tag against whether the product title actually contains "Chat" or "Goal" before trusting it.

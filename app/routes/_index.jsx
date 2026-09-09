@@ -16,6 +16,7 @@ import {
   WORKS_WITH_PLATFORMS,
 } from '~/lib/nav';
 import logo from '~/assets/logo.png';
+import logoStacked from '~/assets/logo-stacked.png';
 import heroWidgets from '~/assets/hero-widgets.webp';
 
 /**
@@ -191,7 +192,7 @@ function Hero() {
     <section className="hero">
       <div className="hero-grid">
         <div className="hero-copy">
-          <img src={logo} alt="Stream Widget Shop" className="hero-logo" />
+          <img src={logoStacked} alt="Stream Widget Shop" className="hero-logo" />
           <h1 className="sws-glow">
             Widgets that make chat <span className="sws-holo">pop.</span>
           </h1>
