@@ -47,7 +47,8 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 ### Branding
 - [x] Wordmark, palette, favicon, OG image consistent with Etsy/X
 ### Conversion
-- [ ] Checkout tested (real $ test order then refund)
+- [x] Purchase path clean: no storefront product forces a shipping checkout, verify with `node scripts/audit-shipping.mjs` (fixed 9 products 2026-09-09)
+- [ ] Checkout tested (real $ test order then refund) - verified in a browser up to the payment step, WELCOME10 applies, the actual charge still needs Todd
 - [x] Email capture + welcome discount (WELCOME10, 10% off, all products, all customers, no end date)
 - [ ] Pixels (X, Google) installed
 - [ ] DNS cutover streamwidgetshop.com -> Hydrogen (Todd approves)
@@ -194,4 +195,34 @@ Verified: `/collections/frontpage` renders 24 cards with 23 Chat badges and 0 Go
 Preview deploy: https://01m229k1p8jnsbjj6nv8vazs97-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `92d8d20`.
 
-Worth knowing for later: if per-collection faceted filtering is ever wanted (filter within a collection rather than routing between collections), someone has to add those filters in Shopify's Search & Discovery app first. No amount of storefront code makes `filters:` work until that is configured.
+Worth knowing for later (collection filters): if per-collection faceted filtering is ever wanted (filter within a collection rather than routing between collections), someone has to add those filters in Shopify's Search & Discovery app first. No amount of storefront code makes `filters:` work until that is configured.
+
+### 2026-09-09
+Metrics (2026-09-08): 21 sessions, 0 add to cart, 0 reached checkout, 0 completed, 0 orders, $0 net sales. Conversion 0.0%. (Sep 7 was 65 sessions / 1 add to cart, the traffic spike has not repeated.)
+
+Shipped: **fixed a hard purchase blocker. 9 active digital products were flagged as physical goods.**
+
+Found by auditing the actual purchase path rather than the checklist: built a real cart against the Storefront API for all 16 top products plus the 3 bundles and inspected each variant. Nine had `requiresShipping: true` on their inventory item. All 7 products created through the Admin API on 2026-09-07, the reactivated Sakura Glassy, and one bloodworm goal widget. Six of those are in the top 15 by revenue (Multistream Chat #2, Star Goal #3, Y2K Sticker #5, Moon Jar #6, Saber Neon #8, Neon Multistream #15), plus Soul Blade and Sakura Glassy #13.
+
+Why it blocks a purchase, not just annoys: a shipping-flagged line item turns Shopify checkout into a physical checkout. The buyer is forced through a shipping-address step for a zip file, and Shopify then needs a delivery rate for their address. This shop has exactly two delivery zones, Domestic (US) and International (27 named countries), both at $0. **Any buyer outside those 28 countries hit "no shipping methods available for your address" and could not complete the purchase at all.** Etsy sells these same widgets worldwide. Confirmed before the fix: a cart with a US address returned zero `deliveryGroups`.
+
+Fix: `productVariantsBulkUpdate` with `inventoryItem: { requiresShipping: false }` on all 9 variants. Inventory left untracked, so nothing became unpurchasable.
+
+Also shipped: `scripts/audit-shipping.mjs`, which pages the whole storefront catalog and exits 1 if any visible product would force a shipping checkout. Products created via the Admin API default to `requiresShipping: true`, so this regresses on every API-created product and is invisible in the storefront UI. Documented in CLAUDE.md's data-quirks list. Run it after any catalog write.
+
+Verified:
+- Storefront API sweep after the fix: 130 storefront-visible products, 0 requiring shipping (was 9). `node scripts/audit-shipping.mjs` exits 0.
+- Drove the real Shopify checkout in a browser with a live cart (Multistream Chat Widget, $24.99). It now renders as a digital checkout: Contact, then Payment, then Billing address. No shipping-address step, no delivery-method step, no shipping line in the order summary. The billing country selector offers the full world list, not the 28 shipping countries.
+- **WELCOME10 tested for the first time on a real checkout**: applied cleanly, $24.99 subtotal, -$2.49 order discount, $22.50 total, "TOTAL SAVINGS $2.49". The code created on 2026-09-08 works.
+- All 16 top products plus the 3 bundles: visible on the Storefront API, `availableForSale: true`, featured image present, price matching `etsy-shopify-map.json` (Rabbit Goal reads 10.4 vs 10.40 in the map, same number, formatting only).
+- `npm run build` clean.
+
+Not done, cannot be done from here: the checklist's "real $ test order then refund". Everything up to entering card details is now verified working; the actual charge needs Todd. Given the delivery blocker below, a real test order would currently deliver nothing anyway.
+
+Needs Todd:
+- **Still the #1 blocker, unchanged and now the only thing between the store and a working sale**: 8 of the top 16 products plus all 3 bundles have no digital file attached. A purchase completes and the buyer receives nothing. Manual upload in Admin > Apps > Digital Products, file list in the 2026-09-07 blockers section. No API exists for this app. Today's fix means buyers worldwide can now reach payment, which makes this blocker more urgent, not less.
+- Google Search Console + Merchant Center still need his account.
+- Soul Blade price still unconfirmed (Etsy live 15.99, notes said 29.99, Shopify matched to 15.99).
+- Worth a look: the shop's International delivery zone covers only 27 countries. It no longer blocks digital sales, but if a physical product is ever sold it will block most of the world.
+
+Next: homepage and PDP conversion work, since the purchase path itself is now clean and traffic that arrives is bouncing at 0% add to cart.
