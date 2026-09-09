@@ -37,7 +37,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 ### Storefront (Hydrogen)
 - [x] Pending work committed + deployed
 - [ ] Homepage sells: hero, top 15, social proof, one clear CTA
-- [ ] PDP: video where available, platform badges, "what you get", FAQ
+- [x] PDP: video where available (65 of 130 active), platform badges, "what you get", FAQ, real per-product Etsy reviews
 - [ ] Mobile QA
 - [ ] Performance (LCP < 2.5s)
 ### SEO
@@ -268,3 +268,46 @@ To finish, once staging succeeds again, work the 39 rows from `node scripts/sync
 Current state: 65 of 130 active products have video (was 8). 39 matched and waiting, 83 Etsy listings with no confident Shopify match (left alone deliberately), 1 listing with no video on Etsy.
 
 Follow up on the cap, measured rather than assumed: archived and draft products hold ZERO videos (all their media is images), so nothing is reclaimable there. Of the 87 real video files, 65 are attached to active products and about 22 are unattached in the Files library. 3D models: 0. That accounts for 87 of the 250 slots, so roughly 163 are held by something that is not a visible file, which points at unconsumed staged upload reservations. Retries at 17:38Z and again after 17:58Z both still returned the cap error, so they had not aged out yet. Nothing to delete, nothing to upgrade, just not ready yet.
+
+### 2026-09-09 (third pass)
+Metrics (2026-09-09 so far): 11 sessions, 1 add to cart, 2 reached checkout, 0 completed, 0 orders, $0 net sales. The 2 checkouts are this routine's own browser test of the shipping fix, not a buyer. Sep 8 was 21 sessions / 0 add to cart. All of this traffic is still hitting the OLD Energy theme on streamwidgetshop.com, not the Hydrogen build, so none of the storefront work moves these numbers until Todd cuts DNS over.
+
+Shipped: **real per-product Etsy reviews on the PDP.**
+
+Every product page was showing the same 3 hardcoded shop-wide quotes. The shop has 990 real Etsy reviews and `getReviewsByShop` returns a `listing_id` per review, so they can be attached to the exact product they were written about. 76 of the 100 most recent now do, across 26 products. Coverage on the sellers that matter: Star Goal 13, Neon Animated 10, Multistream 8, Sakura Floral 5, Moon Cloud 4, Cosmic Galaxy 4, Y2K 4, Sakura Glassy 3, Neon Moon Glow 3.
+
+`scripts/build-etsy-reviews.mjs` joins `data/etsy-reviews-raw.json` (the raw API pull, kept in the repo so the build is offline and re-runnable) to `data/etsy-video-map.json` and writes `app/data/etsy-reviews.json`. A review only attaches when its listing maps to a handle at trusted confidence, because a review on the wrong product is worse than no review at all. The 24 dropped reviews belong to Etsy listings with no confident Shopify match, the same 83-listing gap the video sync left alone.
+
+Honesty constraints held deliberately:
+- Reviews render most recent first whatever the rating, not filtered to 5 stars. The 2 star reviews on Star Goal and Moon Cloud are in the set and show in the distribution bars.
+- Stars floor rather than round. A 4.5 average painting 5 solid stars overstates the product, and the exact number sits right beside it.
+- Attribution is "Verified Etsy buyer". Etsy's API exposes no reviewer name and inventing one is out.
+- Labeled as reviews left on this widget's Etsy listing, never implied to have been left on this site.
+- `aggregateRating` JSON-LD only where 3 or more reviews actually render, using exactly the average and count on the page. No shop-wide numbers smuggled into a product rating.
+
+Conversion detail worth keeping: the rating block beside the price used to be a link straight to Etsy. Sending a ready-to-buy visitor to the Etsy listing from next to the Add to Cart button is a leak, so the buy panel now shows this widget's own rating and anchors down the page to the reviews. One outbound proof link remains at the bottom of the review section.
+
+Shop stats were stale and duplicated across two components. They now come from one generated source: 4.75 from 990 reviews, 7504 sold, 1274 favorites (was 981 / 7383 / 1249).
+
+Verified:
+- `node scripts/build-etsy-reviews.mjs`: 100 source reviews, 76 kept, 24 dropped for no handle, 0 dropped for low confidence, 26 products covered.
+- `npm run build` exits 0. `npx eslint` on all 6 touched files: 0 errors, only the array-index-key and no-console warnings this repo already ships everywhere.
+- Curled against a real dev server: Star Goal PDP reads 4.5 from 13 with an 11/0/0/2/0 distribution, buy panel badge `4.5 from 13 Etsy reviews of this widget`, JSON-LD `aggregateRating 4.5 / 13`. Neon Animated 5.0 from 10, JSON-LD matching. A no-review PDP (Saber Neon) renders the shop-wide fallback, the shop badge, and has no `aggregateRating` key at all. Homepage quotes are real verbatim reviews and the shop line reads 990.
+- No em or en dash anywhere in the new files or the generated JSON.
+
+Not verified: the "Show all 13 written reviews" expander was never clicked in a real browser, and no 375px visual pass was done. Dev servers and the browser tools are both blocked in an unattended scheduled run. The expander is plain `useState` and the CSS is fluid (`minmax(220px, 1fr)` grid, `max-width: 320px` on the distribution, no fixed widths), but it is untested by eye.
+
+Also checked and closed out:
+- Probed whether the Digital Products app exposes attachments as metafields, so the #1 blocker could be fixed from here. It does not. A product that HAS a file and one that does not both return only `global.title_tag` / `global.description_tag`. The app keeps its attachments in its own store. Confirmed dead end, stop re-testing it.
+- Retried `stagedUploadsCreate` for the stalled video sync. Still `Your plan does not permit more than 250 videos and 3D models`. The abandoned staged targets have not aged out yet. 39 videos still pending, unchanged.
+
+Needs Todd:
+- **Still the #1 blocker**: 8 of the top 16 products plus all 3 bundles have no digital file attached. A completed purchase delivers nothing. Manual upload in Admin > Apps > Digital Products, file list in the 2026-09-07 blockers section. No API, confirmed twice now.
+- **Worth saying plainly**: the daily storefront work is all pre-launch. streamwidgetshop.com still serves the old Energy theme, so every improvement since 2026-09-07 is invisible to real traffic until the DNS cutover. The purchase path is clean and the pages are ready. The two things standing between here and a working sale are the digital files and the cutover, and both are his.
+- Google Search Console + Merchant Center still need his account.
+- Soul Blade price still unconfirmed (Etsy live 15.99, notes said 29.99, Shopify matched to 15.99).
+
+Next: finish the 39 pending videos if the staged upload cap has cleared, otherwise homepage conversion (the hero nits from 2026-09-07: star bar overlapping the jar lid, chat too small) and a mobile pass.
+
+Preview deploy: https://01m23p68ccxc8zqghk3m120sjc-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `d0bad39`.
