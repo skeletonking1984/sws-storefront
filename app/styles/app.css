@@ -1115,6 +1115,18 @@ button.reset:hover:not(:has(> *)) {
   text-decoration: none;
 }
 
+.predictive-search-result-item a > div {
+  min-width: 0;
+}
+
+.predictive-search-result-item a p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .predictive-search-result-item a:hover,
 .predictive-search-result-item.is-highlighted a {
   color: var(--sws-holo-1);
@@ -3518,6 +3530,10 @@ button.reset:hover:not(:has(> *)) {
   }
 }
 
+.mega-panel-col {
+  min-width: 0;
+}
+
 .mega-panel-col-wide {
   grid-column: span 2;
 }
@@ -3710,11 +3726,12 @@ button.reset:hover:not(:has(> *)) {
 
 .mega-product-card-title {
   color: var(--sws-text);
+  display: -webkit-box;
   font-size: 0.88rem;
   font-weight: 700;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .mega-product-card-price {
@@ -3897,6 +3914,10 @@ button.reset:hover:not(:has(> *)) {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  /* Overrides reset.css's generic `form { max-width: 400px }` (>=768px),
+     which otherwise caps this fetcher.Form to 400px inside the 640px
+     palette shell no matter what the palette itself measures. */
+  max-width: none;
 }
 
 .search-palette-input-row {
@@ -4030,6 +4051,7 @@ button.reset:hover:not(:has(> *)) {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  min-width: 0;
   text-decoration: none;
 }
 
@@ -4045,6 +4067,7 @@ button.reset:hover:not(:has(> *)) {
   border-radius: 12px;
   overflow: hidden;
   transition: border-color 0.2s ease;
+  width: 100%;
 }
 
 .search-palette-thumb:hover .search-palette-thumb-image {
