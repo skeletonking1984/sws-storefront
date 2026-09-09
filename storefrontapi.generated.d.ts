@@ -377,6 +377,137 @@ export type FooterQuery = {
   >;
 };
 
+export type NavCollectionFragment = Pick<
+  StorefrontAPI.Collection,
+  'id' | 'handle' | 'title'
+> & {
+  image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url' | 'altText'>>;
+  products: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
+};
+
+export type NavProductFragment = Pick<
+  StorefrontAPI.Product,
+  'id' | 'handle' | 'title'
+> & {
+  featuredImage?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Image, 'url' | 'altText'>
+  >;
+  selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+    price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+  }>;
+};
+
+export type NavQueryVariables = StorefrontAPI.Exact<{
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+  featuredWidgetHandle: StorefrontAPI.Scalars['String']['input'];
+  overlayHandle0: StorefrontAPI.Scalars['String']['input'];
+  overlayHandle1: StorefrontAPI.Scalars['String']['input'];
+  overlayHandle2: StorefrontAPI.Scalars['String']['input'];
+  overlayHandle3: StorefrontAPI.Scalars['String']['input'];
+}>;
+
+export type NavQuery = {
+  allWidgets?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Collection, 'id' | 'handle' | 'title'> & {
+      image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url' | 'altText'>>;
+      products: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
+    }
+  >;
+  chatWidgets?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Collection, 'id' | 'handle' | 'title'> & {
+      image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url' | 'altText'>>;
+      products: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
+    }
+  >;
+  goalWidgets?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Collection, 'id' | 'handle' | 'title'> & {
+      image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url' | 'altText'>>;
+      products: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
+    }
+  >;
+  topWidgets?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Collection, 'id' | 'handle' | 'title'> & {
+      thumbs: {
+        nodes: Array<
+          Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title'> & {
+            featuredImage?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Image, 'url' | 'altText'>
+            >;
+            selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+              price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+            }>;
+          }
+        >;
+      };
+      image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url' | 'altText'>>;
+      products: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
+    }
+  >;
+  overlays?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Collection, 'id' | 'handle' | 'title'> & {
+      image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url' | 'altText'>>;
+      products: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
+    }
+  >;
+  bundles?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Collection, 'id' | 'handle' | 'title'> & {
+      image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url' | 'altText'>>;
+      products: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
+    }
+  >;
+  featuredWidget?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title'> & {
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'url' | 'altText'>
+      >;
+      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+      }>;
+    }
+  >;
+  overlayFeatured0?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title'> & {
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'url' | 'altText'>
+      >;
+      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+      }>;
+    }
+  >;
+  overlayFeatured1?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title'> & {
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'url' | 'altText'>
+      >;
+      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+      }>;
+    }
+  >;
+  overlayFeatured2?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title'> & {
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'url' | 'altText'>
+      >;
+      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+      }>;
+    }
+  >;
+  overlayFeatured3?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title'> & {
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'url' | 'altText'>
+      >;
+      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+      }>;
+    }
+  >;
+};
+
 export type RecommendedProductFragment = Pick<
   StorefrontAPI.Product,
   'id' | 'title' | 'handle'
@@ -1512,6 +1643,10 @@ interface GeneratedQueryTypes {
   '#graphql\n  query Footer(\n    $country: CountryCode\n    $footerMenuHandle: String!\n    $language: LanguageCode\n  ) @inContext(language: $language, country: $country) {\n    menu(handle: $footerMenuHandle) {\n      ...Menu\n    }\n  }\n  #graphql\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n    items {\n      ...ChildMenuItem\n    }\n  }\n  fragment Menu on Menu {\n    id\n    items {\n      ...ParentMenuItem\n    }\n  }\n\n': {
     return: FooterQuery;
     variables: FooterQueryVariables;
+  };
+  '#graphql\n  fragment NavCollection on Collection {\n    id\n    handle\n    title\n    image {\n      url\n      altText\n    }\n    products(first: 250) {\n      nodes {\n        id\n      }\n    }\n  }\n  fragment NavProduct on Product {\n    id\n    handle\n    title\n    featuredImage {\n      url\n      altText\n    }\n    selectedOrFirstAvailableVariant {\n      price {\n        amount\n        currencyCode\n      }\n    }\n  }\n  query Nav(\n    $country: CountryCode\n    $language: LanguageCode\n    $featuredWidgetHandle: String!\n    $overlayHandle0: String!\n    $overlayHandle1: String!\n    $overlayHandle2: String!\n    $overlayHandle3: String!\n  ) @inContext(language: $language, country: $country) {\n    allWidgets: collection(handle: "widgets") {\n      ...NavCollection\n    }\n    chatWidgets: collection(handle: "frontpage") {\n      ...NavCollection\n    }\n    goalWidgets: collection(handle: "stream-widgets-templates") {\n      ...NavCollection\n    }\n    topWidgets: collection(handle: "top-widgets") {\n      ...NavCollection\n      thumbs: products(first: 8) {\n        nodes {\n          ...NavProduct\n        }\n      }\n    }\n    overlays: collection(handle: "overlays") {\n      ...NavCollection\n    }\n    bundles: collection(handle: "bundles") {\n      ...NavCollection\n    }\n    featuredWidget: product(handle: $featuredWidgetHandle) {\n      ...NavProduct\n    }\n    overlayFeatured0: product(handle: $overlayHandle0) {\n      ...NavProduct\n    }\n    overlayFeatured1: product(handle: $overlayHandle1) {\n      ...NavProduct\n    }\n    overlayFeatured2: product(handle: $overlayHandle2) {\n      ...NavProduct\n    }\n    overlayFeatured3: product(handle: $overlayHandle3) {\n      ...NavProduct\n    }\n  }\n': {
+    return: NavQuery;
+    variables: NavQueryVariables;
   };
   '#graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    handle\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    featuredImage {\n      id\n      url\n      altText\n    }\n  }\n  query RecommendedProducts (\n    $country: CountryCode\n    $language: LanguageCode\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n    $handle5: String!\n    $handle6: String!\n    $handle7: String!\n  ) @inContext(country: $country, language: $language) {\n    product0: product(handle: $handle0) { ...RecommendedProduct }\n    product1: product(handle: $handle1) { ...RecommendedProduct }\n    product2: product(handle: $handle2) { ...RecommendedProduct }\n    product3: product(handle: $handle3) { ...RecommendedProduct }\n    product4: product(handle: $handle4) { ...RecommendedProduct }\n    product5: product(handle: $handle5) { ...RecommendedProduct }\n    product6: product(handle: $handle6) { ...RecommendedProduct }\n    product7: product(handle: $handle7) { ...RecommendedProduct }\n  }\n': {
     return: RecommendedProductsQuery;

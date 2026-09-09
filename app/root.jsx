@@ -12,7 +12,8 @@ import {
 import favicon from '~/assets/favicon.svg';
 import faviconPng from '~/assets/favicon.png';
 import appleTouchIcon from '~/assets/apple-touch-icon.png';
-import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
+import {FOOTER_QUERY, HEADER_QUERY, NAV_QUERY} from '~/lib/fragments';
+import {OVERLAY_FEATURED_HANDLES, WIDGETS_FEATURED_HANDLE} from '~/lib/nav';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
@@ -161,10 +162,32 @@ function loadDeferredData({context}) {
       console.error(error);
       return null;
     });
+
+  // Mega menu tiles/cards + search palette "Top widgets" thumbnails. Runs
+  // on every route via the root loader, so this must never block TTFB:
+  // deferred, cached long, and swallows its own errors so a bad response
+  // just falls back to plain links instead of breaking the whole nav.
+  const navData = storefront
+    .query(NAV_QUERY, {
+      cache: storefront.CacheLong(),
+      variables: {
+        featuredWidgetHandle: WIDGETS_FEATURED_HANDLE,
+        overlayHandle0: OVERLAY_FEATURED_HANDLES[0],
+        overlayHandle1: OVERLAY_FEATURED_HANDLES[1],
+        overlayHandle2: OVERLAY_FEATURED_HANDLES[2],
+        overlayHandle3: OVERLAY_FEATURED_HANDLES[3],
+      },
+    })
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
+
   return {
     cart: cart.get(),
     isLoggedIn: customerAccount.isLoggedIn(),
     footer,
+    navData,
   };
 }
 

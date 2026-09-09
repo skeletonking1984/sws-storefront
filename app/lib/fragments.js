@@ -240,3 +240,93 @@ export const FOOTER_QUERY = `#graphql
   }
   ${MENU_FRAGMENT}
 `;
+
+/**
+ * Powers the desktop/mobile mega menu image tiles and product cards, plus
+ * the search palette's "Top widgets" empty-state thumbnails. Fetched once
+ * in the root loader as deferred, non-blocking data (see app/root.jsx),
+ * so it never delays time to first byte on any route.
+ *
+ * Collection handles are real and counterintuitive, don't "fix" them:
+ * Chat Widget lives at `frontpage`, Goal Widget at
+ * `stream-widgets-templates`.
+ */
+export const NAV_QUERY = `#graphql
+  fragment NavCollection on Collection {
+    id
+    handle
+    title
+    image {
+      url
+      altText
+    }
+    products(first: 250) {
+      nodes {
+        id
+      }
+    }
+  }
+  fragment NavProduct on Product {
+    id
+    handle
+    title
+    featuredImage {
+      url
+      altText
+    }
+    selectedOrFirstAvailableVariant {
+      price {
+        amount
+        currencyCode
+      }
+    }
+  }
+  query Nav(
+    $country: CountryCode
+    $language: LanguageCode
+    $featuredWidgetHandle: String!
+    $overlayHandle0: String!
+    $overlayHandle1: String!
+    $overlayHandle2: String!
+    $overlayHandle3: String!
+  ) @inContext(language: $language, country: $country) {
+    allWidgets: collection(handle: "widgets") {
+      ...NavCollection
+    }
+    chatWidgets: collection(handle: "frontpage") {
+      ...NavCollection
+    }
+    goalWidgets: collection(handle: "stream-widgets-templates") {
+      ...NavCollection
+    }
+    topWidgets: collection(handle: "top-widgets") {
+      ...NavCollection
+      thumbs: products(first: 8) {
+        nodes {
+          ...NavProduct
+        }
+      }
+    }
+    overlays: collection(handle: "overlays") {
+      ...NavCollection
+    }
+    bundles: collection(handle: "bundles") {
+      ...NavCollection
+    }
+    featuredWidget: product(handle: $featuredWidgetHandle) {
+      ...NavProduct
+    }
+    overlayFeatured0: product(handle: $overlayHandle0) {
+      ...NavProduct
+    }
+    overlayFeatured1: product(handle: $overlayHandle1) {
+      ...NavProduct
+    }
+    overlayFeatured2: product(handle: $overlayHandle2) {
+      ...NavProduct
+    }
+    overlayFeatured3: product(handle: $overlayHandle3) {
+      ...NavProduct
+    }
+  }
+`;

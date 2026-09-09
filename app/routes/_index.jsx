@@ -9,6 +9,12 @@ import {EmailCapture} from '~/components/EmailCapture';
 import {SOCIALS} from '~/components/SocialLinks';
 import {useVariantUrl} from '~/lib/variants';
 import {buildMeta, getOrigin} from '~/lib/seo';
+import {
+  OVERLAY_FEATURED_HANDLES,
+  VIBES,
+  WIDGETS_FEATURED_HANDLE,
+  WORKS_WITH_PLATFORMS,
+} from '~/lib/nav';
 import logo from '~/assets/logo.png';
 import heroWidgets from '~/assets/hero-widgets.webp';
 
@@ -123,7 +129,7 @@ function loadDeferredData({context}) {
  * favorites shift.
  */
 const FAN_FAVORITE_HANDLES = [
-  'neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only',
+  WIDGETS_FEATURED_HANDLE,
   'combo-goal-widget-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
   'dreamy-moon-cloud-glass-goal-widget-customisable-for-twitch-and-tiktok-studio',
   'cute-peach-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-tiktok-studio-streamelements-streamlabs-obs',
@@ -138,34 +144,7 @@ const FAN_FAVORITE_HANDLES = [
  * (the two "stream kit" bundles) are being created in Shopify Admin
  * alongside this change and may resolve to null for a few minutes.
  */
-const KITS_AND_OVERLAY_PACKS_HANDLES = [
-  'spooky-stream-kit',
-  'celestial-stream-kit',
-  'multistream-chat-widget-pack',
-  'demon-samurai-stream-overlay-pack-animated-katana-goal-bar-multistream-chat-alerts-digital-download',
-];
-
-/** Sticker chips for "Shop by vibe", linking into the all-products search. */
-const VIBES = [
-  'Neon',
-  'Celestial',
-  'Sakura',
-  'Spooky',
-  'Cozy',
-  'Y2K',
-  'Multistream',
-];
-
-/** Platforms shown in the "Works with" strip, in the order they read best. */
-const WORKS_WITH_PLATFORMS = [
-  'Twitch',
-  'YouTube',
-  'Kick',
-  'TikTok',
-  'OBS',
-  'Streamlabs',
-  'StreamElements',
-];
+const KITS_AND_OVERLAY_PACKS_HANDLES = OVERLAY_FEATURED_HANDLES;
 
 export default function Homepage() {
   /** @type {LoaderReturnData} */
