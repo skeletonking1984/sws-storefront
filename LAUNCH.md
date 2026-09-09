@@ -35,20 +35,20 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 - [ ] Every active product: title, image, price, product type, Chat/Goal tag correct
 - [ ] Digital download delivery verified end to end (order -> file)
 ### Storefront (Hydrogen)
-- [ ] Pending work committed + deployed
+- [x] Pending work committed + deployed
 - [ ] Homepage sells: hero, top 15, social proof, one clear CTA
 - [ ] PDP: video where available, platform badges, "what you get", FAQ
 - [ ] Mobile QA
 - [ ] Performance (LCP < 2.5s)
 ### SEO
-- [ ] Title/meta per product + collection
-- [ ] Sitemap + robots verified
+- [x] Title/meta per product + collection (plus canonical, OG, Twitter card, JSON-LD)
+- [x] Sitemap + robots verified
 - [ ] Google Search Console + Merchant Center feed
 ### Branding
-- [ ] Wordmark, palette, favicon, OG image consistent with Etsy/X
+- [x] Wordmark, palette, favicon, OG image consistent with Etsy/X
 ### Conversion
 - [ ] Checkout tested (real $ test order then refund)
-- [ ] Email capture + welcome discount
+- [x] Email capture + welcome discount (WELCOME10, 10% off, all products, all customers, no end date)
 - [ ] Pixels (X, Google) installed
 - [ ] DNS cutover streamwidgetshop.com -> Hydrogen (Todd approves)
 
@@ -133,3 +133,26 @@ Left for a follow-up pass (not done here, out of strict visual-redesign scope or
 - Copy corrected against the actual zips: Spooky = 8 widgets (3 chat incl. exclusive multistream, 5 goal, NO pumpkin decoration); Celestial = 10 (5 chat incl. exclusive, 4 goal, 1 scene overlay). Multistream = 10 skins, matched.
 - Flag for Todd: Celestial image 13_one-click-install.jpg overstates (only 3 of 10 widgets have one-click links). Consider replacing or removing that image.
 - 7 products created earlier today were only on Online Store; published to Headless + SWS Storefront (Hydrogen could not see them).
+
+### 2026-09-08
+Metrics (yesterday): 71 sessions, 1 add to cart, 0 reached checkout, 0 completed, 0 orders, $0 net sales. Conversion 0.0%.
+
+Shipped:
+- **WELCOME10 discount created** (10% off, all products, all customers, starts 2026-09-08, no end date, id `gid://shopify/DiscountCodeNode/2364045459646`). The homepage email capture has been promising 10% off since the redesign with no code behind it, so anyone who signed up and tried it hit an invalid-code wall at checkout. That is now real.
+- **Shared SEO helper** `app/lib/seo.js` (`buildMeta` + `getOrigin`), wired into all 12 content routes plus `collections._index.jsx` and `policies._index.jsx` (which had no `meta` export at all). Emits canonical link, og:title/description/url/type/image/site_name/locale, twitter:card/title/description/image/site. `cart` and `search` and the four rendered account routes get `robots: noindex`. Blog articles use `type: article` and their own image.
+- Origin resolution lives in the root loader: production domain when the request host is streamwidgetshop.com, otherwise the real request origin. Nothing hardcodes the myshopify.dev preview host. Routes read it off the root match via `getOrigin(matches)` rather than 12 loaders each computing it.
+- **JSON-LD**: `Product` + `Offer` (real variant price, currency, availability, url) + `BreadcrumbList` on the PDP, `Organization` on the homepage with `sameAs` pulled from `SocialLinks.jsx`'s `SOCIALS` (single source, not a second hardcoded copy). No `aggregateRating`, no invented review data.
+- **Real favicon**: the default Hydrogen "H" mark is gone. `app/assets/favicon.svg` is now a hand-authored SWS sticker lighthouse (holo tile, dark sticker outline, candy stripes, warm lamp), rasterized by `og/icons.mjs` to `favicon.png` (32) and `apple-touch-icon.png` (180), all three referenced from `root.jsx` `links()`. Checked legible at actual 32px.
+- **Real OG share card** at `app/assets/og-image.jpg` (1200x630), replacing the placeholder. Built the Spooky Kit way per the no-AI-hero-art rule: the same real widget renders the homepage hero uses (neon chat+goal, moon jar) composited on the hand-built space background, with the holo wordmark, "Animated chat and goal widgets", and Twitch/YouTube/Kick/OBS chips. Source: `og/og.html` + `og/compose.mjs`, re-runnable.
+- PDP prefers the product's own featured image for og:image at `?width=1200` (no `crop=center`, per the CLAUDE.md cropping quirk), falling back to the card.
+
+Verified: `npm run build` clean. Dev server curl of home, a real PDP, `/collections/all`, `/cart`, `/search`: canonical + og:image + twitter:card present everywhere, `robots noindex` on cart/search, no `Hydrogen | ` string anywhere. All four icon/OG assets serve 200 with the right content types (og-image.jpg 122 KB, the real render not the placeholder). Both PDP JSON-LD blocks parse as valid JSON, Product offer reads price 18.99 USD InStock.
+
+Preview deploy: https://01m220111d9vja40jh11thhc76-fb73b5b73c40344d0d20.myshopify.dev
+
+Needs Todd:
+- **Still the #1 blocker**: 8 of the top-16 products plus all 3 bundles have no digital file attached, so a purchase completes and delivers nothing. Manual upload in Admin > Apps > Digital Products (file list in the 2026-09-07 blockers section above). This is unfixable from here, there is no API.
+- Google Search Console + Merchant Center need his account. Now worth doing since the pages finally have real meta and structured data.
+- Soul Blade price still unconfirmed (Etsy live 15.99, notes said 29.99, Shopify matched to 15.99).
+
+Next: Google Search Console + sitemap submission and the Merchant Center feed, or the Widgets dropdown in the header, whichever Todd prefers. Default is Search Console.
