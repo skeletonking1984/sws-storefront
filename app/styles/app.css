@@ -4137,3 +4137,130 @@ button.reset:hover:not(:has(> *)) {
     display: none;
   }
 }
+
+/*
+* --------------------------------------------------
+* policies (privacy, refund, and the policies index)
+* --------------------------------------------------
+*/
+.policy,
+.policies {
+  max-width: 820px;
+}
+
+.policy-back {
+  display: inline-block;
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+}
+
+.policy-back::before {
+  content: '\2190';
+  margin-right: 0.4rem;
+}
+
+.policy-back:hover {
+  color: var(--sws-accent-2);
+}
+
+.policy-lede {
+  color: var(--sws-text);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0 0 0.75rem;
+}
+
+.policy-updated {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  margin: 0 0 2rem;
+}
+
+.policy-body {
+  color: var(--sws-sub);
+  line-height: 1.7;
+}
+
+.policy-body h2 {
+  color: var(--sws-text);
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 2rem 0 0.6rem;
+}
+
+.policy-body p {
+  margin: 0 0 1rem;
+}
+
+.policy-body ul {
+  margin: 0 0 1rem;
+  padding-left: 1.15rem;
+}
+
+.policy-body li {
+  margin-bottom: 0.5rem;
+}
+
+.policy-body strong {
+  color: var(--sws-text);
+}
+
+.policy-body a,
+.policy-help a {
+  color: var(--sws-accent-2);
+}
+
+.policy-help {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--sws-sub);
+  font-size: 0.95rem;
+}
+
+.policies-lede {
+  color: var(--sws-sub);
+  line-height: 1.6;
+  margin: 0 0 1.75rem;
+  max-width: 60ch;
+}
+
+.policies-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: 1fr;
+  @media (min-width: 45em) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.policies-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 1.1rem 1.2rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  text-decoration: none;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.policies-card:hover {
+  border-color: var(--sws-accent-2);
+  transform: translateY(-2px);
+}
+
+.policies-card-title {
+  color: var(--sws-text);
+  font-weight: 800;
+}
+
+.policies-card-summary {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}

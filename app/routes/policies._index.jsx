@@ -1,5 +1,6 @@
 import {useLoaderData, Link} from 'react-router';
 import {buildMeta, getOrigin} from '~/lib/seo';
+import {getPolicyOverride} from '~/lib/policyContent';
 
 /**
  * @type {Route.MetaFunction}
@@ -43,12 +44,30 @@ export default function Policies() {
   return (
     <div className="policies">
       <h1>Policies</h1>
-      <div>
-        {policies.map((policy) => (
-          <fieldset key={policy.id}>
-            <Link to={`/policies/${policy.handle}`}>{policy.title}</Link>
-          </fieldset>
-        ))}
+      <p className="policies-lede">
+        The plain English version of how this shop works. Everything we sell is
+        an instant digital download.
+      </p>
+      <div className="policies-grid">
+        {policies.map((policy) => {
+          const override = getPolicyOverride(policy.handle);
+          return (
+            <Link
+              className="policies-card"
+              key={policy.id}
+              to={`/policies/${policy.handle}`}
+            >
+              <span className="policies-card-title">
+                {override?.title ?? policy.title}
+              </span>
+              {override?.summary ? (
+                <span className="policies-card-summary">
+                  {override.summary}
+                </span>
+              ) : null}
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
