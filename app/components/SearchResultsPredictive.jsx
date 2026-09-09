@@ -125,7 +125,12 @@ function SearchResultsPredictiveArticles({
               <Link onClick={closeSearch} to={articleUrl}>
                 <span className="predictive-search-result-item-image">
                   {article.image?.url && (
-                    <Image alt={article.image.altText ?? ''} src={article.image.url} />
+                    <Image
+                      alt={article.image.altText ?? ''}
+                      src={article.image.url}
+                      loading="eager"
+                      sizes="50px"
+                    />
                   )}
                 </span>
                 <div>
@@ -172,7 +177,12 @@ function SearchResultsPredictiveCollections({
               <Link onClick={closeSearch} to={collectionUrl}>
                 <span className="predictive-search-result-item-image">
                   {collection.image?.url && (
-                    <Image alt={collection.image.altText ?? ''} src={collection.image.url} />
+                    <Image
+                      alt={collection.image.altText ?? ''}
+                      src={collection.image.url}
+                      loading="eager"
+                      sizes="50px"
+                    />
                   )}
                 </span>
                 <div>
@@ -263,10 +273,18 @@ function SearchResultsPredictiveProducts({
               <Link to={productUrl} onClick={closeSearch}>
                 <span className="predictive-search-result-item-image">
                   {image && (
-                    // No aspectRatio/width/height: this catalog's art isn't
-                    // square (see CLAUDE.md). The wrapper frames it square
-                    // via CSS so the CDN never gets a crop=center request.
-                    <Image alt={image.altText ?? ''} src={image.url} />
+                    // No aspectRatio/width/height prop: this catalog's art
+                    // isn't square (see CLAUDE.md), the wrapper frames it via
+                    // CSS. loading="eager" is deliberate: these render only
+                    // while the palette is open, and Chrome's lazy loader
+                    // never fires for images injected into the open overlay,
+                    // so lazy leaves every thumbnail permanently blank.
+                    <Image
+                      alt={image.altText ?? ''}
+                      src={image.url}
+                      loading="eager"
+                      sizes="50px"
+                    />
                   )}
                 </span>
                 <div>

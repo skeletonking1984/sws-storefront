@@ -347,7 +347,8 @@ function TopWidgetsThumbRow({products, onNavigate}) {
               <Image
                 data={product.featuredImage}
                 alt={product.featuredImage.altText || product.title}
-                sizes="120px"
+                loading="eager"
+                sizes="190px"
               />
             )}
           </span>
