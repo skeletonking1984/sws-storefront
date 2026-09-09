@@ -242,9 +242,27 @@ Shopify will not fetch an arbitrary mp4 by URL for mediaContentType VIDEO. The o
 
 Matching is deliberately conservative, because a wrong video on a product is worse than no video. The 16 hand verified rows in `etsy-shopify-map.json` seed the map. The rest are scored on normalised titles with IDF weighting, so shared filler like "Liquid Filling Goal Widget" cannot carry a match on its own. Anything that does not clear the bar is written to `data/etsy-video-candidates.json` for review instead of being guessed, and reviewed decisions live in `data/etsy-video-adjudication.json` so they survive a rerun. The full resolved map with a confidence per row is `data/etsy-video-map.json`.
 
-Data quirk worth remembering: **Shopify caps video uploads at 200 per hour per shop.** Staging more returns a per input `userErrors` entry rather than failing the whole mutation. Batch accordingly.
+Two Shopify limits govern this and both bite through `stagedUploadsCreate`, not through `productCreateMedia`:
+
+- **200 video uploads per hour per shop.**
+- **250 videos and 3D models total, a hard plan cap.** The shop holds 87 video files today, so there is room, but it is finite.
+
+The trap is that a staged upload **reserves a slot against both limits the moment it is created**, whether or not bytes are ever posted to it, and the reservation is only released when the target expires about 70 minutes later. Creating targets you do not use is therefore not free. Both limits report as per input entries in `userErrors` with a null `url` for the rejected elements, while the earlier elements succeed, so the mutation looks partially successful and must be checked element by element rather than by whether it threw.
+
+Practical rule: request exactly the targets you intend to upload, in batches well under 200, and never speculatively.
 
 Verified:
 - Re-queried the whole active catalog after the run: 65 of 130 products carry a VIDEO media item, every one `status: READY`, zero `fileErrors`.
 - Media was only ever added. Image counts per product are unchanged.
 - No Shopify product is referenced by two Etsy listings: 101 products referenced, 101 unique.
+
+#### Video sync stalled on a misread limit 2026-09-09
+The remaining 39 videos are blocked, and not by the hourly rate limit two agent runs assumed. `stagedUploadsCreate` fails with "Your plan does not permit more than 250 videos and 3D models", which is a hard cap, not a throttle, so waiting on a timer for the hourly window to clear does nothing.
+
+The shop is nowhere near 250 in real assets. `files(query: "media_type:VIDEO")` returns 87 videos, `media_type:MODEL_3D` returns 0, and no video is stuck processing. The gap is reservations: a staged upload target counts against the cap the moment it is created, even if no bytes are ever posted, and only releases when that target expires. The first bulk run created many more targets than it used and pinned the shop at the ceiling.
+
+So the cap does clear on its own, once the abandoned targets expire, and 87 real videos plus the outstanding 39 is 126, comfortably under 250. Nothing needs deleting and no plan upgrade is needed.
+
+To finish, once staging succeeds again, work the 39 rows from `node scripts/sync-etsy-videos.mjs pending` one at a time: create a single staged target immediately before posting its bytes, never a batch up front. Quirk recorded in CLAUDE.md.
+
+Current state: 65 of 130 active products have video (was 8). 39 matched and waiting, 83 Etsy listings with no confident Shopify match (left alone deliberately), 1 listing with no video on Etsy.

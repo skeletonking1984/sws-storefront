@@ -49,6 +49,20 @@
  * and never clobber a row already marked done. Nothing here deletes or replaces
  * Shopify media; the only Shopify write in the whole flow is an additive
  * productCreateMedia.
+ *
+ * Two Shopify limits constrain the staging step, and both are charged at
+ * stagedUploadsCreate time rather than at productCreateMedia time:
+ *
+ *   200 video uploads per hour per shop
+ *   250 videos and 3D models in total, a hard plan cap
+ *
+ * A staged target reserves a slot against both the moment it is created, even
+ * if no bytes are ever posted to it, and releases it only when the target
+ * expires roughly 70 minutes later. So never request targets speculatively.
+ * Both limits surface as per input entries in userErrors with a null url on the
+ * rejected elements while earlier elements succeed, which means the caller has
+ * to inspect the response element by element; a mutation that did not throw is
+ * not evidence that every target was created.
  */
 
 import fs from 'node:fs';
