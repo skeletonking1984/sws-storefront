@@ -15,6 +15,11 @@ import {ProductHighlights} from '~/components/ProductHighlights';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge} from '~/components/EtsyRating';
 import {EtsyReviews} from '~/components/EtsyReviews';
+import {
+  ProductRatingBadge,
+  ProductReviews,
+  getProductReviews,
+} from '~/components/ProductReviews';
 import {FaqAccordion} from '~/components/FaqAccordion';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {formatProductDescription} from '~/lib/productDescription';
@@ -215,6 +220,15 @@ export default function Product() {
     imageUrls.push(product.featuredImage.url);
   }
 
+  // Real per-product Etsy reviews (see ProductReviews.jsx). Only used for
+  // aggregateRating when there are at least 3, and the numbers here must
+  // match exactly what ProductReviews renders on the page.
+  const productReviews = getProductReviews(product.handle);
+  const showsProductReviews =
+    Boolean(productReviews) && productReviews.reviews.length > 0;
+  const hasEnoughReviewsForJsonLd =
+    showsProductReviews && productReviews.count >= 3;
+
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -236,6 +250,15 @@ export default function Product() {
               ? 'https://schema.org/InStock'
               : 'https://schema.org/OutOfStock',
             url: productUrl,
+          },
+        }
+      : {}),
+    ...(hasEnoughReviewsForJsonLd
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: productReviews.average,
+            reviewCount: productReviews.count,
           },
         }
       : {}),
@@ -274,7 +297,11 @@ export default function Product() {
         <ProductGallery media={media} />
         <div className="product-main sws-glass-card">
           <h1>{title}</h1>
-          <EtsyRatingBadge compact />
+          {showsProductReviews ? (
+            <ProductRatingBadge data={productReviews} />
+          ) : (
+            <EtsyRatingBadge compact />
+          )}
           <ProductPrice
             price={selectedVariant?.price}
             compareAtPrice={selectedVariant?.compareAtPrice}
@@ -308,7 +335,11 @@ export default function Product() {
           }
         </Await>
       </Suspense>
-      <EtsyReviews />
+      {showsProductReviews ? (
+        <ProductReviews data={productReviews} />
+      ) : (
+        <EtsyReviews />
+      )}
       <Suspense fallback={null}>
         <Await resolve={relatedProducts}>
           {(nodes) =>

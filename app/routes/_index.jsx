@@ -3,7 +3,8 @@ import {Suspense} from 'react';
 import {Image, Money} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge, SHOP_STATS} from '~/components/EtsyRating';
-import {SAMPLE_REVIEWS, SHOP_RATING} from '~/components/EtsyReviews';
+import {SHOP_RATING} from '~/components/EtsyReviews';
+import etsyReviews from '~/data/etsy-reviews.json';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {EmailCapture} from '~/components/EmailCapture';
 import {SOCIALS} from '~/components/SocialLinks';
@@ -462,6 +463,25 @@ function WorksWithStrip() {
   );
 }
 
+/**
+ * Real, verbatim Etsy reviews for the homepage trust strip, drawn from
+ * across all products rather than tied to any one listing. Picks the 3
+ * most recent 5 star reviews with at least 40 characters of text, so the
+ * homepage doesn't surface a one-word quote. Still real reviews, just
+ * selected for length.
+ */
+function pickHomeReviews() {
+  const allReviews = Object.values(etsyReviews.products).flatMap((product) =>
+    product.reviews.map((review) => ({...review, handle: product.handle})),
+  );
+  return allReviews
+    .filter((review) => review.rating === 5 && review.text.length >= 40)
+    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+    .slice(0, 3);
+}
+
+const HOME_REVIEWS = pickHomeReviews();
+
 function ReviewsSection() {
   const fullStars = Math.round(SHOP_RATING.average);
   return (
@@ -470,7 +490,7 @@ function ReviewsSection() {
         What streamers say
       </h2>
       <div className="home-reviews-grid">
-        {SAMPLE_REVIEWS.slice(0, 3).map((review, i) => (
+        {HOME_REVIEWS.map((review, i) => (
           <div className="chat-bubble-review" key={i}>
             <div className="chat-bubble-review-head">
               <span className="chat-bubble-review-name">Verified buyer</span>

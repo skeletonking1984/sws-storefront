@@ -2984,6 +2984,153 @@ button.reset:hover:not(:has(> *)) {
   margin: 0;
 }
 
+/*
+* --------------------------------------------------
+* components/ProductReviews — real per-product Etsy reviews
+* --------------------------------------------------
+*/
+.product-reviews {
+  border-top: 1px solid var(--sws-border);
+  margin: 2.5rem 0;
+  padding-top: 2rem;
+}
+
+.product-reviews h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.product-reviews-summary {
+  align-items: baseline;
+  color: var(--sws-text);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.product-reviews-summary:hover {
+  color: var(--sws-accent-2);
+}
+
+.product-reviews-summary-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.product-reviews-summary-label {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+}
+
+.product-reviews-distribution {
+  display: grid;
+  gap: 0.35rem;
+  margin: 1rem 0;
+  max-width: 320px;
+}
+
+.product-reviews-distribution-row {
+  align-items: center;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 2.2rem 1fr 1.5rem;
+}
+
+.product-reviews-distribution-label {
+  color: var(--sws-sub);
+  font-size: 0.8rem;
+}
+
+.product-reviews-distribution-bar {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 999px;
+  display: block;
+  height: 6px;
+  overflow: hidden;
+}
+
+.product-reviews-distribution-fill {
+  background: linear-gradient(90deg, var(--sws-accent-1), var(--sws-accent-3));
+  border-radius: 999px;
+  display: block;
+  height: 100%;
+}
+
+.product-reviews-distribution-count {
+  color: var(--sws-sub);
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+.product-reviews-note {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  margin: 0.5rem 0 1.25rem;
+}
+
+.product-reviews-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.product-review-card {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 12px;
+  margin: 0;
+  padding: 1rem;
+}
+
+.product-review-card p {
+  color: var(--sws-text);
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 0.5rem 0 0.75rem;
+  overflow-wrap: break-word;
+}
+
+.product-review-meta {
+  color: var(--sws-sub);
+  display: flex;
+  font-size: 0.78rem;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.product-reviews-expander {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 999px;
+  color: var(--sws-text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  padding: 0.5rem 1.1rem;
+}
+
+.product-reviews-expander:hover {
+  border-color: var(--sws-accent-1);
+  color: var(--sws-accent-2);
+}
+
+.product-reviews-link {
+  color: var(--sws-holo-1);
+  display: block;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  text-decoration: none;
+}
+
+.product-reviews-link:hover {
+  color: var(--sws-holo-3);
+}
+
 .product-price-on-sale,
 .product-price {
   align-items: center;

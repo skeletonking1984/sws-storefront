@@ -1,8 +1,6 @@
-export const SHOP_RATING = {
-  average: 4.75,
-  count: 981,
-  url: 'https://www.etsy.com/shop/StreamWidgetShop/reviews',
-};
+import {SHOP_RATING} from '~/components/EtsyRating';
+
+export {SHOP_RATING};
 
 /**
  * Recurring themes actually observed across real StreamWidgetShop reviews,
