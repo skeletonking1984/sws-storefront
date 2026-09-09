@@ -156,3 +156,26 @@ Needs Todd:
 - Soul Blade price still unconfirmed (Etsy live 15.99, notes said 29.99, Shopify matched to 15.99).
 
 Next: Google Search Console + sitemap submission and the Merchant Center feed, or the Widgets dropdown in the header, whichever Todd prefers. Default is Search Console.
+
+#### Navigation 2026-09-08 (evening)
+Todd asked for a cooler menu and search, a mega menu with category images, easier searching, better navigation.
+
+- **Collection art**: set real images on the 4 collections that had none or junk. Bundles got the Celestial Stream Kit hero, Overlays got Demon Samurai, Widgets got Neon Moon Glow, Top Widgets replaced a 200px favicon with the Neon Animated chat and goal art. Chat Widget and Goal Widget already had usable art. This also fixes the collections directory page.
+- **Mega menu** (`app/components/Header.jsx`, new `app/lib/nav.js`): Widgets panel with image tiles (Chat 35, Goal 93, Top 31, All 124, real counts), Shop by vibe chips, Works with platform links, and a top seller card with live price. Overlays and kits panel with the overlay packs, bundles, and the 3 kits plus Soul Blade. Opens on hover with an intent delay, on click, and on focus. Escape closes and returns focus to the trigger. Panel membership is a code map with a plain link fallback, so a menu edit in Shopify Admin cannot blank the nav. Mobile aside is now an accordion with the same tiles and search pinned at the top.
+- **Search command palette** (`app/components/PageLayout.jsx`, `SearchResultsPredictive.jsx`): replaces the raw Hydrogen skeleton (literal `<br />`, `&nbsp;`, a "Loading..." string). Opens on the search icon, `/`, and Cmd+K or Ctrl+K. Empty state carries popular search chips and a 6 tile Top widgets grid so it is useful before typing. Typing gives predictive results with thumbnails, 2 line clamped titles, and prices, with arrow key navigation and a shimmer loading state. `VIBES` and `WORKS_WITH_PLATFORMS` now live in `app/lib/nav.js` and are imported by both the homepage and the nav, no duplicate copies.
+
+Six bugs were found by driving the real UI in a browser and fixed. The first build agent had no browser tools and correctly reported it could not verify rendering rather than claiming it had; the markup was right and only the rendered result was wrong.
+1. Mega menu third column computed 939px wide with its right edge at 1567px against a 1425px viewport. Grid children had no `min-width: 0` and the top seller title was unclamped. Now 3 even 408px columns, zero overflowing elements at 1280, 1440, and 1920.
+2. Palette inner elements were pinned to 400px inside a 640px shell. Cause was not `--aside-width` but a generic `form { max-width: 400px }` in `reset.css` catching the palette's form. Body now 638px, matching the palette.
+3. Top widgets thumb row had scrollWidth 2046 vs clientWidth 345, with images rendering at 758x758. Now 6 even 185px tiles, no scrollbar.
+4. Every predictive result thumbnail and 5 of 6 palette tiles never loaded at all (`naturalWidth 0`, `complete false` after 5s). Cause: `loading="lazy"`, which Chrome never fires for images injected into an already open overlay. Confirmed by forcing `eager` on one stuck image and watching it load instantly. All 11 images now load.
+5. Result titles ran 3 to 4 lines. Clamped to 2, so 5 results fit instead of 4.
+6. Thumb row requested a 120px source for a 183px slot and looked soft. `sizes` corrected to 190px, natural width now 190.
+
+Not a bug, checked: the Top widgets row's repeating tile widths were a normal CSS grid artifact of 2 rows sharing 3 column tracks, not duplicate products. All 6 are distinct.
+
+Verified in browser at 1440x900 and 375x812: panels open and close, Escape returns focus, Cmd+K opens, "neon" returns 5 real products with art and prices, mobile accordion opens with 56px tiles, `document.scrollWidth == clientWidth` on mobile, no new console errors (the remaining ones are a pre-existing homepage hero `fetchPriority` warning and an Analytics consent env var notice). `npm run build` exits 0.
+
+Preview deploy: https://01m2230qerb2vwasnzeh18na3x-fb73b5b73c40344d0d20.myshopify.dev
+
+Commits: `7cf8ace` mega menu and palette, `67c6321` sizing overflow fixes, `f532675` eager thumbnail loading.
