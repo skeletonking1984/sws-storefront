@@ -3,6 +3,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {FaqAccordion} from '~/components/FaqAccordion';
 import {HowItWorksSteps} from '~/components/HowItWorksSteps';
 import {ContactPage} from '~/components/ContactPage';
+import {buildMeta, getOrigin} from '~/lib/seo';
 
 const CUSTOM_LAYOUTS = {
   'faq-frequently-asked-questions': (page) => <FaqAccordion html={page.body} />,
@@ -13,8 +14,16 @@ const CUSTOM_LAYOUTS = {
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = ({data}) => {
-  return [{title: `${data?.page.title ?? ''} | Stream Widget Shop`}];
+export const meta = ({data, matches, location}) => {
+  const origin = getOrigin(matches);
+  const title = data?.page.title ?? '';
+  return buildMeta({
+    title: `${title} | Stream Widget Shop`,
+    description:
+      data?.page.seo?.description ||
+      `${title}: Stream Widget Shop, animated chat and goal widgets for Twitch, YouTube, and multistream.`,
+    url: `${origin}${location.pathname}`,
+  });
 };
 
 /**

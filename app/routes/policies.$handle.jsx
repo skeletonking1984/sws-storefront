@@ -1,10 +1,17 @@
 import {Link, useLoaderData} from 'react-router';
+import {buildMeta, getOrigin} from '~/lib/seo';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = ({data}) => {
-  return [{title: `${data?.policy.title ?? ''} | Stream Widget Shop`}];
+export const meta = ({data, matches, location}) => {
+  const origin = getOrigin(matches);
+  const title = data?.policy.title ?? '';
+  return buildMeta({
+    title: `${title} | Stream Widget Shop`,
+    description: `${title} for Stream Widget Shop.`,
+    url: `${origin}${location.pathname}`,
+  });
 };
 
 /**

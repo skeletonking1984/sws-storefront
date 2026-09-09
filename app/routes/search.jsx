@@ -3,12 +3,19 @@ import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {SearchForm} from '~/components/SearchForm';
 import {SearchResults} from '~/components/SearchResults';
 import {getEmptyPredictiveSearchResult} from '~/lib/search';
+import {buildMeta, getOrigin} from '~/lib/seo';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = () => {
-  return [{title: 'Search | Stream Widget Shop'}];
+export const meta = ({matches, location}) => {
+  const origin = getOrigin(matches);
+  return buildMeta({
+    title: 'Search | Stream Widget Shop',
+    description: 'Search Stream Widget Shop for chat and goal widgets.',
+    url: `${origin}${location.pathname}`,
+    noIndex: true,
+  });
 };
 
 /**

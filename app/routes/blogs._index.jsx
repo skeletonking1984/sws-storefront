@@ -1,19 +1,19 @@
 import {Link, useLoaderData} from 'react-router';
 import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {buildMeta, getOrigin} from '~/lib/seo';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = () => {
-  return [
-    {title: 'Blog | Stream Widget Shop'},
-    {
-      name: 'description',
-      content:
-        'Guides on animated Twitch chat widgets, goal widgets, OBS setup, and stream overlay design.',
-    },
-  ];
+export const meta = ({matches, location}) => {
+  const origin = getOrigin(matches);
+  return buildMeta({
+    title: 'Blog | Stream Widget Shop',
+    description:
+      'Guides on animated Twitch chat widgets, goal widgets, OBS setup, and stream overlay design.',
+    url: `${origin}${location.pathname}`,
+  });
 };
 
 /**

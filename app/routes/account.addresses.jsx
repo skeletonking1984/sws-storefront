@@ -15,7 +15,7 @@ import {
  * @type {Route.MetaFunction}
  */
 export const meta = () => {
-  return [{title: 'Addresses'}];
+  return [{title: 'Addresses'}, {name: 'robots', content: 'noindex'}];
 };
 
 /**

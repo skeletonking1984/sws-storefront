@@ -1,12 +1,24 @@
 import {useLoaderData} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {buildMeta, getOrigin} from '~/lib/seo';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = ({data}) => {
-  return [{title: `${data?.article.title ?? ''} | Stream Widget Shop Blog`}];
+export const meta = ({data, matches, location}) => {
+  const origin = getOrigin(matches);
+  const article = data?.article;
+  const title = article?.title ?? '';
+  return buildMeta({
+    title: `${title} | Stream Widget Shop Blog`,
+    description:
+      article?.seo?.description ||
+      `${title}: a Stream Widget Shop blog post on stream setup and widgets.`,
+    url: `${origin}${location.pathname}`,
+    image: article?.image?.url,
+    type: 'article',
+  });
 };
 
 /**

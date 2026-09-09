@@ -1,12 +1,19 @@
 import {useLoaderData, data} from 'react-router';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
+import {buildMeta, getOrigin} from '~/lib/seo';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = () => {
-  return [{title: 'Your Cart | Stream Widget Shop'}];
+export const meta = ({matches, location}) => {
+  const origin = getOrigin(matches);
+  return buildMeta({
+    title: 'Your Cart | Stream Widget Shop',
+    description: 'Your Stream Widget Shop cart.',
+    url: `${origin}${location.pathname}`,
+    noIndex: true,
+  });
 };
 
 /**

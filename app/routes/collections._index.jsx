@@ -1,6 +1,20 @@
 import {useLoaderData, Link} from 'react-router';
 import {getPaginationVariables, Image} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {buildMeta, getOrigin} from '~/lib/seo';
+
+/**
+ * @type {Route.MetaFunction}
+ */
+export const meta = ({matches, location}) => {
+  const origin = getOrigin(matches);
+  return buildMeta({
+    title: 'Collections | Stream Widget Shop',
+    description:
+      'Browse Stream Widget Shop collections: chat widgets, goal widgets, overlay packs, and stream kits for Twitch, YouTube, and multistream.',
+    url: `${origin}${location.pathname}`,
+  });
+};
 
 /**
  * @param {Route.LoaderArgs} args

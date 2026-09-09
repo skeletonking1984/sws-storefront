@@ -5,21 +5,21 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
 import {CollectionFilterBar} from '~/components/CollectionFilterBar';
+import {buildMeta, getOrigin} from '~/lib/seo';
 import logo from '~/assets/logo.png';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = ({data}) => {
-  return [
-    {title: `${data?.collection.title ?? ''} | Stream Widget Shop`},
-    {
-      name: 'description',
-      content:
-        data?.collection.description ||
-        `Animated ${data?.collection.title ?? ''} widgets for Twitch, YouTube, and multistream. Instant digital download.`,
-    },
-  ];
+export const meta = ({data, matches, location}) => {
+  const origin = getOrigin(matches);
+  return buildMeta({
+    title: `${data?.collection.title ?? ''} | Stream Widget Shop`,
+    description:
+      data?.collection.description ||
+      `Animated ${data?.collection.title ?? ''} widgets for Twitch, YouTube, and multistream. Instant digital download.`,
+    url: `${origin}${location.pathname}`,
+  });
 };
 
 /**

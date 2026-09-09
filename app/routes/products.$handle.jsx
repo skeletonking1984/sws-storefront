@@ -1,4 +1,4 @@
-import {Await, Link, useLoaderData} from 'react-router';
+import {Await, Link, useLoaderData, useRouteLoaderData} from 'react-router';
 import {Suspense} from 'react';
 import {
   getSelectedProductOptions,
@@ -18,26 +18,42 @@ import {EtsyReviews} from '~/components/EtsyReviews';
 import {FaqAccordion} from '~/components/FaqAccordion';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {formatProductDescription} from '~/lib/productDescription';
+import {buildMeta, getOrigin} from '~/lib/seo';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = ({data}) => {
+export const meta = ({data, matches, location}) => {
   const title = data?.product.title ?? '';
-  return [
-    {title: `${title} | Stream Widget Shop`},
-    {
-      name: 'description',
-      content:
-        data?.product.seo?.description ||
-        `${title}: animated stream widget, instant digital download for Twitch, YouTube, and multistream.`,
-    },
-    {
-      rel: 'canonical',
-      href: `/products/${data?.product.handle}`,
-    },
-  ];
+  const origin = getOrigin(matches);
+  const featuredImageUrl = data?.product.featuredImage?.url;
+  return buildMeta({
+    title: `${title} | Stream Widget Shop`,
+    description:
+      data?.product.seo?.description ||
+      `${title}: animated stream widget, instant digital download for Twitch, YouTube, and multistream.`,
+    url: `${origin}${location.pathname}`,
+    image: featuredImageUrl ? withWidthParam(featuredImageUrl, 1200) : undefined,
+  });
 };
+
+/**
+ * Appends a Shopify CDN `width` sizing param to an image URL without
+ * clobbering an existing query string (the real catalog's featured image
+ * URLs already carry a `?v=...` cache-busting param). Never adds `crop=`,
+ * per this codebase's cropping quirk (see CLAUDE.md).
+ * @param {string} url
+ * @param {number} width
+ */
+function withWidthParam(url, width) {
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.set('width', String(width));
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
 
 /**
  * Some titles in this catalog mention both words (e.g. "Sakura Floral Chat
@@ -151,9 +167,21 @@ function loadDeferredData({context, params}, product) {
   return {relatedProducts, faq};
 }
 
+/** Strips tags from an HTML string and collapses whitespace, for JSON-LD text fields. */
+function stripHtml(html) {
+  if (!html) return '';
+  return html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export default function Product() {
   /** @type {LoaderReturnData} */
   const {product, relatedProducts, faq} = useLoaderData();
+  const rootData = useRouteLoaderData('root');
+  const origin = rootData?.origin || 'https://streamwidgetshop.com';
 
   // Optimistically selects a variant with given available variant information
   const selectedVariant = useOptimisticVariant(
@@ -179,8 +207,69 @@ export default function Product() {
     ? kindLabel.charAt(0).toUpperCase() + kindLabel.slice(1)
     : null;
 
+  const productUrl = `${origin}/products/${product.handle}`;
+  const imageUrls = media
+    .map((item) => item.image?.url)
+    .filter(Boolean);
+  if (!imageUrls.length && product.featuredImage?.url) {
+    imageUrls.push(product.featuredImage.url);
+  }
+
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: title,
+    description: stripHtml(description || descriptionHtml),
+    image: imageUrls,
+    ...(selectedVariant?.sku ? {sku: selectedVariant.sku} : {}),
+    brand: {
+      '@type': 'Brand',
+      name: 'Stream Widget Shop',
+    },
+    ...(selectedVariant?.price
+      ? {
+          offers: {
+            '@type': 'Offer',
+            price: selectedVariant.price.amount,
+            priceCurrency: selectedVariant.price.currencyCode,
+            availability: selectedVariant.availableForSale
+              ? 'https://schema.org/InStock'
+              : 'https://schema.org/OutOfStock',
+            url: productUrl,
+          },
+        }
+      : {}),
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {'@type': 'ListItem', position: 1, name: 'Home', item: origin},
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'All Widgets',
+        item: `${origin}/collections/all`,
+      },
+      {'@type': 'ListItem', position: 3, name: title, item: productUrl},
+    ],
+  };
+
   return (
     <div className="product">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productJsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
       <div className="product-top">
         <ProductGallery media={media} />
         <div className="product-main sws-glass-card">
@@ -302,6 +391,11 @@ const PRODUCT_FRAGMENT = `#graphql
     description
     encodedVariantExistence
     encodedVariantAvailability
+    featuredImage {
+      id
+      url
+      altText
+    }
     media(first: 10) {
       nodes {
         __typename

@@ -1,4 +1,4 @@
-import {Await, useLoaderData, Link} from 'react-router';
+import {Await, useLoaderData, useRouteLoaderData, Link} from 'react-router';
 import {Suspense} from 'react';
 import {Image, Money} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
@@ -6,25 +6,23 @@ import {EtsyRatingBadge, SHOP_STATS} from '~/components/EtsyRating';
 import {SAMPLE_REVIEWS, SHOP_RATING} from '~/components/EtsyReviews';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {EmailCapture} from '~/components/EmailCapture';
+import {SOCIALS} from '~/components/SocialLinks';
 import {useVariantUrl} from '~/lib/variants';
+import {buildMeta, getOrigin} from '~/lib/seo';
 import logo from '~/assets/logo.png';
 import heroWidgets from '~/assets/hero-widgets.webp';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = () => {
-  return [
-    {
-      title:
-        'Stream Widget Shop | Animated Twitch Chat + Goal Widgets',
-    },
-    {
-      name: 'description',
-      content:
-        'Chunky, holographic, animated chat and goal widgets for Twitch, YouTube, Kick, and multistream. Instant download, drop into OBS in minutes.',
-    },
-  ];
+export const meta = ({matches, location}) => {
+  const origin = getOrigin(matches);
+  return buildMeta({
+    title: 'Stream Widget Shop | Animated Twitch Chat + Goal Widgets',
+    description:
+      'Chunky, holographic, animated chat and goal widgets for Twitch, YouTube, Kick, and multistream. Instant download, drop into OBS in minutes.',
+    url: `${origin}${location.pathname}`,
+  });
 };
 
 /**
@@ -172,8 +170,28 @@ const WORKS_WITH_PLATFORMS = [
 export default function Homepage() {
   /** @type {LoaderReturnData} */
   const data = useLoaderData();
+  const rootData = useRouteLoaderData('root');
+  const origin = rootData?.origin || 'https://streamwidgetshop.com';
+
+  // Organization JSON-LD, homepage only. Real social links (single source:
+  // SocialLinks.jsx), no fake reviews or data.
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Stream Widget Shop',
+    url: origin,
+    logo: `${origin}${logo}`,
+    sameAs: SOCIALS.map((social) => social.href),
+  };
+
   return (
     <div className="home">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationJsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
       <Hero />
       <ShopByVibe />
       <KitsAndOverlayPacks kits={data.kitsAndOverlayPacks} />

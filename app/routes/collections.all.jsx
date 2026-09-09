@@ -3,20 +3,20 @@ import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
 import {TAG_TYPES, CATEGORY_LINKS} from '~/components/CollectionFilterBar';
+import {buildMeta, getOrigin} from '~/lib/seo';
 import logo from '~/assets/logo.png';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = () => {
-  return [
-    {title: 'All Widgets | Stream Widget Shop'},
-    {
-      name: 'description',
-      content:
-        'Browse every animated chat and goal widget: Twitch, YouTube, Kick, and multistream. Instant digital download.',
-    },
-  ];
+export const meta = ({matches, location}) => {
+  const origin = getOrigin(matches);
+  return buildMeta({
+    title: 'All Widgets | Stream Widget Shop',
+    description:
+      'Browse every animated chat and goal widget: Twitch, YouTube, Kick, and multistream. Instant digital download.',
+    url: `${origin}${location.pathname}`,
+  });
 };
 
 /**

@@ -6,7 +6,10 @@ import {CUSTOMER_ORDER_QUERY} from '~/graphql/customer-account/CustomerOrderQuer
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
-  return [{title: `Order ${data?.order?.name}`}];
+  return [
+    {title: `Order ${data?.order?.name}`},
+    {name: 'robots', content: 'noindex'},
+  ];
 };
 
 /**

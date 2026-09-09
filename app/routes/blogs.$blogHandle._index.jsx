@@ -4,12 +4,21 @@ import {Image, getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {BLOG_CATEGORIES, categorizeArticle} from '~/lib/blogCategories';
+import {buildMeta, getOrigin} from '~/lib/seo';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = ({data}) => {
-  return [{title: `${data?.blog.title ?? ''} | Stream Widget Shop Blog`}];
+export const meta = ({data, matches, location}) => {
+  const origin = getOrigin(matches);
+  const title = data?.blog.title ?? '';
+  return buildMeta({
+    title: `${title} | Stream Widget Shop Blog`,
+    description:
+      data?.blog.seo?.description ||
+      `Setup guides, product spotlights, and stream trends from the ${title} blog.`,
+    url: `${origin}${location.pathname}`,
+  });
 };
 
 /**

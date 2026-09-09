@@ -84,9 +84,20 @@ export async function loader(args) {
 
   const {storefront, env} = args.context;
 
+  // Canonical origin for SEO tags (canonical link, og:url, twitter). Uses
+  // the production domain whenever the request actually came in on it, and
+  // falls back to the real request origin otherwise (localhost, an Oxygen
+  // preview host, etc). Never hardcode the myshopify.dev preview host here.
+  const requestUrl = new URL(args.request.url);
+  const origin =
+    requestUrl.hostname === 'streamwidgetshop.com'
+      ? 'https://streamwidgetshop.com'
+      : requestUrl.origin;
+
   return {
     ...deferredData,
     ...criticalData,
+    origin,
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
       storefront,
