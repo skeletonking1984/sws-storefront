@@ -266,3 +266,5 @@ So the cap does clear on its own, once the abandoned targets expire, and 87 real
 To finish, once staging succeeds again, work the 39 rows from `node scripts/sync-etsy-videos.mjs pending` one at a time: create a single staged target immediately before posting its bytes, never a batch up front. Quirk recorded in CLAUDE.md.
 
 Current state: 65 of 130 active products have video (was 8). 39 matched and waiting, 83 Etsy listings with no confident Shopify match (left alone deliberately), 1 listing with no video on Etsy.
+
+Follow up on the cap, measured rather than assumed: archived and draft products hold ZERO videos (all their media is images), so nothing is reclaimable there. Of the 87 real video files, 65 are attached to active products and about 22 are unattached in the Files library. 3D models: 0. That accounts for 87 of the 250 slots, so roughly 163 are held by something that is not a visible file, which points at unconsumed staged upload reservations. Retries at 17:38Z and again after 17:58Z both still returned the cap error, so they had not aged out yet. Nothing to delete, nothing to upgrade, just not ready yet.
