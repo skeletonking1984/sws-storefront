@@ -179,3 +179,19 @@ Verified in browser at 1440x900 and 375x812: panels open and close, Escape retur
 Preview deploy: https://01m2230qerb2vwasnzeh18na3x-fb73b5b73c40344d0d20.myshopify.dev
 
 Commits: `7cf8ace` mega menu and palette, `67c6321` sizing overflow fixes, `f532675` eager thumbnail loading.
+
+#### Collection filter fix 2026-09-09
+Todd reported the "Chat widgets" chip on `/collections/widgets?type=Chat_widget` was still listing goal widgets.
+
+Root cause: the chips passed `?type=<tag>` into the Storefront API as `products(filters: [{tag}])`. **The Storefront API only honours filters configured in Shopify's Search & Discovery settings, and this shop has only Availability and Price configured**, so the tag filter was silently dropped and every chip returned the unfiltered collection. Confirmed by querying `collection.products.filters` directly, which returns exactly those two filters and nothing else. The chips had never filtered anything. Not a regression from the mega menu work.
+
+Fix: the chips are now plain links to the smart collections already curated on `product_type`, the same handles the mega menu uses. Chat Widget is `frontpage`, Goal Widget is `stream-widgets-templates` (counterintuitive but real). Removed the dead `filters` plumbing from `collections.$handle.jsx` and its query. `/collections/all` keeps its `?type=` support, which genuinely works there because that route filters through a search query string, not the `filters` argument.
+
+Second bug found while verifying: the product card badge tested the title for "goal" before "chat", so every combo listing (there are many named "Chat and Goal Widget") was badged Goal even sitting inside the Chat Widget collection. CLAUDE.md flags exactly this trap. The badge now prefers `productType` and only falls back to the title, chat first, when a product has no type set. Added `productType` to the three product fragments feeding the card.
+
+Verified: `/collections/frontpage` renders 24 cards with 23 Chat badges and 0 Goal, `/collections/stream-widgets-templates` renders all Goal, chips route correctly with the right active state on both. `npm run build` exits 0. The 2 remaining eslint errors are pre-existing (`context` unused in both collection routes, confirmed by linting the stashed tree).
+
+Preview deploy: https://01m229k1p8jnsbjj6nv8vazs97-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `92d8d20`.
+
+Worth knowing for later: if per-collection faceted filtering is ever wanted (filter within a collection rather than routing between collections), someone has to add those filters in Shopify's Search & Discovery app first. No amount of storefront code makes `filters:` work until that is configured.
