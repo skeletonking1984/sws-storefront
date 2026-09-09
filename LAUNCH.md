@@ -311,3 +311,15 @@ Next: finish the 39 pending videos if the staged upload cap has cleared, otherwi
 
 Preview deploy: https://01m23p68ccxc8zqghk3m120sjc-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `d0bad39`.
+
+#### Digital files staged for Todd 2026-09-09
+Todd asked for the delivery blocker as clickable steps, so the files were tracked down and staged instead of just re-listed.
+
+`~/Desktop/SWS-Shopify-Uploads/` now holds 17 of the 19 needed files in 11 numbered folders, one per product, plus a READ ME FIRST.txt with the Admin path and the per-product upload order. Every file was byte-checked against `etsy_list_listing_files`, which is the authoritative answer to what each live Etsy listing actually delivers, so nothing staged is a stale or wrong-sized copy.
+
+Sources were scattered: `content/catalog/<listing_id>/files/` held most of the widget code, several setup PDFs are shared across listings and were pulled from another listing's catalog folder after a byte match, and 3 files only existed in `~/Downloads`. The bundle zips were already built under `products/bundles/*/upload/`.
+
+Two files exist nowhere on the machine and have to come off Etsy Shop Manager: `NeonChatandGoalCodefile.zip` (34472 bytes, Saber Neon, listing 4473894910) and `SakuraGlassyChatWidget.zip` (21578 bytes, Sakura Glassy, listing 4369470796).
+
+Corrected a stale note while verifying: the 2026-09-07 entry lists a third `Celestial-Stream-Kit-Guides.zip` for the Celestial bundle. No such file was ever built and none is needed, the Shared Guides PDFs are already inside `Celestial-Stream-Kit.zip` (confirmed by listing the archive). Celestial ships 2 files, not 3.
+
