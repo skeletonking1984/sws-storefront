@@ -2,7 +2,7 @@ import {Form, Link, useLoaderData, useSearchParams} from 'react-router';
 import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
-import {TAG_TYPES, CATEGORY_LINKS} from '~/components/CollectionFilterBar';
+import {CATEGORY_LINKS} from '~/components/CollectionFilterBar';
 import {buildMeta, getOrigin} from '~/lib/seo';
 import logo from '~/assets/logo.png';
 
@@ -93,20 +93,16 @@ export default function Collection() {
       <h1>Products</h1>
       <div className="collection-filter-bar">
         <div className="collection-filter-types">
-          {TAG_TYPES.map(({label, tag}) => (
-            <Link
-              key={label}
-              to={typeHref(tag)}
-              className={`collection-filter-type${
-                activeType === tag ? ' active' : ''
-              }`}
-            >
-              {label}
-            </Link>
-          ))}
+          <Link
+            to={typeHref('')}
+            className={`collection-filter-type${activeType ? '' : ' active'}`}
+            aria-current={activeType ? undefined : 'page'}
+          >
+            All products
+          </Link>
           {CATEGORY_LINKS.map(({label, handle}) => (
             <Link
-              key={label}
+              key={handle}
               to={`/collections/${handle}`}
               className="collection-filter-type"
             >
@@ -161,6 +157,7 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
     id
     handle
     title
+    productType
     featuredImage {
       id
       altText

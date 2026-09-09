@@ -1,78 +1,57 @@
-import {Link, useLocation, useSearchParams} from 'react-router';
-
-/** Tag-based filters, applied via `?type=` on whichever collection page. */
-export const TAG_TYPES = [
-  {label: 'All', tag: ''},
-  {label: 'Chat widgets', tag: 'Chat_widget'},
-  {label: 'Goal widgets', tag: 'Goal_Widget'},
-];
+import {Link} from 'react-router';
 
 /**
- * Plain links into the category collections, replacing the old "VTuber
- * assets" tag chip (that tag matched 113 of 127 active products, so it
- * filtered nothing). These aren't tag filters, they just route to a
- * different collection page.
+ * Category chips. These are plain links into the real collections, not
+ * query-param filters.
+ *
+ * They used to be `?type=<tag>` filters passed to the Storefront API as
+ * `products(filters: [{tag}])`, which silently returned unfiltered results:
+ * the Storefront API only honours filters that are configured in Shopify's
+ * Search & Discovery settings, and this shop only has Availability and Price
+ * configured. Querying `collection.products.filters` returns exactly those
+ * two and nothing else, so a tag filter was always a no-op and "Chat widgets"
+ * happily listed goal widgets.
+ *
+ * The smart collections below are already curated on `product_type` (the
+ * field the category pass set on every active product), so routing to them
+ * is both correct and consistent with the mega menu, which links to the same
+ * handles. Note the two counterintuitive handles, they are real: Chat Widget
+ * is `frontpage` and Goal Widget is `stream-widgets-templates`.
  */
 export const CATEGORY_LINKS = [
-  {label: 'Widgets', handle: 'widgets'},
+  {label: 'All widgets', handle: 'widgets'},
+  {label: 'Chat widgets', handle: 'frontpage'},
+  {label: 'Goal widgets', handle: 'stream-widgets-templates'},
   {label: 'Overlays', handle: 'overlays'},
   {label: 'Kits', handle: 'bundles'},
 ];
 
 /**
- * Search + widget-type filter bar shown above a collection's product grid.
- * Type filter is server-side (accurate across the whole collection); search
- * is client-side over the currently loaded page. The category links route
- * to `/collections/widgets`, `/collections/overlays`, `/collections/bundles`
- * outright rather than filtering the current collection.
+ * Search + category bar shown above a collection's product grid. Search is
+ * client-side over the currently loaded page; the category chips route to a
+ * different collection outright.
  * @param {{
- *   activeType: string;
  *   searchTerm: string;
  *   onSearchChange: (value: string) => void;
  *   collectionHandle?: string;
  * }}
  */
 export function CollectionFilterBar({
-  activeType,
   searchTerm,
   onSearchChange,
   collectionHandle,
 }) {
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
-
-  const typeHref = (tag) => {
-    const params = new URLSearchParams(searchParams);
-    if (tag) {
-      params.set('type', tag);
-    } else {
-      params.delete('type');
-    }
-    const query = params.toString();
-    return query ? `${location.pathname}?${query}` : location.pathname;
-  };
-
   return (
     <div className="collection-filter-bar">
       <div className="collection-filter-types">
-        {TAG_TYPES.map(({label, tag}) => (
-          <Link
-            key={label}
-            to={typeHref(tag)}
-            className={`collection-filter-type${
-              activeType === tag ? ' active' : ''
-            }`}
-          >
-            {label}
-          </Link>
-        ))}
         {CATEGORY_LINKS.map(({label, handle}) => (
           <Link
-            key={label}
+            key={handle}
             to={`/collections/${handle}`}
             className={`collection-filter-type${
               collectionHandle === handle ? ' active' : ''
             }`}
+            aria-current={collectionHandle === handle ? 'page' : undefined}
           >
             {label}
           </Link>

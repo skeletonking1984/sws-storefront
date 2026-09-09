@@ -46,17 +46,13 @@ async function loadCriticalData({context, params, request}) {
   const paginationVariables = getPaginationVariables(request, {
     pageBy: 24,
   });
-  const url = new URL(request.url);
-  const activeType = url.searchParams.get('type') || '';
-  const filters = activeType ? [{tag: activeType}] : [];
-
   if (!handle) {
     throw redirect('/collections');
   }
 
   const [{collection}] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
-      variables: {handle, filters, ...paginationVariables},
+      variables: {handle, ...paginationVariables},
       // Add other queries here, so that they are loaded in parallel
     }),
   ]);
@@ -72,7 +68,6 @@ async function loadCriticalData({context, params, request}) {
 
   return {
     collection,
-    activeType,
   };
 }
 
@@ -88,7 +83,7 @@ function loadDeferredData({context}) {
 
 export default function Collection() {
   /** @type {LoaderReturnData} */
-  const {collection, activeType} = useLoaderData();
+  const {collection} = useLoaderData();
   const [searchTerm, setSearchTerm] = useState('');
 
   const matchesSearch = (product) =>
@@ -101,7 +96,6 @@ export default function Collection() {
       <h1>{collection.title}</h1>
       <p className="collection-description">{collection.description}</p>
       <CollectionFilterBar
-        activeType={activeType}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         collectionHandle={collection.handle}
@@ -150,6 +144,7 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
     id
     handle
     title
+    productType
     featuredImage {
       id
       altText
@@ -177,7 +172,6 @@ const COLLECTION_QUERY = `#graphql
     $last: Int
     $startCursor: String
     $endCursor: String
-    $filters: [ProductFilter!]
   ) @inContext(country: $country, language: $language) {
     collection(handle: $handle) {
       id
@@ -188,8 +182,7 @@ const COLLECTION_QUERY = `#graphql
         first: $first,
         last: $last,
         before: $startCursor,
-        after: $endCursor,
-        filters: $filters
+        after: $endCursor
       ) {
         nodes {
           ...ProductItem

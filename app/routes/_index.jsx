@@ -518,6 +518,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   fragment RecommendedProduct on Product {
     id
     title
+    productType
     handle
     priceRange {
       minVariantPrice {
