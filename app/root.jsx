@@ -10,6 +10,8 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import favicon from '~/assets/favicon.svg';
+import faviconPng from '~/assets/favicon.png';
+import appleTouchIcon from '~/assets/apple-touch-icon.png';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
@@ -69,6 +71,8 @@ export function links() {
       href: 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;700;800&display=swap',
     },
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    {rel: 'icon', type: 'image/png', sizes: '32x32', href: faviconPng},
+    {rel: 'apple-touch-icon', sizes: '180x180', href: appleTouchIcon},
   ];
 }
 

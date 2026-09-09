@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SWS social share card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  * { box-sizing: border-box; }
+
+  /* Same space ground the homepage hero is built on, retuned for a 1.91:1 card. */
+  #canvas {
+    width: 1200px;
+    height: 630px;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(820px 460px at 82% 20%, rgba(242, 166, 216, 0.18), transparent 62%),
+      radial-gradient(680px 520px at 8% 86%, rgba(127, 230, 255, 0.15), transparent 62%),
+      linear-gradient(165deg, #0b0713 0%, #140b23 55%, #180f28 100%);
+  }
+
+  .stars {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1.6px 1.6px at 6% 12%, #fff, transparent 100%),
+      radial-gradient(1.4px 1.4px at 15% 68%, #fff, transparent 100%),
+      radial-gradient(2px 2px at 24% 30%, #f2e9ff, transparent 100%),
+      radial-gradient(1.3px 1.3px at 33% 85%, #fff, transparent 100%),
+      radial-gradient(1.8px 1.8px at 44% 8%, #fff, transparent 100%),
+      radial-gradient(1.4px 1.4px at 58% 92%, #fff, transparent 100%),
+      radial-gradient(2px 2px at 68% 22%, #f2e9ff, transparent 100%),
+      radial-gradient(1.3px 1.3px at 80% 6%, #fff, transparent 100%),
+      radial-gradient(1.6px 1.6px at 88% 78%, #fff, transparent 100%),
+      radial-gradient(1.4px 1.4px at 93% 40%, #fff, transparent 100%),
+      radial-gradient(1.3px 1.3px at 4% 45%, #fff, transparent 100%),
+      radial-gradient(1.5px 1.5px at 52% 55%, #fff, transparent 100%),
+      radial-gradient(1.7px 1.7px at 38% 46%, #fff, transparent 100%);
+    opacity: 0.55;
+  }
+
+  .copy {
+    position: absolute;
+    left: 58px;
+    top: 96px;
+    width: 540px;
+  }
+  .copy img.wordmark {
+    display: block;
+    width: 420px;
+    height: auto;
+    filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.55));
+  }
+  .headline {
+    margin: 34px 0 0;
+    font-family: 'Baloo 2', 'Trebuchet MS', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 50px;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    color: #fdf7ff;
+    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.5);
+  }
+  .sub {
+    margin: 20px 0 0;
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 1.35;
+    color: #cbb6e8;
+  }
+  .platforms {
+    margin: 26px 0 0;
+    display: flex;
+    gap: 10px;
+  }
+  .platforms span {
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    color: #f3e9ff;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(183, 157, 242, 0.42);
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .widget { position: absolute; }
+  .widget img { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+  #neon {
+    left: 578px;
+    top: 16px;
+    width: 398px;
+    height: 594px;
+    filter:
+      drop-shadow(0 0 30px rgba(240, 80, 154, 0.45))
+      drop-shadow(0 0 64px rgba(127, 230, 255, 0.2));
+  }
+  #jar {
+    left: 878px;
+    top: 196px;
+    width: 292px;
+    height: 370px;
+    filter:
+      drop-shadow(0 0 40px rgba(153, 153, 255, 0.5))
+      drop-shadow(0 0 80px rgba(242, 166, 216, 0.26));
+  }
+</style>
+</head>
+<body>
+  <div id="canvas">
+    <div class="stars"></div>
+    <div class="widget" id="neon"><img src="neon-chat-goal-v.png" alt=""></div>
+    <div class="widget" id="jar"><img src="jar-goal.png" alt=""></div>
+    <div class="copy">
+      <img class="wordmark" src="logo.png" alt="Stream Widget Shop">
+      <p class="headline">Animated chat and goal widgets</p>
+      <p class="sub">Instant download. Drop into OBS in minutes.</p>
+      <div class="platforms"><span>Twitch</span><span>YouTube</span><span>Kick</span><span>OBS</span></div>
+    </div>
+  </div>
+</body>
+</html>
