@@ -229,3 +229,22 @@ Next: homepage and PDP conversion work, since the purchase path itself is now cl
 
 Preview deploy: https://01m2343259d7q2snv79287f16n-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `b011026`.
+
+### 2026-09-09 (second pass)
+
+Shipped: **Etsy demo videos attached to the Shopify catalog. 8 of 130 active products had a video, now 65 and climbing.**
+
+Every SWS product is sold on Etsy first, and 185 of the 186 active Etsy listings carry a short mp4 of the widget actually running. Shopify had almost none of them. That clip is the strongest conversion asset the catalog has, and the PDP checklist item "video where available" was blocked on it.
+
+Built `scripts/sync-etsy-videos.mjs`, re-runnable and idempotent. It resolves an Etsy listing to a Shopify product, skips anything that already has a VIDEO media item, downloads the mp4, does the presigned multipart POST, and records per row state so a rerun never repeats finished work.
+
+Shopify will not fetch an arbitrary mp4 by URL for mediaContentType VIDEO. The only path is the staged upload flow: `stagedUploadsCreate` (VIDEO, real byte size, POST), multipart POST the bytes to the returned target, then `productCreateMedia` with the returned `resourceUrl`, then poll until READY. The repo holds only a READ ONLY Storefront token, so the three admin steps run through the Admin MCP tools and the script owns everything that does not need admin credentials.
+
+Matching is deliberately conservative, because a wrong video on a product is worse than no video. The 16 hand verified rows in `etsy-shopify-map.json` seed the map. The rest are scored on normalised titles with IDF weighting, so shared filler like "Liquid Filling Goal Widget" cannot carry a match on its own. Anything that does not clear the bar is written to `data/etsy-video-candidates.json` for review instead of being guessed, and reviewed decisions live in `data/etsy-video-adjudication.json` so they survive a rerun. The full resolved map with a confidence per row is `data/etsy-video-map.json`.
+
+Data quirk worth remembering: **Shopify caps video uploads at 200 per hour per shop.** Staging more returns a per input `userErrors` entry rather than failing the whole mutation. Batch accordingly.
+
+Verified:
+- Re-queried the whole active catalog after the run: 65 of 130 products carry a VIDEO media item, every one `status: READY`, zero `fileErrors`.
+- Media was only ever added. Image counts per product are unchanged.
+- No Shopify product is referenced by two Etsy listings: 101 products referenced, 101 unique.
