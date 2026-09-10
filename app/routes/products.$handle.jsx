@@ -435,7 +435,12 @@ const PRODUCT_FRAGMENT = `#graphql
       url
       altText
     }
-    media(first: 10) {
+    # 25, not 10. This catalog runs to 15 images plus a demo video, and the
+    # video was imported last on nearly every product, so a cap of 10 silently
+    # dropped the video on 13 products: it was never fetched, so the gallery
+    # could not render it however correct the component was. It also truncated
+    # the image gallery on anything with more than 10 photos.
+    media(first: 25) {
       nodes {
         __typename
         ... on MediaImage {
