@@ -365,3 +365,72 @@ Commit: `3166dd5`.
 ### 2026-09-10 (Todd + Claude, analytics decisions)
 - GA4 property/stream/ID settled, X pixel plan written, ownership split. All recorded in the Conversion + SEO checklist items above so the daily pass picks it up. Linear: BAT-145 (Auny: X Events Manager side). Code side is the routine's job once GA4 is unblocked (it is) and X IDs arrive.
 - Hydrogen analytics bus already exists: `Analytics.Provider` with consent in `app/root.jsx:105-109,227-235`, `Analytics.ProductView` in `products.$handle.jsx:361`. Nothing subscribes to it yet.
+
+### 2026-09-10 (second pass, Todd present)
+Metrics (2026-09-10 so far): 29 sessions, 1 add to cart, 1 reached checkout, 0 completed, 0 orders, $0 net sales. Sep 9 was 23 sessions / 2 add to cart / 3 reached checkout. Still all on the OLD Energy theme, not the Hydrogen build.
+
+Todd reset the priorities mid-pass: launch with what is there plus the top 10 to 20 Etsy products, every one of them with full images and at least one video, every title and description standardized and optimized for SEO and AEO, simple checkout, and analytics plus X pixel conversion tracking ASAP because ads start within a week. He also asked for the full GA4 enhanced ecommerce event set, not just add to cart.
+
+Shipped, in four parts.
+
+**1. Analytics (commits `399c0ea`, `d4bd205`).**
+`app/components/pixels/GA4.jsx` and `XPixel.jsx`, mounted inside the existing `Analytics.Provider`, all IDs read from `PUBLIC_*` env vars, nothing hardcoded. CSP extended in `app/entry.server.jsx` for googletagmanager, google-analytics, static.ads-twitter, analytics.twitter and t.co, including a real `connectSrc` directive, or the beacons fail silently the way the video CSP trap did.
+
+Full enhanced ecommerce: `page_view`, `view_item`, `view_item_list`, `select_item`, `add_to_cart`, `remove_from_cart`, `view_cart`, `begin_checkout`, `search`. Hydrogen publishes no event for `select_item` or `begin_checkout`, so those are published as `custom_*` events from `ProductItem.jsx` and `CartSummary.jsx`. `item_category` was missing from the cart fragments and was added to `CartLine` and `CartLineComponent` so every cart event gets it at once.
+
+`purchase` is deliberately never sent from the storefront. Checkout is Shopify hosted, so it comes from a separate Admin custom pixel. Both firing would double count every order.
+
+**Answered for Todd: yes, gtag is needed.** Measurement Protocol alone means inventing and persisting `client_id` yourself and losing auto source/medium, which kills ad attribution. GTM loads gtag anyway. Shopify's Google and YouTube channel instruments the Online Store theme only and gives a headless Hydrogen storefront nothing.
+
+**2. Catalog, the launch set (commit `3fded55`).**
+All 20 top products now carry full images and one demo video. Two gaps closed: Celestial Moon Goal Widget had no video, and Sakura Chat and Goal Widget (Etsy 4505167275, $138, rank 18) had no Shopify product at all and was created from scratch, published to all three channels with `requiresShipping: false`.
+
+Browse hole fixed: 25 products titled "Chat & Goal Widgets" were typed Chat Widget only and never appeared in the Goal Widget collection, the number 1 seller among them. `productType` is a single string, so the two widget collections are now disjunctive on TYPE or TAG and the tag carries the second membership. Goal collection went 93 to 118 storefront products.
+
+New `scripts/audit-catalog.mjs` checks title, image, price, description, productType and tag agreement. Run it with `audit-shipping.mjs` after any catalog write. Two traps it now encodes, both of which bit during this pass:
+- **Shopify matches and dedupes tags case-insensitively.** Adding `Goal_Widget` to a product already carrying `goal_widget` keeps the old casing, so a case-sensitive check reported 30 correctly tagged products as broken. Had that been trusted, 30 correct products would have been "fixed".
+- **Shortened Shopify titles lose the combo signal.** Neon Moon Glow (rank 4) reads chat-only but its Etsy listing ships `ChatCode.zip` AND `GoalCode.zip`, so the audit reads the handle as well as the title. Title alone would have stripped a correct tag off a top-five seller.
+
+**3. Copy standardization (commit `67e8b01`).**
+Titles and descriptions standardized across the 18 launch-set products, plus `seo.title` and `seo.description`. Standard written to `docs/COPY-STANDARD.md` for the remaining catalog. Descriptions end in a 3 to 5 question FAQ whose answers are self-contained, which is the AEO layer.
+
+Every claim ground-truthed against that product's own Etsy listing and file manifest, which removed inherited false claims: Kick and YouTube dropped from seven StreamElements-only chat products, TikTok dropped from three whose handles say `tiktok-studio` but whose listing bodies never mention it, no one-click-install claim on Potion Bottle because its manifest shows a manual install. Originals backed up to `data/copy-backup-2026-09-10.json`, one command to revert.
+
+`audit-catalog.mjs` immediately caught a regression the rewrite introduced: retitling Sakura Glassy to "Chat and Goal Widget" left it without the `Goal_Widget` tag and hid it from the Goal collection. Its Etsy listing does ship a StreamElements goal widget, so the title is honest and the tag was added.
+
+**4. A mapping bug worth more attention than anything else here. NOT FIXED, needs Todd.**
+`data/etsy-video-map.json` has Etsy 1706402816 and 4339053159 mapped to the wrong Shopify products, swapped with each other. Proof, two independent lines:
+- Shopify `celestial-butterfly-...` has featured image `il_fullxfull.7087440965_gsg6.jpg`, which is the exact `og_image` of Etsy **4339053159**, whose description text is literally the celestial-butterfly Shopify handle spelled out.
+- Shopify stores the source listing id in the video filename. `celestial-butterfly-...` carries `1706402816.mp4` and `sakura-butterfly-pastel-cozy-...` carries `4339053159.mp4`. They hold each other's videos.
+
+**Both bad rows are marked `confidence: reviewed`, so that field is not trustworthy.** This matters beyond video: `scripts/build-etsy-reviews.mjs` joins reviews to products through this same map. Verified consequence so far: `celestial-butterfly-...` displays **2 real customer reviews written about a different product**. `sakura-butterfly-...` has no reviews, so it is unaffected on that axis.
+
+Found only because the copy pass produced a mapping that disagreed with the stored map, and the disagreement was checked instead of resolved in favour of the stored value.
+
+A full audit across all 104 mapped rows was dispatched and returned nothing, so it is still owed. The method is deterministic and needs no judgement: extract the numeric CDN id from each Etsy image URL (`il_fullxfull.<ID>_xxxx.jpg`), extract the same ids from the Shopify product's image filenames (Shopify keeps the Etsy filename behind a hash prefix), and a row is confirmed only when at least one id appears on both sides. Cross-check with the video filename, which independently names the source listing.
+
+Verified this pass:
+- `node scripts/audit-catalog.mjs`: 131 storefront products, 0 issues on title, image, price, description, productType and tags.
+- `node scripts/audit-shipping.mjs`: exit 0, no product forces a shipping checkout.
+- `npm run build` exit 0. No em or en dash in any commit from this pass.
+- Both new videos READY, 0 fileErrors. Storefront API re-queried for both products directly rather than trusting the agent that attached them.
+- Checkout host measured, not assumed: a real cart's `checkoutUrl` is on `streamwidgetshop.com`.
+
+Not verified: nothing was opened in a browser. Dev servers and the browser tools are blocked in this session, so no GA4 event has been watched firing, consent gating is untested at runtime, and the `remove_from_cart` quantity delta is unexercised. Build, type and lint level only.
+
+Corrected a wrong conclusion before it reached Todd: a research pass concluded checkout ran on a `myshopify.com` host and that every paid conversion would land unattributed, needing a cart-attribute `client_id` relay. It inferred that from `PUBLIC_CHECKOUT_DOMAIN` being unset. Measuring the actual `checkoutUrl` showed checkout is on `streamwidgetshop.com`, the same registrable domain as the storefront, so `_ga` is readable at `checkout_completed` and campaign attribution works. `docs/checkout-purchase-pixel.md` carries the correction. Attribution must still be tested AFTER the DNS cutover, because before it the storefront is on an `o2.myshopify.dev` host and the test would fail for a reason that will not exist in production.
+
+Needs Todd:
+- **DNS cutover.** Every improvement since 2026-09-07 is invisible to real traffic until this happens. Running ads before it sends paid clicks to the old Energy theme.
+- **The digital files.** 8 of the top 16 plus all 3 bundles still deliver nothing on purchase. 17 of 19 staged at `~/Desktop/SWS-Shopify-Uploads/`. Ads before this is paying for a broken fulfilment.
+- **Hydrogen environment variables**, Admin > Hydrogen > SWS Storefront, for both Preview and Production: `PUBLIC_GA4_MEASUREMENT_ID = G-X0978HDVTK` and `PUBLIC_CHECKOUT_DOMAIN = streamwidgetshop.com`. Oxygen does not read the repo `.env`. `npx shopify hydrogen env push` would work but pushes the whole local `.env` and would overwrite the remote `SESSION_SECRET`, logging out every session, so it was not used.
+- **Go-ahead to swap the two videos back**, which means deleting the wrong video from each product first.
+- **Go-ahead to create the `checkout_completed` pixel** in Admin, a live-store settings change. Draft ready at `docs/checkout-purchase-pixel.md`, needs a GA4 API secret Todd generates.
+- **Auny's 5 X pixel IDs** (BAT-145). Four env vars, no code change.
+- Google Search Console and Merchant Center still need his account.
+- Soul Blade price still unconfirmed (Etsy live 15.99, notes said 29.99, Shopify matched to 15.99).
+
+Next: finish the 104-row map audit with the method above, correct the confirmed bad rows, rebuild reviews, then apply `docs/COPY-STANDARD.md` to the remaining ~110 products.
+
+Preview deploy: https://01m26pp7c2pwvvrjdawjb7ejpg-fb73b5b73c40344d0d20.myshopify.dev
+Commits: `399c0ea`, `d4bd205`, `3fded55`, `67e8b01`.
