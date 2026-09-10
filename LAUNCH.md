@@ -37,7 +37,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 ### Storefront (Hydrogen)
 - [x] Pending work committed + deployed
 - [ ] Homepage sells: hero, top 15, social proof, one clear CTA
-- [x] PDP: video where available (65 of 130 active), platform badges, "what you get", FAQ, real per-product Etsy reviews
+- [x] PDP: video where available (104 of 130 active), platform badges, "what you get", FAQ, real per-product Etsy reviews
 - [ ] Mobile QA
 - [ ] Performance (LCP < 2.5s)
 ### SEO
@@ -323,3 +323,33 @@ Two files exist nowhere on the machine and have to come off Etsy Shop Manager: `
 
 Corrected a stale note while verifying: the 2026-09-07 entry lists a third `Celestial-Stream-Kit-Guides.zip` for the Celestial bundle. No such file was ever built and none is needed, the Shared Guides PDFs are already inside `Celestial-Stream-Kit.zip` (confirmed by listing the archive). Celestial ships 2 files, not 3.
 
+### 2026-09-10
+Metrics (2026-09-09): 23 sessions, 2 add to cart, 3 reached checkout, 0 completed, 0 orders, $0 net sales. Conversion 0.0%. (2 of those 3 checkouts were this routine's own browser test of the shipping fix, not buyers.) Sep 8 was 21 sessions / 0 add to cart. All of it is still hitting the OLD Energy theme on streamwidgetshop.com, not the Hydrogen build.
+
+Shipped: **the stalled Etsy video sync is finished. Every matched product now carries its demo clip. 65 of 130 active products had video yesterday, 104 do now.**
+
+The 250 video and 3D model cap that blocked this on 2026-09-09 had cleared on its own, exactly as the diagnosis predicted: abandoned staged upload reservations aged out, nothing was deleted and no plan was changed. First `stagedUploadsCreate` of the run succeeded with zero `userErrors`.
+
+All 39 remaining rows were downloaded first (`node scripts/sync-etsy-videos.mjs fetch`), then staged, posted and attached in four batches of 10, 10, 10 and 9. Every target was created immediately before its bytes went up and every one was consumed, so the run added no new abandoned reservations. `productCreateMedia` ran as an aliased batch per group, one alias per product, and every alias was checked individually rather than trusting that the mutation did not throw.
+
+One thing worth recording, because it cost a slot: the signed policy pins `content-length-range` to EXACTLY the `fileSize` declared in `stagedUploadsCreate`. A probe target created with a placeholder size can never accept a real file, and it still holds a cap slot until it expires. Always fetch the file and pass its real byte count. Written into CLAUDE.md's quirks list.
+
+Verified:
+- Storefront API sweep of the whole catalog: 130 storefront-visible products, 104 carry a VIDEO media node, 26 do not. That is +39, matching exactly what was attached.
+- Admin API: `media_type:VIDEO AND status:FAILED` returns 0 files, `status:PROCESSING` returns 0. Nothing is stuck or broken.
+- Media was only ever added. No image or existing video was touched, no product was deleted or archived.
+- `node scripts/audit-shipping.mjs` exits 0: 130 storefront products, none require shipping.
+- `npm run build` exits 0.
+
+Not verified: the PDP was not opened in a real browser. Dev servers are blocked in an unattended scheduled run and both the Oxygen preview and production URLs are auth-gated behind Shopify OAuth, so there is no way to fetch a rendered page from here. The check that was possible is the data layer, and that is the exact source `ProductGallery` reads, which has been rendering video on 65 products since yesterday. No code changed today, only catalog media.
+
+The 26 products still without video are the deliberate gap, not a failure: they are Etsy listings with no confident Shopify match, left alone rather than guessed, because a wrong video on a product is worse than no video.
+
+Needs Todd:
+- **Still the #1 blocker**: 8 of the top 16 products plus all 3 bundles have no digital file attached, so a completed purchase delivers nothing. 17 of the 19 files are already staged for him at `~/Desktop/SWS-Shopify-Uploads/` in 11 numbered folders with a READ ME FIRST.txt. Upload path is Admin > Apps > Digital Products. No API exists, confirmed twice.
+- The 2 files that exist nowhere on this machine and have to come off Etsy Shop Manager: `NeonChatandGoalCodefile.zip` (Saber Neon, listing 4473894910) and `SakuraGlassyChatWidget.zip` (Sakura Glassy, listing 4369470796).
+- Google Search Console + Merchant Center still need his account.
+- Soul Blade price still unconfirmed (Etsy live 15.99, notes said 29.99, Shopify matched to 15.99).
+- The DNS cutover. Every storefront improvement since 2026-09-07 is invisible to real traffic until he makes it.
+
+Next: homepage and PDP conversion. The purchase path is clean, the catalog is now as good as it can get without Todd, and traffic that arrives is still bouncing at roughly 0% add to cart. Starting with the hero nits logged on 2026-09-07 (star bar overlapping the jar lid, chat too small) and a 375px mobile pass.
