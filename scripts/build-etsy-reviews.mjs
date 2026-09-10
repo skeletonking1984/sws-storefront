@@ -160,6 +160,25 @@ function main() {
     };
   }
 
+  // Fail loudly on a malformed shop block. JSON.stringify drops undefined
+  // keys rather than throwing, so a raw file whose `shop` is a bare id (which
+  // one version of the pull script wrote) produced a stats file with every
+  // number missing, and the site rendered an empty shop rating with no error
+  // anywhere. Check before building, not after shipping.
+  const missing = [
+    'review_average',
+    'review_count',
+    'transaction_sold_count',
+    'num_favorers',
+  ].filter((k) => typeof raw.shop?.[k] !== 'number');
+  if (missing.length) {
+    console.error(
+      `data/etsy-reviews-raw.json has a malformed "shop" block, missing: ${missing.join(', ')}.`,
+    );
+    console.error('Re-run: node scripts/pull-etsy-reviews.mjs');
+    process.exit(1);
+  }
+
   const shop = {
     average: raw.shop.review_average,
     count: raw.shop.review_count,

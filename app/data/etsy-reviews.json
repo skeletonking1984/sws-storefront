@@ -1,12 +1,12 @@
 {
   "shop": {
-    "average": 4.75,
-    "count": 990,
-    "soldCount": 7504,
-    "favoriteCount": 1274,
+    "average": 4.76,
+    "count": 992,
+    "soldCount": 7512,
+    "favoriteCount": 1275,
     "url": "https://www.etsy.com/shop/StreamWidgetShop/reviews"
   },
-  "generatedAt": "2026-09-10T23:19:55.069Z",
+  "generatedAt": "2026-09-10T23:24:35.683Z",
   "sourceNote": "Real StreamWidgetShop Etsy reviews, joined to Shopify products by etsy listing id via data/etsy-video-map.json. Only trusted-confidence matches are kept, see scripts/build-etsy-reviews.mjs. SERVER USE ONLY, contains every product review verbatim: import this from a route loader, never from a component body or module scope, or the bundler ships it to the client. Client code wanting just the shop stats should import etsy-shop-stats.json instead.",
   "products": {
     "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download": {

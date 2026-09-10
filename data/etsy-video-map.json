@@ -213,13 +213,13 @@
       "etsy_listing_id": 1706402816,
       "etsy_title": "Animated Celestial Butterfly Goal Bar | Twitch, Kick, OBS Streamlabs (Digital Download)",
       "shopify_product_id": "gid://shopify/Product/8537284083902",
-      "handle": "celestial-butterfly-chat-and-goal-stream-widgets-minimal-elegant-celestial-theme-clean-vibe-streamelement-only",
+      "handle": null,
       "shopify_title": "Celestial Butterfly Chat & Goal Widgets for Twitch Kick YouTube | Elegant | StreamElements Streamlabs OBS",
-      "confidence": "reviewed",
+      "confidence": "unverified",
       "score": null,
       "priority": 0,
       "state": "done",
-      "note": "attached 2026-09-10",
+      "note": "Unmapped 2026-09-10. Previously pointed at celestial-butterfly at confidence \"reviewed\", which was wrong: that product is Etsy 4339053159. The true Shopify product for this listing is not established. Its images share no CDN id with sakura-butterfly, the obvious swap partner, so it is deliberately left unmapped rather than guessed. Its 9 reviews stay unattached until proven.",
       "video_url": "https://v.etsystatic.com/c/video/upload/ac_none,du_15,q_auto:good/tdk0pkbrr3b6hqwdgayc.mp4"
     },
     {
@@ -1267,13 +1267,13 @@
       "etsy_listing_id": 4339053159,
       "etsy_title": "Butterfly Chat Widget | Twitch StreamElements OBS Animated Nature Stream Overlay | Cozy VTuber Streamer",
       "shopify_product_id": "gid://shopify/Product/8537284214974",
-      "handle": "sakura-butterfly-pastel-cozy-chat-and-goal-stream-widgets-minimal-elegant-pastel-theme-clean-vibe-streamelement-only",
+      "handle": "celestial-butterfly-chat-and-goal-stream-widgets-minimal-elegant-celestial-theme-clean-vibe-streamelement-only",
       "shopify_title": "Sakura Butterfly Chat & Goal Widgets for Twitch Kick YouTube | Pastel Cozy | StreamElements Streamlabs OBS",
-      "confidence": "reviewed",
+      "confidence": "manual",
       "score": null,
       "priority": 0,
       "state": "done",
-      "note": "attached 2026-09-10",
+      "note": "Corrected 2026-09-10. Proven by exact image identity: this listing og_image is il_fullxfull.7087440965_gsg6.jpg, which is the Shopify featured image of celestial-butterfly, and this listing description text is that Shopify handle spelled out. The map previously pointed this listing at sakura-butterfly-pastel-cozy.",
       "video_url": "https://v.etsystatic.com/c/video/upload/ac_none,du_15,q_auto:good/Butterfly_Chat_Goal_Widget_for_twitch_streamers_stmhsz.mp4"
     },
     {
