@@ -1,5 +1,5 @@
 import {Link} from 'react-router';
-import {Image, Money} from '@shopify/hydrogen';
+import {Image, Money, useAnalytics} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
 import {detectPlatforms} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
@@ -30,25 +30,61 @@ function widgetKind(title, productType) {
 }
 
 /**
+ * Publishes a `custom_select_item` event on the Hydrogen analytics bus so
+ * GA4.jsx can map it to GA4's `select_item`, joining it back to whichever
+ * `view_item_list` the card was shown in. `listId`/`listName` are only
+ * passed by callers that also fire a matching `view_item_list` (collection
+ * pages); other callers (home, search) still pass a stable list label so
+ * the click is attributable even without a paired list view.
+ * @param {{
+ *   publish: ReturnType<typeof useAnalytics>['publish'];
+ *   product: CollectionItemFragment | ProductItemFragment | RecommendedProductFragment;
+ *   listId?: string;
+ *   listName?: string;
+ *   index?: number;
+ * }}
+ */
+function publishSelectItem({publish, product, listId, listName, index}) {
+  publish('custom_select_item', {
+    product: {
+      id: product.id,
+      title: product.title,
+      price: product.priceRange?.minVariantPrice?.amount,
+      productType: product.productType,
+    },
+    listId,
+    listName,
+    index,
+  });
+}
+
+/**
  * @param {{
  *   product:
  *     | CollectionItemFragment
  *     | ProductItemFragment
  *     | RecommendedProductFragment;
  *   loading?: 'eager' | 'lazy';
+ *   listId?: string;
+ *   listName?: string;
+ *   index?: number;
  * }}
  */
-export function ProductItem({product, loading}) {
+export function ProductItem({product, loading, listId, listName, index}) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
   const kind = widgetKind(product.title, product.productType);
   const platforms = detectPlatforms(product.title).slice(0, 4);
+  const {publish} = useAnalytics();
   return (
     <Link
       className="product-item"
       key={product.id}
       prefetch="intent"
       to={variantUrl}
+      onClick={() =>
+        publishSelectItem({publish, product, listId, listName, index})
+      }
     >
       {image && (
         // No aspectRatio prop: it makes Hydrogen add `crop=center` to the

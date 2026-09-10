@@ -431,8 +431,14 @@ function TopWidgets({topWidgets, fallback}) {
                 if (!nodes.length) return null;
                 return (
                   <div className="top-widgets-grid">
-                    {nodes.slice(0, 6).map((product) => (
-                      <ProductItem key={product.id} product={product} />
+                    {nodes.slice(0, 6).map((product, index) => (
+                      <ProductItem
+                        key={product.id}
+                        product={product}
+                        listId="home-top-widgets"
+                        listName="Top widgets"
+                        index={index}
+                      />
                     ))}
                   </div>
                 );

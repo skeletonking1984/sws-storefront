@@ -1,4 +1,4 @@
-import {CartForm, Money} from '@shopify/hydrogen';
+import {CartForm, Money, useAnalytics} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
 import {useFetcher} from 'react-router';
 
@@ -37,20 +37,31 @@ export function CartSummary({cart, layout}) {
         giftCardHeadingId={giftCardHeadingId}
         giftCardInputId={giftCardInputId}
       />
-      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
+      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} cart={cart} />
     </div>
   );
 }
 
 /**
- * @param {{checkoutUrl?: string}}
+ * Checkout is Shopify hosted, so Hydrogen never publishes a begin_checkout
+ * equivalent on its own. This fires one at click time, before the browser
+ * navigates away to the hosted checkout, via the same publish/subscribe
+ * bus GA4.jsx already listens on (see its `custom_begin_checkout`
+ * subscriber) rather than calling gtag directly here.
+ * @param {{checkoutUrl?: string; cart?: CartApiQueryFragment | OptimisticCart<CartApiQueryFragment | null>}}
  */
-function CartCheckoutActions({checkoutUrl}) {
+function CartCheckoutActions({checkoutUrl, cart}) {
+  const {publish} = useAnalytics();
   if (!checkoutUrl) return null;
 
   return (
     <div>
-      <a href={checkoutUrl} target="_self" className="cart-checkout-button">
+      <a
+        href={checkoutUrl}
+        target="_self"
+        className="cart-checkout-button"
+        onClick={() => publish('custom_begin_checkout', {cart})}
+      >
         Continue to Checkout &rarr;
       </a>
       <br />

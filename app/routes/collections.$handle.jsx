@@ -119,6 +119,9 @@ export default function Collection() {
               key={product.id}
               product={product}
               loading={index < 8 ? 'eager' : undefined}
+              listId={collection.handle}
+              listName={collection.title}
+              index={index}
             />
           );
         }}
@@ -128,7 +131,20 @@ export default function Collection() {
           collection: {
             id: collection.id,
             handle: collection.handle,
+            title: collection.title,
           },
+          // Extra field on top of Hydrogen's CollectionPayload shape (which
+          // is only {collection: {id, handle}}), read back in GA4.jsx's
+          // collection_viewed subscriber to build view_item_list's items.
+          // The generic view component spreads this whole data object into
+          // the published payload, so it survives the round trip.
+          products: collection.products.nodes.map((node, i) => ({
+            id: node.id,
+            title: node.title,
+            price: node.priceRange?.minVariantPrice?.amount,
+            productType: node.productType,
+            index: i,
+          })),
         }}
       />
     </div>

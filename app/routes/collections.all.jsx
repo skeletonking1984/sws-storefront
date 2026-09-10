@@ -140,6 +140,9 @@ export default function Collection() {
               key={product.id}
               product={product}
               loading={index < 8 ? 'eager' : undefined}
+              listId="all-products"
+              listName="All Products"
+              index={index}
             />
           )}
         </PaginatedResourceSection>

@@ -349,8 +349,14 @@ export default function Product() {
                   More {widgetKind ? `${widgetKind} widgets` : 'widgets'}
                 </h2>
                 <div className="product-related-grid">
-                  {nodes.map((related) => (
-                    <ProductItem key={related.id} product={related} />
+                  {nodes.map((related, index) => (
+                    <ProductItem
+                      key={related.id}
+                      product={related}
+                      listId="related-products"
+                      listName="Related products"
+                      index={index}
+                    />
                   ))}
                 </div>
               </div>
@@ -369,6 +375,7 @@ export default function Product() {
               variantId: selectedVariant?.id || '',
               variantTitle: selectedVariant?.title || '',
               quantity: 1,
+              productType: product.productType,
             },
           ],
         }}
@@ -418,6 +425,7 @@ const PRODUCT_FRAGMENT = `#graphql
     title
     vendor
     handle
+    productType
     descriptionHtml
     description
     encodedVariantExistence
