@@ -43,14 +43,19 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 ### SEO
 - [x] Title/meta per product + collection (plus canonical, OG, Twitter card, JSON-LD)
 - [x] Sitemap + robots verified
-- [ ] Google Search Console + Merchant Center feed
+- [ ] Google Search Console: verify `streamwidgetshop.com` as a Domain property (DNS TXT in Cloudflare), submit `/sitemap.xml`. Todd's Google account. X-in-Search-Console is already connected (@streamwidget), read-only, data lands ~2026-09-12.
+- [ ] Merchant Center feed via the Google & YouTube app. After DNS cutover (product URLs must resolve on the live domain).
 ### Branding
 - [x] Wordmark, palette, favicon, OG image consistent with Etsy/X
 ### Conversion
 - [x] Purchase path clean: no storefront product forces a shipping checkout, verify with `node scripts/audit-shipping.mjs` (fixed 9 products 2026-09-09)
 - [ ] Checkout tested (real $ test order then refund) - verified in a browser up to the payment step, WELCOME10 applies, the actual charge still needs Todd
 - [x] Email capture + welcome discount (WELCOME10, 10% off, all products, all customers, no end date)
-- [ ] Pixels (X, Google) installed
+- [ ] Pixels (X, Google) installed. Tracking issue for Auny's half: BAT-145. Decided 2026-09-10:
+  - GA4: reuse existing property **SpaceLabs - Shopify** (451083860), stream 8496264324, Measurement ID `G-X0978HDVTK`. Same ID the old Online Store theme already serves on streamwidgetshop.com (verified by curl 2026-09-10), so history stays continuous across cutover. Keep the Etsy property (450644449) separate. Cosmetic: Todd renames property + sets stream URL to `https://streamwidgetshop.com` (still says spacelabsshop.com, which now 404s).
+  - Hydrogen ships no analytics tag on its own. Build `app/components/pixels/` (GA4.jsx, XPixel.jsx) mounted inside the existing `Analytics.Provider` in `app/root.jsx`; subscribe via `useAnalytics()` to `page_viewed`, `product_viewed`, `product_added_to_cart`; load `gtag`/`uwt.js` with `useNonce()` for CSP; fire only after consent. GA4 can go in now. X waits on Auny's 5 IDs (1 pixel + PageView/ViewContent/AddToCart/Purchase) on BAT-145.
+  - Purchase events cannot come from Hydrogen (checkout is Shopify-hosted). They go in Shopify Admin > Settings > Customer events > custom pixel on `checkout_completed`, sending X `Purchase` + GA4 `purchase` with order value. Site pixel must NOT also fire Purchase, or orders double count.
+  - Item stays unchecked until a real test order shows once in X Events Manager and once in GA4.
 - [ ] DNS cutover streamwidgetshop.com -> Hydrogen (Todd approves)
 
 ## Daily log
@@ -356,3 +361,7 @@ Next: homepage and PDP conversion. The purchase path is clean, the catalog is no
 
 Preview deploy: https://01m26j05y45c663dg4shv60yhe-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `3166dd5`.
+
+### 2026-09-10 (Todd + Claude, analytics decisions)
+- GA4 property/stream/ID settled, X pixel plan written, ownership split. All recorded in the Conversion + SEO checklist items above so the daily pass picks it up. Linear: BAT-145 (Auny: X Events Manager side). Code side is the routine's job once GA4 is unblocked (it is) and X IDs arrive.
+- Hydrogen analytics bus already exists: `Analytics.Provider` with consent in `app/root.jsx:105-109,227-235`, `Analytics.ProductView` in `products.$handle.jsx:361`. Nothing subscribes to it yet.
