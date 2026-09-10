@@ -353,3 +353,6 @@ Needs Todd:
 - The DNS cutover. Every storefront improvement since 2026-09-07 is invisible to real traffic until he makes it.
 
 Next: homepage and PDP conversion. The purchase path is clean, the catalog is now as good as it can get without Todd, and traffic that arrives is still bouncing at roughly 0% add to cart. Starting with the hero nits logged on 2026-09-07 (star bar overlapping the jar lid, chat too small) and a 375px mobile pass.
+
+Preview deploy: https://01m26j05y45c663dg4shv60yhe-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `3166dd5`.
