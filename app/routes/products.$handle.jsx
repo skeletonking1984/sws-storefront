@@ -15,15 +15,18 @@ import {ProductHighlights} from '~/components/ProductHighlights';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge} from '~/components/EtsyRating';
 import {EtsyReviews} from '~/components/EtsyReviews';
-import {
-  ProductRatingBadge,
-  ProductReviews,
-  getProductReviews,
-} from '~/components/ProductReviews';
+import {ProductRatingBadge, ProductReviews} from '~/components/ProductReviews';
 import {FaqAccordion} from '~/components/FaqAccordion';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {formatProductDescription} from '~/lib/productDescription';
 import {buildMeta, getOrigin} from '~/lib/seo';
+// Full per-product Etsy review dataset, review text included. SERVER USE
+// ONLY (see scripts/build-etsy-reviews.mjs). This import is only ever
+// referenced from loadCriticalData below, never from the component body,
+// so the route's client bundle never ships it. EtsyRating.jsx has the
+// small client-safe shop-stats-only slice for anything rendered directly
+// in the component.
+import etsyReviewsData from '~/data/etsy-reviews.json';
 
 /**
  * @type {Route.MetaFunction}
@@ -120,8 +123,15 @@ async function loadCriticalData({context, params, request}) {
   // The API handle might be localized, so redirect to the localized handle
   redirectIfHandleIsLocalized(request, {handle, data: product});
 
+  // Real per-product Etsy reviews (see ProductReviews.jsx), looked up here
+  // in the loader so the full etsy-reviews.json import (review text for
+  // all 83 products) stays server-side and never reaches the client
+  // bundle. Only this one product's slice is sent down to the component.
+  const productReviews = etsyReviewsData.products[handle] || null;
+
   return {
     product,
+    productReviews,
   };
 }
 
@@ -184,7 +194,7 @@ function stripHtml(html) {
 
 export default function Product() {
   /** @type {LoaderReturnData} */
-  const {product, relatedProducts, faq} = useLoaderData();
+  const {product, relatedProducts, faq, productReviews} = useLoaderData();
   const rootData = useRouteLoaderData('root');
   const origin = rootData?.origin || 'https://streamwidgetshop.com';
 
@@ -220,10 +230,10 @@ export default function Product() {
     imageUrls.push(product.featuredImage.url);
   }
 
-  // Real per-product Etsy reviews (see ProductReviews.jsx). Only used for
-  // aggregateRating when there are at least 3, and the numbers here must
-  // match exactly what ProductReviews renders on the page.
-  const productReviews = getProductReviews(product.handle);
+  // Real per-product Etsy reviews (see ProductReviews.jsx and the loader
+  // above). Only used for aggregateRating when there are at least 3, and
+  // the numbers here must match exactly what ProductReviews renders on the
+  // page.
   const showsProductReviews =
     Boolean(productReviews) && productReviews.reviews.length > 0;
   const hasEnoughReviewsForJsonLd =

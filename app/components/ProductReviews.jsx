@@ -1,16 +1,15 @@
 import {useState} from 'react';
-import etsyReviews from '~/data/etsy-reviews.json';
+import {SHOP_RATING} from '~/components/EtsyRating';
 
 /**
- * Looks up the real, per-product Etsy reviews for a Shopify handle. Returns
- * null when this product has no trusted review match (see
- * scripts/build-etsy-reviews.mjs), the caller should fall back to the
- * shop-wide <EtsyReviews /> in that case.
- * @param {string} handle
+ * Per-product Etsy review data (see scripts/build-etsy-reviews.mjs), the
+ * shape written for one product handle in app/data/etsy-reviews.json:
+ * {handle, etsyListingId, count, average, distribution, reviews}. This
+ * component never imports that JSON itself, it's the full-catalog,
+ * server-only dataset. The caller (the product route loader) looks up the
+ * one product's slice and passes it down as `data`, so no review text ever
+ * reaches the client bundle for products the visitor isn't viewing.
  */
-export function getProductReviews(handle) {
-  return etsyReviews.products[handle] || null;
-}
 
 /** Formats a YYYY-MM-DD string without a timezone-driven off-by-one day. */
 function formatReviewDate(dateStr) {
@@ -25,7 +24,7 @@ function formatReviewDate(dateStr) {
  * Per-product Etsy reviews, real and verbatim, for this exact listing (not
  * the shop-wide sample in EtsyReviews.jsx). Sorted most recent first,
  * whatever the rating, first 3 shown with an expander for the rest.
- * @param {{data: ReturnType<typeof getProductReviews>}} props
+ * @param {{data: {count: number, average: number, distribution: object, reviews: Array}}} props
  */
 export function ProductReviews({data}) {
   const [expanded, setExpanded] = useState(false);
@@ -117,7 +116,7 @@ export function ProductReviews({data}) {
       )}
 
       <a
-        href={etsyReviews.shop.url}
+        href={SHOP_RATING.url}
         target="_blank"
         rel="noopener noreferrer"
         className="product-reviews-link"
@@ -132,7 +131,7 @@ export function ProductReviews({data}) {
  * Compact product-level rating for the buy panel. Shows this listing's own
  * average and review count instead of the shop-wide badge, and jumps to the
  * reviews further down the page rather than off to Etsy.
- * @param {{data: ReturnType<typeof getProductReviews>}} props
+ * @param {{data: {count: number, average: number, distribution: object, reviews: Array}}} props
  */
 export function ProductRatingBadge({data}) {
   if (!data || data.reviews.length === 0) return null;

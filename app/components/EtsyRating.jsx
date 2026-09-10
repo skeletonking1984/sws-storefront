@@ -1,23 +1,25 @@
-import etsyReviews from '~/data/etsy-reviews.json';
+import etsyShopStats from '~/data/etsy-shop-stats.json';
 
 /**
  * Shop-level Etsy rating, shown as a trust signal on product pages.
  *
  * This is the aggregate StreamWidgetShop rating on Etsy (not a per-listing
  * rating, Etsy doesn't expose a reliable per-listing sample size for every
- * product). Sourced from app/data/etsy-reviews.json, the single source of
- * truth for shop stats, rebuilt by scripts/build-etsy-reviews.mjs.
+ * product). Sourced from app/data/etsy-shop-stats.json, the small
+ * client-safe stats-only slice rebuilt by scripts/build-etsy-reviews.mjs.
+ * The full per-product review text lives in app/data/etsy-reviews.json,
+ * server use only, never import that one here.
  */
 export const SHOP_RATING = {
-  average: etsyReviews.shop.average,
-  count: etsyReviews.shop.count,
-  url: etsyReviews.shop.url,
+  average: etsyShopStats.shop.average,
+  count: etsyShopStats.shop.count,
+  url: etsyShopStats.shop.url,
 };
 
 /** Shop-wide Etsy stats, for trust strips (e.g. homepage hero). */
 export const SHOP_STATS = {
-  soldCount: etsyReviews.shop.soldCount,
-  favoriteCount: etsyReviews.shop.favoriteCount,
+  soldCount: etsyShopStats.shop.soldCount,
+  favoriteCount: etsyShopStats.shop.favoriteCount,
 };
 
 export function EtsyRatingBadge({compact = false}) {

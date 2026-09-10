@@ -6,43 +6,28 @@
     "favoriteCount": 1274,
     "url": "https://www.etsy.com/shop/StreamWidgetShop/reviews"
   },
-  "generatedAt": "2026-09-09T18:09:23.221Z",
-  "sourceNote": "Real StreamWidgetShop Etsy reviews, joined to Shopify products by etsy listing id via data/etsy-video-map.json. Only trusted-confidence matches are kept, see scripts/build-etsy-reviews.mjs.",
+  "generatedAt": "2026-09-10T23:19:55.069Z",
+  "sourceNote": "Real StreamWidgetShop Etsy reviews, joined to Shopify products by etsy listing id via data/etsy-video-map.json. Only trusted-confidence matches are kept, see scripts/build-etsy-reviews.mjs. SERVER USE ONLY, contains every product review verbatim: import this from a route loader, never from a component body or module scope, or the bundler ships it to the client. Client code wanting just the shop stats should import etsy-shop-stats.json instead.",
   "products": {
-    "cute-rabbit-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
-      "handle": "cute-rabbit-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
-      "etsyListingId": 1730461418,
-      "count": 1,
-      "average": 5,
+    "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download": {
+      "handle": "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
+      "etsyListingId": 1790018033,
+      "count": 51,
+      "average": 4.8,
       "distribution": {
-        "1": 0,
-        "2": 0,
+        "1": 1,
+        "2": 2,
         "3": 0,
-        "4": 0,
-        "5": 1
+        "4": 2,
+        "5": 46
       },
       "reviews": [
         {
           "rating": 5,
-          "date": "2026-09-05",
-          "text": "Super cute video helped so it was super ez to install",
+          "date": "2026-09-10",
+          "text": "Download was easy and they work great!",
           "language": "en"
-        }
-      ]
-    },
-    "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download": {
-      "handle": "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
-      "etsyListingId": 1790018033,
-      "count": 13,
-      "average": 4.5,
-      "distribution": {
-        "1": 0,
-        "2": 2,
-        "3": 0,
-        "4": 0,
-        "5": 11
-      },
-      "reviews": [
+        },
         {
           "rating": 5,
           "date": "2026-09-04",
@@ -120,6 +105,441 @@
           "date": "2026-05-21",
           "text": "uwu me gusto mucho uwu",
           "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2026-05-04",
+          "text": "It's very beautiful on my twitch streams! It was a little hard to set up with Stream Elements (I had to manually input the files), but otherwise it's wonderfully made!",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2026-03-31",
+          "text": "Was unable to get the custom html, js, fields, or css to work within streamlabs correctly. The help video wasn't what my download options were, so it was not helpful what-so-ever.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-03",
+          "text": "This product is amazing love it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-31",
+          "text": "Perfect for what I was going for for stream and the community loves it!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2026-01-06",
+          "text": "Difficult to install but works well once installed.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-01",
+          "text": "I am blown away at how pretty and customizable this widget is! I love it so much! The creator included a very detailed tutorial on how to install and set up this widget from start to finish. Which is so helpful, I am very new to twitch. I had one question (user error) and the creator replied in minutes! I love this store and highly recommend!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-06",
+          "text": "Very customizable and very cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-29",
+          "text": "Good and the discord is really responsive if you have questions setting it up",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-27",
+          "text": "I love the glowy style soo much",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-12",
+          "text": "Love how customizable the widget is!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-17",
+          "text": "Beautiful Widgets. I love them.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-14",
+          "text": "Very cute and easy to set up!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-29",
+          "text": "Simple, cute, easy to use",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-02",
+          "text": "Exactly as described with very clear directions!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-29",
+          "text": "It works. Wish the description on the item was a little more clean on how it was going to install. Works well.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-25",
+          "text": "Easy to set up, super cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-14",
+          "text": "Me and my community love them! Easy to use and set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-10",
+          "text": "Super Süß. Mein Chat liebt diese Deko",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-07",
+          "text": "im happy with it :)",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-05",
+          "text": "Works great and super cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-28",
+          "text": "Super cute and I love it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-25",
+          "text": "Très facile à comprendre avec l'explication et super mignon !",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-24",
+          "text": "very simple, cute and easy to use ♡",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-16",
+          "text": "It is so pretty, the instructions were very clear in how to use it and the animation is awesome!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-07",
+          "text": "Definitely a must have, really easy to set up and the animation is really smooth even when having the star float.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-28",
+          "text": "muy sencillo de utilizar gracias",
+          "language": "es"
+        },
+        {
+          "rating": 4,
+          "date": "2024-12-09",
+          "text": "Good product ! Works well but struggled a little bit setting it up. Seller tried to help but was unsuccessful, perhaps because of miscommunication(not sure). Don't regret the purchase tho !",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-01",
+          "text": "just what i wanted, easy to set up, very happy :)",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-29",
+          "text": "Such cute overlays, and really easy to follow the set up guide! My community love this new addition to my streams :)",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-25",
+          "text": "easy to set up, very cute!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-23",
+          "text": "Muy bonito, pero las instrucciones son complejas a la hora de usarlo.",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-21",
+          "text": "It did what it says on the tin and was easy enough to install.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-21",
+          "text": "im about to set it up right now",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-19",
+          "text": "LOVE IT so much def helps my stream aesthetic",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-03",
+          "text": "I was a bit nervous about setting this  up but the instructions were easy to follow and I love how this looks! Its so pretty! Thank you!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-16",
+          "text": "GIF is not completely transparent, has a lot of artifacts.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-23",
+          "text": "This was a very good purchase and investment.",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-rabbit-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-rabbit-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1730461418,
+      "count": 33,
+      "average": 4.7,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 2,
+        "4": 2,
+        "5": 28
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-09-05",
+          "text": "Super cute video helped so it was super ez to install",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2026-03-29",
+          "text": "Can't figure out how to get them to work for TikTok",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-25",
+          "text": "Amazing item, amazing seller, would recommend",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-05",
+          "text": "Love it so much!! Can't wait to use it for april",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-01",
+          "text": "It looks absolutely cute on stream!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-20",
+          "text": "Wonderful & Perfect for me",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-12-25",
+          "text": "Just follow the instructions- thanks for the help",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-19",
+          "text": "Parfait ! Ma commu adore",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-25",
+          "text": "Literally so cute! Its my first time setting this up and the video inserted was not working. The discord was easy to find and the instructional video clear and so easy to follow! Thank you bunches! I love the bunny so much!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-11",
+          "text": "cute as f-  hahhaa",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-29",
+          "text": "i love my bunny widget! So cute and professional looking. SO easy to set up.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-23",
+          "text": "Great for the stream love it",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2025-04-23",
+          "text": "It worked fine. Thank you",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-14",
+          "text": "Es war direkt da und so wie in der Anleitung beschrieben hat es auch funktioniert. Super Produkt :)",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-13",
+          "text": "very cute stream add on <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-21",
+          "text": "couldn't get it to work on stream labs but i eventually got it to work",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-20",
+          "text": "Adorable ! Thank you so much 😊",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-07",
+          "text": "It does exactly what it's intended for.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-11",
+          "text": "Perfect for my stream, very easy to use!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2024-12-18",
+          "text": "I really love that ! But, I did exaclty what's in the video, but it doesn't work. The donation texte does not appear and I can't reset it... can I get some help please ?",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-01",
+          "text": "Very cute, thank you so much",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2024-11-21",
+          "text": "The product looks great and has amazing color customization. My only issue is that there isn't any customization for the goal symbols. I would have liked to change the symbol in between the numbers from a • to / for better visibility, but there is no option.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-19",
+          "text": "Amazingly youtube video to learn and do it yourself alerts <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-22",
+          "text": "love it so much :D",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-14",
+          "text": "There was a small hiccup on my end getting it to work but I finally did and it's super cute! Thanks for the help and cute widget",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-11",
+          "text": "Cute, Adorable, amazing, works great!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-30",
+          "text": "mega cute, thank you. for the price this is amazing",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-27",
+          "text": "I love this so much, customisable and easy to setup!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-25",
+          "text": "It's a pretty cute overlay to streams, my chat loves it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-08-19",
+          "text": "good! very cute and easy to upload",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-23",
+          "text": "its so cute and easy to use 10/10! <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-17",
+          "text": "Super cute, need more of this<33",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-17",
+          "text": "i love that they included a tutorial!! thank you so so much this is perfect and looks so adorable",
+          "language": "en"
         }
       ]
     },
@@ -210,14 +630,14 @@
     "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only": {
       "handle": "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only",
       "etsyListingId": 4322617816,
-      "count": 4,
-      "average": 5,
+      "count": 13,
+      "average": 4.7,
       "distribution": {
-        "1": 0,
+        "1": 1,
         "2": 0,
         "3": 0,
         "4": 0,
-        "5": 4
+        "5": 12
       },
       "reviews": [
         {
@@ -242,6 +662,60 @@
           "rating": 5,
           "date": "2026-06-20",
           "text": "amazing product love it !",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-24",
+          "text": "Very easy to set up and gorgeous!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-31",
+          "text": "Great, helpful seller. It was a little confusing but they helped with a tutorial video that solved my issues",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-12",
+          "text": "This is so pretty! I love having it on my stream and so does chat! instructions were easy to follow and had no issues with making it all work together",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-01",
+          "text": "Really pretty and gorgeous chat widgets",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-07",
+          "text": "Absolutely amazing work and such fine details, can’t wait to get it onto my chat",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-13",
+          "text": "Très joli rendu pour le chatbox vraiment de plus j'ai eu des difficultés d'installation j'ai eu une assistance au top m'ont beaucoup aidé et la traduction en autre langue pour les tutos sont possibles.",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-15",
+          "text": "Looks awesome, very cute and easy to set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-18",
+          "text": "Was waiting for a day to ship and then few days to have an answer otherwise would be 5/5",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-07-24",
+          "text": "Chat widget not included and the goal widget is not as shown.",
           "language": "en"
         }
       ]
@@ -282,14 +756,14 @@
     "classical-floral-red-chat-and-goal-widget-minimal-starry-mystical-chat-box-with-pronouns-alerts-for-twitch-streamelements": {
       "handle": "classical-floral-red-chat-and-goal-widget-minimal-starry-mystical-chat-box-with-pronouns-alerts-for-twitch-streamelements",
       "etsyListingId": 4315451056,
-      "count": 1,
-      "average": 4,
+      "count": 2,
+      "average": 4.5,
       "distribution": {
         "1": 0,
         "2": 0,
         "3": 0,
         "4": 1,
-        "5": 0
+        "5": 1
       },
       "reviews": [
         {
@@ -297,33 +771,18 @@
           "date": "2026-08-29",
           "text": "It's great overall! I do wish colors were a little more customizable other than with a slider but overall pretty good!",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-27",
+          "text": "really cool setup! very easy to follow",
+          "language": "en"
         }
       ]
     },
     "broken-star-bar-loading-goal-widget-is-fully-customisable-for-twitch-streamelements-and-obs-bar-goal-widget": {
       "handle": "broken-star-bar-loading-goal-widget-is-fully-customisable-for-twitch-streamelements-and-obs-bar-goal-widget",
       "etsyListingId": 1888424656,
-      "count": 1,
-      "average": 5,
-      "distribution": {
-        "1": 0,
-        "2": 0,
-        "3": 0,
-        "4": 0,
-        "5": 1
-      },
-      "reviews": [
-        {
-          "rating": 5,
-          "date": "2026-08-29",
-          "text": "You can edit the star's colour and also the size, it's super cute and matches my stream really well, plus I can't wait to see the star come back together when the goal is reached! Love it, thank you so much.",
-          "language": "en"
-        }
-      ]
-    },
-    "cute-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
-      "handle": "cute-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
-      "etsyListingId": 1758361648,
       "count": 2,
       "average": 5,
       "distribution": {
@@ -332,6 +791,33 @@
         "3": 0,
         "4": 0,
         "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-08-29",
+          "text": "You can edit the star's colour and also the size, it's super cute and matches my stream really well, plus I can't wait to see the star come back together when the goal is reached! Love it, thank you so much.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-27",
+          "text": "Dynamic and beautiful, especially the broken part",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1758361648,
+      "count": 13,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 13
       },
       "reviews": [
         {
@@ -345,20 +831,86 @@
           "date": "2026-08-22",
           "text": "Super cute and easy install! thanks",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-28",
+          "text": "amazing, i love it so much",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-05",
+          "text": "So excited to use this for Halloween 🎃",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-02",
+          "text": "Perfect, I love it! Exactly what I needed 😌",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-04",
+          "text": "Love them, they were super cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-05",
+          "text": "Super cute, works well, delivery was instant! <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-08",
+          "text": "soooo cute, i love 10/10",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-11",
+          "text": "Easy to set up and super cute to boot!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-05",
+          "text": "This was perfect for my stream!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-24",
+          "text": "love ittt obsessed with it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-16",
+          "text": "The seller helped me customize it upon purchase of the item files, they were very prompt in their answers and solutions. The widget I purchased is so cute and so perfect I love it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-03",
+          "text": "so excited to use this for halloween time",
+          "language": "en"
         }
       ]
     },
     "boba-drink-cute-fruit-drink-goal-widget-for-twitch-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
       "handle": "boba-drink-cute-fruit-drink-goal-widget-for-twitch-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
       "etsyListingId": 1712229820,
-      "count": 1,
+      "count": 16,
       "average": 5,
       "distribution": {
         "1": 0,
         "2": 0,
         "3": 0,
         "4": 0,
-        "5": 1
+        "5": 16
       },
       "reviews": [
         {
@@ -366,20 +918,110 @@
           "date": "2026-08-24",
           "text": "LIQUID IS NOT FULLY CUSTOMIZABLE. You can customize it but you cannot CHOOSE a hex code or anything like that.",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-08",
+          "text": "Amazing!! Love the way it came out!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-26",
+          "text": "Easy to set up and absolutely adorable!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-27",
+          "text": "Sieht super Klasse aus, klappt alles wunderbar. Tutorial als Video ist auch verfügbar.",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-21",
+          "text": "i cant figure out how to actually use it to put in my stream but i have seen others use it an i love it.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-12",
+          "text": "This is so freaking cute! It's really easy to set up as well so even a numpty like me could do it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-31",
+          "text": "Easy to install and get everything customized",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-29",
+          "text": "Almost easy to put on Twitch with editing on StreamElements. Wish there was a voiceover with the how to video but I got it. Have to do some work but it got there.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-30",
+          "text": "It’s literally the cutest little widget on my stream and I’m enjoying watching it rise with each follow on twitch 🥹",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-28",
+          "text": "Kawaii Kawaii Kawaii Kawaii Kawaii",
+          "language": "haw"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-31",
+          "text": "I lovet the details and the art!\nOverall they are amazing",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-05",
+          "text": "Super cute and excited to use it.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-24",
+          "text": "Absolutely adore this widget so I recommended it to a friend.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-15",
+          "text": "10/10 item it is so stinking cute and I love the different styles and colors",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-10",
+          "text": "It's super cute! Very easy to set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-06-28",
+          "text": "Love the color options and was very easy to set up",
+          "language": "en"
         }
       ]
     },
     "neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only": {
       "handle": "neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
       "etsyListingId": 4333471272,
-      "count": 10,
-      "average": 5,
+      "count": 81,
+      "average": 4.7,
       "distribution": {
-        "1": 0,
-        "2": 0,
-        "3": 0,
-        "4": 0,
-        "5": 10
+        "1": 3,
+        "2": 1,
+        "3": 2,
+        "4": 4,
+        "5": 71
       },
       "reviews": [
         {
@@ -441,6 +1083,432 @@
           "date": "2026-05-22",
           "text": "its a great addition thank you!",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-29",
+          "text": "lovely neon theme chat box overlay! looks really nice",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-16",
+          "text": "Me encantó pero me gustaría personalizar mas rápido el nombre de los roles en el chat",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-10",
+          "text": "Super easy  to set up, the linked tutorial was very clear and I had it set up in less than 5 minutes from purchase to go live. Looks great on stream and very customizable!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-07",
+          "text": "Took a bit of time to learn how to properly input the code into StreamElements, but the instructions that came with the asset made it MUCH simpler. Its super customizable, and looks perfect for stream. 10/10",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-31",
+          "text": "can't wait to use <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-30",
+          "text": "It fits my stream theme very well!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-26",
+          "text": "Matched my stream vibe perfectly!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2026-03-20",
+          "text": "kind of hard to figure out with stream elements but it’s more the sites fault. very cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-10",
+          "text": "Super overlay pour ma chaine twitch !!",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-09",
+          "text": "Good style and colors of the widget",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-05",
+          "text": "good seller , thanx you",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-04",
+          "text": "Leichte installation. Wunderschön. Was soll man noch dazu sagen?",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-01",
+          "text": "easy to set up and love using it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-23",
+          "text": "its soooooooo cute make my chat box looks better",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-21",
+          "text": "very good chat overlay :D",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-16",
+          "text": "Video was easy to follow and upload to my stream!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2026-02-16",
+          "text": "Uses widget.io on Chrome to work, \nseller is willing to adjust glow intensity,\npretty chat box",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-06",
+          "text": "Works well, clear instructions. My chat & I love it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-04",
+          "text": "Wonderful. Looks really good on the streams.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-30",
+          "text": "I love it, thank you again ! My Twitch chat is colorful, like I always wanted 🥰 and my viewers like it too !",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-15",
+          "text": "I love how it looks with the rest of my stream set up. super cute!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-13",
+          "text": "Really easy to use and highly customizable I love it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-11",
+          "text": "Item looks great and works as intended.  Easy to setup. Thanks.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-11",
+          "text": "looks good. I am just struggling to setting up.",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2026-01-06",
+          "text": "It genuinely feels like the seller added the 'Neon Stream Chat' as an extra, with little care given to it. Once you download, you get a reasonably detailed video on how to set up the Goal Widget, but there is absolutely nothing about setting up the chat. You're given text documents as part of the configuration, but that's it. No instructions on how to use it at all. One star all around, because I bought this specifically for the chat. I won't be reaching out, because I shouldn't need to take extra steps to find out how to use the product. If they can supply a video to set up the goal widget, they can supply a video to set up the chat, yet they didn't.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-01",
+          "text": "wonderful product would buy again",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-26",
+          "text": "Looks lovely on my stream!",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-12-23",
+          "text": "Would have been a great product but the setup makes no sense. I would reach out but seller seems to not be responsive/helpful based on other users reviews. Disappointing and waste of money.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-14",
+          "text": "Beautiful installation! It was a nice add on to my stream",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-10",
+          "text": "it matches my stream vibes so good! and very easy to set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-08",
+          "text": "Love the colors and simple design",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-07",
+          "text": "Chat box parfaitement au top !",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-07",
+          "text": "Great job with creating something wonderful like this…",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-04",
+          "text": "beautiful and i love it!",
+          "language": "en"
+        },
+        {
+          "rating": 2,
+          "date": "2025-11-26",
+          "text": "aucune instruction pour installer le chat dans son application, je suis déçue car je ne sais pas comment faire...",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-26",
+          "text": "Exactly as promoted, the neon colors are so pretty! My stream looks amazing with this included and matches the king of bite I was exactly going for💕",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-11-26",
+          "text": "качество отвратительное, иконки ложатся друг на друга, не рекомендую",
+          "language": "ru"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-23",
+          "text": "The customization on this is totally amazing and very freeing. Little confusing to set up, but that could have just been a me issue, lol, but absolutely beautiful when finally put together!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-22",
+          "text": "Adds such great personality and vibes to my stream!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-16",
+          "text": "very nice. I love it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-14",
+          "text": "very very very nicely done",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-14",
+          "text": "it works very well tbh",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-12",
+          "text": "I love this layout for my chat box and the colors are cool. I got it to work but I kind of wish the instructions were a bit more detailed in a more step by step way versus the quick video. Once you figure it out everything else is seamless and the coding is done just right so there wasn't much editing on my end I really needed to do, a bit of resizing for my taste but it was good to go.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-10",
+          "text": "These are wonderful assets! I love it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-10",
+          "text": "its very nice would recommend",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-05",
+          "text": "Very easy to set up and customize if you choose. Nice addition to a Just Chatting or simply adding chat to stream.",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2025-11-03",
+          "text": "J'ai vraiment aimé le rendu, un grand merci",
+          "language": "fr"
+        },
+        {
+          "rating": 4,
+          "date": "2025-10-30",
+          "text": "The chat box looks amazing! The only thing that I am not a huge fan of is the way the alerts look within the chat. Not sure if that is adjustable or not.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-30",
+          "text": "Chat loves it so much and it looks great on screen",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-29",
+          "text": "easy to use. Beautiful and the walkthrough is easy to understand.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-20",
+          "text": "looks awesome. love the customization options and set up guide!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-14",
+          "text": "so cute love it sm",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-11",
+          "text": "Would buy it again :)",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-10",
+          "text": "Parfait, j'adore 🥰 Je suis satisfaite à 1000% 😄",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-09",
+          "text": "wow amazing work perfect fit",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-04",
+          "text": "Wunderschön und gut erklärt <3",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-01",
+          "text": "So cute and easy to set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-29",
+          "text": "Bastante llamativo!! y muy bonito.\nBastante facil de aplicar de echo!",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-29",
+          "text": "It looks amazing! Did struggle with it at first since it’s my first time using anything like this but I love it so much!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-27",
+          "text": "Really simple to set up and gorgeous on screen.  Thank you!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-26",
+          "text": "This is next level amazing. It even came with a video tutorial on how to use it. I will say the video seemed a little outdated as one of the buttons to press didn't show up for me when making the Widget in Streamelements, but even still I was able to figure it out with the sources I was given.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-21",
+          "text": "Easy to install with a video that explains. The NeonChat looks really nice.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-14",
+          "text": "I adore this chat widget! It looks so clean and fits my aesthetic perfectly!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-09-11",
+          "text": "I like it, this is cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-03",
+          "text": "it was a bit hard to let it work but with a youtube video is it working now",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2025-08-28",
+          "text": "Did not work as intended",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-23",
+          "text": "Just what I needed! Thanks!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-22",
+          "text": "This chat looks amazing! But it can take awhile to tweak and get set up! Gorgeous chat though! 😁",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-11",
+          "text": "While I am a bit sad it doesn't work with Stream Labs, we were able to get it to work using Stream Elements. Also for those of you who don't want to download/use Chrome, Opera can use the extension needed to get it to work.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-30",
+          "text": "it was what was advertised",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-27",
+          "text": "Beautiful, and great quality. :)",
+          "language": "en"
         }
       ]
     },
@@ -468,14 +1536,14 @@
     "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only": {
       "handle": "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only",
       "etsyListingId": 4336744223,
-      "count": 2,
-      "average": 5,
+      "count": 9,
+      "average": 4.9,
       "distribution": {
         "1": 0,
         "2": 0,
         "3": 0,
-        "4": 0,
-        "5": 2
+        "4": 1,
+        "5": 8
       },
       "reviews": [
         {
@@ -489,20 +1557,62 @@
           "date": "2026-07-05",
           "text": "I love my new chat overlay. As a new streamer, it did take some trial and error to get it set up how I wanted, but the video included did help a bit.",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-25",
+          "text": "Amazing chatbox, that's soo cute and perfect for my aesthetic. Couldn't have been more happy with this find 💜",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-01",
+          "text": "Thank you so much for making this!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-19",
+          "text": "I love this chat layout <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-26",
+          "text": "Works beautifully, was easy to setup",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-01",
+          "text": "Très joli ChatBox. Parfait pour aller sur mon stream. L'installation peut se faire directement en utilisant l'extension Chrome ou de façon manuelle avec les fichiers inclus dans le dossier. Merci pour la vidéo Youtube pour l'installation. Tout est parfait. ♥ Je ne vais pas utiliser le Goal car je ne stream pas pour l'argent. Mais je l'ai aussi essayé et il est vraiment parfait. Très discret. ♥",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-20",
+          "text": "Its a great product overall but there was no explanation on how to get Widget.io extension for the browser to be able to add this into stream elelments i had to figure it out myself but there is a discord for help.",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-10-18",
+          "text": "Sehr schön und leicht einzufügen, bisschen tricky allerdings bei den ganzen feinheiten :D",
+          "language": "de"
         }
       ]
     },
     "cute-owl-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
       "handle": "cute-owl-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
       "etsyListingId": 1742236253,
-      "count": 1,
-      "average": 5,
+      "count": 4,
+      "average": 3.5,
       "distribution": {
-        "1": 0,
+        "1": 1,
         "2": 0,
-        "3": 0,
+        "3": 1,
         "4": 0,
-        "5": 1
+        "5": 2
       },
       "reviews": [
         {
@@ -510,20 +1620,38 @@
           "date": "2026-08-18",
           "text": "The creator really is helpful! Thank you very much!",
           "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-08-06",
+          "text": "not working well in streamlabs",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2025-01-25",
+          "text": "Had trouble with the bitty Owl its not working for some reason but i am happy with the others",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-30",
+          "text": "Perfektes Widget, alles super und wunderschön",
+          "language": "de"
         }
       ]
     },
     "sakura-petal-butterfly-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only": {
       "handle": "sakura-petal-butterfly-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only",
       "etsyListingId": 4320003692,
-      "count": 5,
-      "average": 4.8,
+      "count": 12,
+      "average": 4.4,
       "distribution": {
-        "1": 0,
+        "1": 1,
         "2": 0,
-        "3": 0,
+        "3": 1,
         "4": 1,
-        "5": 4
+        "5": 9
       },
       "reviews": [
         {
@@ -555,20 +1683,56 @@
           "date": "2026-05-16",
           "text": "works perfectly super adorable, good instructions in video",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-20",
+          "text": "cutee widgets for streaming and the video is easy to understand/follow to setup !",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2026-04-18",
+          "text": "Hatte anfangs probleme es richtig einzurichten aber sieht gut aus",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-08",
+          "text": "je les offert a une amie",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-08",
+          "text": "un peux plus transparent que ce que je pense mais sa fait son petit effet donc j'aime beaucoup",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-27",
+          "text": "Does exactly what I needed and I could customise to fit my channel! Thank you!",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-06-18",
+          "text": "I'm a bit upset at the fact the files are way to messy and the folders have just copies of stuff already, I can't even access it or use it on stream elements or obs. The files are to messed up and there are no steps on how to add to obs or steam elements I wouldn't recommend it",
+          "language": "en"
         }
       ]
     },
     "combo-goal-widget-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
       "handle": "combo-goal-widget-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
       "etsyListingId": 1790033028,
-      "count": 2,
-      "average": 4.5,
+      "count": 46,
+      "average": 4.7,
       "distribution": {
-        "1": 0,
+        "1": 2,
         "2": 0,
-        "3": 0,
-        "4": 1,
-        "5": 1
+        "3": 2,
+        "4": 3,
+        "5": 39
       },
       "reviews": [
         {
@@ -582,20 +1746,284 @@
           "date": "2026-06-29",
           "text": "Hi! I found what seems to be a bug with the Potion Bottle Goal Widget.\n\nAfter testing in both OBS Studio and Meld Studio, I discovered that the issue is caused by the particle effects.\n\nIf particles are enabled, even with only one bottle in a clean overlay, my alerts freeze and my camera starts losing FPS. If I disable the particles, everything works correctly, even with multiple goal bottles in the same overlay.\n\nI just wanted to let you know in case this helps identify the issue. Is there an updated version or a fix for the particle effects?\n\nAlso, as a small suggestion, it would be great if the water movement speed could be set even slower. Even at the lowest available setting, it still looks a little too fast for my preference.\n\nThank you!",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-25",
+          "text": "Reasonable price - very easy to set up - very cute product overall",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-11-12",
+          "text": "its good i just wish it had more customization options",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-05",
+          "text": "Easy to set-up and customize. Works perfect for my jackalope <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-01",
+          "text": "These are so great! They fit my DnD tavern themed stream so well.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-17",
+          "text": "Love these goal widgets. They are definitely magical, and I love that they are not static. The little glitter and liquid flowing make it very aesthetically pleasing!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-08",
+          "text": "lovely widgets, easy to install and look great",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-05",
+          "text": "great customizable widgets everything i needed and more!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-24",
+          "text": "These look great and installing them and getting them set up was easy.",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-08-22",
+          "text": "its just another spin off of the other animations. you can find original files in the links of the data. this is a scrap.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-16",
+          "text": "Such an amazing addition to my stream, I disliked having a plain bar for goals so I love how these add just a little something extra.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-10",
+          "text": "Perfect for my stream set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-03",
+          "text": "It really helps out with my streams on twitch~",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-29",
+          "text": "Wenn alles mal richtig eingestellt ist funktioniert das Widget ohne Probleme und sieht richtig cute aus :)",
+          "language": "de"
+        },
+        {
+          "rating": 1,
+          "date": "2025-07-23",
+          "text": "this is just scam to any tiktok streamer, and the seller is not responsive at all",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-17",
+          "text": "Beautiful widgets. I love them.",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2025-07-16",
+          "text": "The widgets themselves are very pretty, but i'm giving a three star review because they do not make it clear nor us it very helpful on how to get set up properly. Their YouTube video did not have any audio, and they just sped through everything and only just shows it through StreamElements, no Streamlabs, or OBS.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-14",
+          "text": "Super lovely product and the set up isn't to hard. its worth it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-27",
+          "text": "Amazing widget i love it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-24",
+          "text": "Easy once I watched a yt video lol used for obs !",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-16",
+          "text": "The product is absolutely amazing!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-10",
+          "text": "i love it super cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-02",
+          "text": "its a lovely addition to my cute witchy streams",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-30",
+          "text": "Honestly these are amazing thank you",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-30",
+          "text": "Cute and easy to set up and customize once I figured out what I needed to do.",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2025-05-27",
+          "text": "honestly i thought these could be used for bits and stuff, but it doesn’t seem to be the case.. and if it is the case, the youtube video sent along with them is confusing and really no help at all hence the lower rating. after putting it onto the stream the bottle was already full to the top. lovely bottles though if i could get them to work properly they’d be a great addition to my stream.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-23",
+          "text": "Overlays look amazing, was pretty easy to install using Stream Elements. Tried with StreamLabs before, couldn't make it work and couldn't figure out why XD The tutorial video for setting it up could be upgraded in terms of image quality (was very very blurry) and maybe by adding subtitles or a voice to guide you through the steps.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-09",
+          "text": "LOVE IT!!!! It's easy to implement on StreamLabs <3 Beautiful product.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-09",
+          "text": "Easy to set up, once I read the instructions. Looks wonderful on stream! Much appreciate the work!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-22",
+          "text": "Très bien réaliste ! je recommande.",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-18",
+          "text": "Very good Quality and Easy to use. Love it <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-07",
+          "text": "It works great. The only complaint i had was i had to go through each code to find the bottle I wanted because it wasn't named to describe. Just a bottle 1 bottle 2 type situation. But other than that I love it. It's cute and beautiful.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-02",
+          "text": "Easy video instructions on how to setup. I love all the bottles animated on the widgets. Setup on OBS and doesn't take up a lot of room",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-25",
+          "text": "Super cute and easy to set up! Highly recommend!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-03-20",
+          "text": "I think these are so cute. I would’ve liked for the different styles to be labeled differently so I’d know which is which but it’s still a nice addition to my stream!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-26",
+          "text": "Very cute once you get past the set-up. I have Firefox, not Chrome, so I can't download the specific extension they use in the tutorial, but I still got it to work in the end.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-23",
+          "text": "Easy to Use and perfect for what i needed!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-09",
+          "text": "Absolutely stunning. Love being able to 100% customize font color and the color blend. Also bonus that it has a float effect. Perfect addition.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-01",
+          "text": "Easy to customize and set up and the different versions are really nice.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-28",
+          "text": "Product is good and nice!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-12",
+          "text": "Super cute for my stream! It did take me a bit to understand how to upload it but I got it! I recommend if you’re using this for streamlabs to actually create it in stream elements like in the video and then just copying the URL and making it a browser source on streamlabs. Streamelemts customization tools are so much easier to use and it’ll be easier to upload. Just make sure you’re extracting the files!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-02",
+          "text": "I love these goal widget so much it really useful",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-30",
+          "text": "Quick delivery and amazing quality",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-28",
+          "text": "Love this item, looks amazing on screen. <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-19",
+          "text": "A cute addition to my stream",
+          "language": "en"
         }
       ]
     },
     "cute-froggy-goal-widget-liquid-filling-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
       "handle": "cute-froggy-goal-widget-liquid-filling-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
       "etsyListingId": 1763385692,
-      "count": 1,
-      "average": 5,
+      "count": 10,
+      "average": 4.8,
       "distribution": {
         "1": 0,
         "2": 0,
-        "3": 0,
+        "3": 1,
         "4": 0,
-        "5": 1
+        "5": 9
       },
       "reviews": [
         {
@@ -603,20 +2031,74 @@
           "date": "2026-08-08",
           "text": "Great product, works as expected.",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-06",
+          "text": "Excellent thanks it's like in images",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-23",
+          "text": "Had a little trouble, but they responded in a timely manner even when I fixed it! Very cute product",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-19",
+          "text": "Super cute item, kinda confusing if you don't know how to set it up though. Customer service was basic and kinda slow",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-28",
+          "text": "A little hard to set up, but the Seller replied fast to my question and everything worked! Thanks for the amazing product :)",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-18",
+          "text": "great and easy to do to",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-15",
+          "text": "Overall the art is amazing. And the widget isn’t bad to set up. There is a problem with the follower portion of the widget. And could use a video of how to change certain things. But it’s a beautiful widget.",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2024-10-21",
+          "text": "All in all a great product.  was a little confused when it said for stream labs and stream elements and when unzipping files it kept telling me the same files were already downloaded when I hadn't downloaded all of them.  After getting things unzipped and organized, there is a video to help with setup however there was no sound so i had to keep starting and stopping the video on each step to make sure of what i was doing.  After set up though I love the frogs and the item but setup instructions/download instructions need a little help.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-21",
+          "text": "A little challenging to instal but thankfully we're well guided. It's adorable and exactly what I wanted!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-20",
+          "text": "a little hard to set up but comes with a video, i love it so much and my twitch @ thiccctoasttt chat likes it aswell",
+          "language": "en"
         }
       ]
     },
     "mushroom-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
       "handle": "mushroom-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
       "etsyListingId": 1790037076,
-      "count": 1,
+      "count": 9,
       "average": 5,
       "distribution": {
         "1": 0,
         "2": 0,
         "3": 0,
         "4": 0,
-        "5": 1
+        "5": 9
       },
       "reviews": [
         {
@@ -624,20 +2106,68 @@
           "date": "2026-08-08",
           "text": "Extrêmement ravie du produit ^^",
           "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-13",
+          "text": "Love these they make it so much easier to see how close to my goal i am.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-23",
+          "text": "Never had anything like this before, it’s super cute, perfect for my streaming theme, I really love how the customization is.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-21",
+          "text": "I absolutely love this goal widet! It's so cute, was so easy to set up and I can't wait to use it over and over. It matches my channel aesthetic perfectly!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-30",
+          "text": "easy set up and there's a bit of customization capability",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-28",
+          "text": "super cute and easy to use!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-03",
+          "text": "very cute and matches the aesthetics of my stream :3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-15",
+          "text": "Its super cute. I used it on my stream",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-29",
+          "text": "I love the customization and greatly appreciate the step-by-step setup tutorial! It's a great addition to my stream and very cute",
+          "language": "en"
         }
       ]
     },
     "sparkling-bubble-sakura-flower-stream-chat-widgets-glassy-chat-with-flowers-and-petals": {
       "handle": "sparkling-bubble-sakura-flower-stream-chat-widgets-glassy-chat-with-flowers-and-petals",
       "etsyListingId": 4369470796,
-      "count": 3,
+      "count": 6,
       "average": 5,
       "distribution": {
         "1": 0,
         "2": 0,
         "3": 0,
         "4": 0,
-        "5": 3
+        "5": 6
       },
       "reviews": [
         {
@@ -657,32 +2187,23 @@
           "date": "2026-06-25",
           "text": "i like it a lot",
           "language": "en"
-        }
-      ]
-    },
-    "celestial-butterfly-chat-and-goal-stream-widgets-minimal-elegant-celestial-theme-clean-vibe-streamelement-only": {
-      "handle": "celestial-butterfly-chat-and-goal-stream-widgets-minimal-elegant-celestial-theme-clean-vibe-streamelement-only",
-      "etsyListingId": 1706402816,
-      "count": 2,
-      "average": 5,
-      "distribution": {
-        "1": 0,
-        "2": 0,
-        "3": 0,
-        "4": 0,
-        "5": 2
-      },
-      "reviews": [
+        },
         {
           "rating": 5,
-          "date": "2026-08-02",
-          "text": "perfect for my stream.. cute and girly",
+          "date": "2026-03-07",
+          "text": "works well and is super pretty on stream. you can customize it to you liking",
           "language": "en"
         },
         {
           "rating": 5,
-          "date": "2026-07-10",
-          "text": "love it will buy more soon",
+          "date": "2025-11-22",
+          "text": "While I got this initially as a backup to the one I was making, I immediately changed my mind I opted for using it mainly instead. It's absolutely gorgeous and, truly, I will probably be getting others!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-02",
+          "text": "I've been looking for something like this since I started streaming... and now I found it! It fits me so much and it was SUPER easy to setup!",
           "language": "en"
         }
       ]
@@ -690,14 +2211,14 @@
     "lotus-butterfly-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only": {
       "handle": "lotus-butterfly-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only",
       "etsyListingId": 4310437865,
-      "count": 2,
-      "average": 5,
+      "count": 7,
+      "average": 3.7,
       "distribution": {
-        "1": 0,
+        "1": 2,
         "2": 0,
         "3": 0,
-        "4": 0,
-        "5": 2
+        "4": 1,
+        "5": 4
       },
       "reviews": [
         {
@@ -711,20 +2232,149 @@
           "date": "2026-05-10",
           "text": "Great product. Easy to set up",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-10",
+          "text": "love it got a lot of compliments",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2026-04-03",
+          "text": "I'm actually disappointed with the fact it is so difficult to set up. (Even right now, I can't get it set up for my chat box.)\n\nIt's beautiful, but the fact you need a third party extension, and then the video doesn't even show you how to set up the chat-box part. I wish I could just refund this. Despite how pretty the art is, I do not recommend.",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-07-24",
+          "text": "It looks fantastic, but the coding is a little wonky to get the dimensions right on the overlay (text can get cut off, it doesn't start int he right place, etc.) You kinda gotta tinker with it, a lot.",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-06-29",
+          "text": "1. JS Code has Obfuscations preventing it being pasted into Streamlabs\n\n2. No instructions supplied with how to setup the chat\n\n3. User is possibly hiding malicious code in JS code",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-09",
+          "text": "The chat looks beautiful and works like a charm!",
+          "language": "en"
+        }
+      ]
+    },
+    "celestial-moon-cute-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "celestial-moon-cute-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1728594513,
+      "count": 14,
+      "average": 4.8,
+      "distribution": {
+        "1": 0,
+        "2": 1,
+        "3": 0,
+        "4": 0,
+        "5": 13
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-07-27",
+          "text": "supper cute and works perfectly",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-07-24",
+          "text": "I'm loving it! So cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-06-10",
+          "text": "Amazing love seeing it fill up on my twitch",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-05-17",
+          "text": "took me a little figured out how to set it in my streamlabs. The video they sent was very helpful. im just lil slow haha. Definitely recommended!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-05-06",
+          "text": "I like them a lot. 😁",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-04",
+          "text": "Beautiful widget, only issue I have is that it won’t work with charity donations on stream BUT it does work with tip donations x",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-28",
+          "text": "Super schöner und inspirierender Artikel ✨",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-28",
+          "text": "easy to setup and manage",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-02",
+          "text": "Super cute and easy to use!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-21",
+          "text": "Is very easy to customize, but one thing that I must say is that you can't customize the glow color (blue), but everything else is great!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-18",
+          "text": "Looks absolutely ethereal and adds a bit more to my stream overlays!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-08-30",
+          "text": "It’s so cute and easy super easy to set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-31",
+          "text": "Absolutely love it, its so cute!",
+          "language": "en"
+        },
+        {
+          "rating": 2,
+          "date": "2024-06-18",
+          "text": "The art alone is gorgeous, but when it's beginning to fill from the goal being done, a thin square outline becomes visible and there is no way to get rid of it. Kind of an eye sore if you ask me. I have input the custom fields in both SE and SL and have the same issue. Was unable to message seller, and for some reason can't inquire about help. ):",
+          "language": "en"
         }
       ]
     },
     "dreamy-moon-cloud-glass-goal-widget-customisable-for-twitch-and-tiktok-studio": {
       "handle": "dreamy-moon-cloud-glass-goal-widget-customisable-for-twitch-and-tiktok-studio",
       "etsyListingId": 1707756402,
-      "count": 4,
-      "average": 4.3,
+      "count": 75,
+      "average": 4.7,
       "distribution": {
-        "1": 0,
+        "1": 3,
         "2": 1,
         "3": 0,
-        "4": 0,
-        "5": 3
+        "4": 6,
+        "5": 65
       },
       "reviews": [
         {
@@ -750,20 +2400,434 @@
           "date": "2026-05-13",
           "text": "so cute! i love it!",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-25",
+          "text": "it was so pretty i used it on my channel",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2026-04-10",
+          "text": "The asset gave me a lot of problems, putting my cpu at 100% whenever it was active. Spoke with the seller and they took almost 2 months and me reaching out a few times to remind them and ask them where the solution is. After all they offered me a solution and it works. The asset is very pretty now that it works properly",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2026-03-22",
+          "text": "After using these for a while, I've come to realize that this widget completely lags my CPU when adding them to my stream overlay. I don't recommend these at all.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-01",
+          "text": "i like it and it is amazing",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-09",
+          "text": "I love this moon goal widget! It’s so cute and fits so well with my stream. The instructions were so easy to follow! Thanks for your amazing work.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-08",
+          "text": "Awesome widget, and easy to setup! thank you!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-27",
+          "text": "Love that its customizable & if you have a night or moon theme in your streaming channel, highly recommend this!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-20",
+          "text": "This product is great, just what I needed",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-02",
+          "text": "Super easy to set up love it.So much it matches my moon themes and color scheme.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-31",
+          "text": "I love this product  it was easy to add onto my obs!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-10-06",
+          "text": "cute and lovely will recommend to my friends",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-27",
+          "text": "Very dreamy, i love it so much",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-26",
+          "text": "It had a struggle with it, but once I found the setup link to do it via streamelements, it clicked! I've wanted a widget like this to match my stream aesthetic so thank you so much!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-17",
+          "text": "Beautiful widgets. I love them.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-17",
+          "text": "The shop owner was beyond helpful and kind when I was having trouble! It was nice that she uses discord to further trouble shoot any issues to make the experience less stressful and easier to navigate! Her items are super cute as well! 10/10 a fan!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-10",
+          "text": "Wunderschön, einfach einzubinden und zu gestalten - bin absolut zufrieden!",
+          "language": "de"
+        },
+        {
+          "rating": 4,
+          "date": "2025-06-04",
+          "text": "The widget is great. The help via discord also great! But I wish there was some mention of needing a widget extension before purchase? I don't use Chrome but I downloaded it just for this widget.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-29",
+          "text": "Quick delivery, clear instructions! Would purchase again xo",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-16",
+          "text": "Took me a hot minute to figure out how to add it to my stream accurately, but it works like a dream!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-07",
+          "text": "It's very cute, thank you",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-07",
+          "text": "Very detailed instructions, works perfectly as described and intended",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-22",
+          "text": "Cutesy cutesy I’m in love!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-17",
+          "text": "Super pretty and fitting for me!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-04-08",
+          "text": "La lune est magnifique mais dommage que la brillance reste violette et qu'on ne puisse pas modifier la couleur, donc j'ai du l'enlevé.\nLes lignes de code à entré ne fonctionnent pas sur Streamlabs, il faut passé par Streamelements et la vidéo donné avec n'est pas très claire, le fichier n'est pas une vidéo donc j'ai eu du mal à comprendre ou était le tutoriel, le lien est à trouvé dans le fichier texte, j'ai contacté le vendeur et il m'a donné un lien youtube qui est mieux.",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-07",
+          "text": "Absolutely perfect and exactly what I need!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-05",
+          "text": "Love this so much! Its super cute and has options to be more or less distracting",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-01",
+          "text": "Super easy to use and apply to stream via obs!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-23",
+          "text": "love this widget!! it looks super cute and matches my celestial stream theme!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-18",
+          "text": "They help me so fast!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-03-16",
+          "text": "It works nice but what I see as a downgrade is need to join a discord server to get customer service",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-07",
+          "text": "Super lovely and easy to use. Looks great on stream!",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-03-05",
+          "text": "As much as I'd like to recommend this Creator because their products are beautiful they're technical support is terrible they assume that everyone's going to know how to plug in this complicated code and set it all up they have tutorial videos but they're all mute with no audio which makes it hard for certain people to follow if you're not a highly skilled technology person or extremely good at reading or can keep up with a fast pace then I don't recommend it if you're a handicapped individual like myself who needs an actual proper step by step tutorial with audio and good visuals then I'd say this isn't the product for you it's beautiful but I can't get it to work and it can't get my money back and I'm not getting a response from anyone so I'm buying a product that I cannot use and the download process to get to it was very com",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-23",
+          "text": "super cute and works smoothly",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-23",
+          "text": "I love it!! it looks awesome on",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-14",
+          "text": "My community and I love it! Super easy to set up.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-11",
+          "text": "Love these! Took me a bit to figure out but when I finally got it i was so happy they are adorable",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-05",
+          "text": "AMAZING! Easy to use and set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-05",
+          "text": "Es muy lindo y fácil de usar",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-25",
+          "text": "love it a ton thank you !",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-02",
+          "text": "Super cute, easy to set up with the guide video included, looks amazing with my setup! Thank you this is perfect!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-19",
+          "text": "Beautifully done and was exactly what needed <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-08",
+          "text": "Very nice and aesthetically pleasing",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-03",
+          "text": "Rapide, efficace, magnifique, que demander de plus ?",
+          "language": "fr"
+        },
+        {
+          "rating": 4,
+          "date": "2024-11-25",
+          "text": "The design is great and I was so excited to set the widget up on my stream. \nI did struggle a lot with set up, as the set up instruction video was quite blurred until about half way in. It may be an idea to also write a set of instructions, answers to frequently asked questions etc",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-22",
+          "text": "this's really cute, I love it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-21",
+          "text": "It's perfect, thank you !",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-19",
+          "text": "great quality!! loving it :D",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2024-11-14",
+          "text": "I bought this and it's damage the files are missing and the customer service asked me to wait to check the problem and I was waiting for 37 mins and no response came they scammed me I bought two of these are non of them work!!!!!!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-09",
+          "text": "I adore this hype cup so much!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-05",
+          "text": "Love this little moon! Great addition to my stream!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-24",
+          "text": "I love it\nthx so much ^^",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-18",
+          "text": "Cute and fits my theme perfectly! Love it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-30",
+          "text": "Amazing product and the seller was super patient as I tried to navigate how to set it up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-30",
+          "text": "Absolutely beautiful addition to my overlay!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-19",
+          "text": "Absolutely perfect for my stream, beautiful asset :>",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-07",
+          "text": "Cute widget easy to set up. Thank you!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-01",
+          "text": "adoreiii deixou minha live muito mais bonita",
+          "language": "pt"
+        },
+        {
+          "rating": 5,
+          "date": "2024-08-30",
+          "text": "Super cute for my streams!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-08-25",
+          "text": "Me encantó muy bonito el diseño y la explicación para el uso es muy buena",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-17",
+          "text": ":) loved it very much",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-16",
+          "text": "Love it perfect for my stream",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-11",
+          "text": "Great and easy to use! I’m not good with technology but this was so easy to use! <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-07",
+          "text": "This is such a cutely made donation goal! I was scrolling by and this caught my eye!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-06-28",
+          "text": "Looks great but not really what I was looking for.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-06-26",
+          "text": "Looks really great, good quality!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-05-15",
+          "text": "my stream is so cute now, really beautiful",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-05-08",
+          "text": "Had some trouble getting it started but now it looks amazing",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-05-06",
+          "text": ". . . . .",
+          "language": "und"
+        },
+        {
+          "rating": 5,
+          "date": "2024-05-05",
+          "text": "Its adorable and works great! They include a detailed video which helped big time!",
+          "language": "en"
         }
       ]
     },
     "pokemon-charizard-character-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
       "handle": "pokemon-charizard-character-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
       "etsyListingId": 1881347726,
-      "count": 1,
-      "average": 5,
+      "count": 9,
+      "average": 4.6,
       "distribution": {
-        "1": 0,
+        "1": 1,
         "2": 0,
         "3": 0,
         "4": 0,
-        "5": 1
+        "5": 8
       },
       "reviews": [
         {
@@ -771,20 +2835,68 @@
           "date": "2026-06-21",
           "text": "One of the OG dragons. cool design!!",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-14",
+          "text": "Étant fan de dracofeu, j'ai essayé et adopté direct.\nJe recommande !",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-12",
+          "text": "these are great for keeping tracking of my goals on stream love it",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-11-07",
+          "text": "Seller needs to update their coding. But they disappeared. Do not buy these.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-06",
+          "text": "easy to install and easy instruction",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-01",
+          "text": "the quality is as one expected",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-14",
+          "text": "Veramente molto bello, ben fatto",
+          "language": "it"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-21",
+          "text": "This thing looks great! I had a little problem with setup in my OBS Studio and i decided to hit up the guy in support. He gave me answer really quick like in 2-3mins, and then added me on discord + on discord server. We find a fix very fast to this problem. So i recommend this little cute thing! :)",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-13",
+          "text": "I love it! deff recommended thank you<3",
+          "language": "en"
         }
       ]
     },
     "moon-glow-neon-aesthetic-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only": {
       "handle": "moon-glow-neon-aesthetic-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
       "etsyListingId": 4336740821,
-      "count": 3,
+      "count": 12,
       "average": 4.7,
       "distribution": {
         "1": 0,
         "2": 0,
         "3": 0,
-        "4": 1,
-        "5": 2
+        "4": 4,
+        "5": 8
       },
       "reviews": [
         {
@@ -804,20 +2916,74 @@
           "date": "2026-05-30",
           "text": "Video tutorial was helpful though it took me a while to figure out how to OBS. Product was easy enough to set up and customize only had trouble asjusting the size but that was more user issue than the product.",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-11",
+          "text": "Absolutely perfect for my stream!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-22",
+          "text": "I love using this for my chat, the neon glow is very comfy.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-31",
+          "text": "Me gusto mucho, es super facil de instalar y es super lindo",
+          "language": "es"
+        },
+        {
+          "rating": 4,
+          "date": "2026-01-17",
+          "text": "Its so cute and easy to installed",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-14",
+          "text": "it was al little hard to setup but i love it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-26",
+          "text": "exactement comme décrit très facile d'usage",
+          "language": "fr"
+        },
+        {
+          "rating": 4,
+          "date": "2025-11-16",
+          "text": "This widget has helped make my stream look flawless and more personalized for my theme! \n\nI will for sure mess around with customization when I get the chance when it comes around.\n\nThe discord group is great and insightful. The support was great as well because when I was struggling to transfer the widget to stream labs I was able to figure out my problem but Space Labs did well with the communication and assistance while I was needing assitance.",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-08-15",
+          "text": "Not quite as customizable as I thought it would be. But could be user error. Very nice widget",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-13",
+          "text": "Love this product, 10/10 would recommend",
+          "language": "en"
         }
       ]
     },
     "pastel-cloud-stream-widget-cute-rainbow-cloud-fully-customisable-goal-widget-for-streamlabs-tiktok-studio-and-streamelements": {
       "handle": "pastel-cloud-stream-widget-cute-rainbow-cloud-fully-customisable-goal-widget-for-streamlabs-tiktok-studio-and-streamelements",
       "etsyListingId": 1797937195,
-      "count": 1,
-      "average": 5,
+      "count": 12,
+      "average": 4.8,
       "distribution": {
         "1": 0,
         "2": 0,
         "3": 0,
-        "4": 0,
-        "5": 1
+        "4": 2,
+        "5": 10
       },
       "reviews": [
         {
@@ -825,12 +2991,387 @@
           "date": "2026-06-07",
           "text": "I absolutely love this little moon guy so much.",
           "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-06",
+          "text": "Very customizable and super cute.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-11",
+          "text": "A video tutorial. Super easy to follow and super easy to customize!!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-06-13",
+          "text": "Alles super, sehr zu empfehlen.",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-08",
+          "text": "Nice goal, you can use that for everything, it's so cute I love it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-04",
+          "text": "The widget itself looks really amazing however in the beginning it did not work because I was using a whole different platform but she took the time to decode to make it work for me and stayed in call to fix things she's truly a star and amazing I recommend her beyond measures!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-23",
+          "text": "Super parfait trop mimi je les ai mis en follow etc",
+          "language": "fr"
+        },
+        {
+          "rating": 4,
+          "date": "2025-05-01",
+          "text": "wish i could move the wording to left or right- but looks really cool",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-09",
+          "text": "Being new to streaming it was little confusing trying to get the widget in steamlabs. But I used another video to figure it out. After I did it was an amazing new addition to my stream.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-30",
+          "text": "Очень милый виджет, спасибо большое",
+          "language": "ru"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-21",
+          "text": "It is very nicely done and easy to set up! Let me tell you it IS fully adjustable to your needs with any color and title you want. 10 out of 10!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-19",
+          "text": "Cute and easy to install!",
+          "language": "en"
         }
       ]
     },
     "goth-spell-book-spooky-vibes-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
       "handle": "goth-spell-book-spooky-vibes-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
       "etsyListingId": 1747633766,
+      "count": 15,
+      "average": 4.9,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 13
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-06-05",
+          "text": "Pour le coté Rp c'est vraiment parfais",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-15",
+          "text": "SO CUTE AAAAH - fits my theme",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-26",
+          "text": "Correspond très bien à ce que je cherchais",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-27",
+          "text": "This widget is beautiful, and the instructions made it incredibly simple to set up. I've never streamed before, and it took me less than 5 minutes to get it set up. Highly recommend. <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-12",
+          "text": "I love how cute these are, so customisable and just perfect for any library theme",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-24",
+          "text": "Super cute design, totally fits my streamer theme!! Easy to set up.",
+          "language": ""
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-22",
+          "text": "Love the modifications you can bring to it to make it your own, great for book lovers!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-30",
+          "text": "Really cool widget to have!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-19",
+          "text": "good widget, it really suits my channel's vibe :D",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-15",
+          "text": "The book is so cool! Love that it's customizable.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-26",
+          "text": "Look amazing on my stream. Easy to use and very quick delivery would 100% recommend! Ty so much",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-22",
+          "text": "so cute!\nvery simple\nand can change color",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2024-10-07",
+          "text": "Its cute but the set up is easy enough if you know what your doing but i did have to go in and fix some of the text as it wasnt across the book and discovered that it was hard to read on the book when on stream",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-12",
+          "text": "Very cute I love the directions too",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2024-09-02",
+          "text": "Very Cute and nicely done..",
+          "language": "en"
+        }
+      ]
+    },
+    "saber-neon-chat-widget-twitch-streamelements-animated-glow-chat-goal-overlay-vtuber-streamer-obs": {
+      "handle": "saber-neon-chat-widget-twitch-streamelements-animated-glow-chat-goal-overlay-vtuber-streamer-obs",
+      "etsyListingId": 4473894910,
+      "count": 2,
+      "average": 4.5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-05-02",
+          "text": "Very high quality product and when I had a problem they were very helpful and found the solution for me!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2026-04-06",
+          "text": "Was quick to debug the issue I had with widget not working properly!",
+          "language": "en"
+        }
+      ]
+    },
+    "celestial-butterfly-chat-and-goal-stream-widgets-minimal-elegant-celestial-theme-clean-vibe-streamelement-only": {
+      "handle": "celestial-butterfly-chat-and-goal-stream-widgets-minimal-elegant-celestial-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4339053159,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-04-28",
+          "text": "es ist genial! macht die chatbox ansehnlicher <3 kann ich nur weiter empfehlen",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-27",
+          "text": "Its a good product !",
+          "language": "en"
+        }
+      ]
+    },
+    "halloween-eye-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "halloween-eye-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1805179619,
+      "count": 9,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 9
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-04-17",
+          "text": "Beautiful widget, good instructions for install",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-15",
+          "text": "easy to set up, very cool detailing and super cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-04",
+          "text": "very cute love this so much",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-13",
+          "text": "very cute, i love it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-12",
+          "text": "Love the animations, and the customization is great!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-10",
+          "text": "it is so very cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-29",
+          "text": "the seller are fast respon, the widgets are cute and fits my theme. i hope u keep making cute things like this <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-09",
+          "text": "Item is just what i was looking for and it was so easy to upload and use.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-28",
+          "text": "amazing goal widgets 10/10 ♥️",
+          "language": "en"
+        }
+      ]
+    },
+    "heart-skeleton-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "heart-skeleton-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1797449100,
+      "count": 11,
+      "average": 4.6,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 10
+      },
+      "reviews": [
+        {
+          "rating": 1,
+          "date": "2026-04-09",
+          "text": "instructions were not clear and did not have a clear image nor any audio",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-18",
+          "text": "My friend absolutely loved it! Thanks for making her Birthday really special!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-14",
+          "text": "Item is exactly as described",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-27",
+          "text": "Amazing goal widget looks beautiful on stream, I love the cute creepy vibe worked perfect for my model aesthetic overall incredible easy set up you name it! <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-11",
+          "text": "very easy to set up and is super cute to customize!! love this for stream ^-^",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-10",
+          "text": "mag das man die individualisieren kann. sehr schöne herzen und meinen Zuschauern gefällt es auch.",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-02",
+          "text": "looks great and works as intended, love it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-09",
+          "text": "Super easy to use, super cute to see!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-30",
+          "text": "Works perfectly :3 help my goals be more visible and interactive",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-25",
+          "text": "took a bit longer to set it up but was worth it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-22",
+          "text": "I like the goal. It is cute",
+          "language": "en"
+        }
+      ]
+    },
+    "lunar-cat-aesthetic-dark-purple-chat-goal-stream-widgets-animated-celestial-elegant-lunar-theme-clean-vibe-streamelement-only": {
+      "handle": "lunar-cat-aesthetic-dark-purple-chat-goal-stream-widgets-animated-celestial-elegant-lunar-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4333466716,
       "count": 1,
       "average": 5,
       "distribution": {
@@ -843,9 +3384,2204 @@
       "reviews": [
         {
           "rating": 5,
-          "date": "2026-06-05",
-          "text": "Pour le coté Rp c'est vraiment parfais",
+          "date": "2026-03-28",
+          "text": "Was perfect, and seller was so helpful on information I didnt know about.",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-peach-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-tiktok-studio-streamelements-streamlabs-obs": {
+      "handle": "cute-peach-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-tiktok-studio-streamelements-streamlabs-obs",
+      "etsyListingId": 1723478277,
+      "count": 34,
+      "average": 4.6,
+      "distribution": {
+        "1": 3,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 29
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-03-09",
+          "text": "C'est magnifique! Le fonctionnement était clair et simple, j'adore",
           "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-04",
+          "text": "Very cute goal counter! I love the liquid effect whenever the goal counter goes up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-07",
+          "text": "These were perfect, just like pictured",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-08-22",
+          "text": "thy advertised fake one for tiktok",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-15",
+          "text": "Very adorable, thought a little complicated to set up if you've never had to copy code before :)",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-08",
+          "text": "Easy to set up and use!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-01",
+          "text": "perfect for my stream ty",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-28",
+          "text": "Item is exactly as described. Would recommend this seller and this product to anyone.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-24",
+          "text": "Nice i like it so much",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-03-21",
+          "text": "Jolie deco j'aime bien. Je vous le recommande",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-02",
+          "text": "Super adorable! Can't wait to use this item :)",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-23",
+          "text": "Great addition to twitch for goals!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-22",
+          "text": "love it, good product, simple to install.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-14",
+          "text": "everything is perfect, I just don't see the option to change color and goal's amount...",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-28",
+          "text": "Super cute widget and easy install.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-26",
+          "text": "thank you for also sending the instructions with this beautiful and professional widget! my chat and I love it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-05",
+          "text": "Nicely designed product. Thank you",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-17",
+          "text": "I love it very cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-13",
+          "text": "soooo cute! i love it and the customizations. Seller was super helpful and quick <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-23",
+          "text": "Love these little potion peaches! They're adorable and I love how easily customizable they are (color, amounts) in StreamElements!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-18",
+          "text": "Love it! Super cute and customizable",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-17",
+          "text": "Very cute! love how these look on streamlabs",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-16",
+          "text": "Such a neat addition to my stream! The instructions were easy enough to follow- I appreciate that there was an instructional video so you could see clearly how to set up the widgets.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-07",
+          "text": "the videos is super helpful takes a little bit of time to set up fully but really love the end results",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-03",
+          "text": "Cute design for a goal widget, it's a perfect extra touch and the floating heart animation inside is so cute! I had an issue with mine at first when I set it up and with the help of the creator, fixed it! Super helpful and responds quickly. :) (Added a photo of what it looks like on stream, also Halloween stream lol)",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2024-10-25",
+          "text": "Good. I really like it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-10",
+          "text": "Super Adorable!!! Very easy to install! Directions included.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-10",
+          "text": "es muy bonito y bien animado",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-08",
+          "text": "all good! Beautiful peach indeed",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2024-10-02",
+          "text": "the video didn't help at all, it didn't work",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-30",
+          "text": "Easy to use - a few video tutorials and works great!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-07",
+          "text": "Very cute and very awesome. Easy to set up as well.",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2024-08-07",
+          "text": "Leider nicht das bekommen was ich wollte, da es ein herz und keine pfirsisch ist",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2024-05-30",
+          "text": "Really good! In love with it!",
+          "language": "en"
+        }
+      ]
+    },
+    "lunar-cat-aesthetic-light-purple-chat-goal-stream-widgets-animated-celestial-elegant-lunar-theme-clean-vibe-streamelement-only": {
+      "handle": "lunar-cat-aesthetic-light-purple-chat-goal-stream-widgets-animated-celestial-elegant-lunar-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4333468758,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-02-27",
+          "text": "love this chat box and it is such a hit with my followers <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-21",
+          "text": "c'est magnifique comme widget de chat",
+          "language": "fr"
+        }
+      ]
+    },
+    "plants-vibe-dreamy-chat-goal-stream-widgets-minimal-celestial-nature-theme-clean-vibe-streamelement-only": {
+      "handle": "plants-vibe-dreamy-chat-goal-stream-widgets-minimal-celestial-nature-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4325051591,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-02-26",
+          "text": "so pretty, and matches my setup perfectly!",
+          "language": "en"
+        }
+      ]
+    },
+    "classical-tarot-card-chat-and-goal-widget-minimal-mystical-elegant-theme-alerts-for-twitch-streams-streamelements-only": {
+      "handle": "classical-tarot-card-chat-and-goal-widget-minimal-mystical-elegant-theme-alerts-for-twitch-streams-streamelements-only",
+      "etsyListingId": 1892179450,
+      "count": 5,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 5
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-02-07",
+          "text": "Looks amazing on stream and easy to set up",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-01-04",
+          "text": "Absolutely thrilled with this chat widget! The design is incredibly clean, modern, and highly aesthetic, and I love how customizable it is. The seller was extremely helpful - answered my questions quickly and solved my problem without any hassle. Excellent product and top-notch support. Highly recommend!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-05",
+          "text": "très apprécier de ma commu pendant halloween",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-28",
+          "text": "Absolutely stunning, easy to use, easy to customize and runs extremely smoothly! ♥ 10/10",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-10",
+          "text": "Super cute great support though I'm still working on setting up the widget.  <3",
+          "language": "en"
+        }
+      ]
+    },
+    "lantern-aesthetic-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "lantern-aesthetic-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1772576667,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-01-04",
+          "text": "this was so good i love it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-18",
+          "text": "Very uncomplicated, easy to install with the instruction video! Perfect!",
+          "language": "en"
+        }
+      ]
+    },
+    "halloween-spooky-tea-bag-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "halloween-spooky-tea-bag-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1806974501,
+      "count": 3,
+      "average": 4.3,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-12-29",
+          "text": "Very Cute and perfect for my stream!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-06-11",
+          "text": "The lack of instructions almost made me request a refund because I don’t understand code so I didn’t know how to do anything. After 4 hours I finally got it. Cute once everything works.",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-05-22",
+          "text": "the widget is adorable but it took me a while to set up. i just chose the current status and it showed follows/subs correctly. visually, i am very satisfied and it suits my stream perfectly!",
+          "language": "en"
+        }
+      ]
+    },
+    "retro-file-love-chat-widget-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-love-goal": {
+      "handle": "retro-file-love-chat-widget-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-love-goal",
+      "etsyListingId": 4297334656,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-12-28",
+          "text": "Really easy to install and works great. The CSS is pretty easy to tweak with if you want customization as the variables make sense.",
+          "language": "en"
+        }
+      ]
+    },
+    "sakura-dessert-loading-goal-widget-is-fully-customisable-for-twitch-streamelements": {
+      "handle": "sakura-dessert-loading-goal-widget-is-fully-customisable-for-twitch-streamelements",
+      "etsyListingId": 1763459664,
+      "count": 4,
+      "average": 3,
+      "distribution": {
+        "1": 2,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-12-09",
+          "text": "En pleins ce que je cherchais pour mon changement de décor à long terme !",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-29",
+          "text": "a cute little design for the overlay",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2024-11-20",
+          "text": "Suppose to work for streamelements. The video shows how to do it but when you look at the coding in the video and the product you are given to copy, it is nothing like in the video. its messy. Even when you download the txt app, it did not help",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2024-09-15",
+          "text": "The ad said the item was for streamlabs and stream elements but when I got the file it was very messy with no labeling on anything. When I messaged them they said the item was only for obs. False advertising, I am asking for a refund.",
+          "language": "en"
+        }
+      ]
+    },
+    "floral-purple-chat-widget-minimal-starry-mystical-elegant-theme-chat-box-with-pronouns-alerts-for-twitch-streams-streamelements": {
+      "handle": "floral-purple-chat-widget-minimal-starry-mystical-elegant-theme-chat-box-with-pronouns-alerts-for-twitch-streams-streamelements",
+      "etsyListingId": 1763900071,
+      "count": 18,
+      "average": 4.9,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 16
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-12-05",
+          "text": "Easy setup very cute highly reccomend",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-03",
+          "text": "Super cool and easy to use! Great asset! Thank you!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-19",
+          "text": "this is such a beautiful chat widget, matches my theme amazingly and my community absolutely loves it 10/10",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-07",
+          "text": "works nice and seamless worth every penny",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-06",
+          "text": "Facil de instalar, recomendable, se puede entender",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-03",
+          "text": "Thank you for this. Easy to set up and I def recommend it.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-11",
+          "text": "I didn't want to leave a review but it won't get rid of the notification until I review the product",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-15",
+          "text": "Best Chat Ever! I love it and it's perfect for my Stream set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-04",
+          "text": "Thank you for the widget!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-09",
+          "text": "Received help when I needed and delivery was quick :)",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-18",
+          "text": "Es precioso 100% recomendable! Queda muy bonito",
+          "language": "es"
+        },
+        {
+          "rating": 4,
+          "date": "2025-02-10",
+          "text": "Exactly what I needed. 🌸",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-06",
+          "text": "It's cute and easy to use",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-21",
+          "text": "Very nicely animated, easy to set up, easy to customize, includes test messages to see your changes. I love it! 10 out of 10!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-02",
+          "text": "Abosolutely LOVE this chat widget :) ... Now, to find a twitch package that matches it! ! Totally worth <3",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2024-12-26",
+          "text": "Does not have the proper codes for Streamlabs, but it'll work in streamelements",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-26",
+          "text": "Super Cute and easy to set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-03",
+          "text": "This is so pretty, I love using it!",
+          "language": "en"
+        }
+      ]
+    },
+    "pastel-bubble-chat-widget-pastel-gradient-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-bubble-goal": {
+      "handle": "pastel-bubble-chat-widget-pastel-gradient-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-bubble-goal",
+      "etsyListingId": 1904486343,
+      "count": 5,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 5
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-12-02",
+          "text": "It is not easy to setup chat in a stream, but this made it effortless! I wish I had bought this sooner! It's sleek and I love the pastel gradient! BIG W! Easy setup, great quality, 10/10 recommend!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-24",
+          "text": "super cute and well made",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-22",
+          "text": "love it its great and easy to use",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-13",
+          "text": "incredible, nice widget easy to use",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-29",
+          "text": "Hat alles super funktioniert :)",
+          "language": "de"
+        }
+      ]
+    },
+    "butterfly-vibe-combo-goal-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "butterfly-vibe-combo-goal-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1858698516,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-11-24",
+          "text": "in love with the cute butterfly overlaysss",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-13",
+          "text": "Super cute !! Love it !! ♡",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-moon-panda-combo-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-moon-panda-combo-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1728586845,
+      "count": 8,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 8
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-11-19",
+          "text": "These are adorable and easy to setup!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-09",
+          "text": "Super très beau widget !",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-08",
+          "text": "me gusto mucho pero al ponerlos me costo que se vean claros en stream, igual creo q es xq yo transmito en 720 pero bueno estan muy lindos, se ven muy cute y si los recomiendo.",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-09",
+          "text": "Cute and very easy to install!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-27",
+          "text": "It's perfect for what I was looking for and easy to set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-21",
+          "text": "Easy to set up and works very well.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-31",
+          "text": "IT'S SO CUTE AHHH!! the video walkthrough was super helpful for setting it up and i love the fact that you can customize the colors as well!! highly recommend!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-05-30",
+          "text": "it was not too bad setting up and its so cute!!",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-spooky-bat-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-spooky-bat-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1775661417,
+      "count": 14,
+      "average": 4.6,
+      "distribution": {
+        "1": 0,
+        "2": 1,
+        "3": 1,
+        "4": 1,
+        "5": 11
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-11-18",
+          "text": "bah super je sais pas",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-24",
+          "text": "very cute!! love the baby bats that pop up",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-24",
+          "text": "These are so adorable to look at! I hope to start using these soon.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-01",
+          "text": "Just what I was looking for, perfect for my stream set up.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-30",
+          "text": "It's so cute and so easy to do",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-19",
+          "text": "SUCH easy to add to my stream, love how cute and customizable they are! <3",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2025-01-22",
+          "text": "....... ... . . .h",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-01-21",
+          "text": "super cute! Got as a gift for my friends stream! It looks perfect",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-12",
+          "text": "Cute, easy to setup if you've done similar items. I did not receive the tutorial video, but it wasn't needed since I've used these types of stream decorations before",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-23",
+          "text": "Seller very responsive when I needed the video sent to me. The widget is so cute, can't wait to use it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-21",
+          "text": "super adorable and good quality",
+          "language": "en"
+        },
+        {
+          "rating": 2,
+          "date": "2024-10-12",
+          "text": "The product displays a glowing box around the image. This is not how it's shown in the preview. I contacted the seller and have been waiting days without really getting anywhere at all with promise of being contacted via Discord. This has yet to happen. I was told by the seller that this isn't a \"major problem\". I've requested a refund.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-29",
+          "text": "Super Duper cute! I love that you can change the colors! Easy to download and easy to use!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-08",
+          "text": "Had trouble getting it set up but the seller was super responsive and sent me videos that walked me through everything. Thank you so much and I LOVE the widget!!!",
+          "language": "en"
+        }
+      ]
+    },
+    "christmas-holly-leaves-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "christmas-holly-leaves-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1839823855,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-11-15",
+          "text": "such and amazing widget ilove it",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-minimalist-heart-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-minimalist-heart-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1721971396,
+      "count": 7,
+      "average": 4,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 1,
+        "4": 1,
+        "5": 4
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-11-11",
+          "text": "Das herz ist total süss, danke für das video zum integrieren in obs!!",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-01",
+          "text": "stupidly bought this thinking i could use it as a sub goal but still happy and easy to set up either way :)",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2024-11-14",
+          "text": "There are missing files this is not working !!!",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2024-08-29",
+          "text": "super cute but the setup was confusing and time consuming, needed to figure out how to do quite a lot of through another streamer friend of mine to get it working how i wanted it to",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2024-07-29",
+          "text": "This worked great on stream elements,but it would be great if it could easily integrate with stream labs too. Great every other way!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-06-28",
+          "text": "Looks great but not really what I was looking for and setup was a bit of a pain",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-06-04",
+          "text": "Absolutely love it, it looks so nice on stream and the tutorial to set it up was so easy to use",
+          "language": "en"
+        }
+      ]
+    },
+    "halloween-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "halloween-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1792249804,
+      "count": 12,
+      "average": 4.9,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 11
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-11-11",
+          "text": "super awesome fantastic cool great job",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-14",
+          "text": "good asset and really cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-04",
+          "text": "J'adore, je suis dans on event Halloween en se moment et il fonctionne très bien!",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-01",
+          "text": "decors parfait pour un theme halloween",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-09-22",
+          "text": "This widget is SO cute! I love it! It worked perfectly, it was easy to change the colors of the pumpkin to match with my stream. Thank you so much!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-01",
+          "text": "absolutely perfect for my stream's vibes and it will be a perminant fixture there lol",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-29",
+          "text": "Still my fav widget to use",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-11",
+          "text": "Thank you so much! Its amazing ✨️🙏🏻",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-25",
+          "text": "So cute. Love them. Will be back for christmas",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-22",
+          "text": "great quality easy to install",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2024-10-16",
+          "text": "entrega rápida y buena atención a las dudas y sugerencias",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-14",
+          "text": "Love it !! 10/10 Recommend. Instructions come with a helpful video. I like that you can use as many of these as you want for multiple things :)",
+          "language": "en"
+        }
+      ]
+    },
+    "spooky-cauldron-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements": {
+      "handle": "spooky-cauldron-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements",
+      "etsyListingId": 1785478023,
+      "count": 28,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 27
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-10-14",
+          "text": "easy to install and looks very clean",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-15",
+          "text": "good quality! very cute! amazing customer service!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-18",
+          "text": "Honestly so cute. The instructions that were included were really easy to follow. Thank you for including that! It looks so cute on my stream",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-16",
+          "text": "The cauldrons are so cute! I love them!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-20",
+          "text": "great love it it fits in great <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-05",
+          "text": "Definitely a great addition to my stream setup <3",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-03-05",
+          "text": "Really cool, just wish it would combine subs, bits, and donations all into one!! Still an amazing widget though!!! The art is so cool!!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-18",
+          "text": "Good item and live the customization",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-10",
+          "text": "I was looking for something a little spooky to add to my stream and this was PERFECT",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-04",
+          "text": "super cute! easy to set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-08",
+          "text": "Had a few problems at first setting up this widget but got it fixed in the end love how cute it is!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-01",
+          "text": "A bit confusing to get put into my stream at first but figured it out and it's cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-28",
+          "text": "Easy to set up and am in love <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-12",
+          "text": "this was so easy to set up and straight forward",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-31",
+          "text": "So easy to set up and so cute!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-23",
+          "text": "Matches my witch vibes and i love it!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-23",
+          "text": "perfect add on for stream during spooky month",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-14",
+          "text": "I was looking for a new sub goal widget for spooky season and this cute widget caught my eye! It looks super cute on stream. I was having trouble with the sub goal showing up and reached out to the seller. The seller replied very quickly and helped me out! 10/10 must buy!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-12",
+          "text": "Did have difficult time figuring out how to get it to work and the size. Overall, love it and it looks cute on my overlay.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-07",
+          "text": "Really cute! I was stuck figuring out how to edit the settings so I reached out, and they were super helpful! Dealt with my dumb ass ToT I appreciate it sm! ty again!!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-07",
+          "text": "It was a bit difficult to set up, but it did work without me contacting the seller. I had to mess with the box size around it to make sure it set correctly especially after turning off the floating asset. Either way I still love the design and looks very cute on my stream!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-05",
+          "text": "Para instalarlo en mi OBS necesité un tutorial de Youtube. Una vez instalado han quedado perfectos!",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-01",
+          "text": "Just what i needed for spooky streams",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-29",
+          "text": "Required help getting it set up, but they were extremely kind and helpful during the process!! Absolutely love them and can't wait to show them off on stream!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-24",
+          "text": "love ittt obsessed with it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-20",
+          "text": "is amazing can be challenging to use but is awesome.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-17",
+          "text": "I love this widget. I was unsure how to fully work the product and after reaching out, the seller messaged back quickly and helped me get the results I wanted!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-16",
+          "text": "amazing and so easy to use!!",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-sea-horse-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-sea-horse-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1895254409,
+      "count": 1,
+      "average": 4,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 0
+      },
+      "reviews": [
+        {
+          "rating": 4,
+          "date": "2025-10-05",
+          "text": "I love how these look. They are super cute. However, the set up is a bit tedious. There is copy and pasting involved with coding and I found it easier to copy straight into stream elements. The seller is super helpful though and will gladly take the time to walk you through it and provide tutorials. My biggest gripe is that the cpu usage while they are active is insane.",
+          "language": "en"
+        }
+      ]
+    },
+    "halloween-neon-vibes-stream-chat-widgets-transparent-neon-glow-theme-streamelements": {
+      "handle": "halloween-neon-vibes-stream-chat-widgets-transparent-neon-glow-theme-streamelements",
+      "etsyListingId": 4358899434,
+      "count": 2,
+      "average": 4.5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 4,
+          "date": "2025-10-05",
+          "text": "Still messing around with the customization but it looks good so far.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-01",
+          "text": "great widget it was hard to work with but thanks for the sellers costumer service",
+          "language": "en"
+        }
+      ]
+    },
+    "full-moon-bar-loading-goal-widget-is-fully-customisable-for-twitch-streamelements-and-obs-bar-goal-widget": {
+      "handle": "full-moon-bar-loading-goal-widget-is-fully-customisable-for-twitch-streamelements-and-obs-bar-goal-widget",
+      "etsyListingId": 1904185485,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-10-05",
+          "text": "All you do is copy and paste the text in the corresponding category in stream elements. It looks lovely. Customizable as well with colors.",
+          "language": "en"
+        }
+      ]
+    },
+    "twin-skull-berry-goal-widget-cute-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "twin-skull-berry-goal-widget-cute-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1795999492,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-09-12",
+          "text": "love it so much!!! sooo cute!",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-seal-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements": {
+      "handle": "cute-seal-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements",
+      "etsyListingId": 1820781516,
+      "count": 3,
+      "average": 3.7,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-09-01",
+          "text": "super cute and great way to add flare to the stream",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-07",
+          "text": "Geil einfach\nSuper  Arbeit danke",
+          "language": "de"
+        },
+        {
+          "rating": 1,
+          "date": "2025-02-18",
+          "text": "I did not receive the proper installation instructions and had to ask several times for the correct ones until I had asked multiple times, or I simply received cold messages like: \"Yes you can change it\" or \"follow the tutorial\" (when what I was asking was not in the tutorial, or was the incorrect tutorial). I am incredibly unimpressed. The item itself is cute, but the customer service and communication and delivery is terrible.",
+          "language": "en"
+        }
+      ]
+    },
+    "halloween-spider-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "halloween-spider-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 4342607027,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-08-18",
+          "text": "love just love I can't really say more about it x3",
+          "language": "en"
+        }
+      ]
+    },
+    "game-machine-old-arcade-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "game-machine-old-arcade-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1858669918,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-08-16",
+          "text": "Super cute and fits with my theme!",
+          "language": "en"
+        }
+      ]
+    },
+    "gothic-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "gothic-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1834826106,
+      "count": 5,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 5
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-08-14",
+          "text": "Preis Leitung einfach unübertroffen, für jeden Anfänger was dabei und leicht zu installieren :)",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-23",
+          "text": "was rather confusing at first since the file type i had to find a program that would read the file before, but the video was very easy to follow",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-05",
+          "text": "It's so cute, and after I painstakingly got it set up it works beautifully.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-04",
+          "text": "Amazing addition to the overlay! The customization is wonderful people loved seeing it fill up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-01",
+          "text": "so cute, love the way it looks on stream!",
+          "language": "en"
+        }
+      ]
+    },
+    "stream-widget-devil-and-angel-combo-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "stream-widget-devil-and-angel-combo-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1780969806,
+      "count": 15,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 15
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-08-02",
+          "text": "Très bon widget trop cute ! Parfait !",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-25",
+          "text": "Amazing quality, fast delivery. They look amazing on stream!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-26",
+          "text": "super cute and cannot wait to use and see it be used next stream !",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-30",
+          "text": "Super Cute! Thank you so much.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-14",
+          "text": "cute and very customizable! also quite easy to work with",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-28",
+          "text": "Quickly responds to questions and its an cute widget",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-27",
+          "text": "hermoso lo recomiendo vale la pena comprarlo",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-09",
+          "text": "Couldn’t work it out as first time trying obs/stream labs but the seller sent me some tutorials. Would recommend absolutely love. Thank you",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-29",
+          "text": "very good quality i love both them",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-24",
+          "text": "Beautiful addition to anyones stream! Seller responds quickly and is happy to help.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-21",
+          "text": "The quality is lovely, I originally had a lot of trouble with it but the creator sent me updated code and that fixed everything~! I'm so happy with it!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-13",
+          "text": "Very cute widget and was easy to set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-22",
+          "text": "I love the item and when I had an issue with it the creator helped me out quickly.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-02",
+          "text": "really cool! trying to figure out how to set it up though.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-28",
+          "text": "Despite their being a small flaw in the coding of the angel widget, the devil widget works perfectly and looks amazing!",
+          "language": "en"
+        }
+      ]
+    },
+    "minimal-line-chat-widget-simple-line-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-progress-goal": {
+      "handle": "minimal-line-chat-widget-simple-line-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-progress-goal",
+      "etsyListingId": 4297334909,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-07-30",
+          "text": "Everyone on stream Loves it",
+          "language": "en"
+        }
+      ]
+    },
+    "dreamy-lotus-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only": {
+      "handle": "dreamy-lotus-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4328622333,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-07-25",
+          "text": "Very pretty 😍 absolutely love it. ❤️",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-22",
+          "text": "Love these for my stream very good quality",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-cow-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-cow-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1849166777,
+      "count": 4,
+      "average": 4.3,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 1,
+        "4": 1,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-07-10",
+          "text": "Quick and easy to set up. Fast response when I couldn't reset the goals. Super cute addition to my cow themed stream! @kawaiisakigirl on twitch!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-11",
+          "text": "It is super cute !",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-03-01",
+          "text": "It fits so well in my cow stream thank you so much!",
+          "language": "en"
+        },
+        {
+          "rating": 3,
+          "date": "2025-02-24",
+          "text": "These are cute but not what I was expecting.",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-bunny-chat-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-bunny-chat-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1730459480,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-07-04",
+          "text": "Simplemente precioso, lo voy a usar en mi stream, queda muy bien con mi estetica ˚˖𓍢🌷✧˚.🎀⋆",
+          "language": "es"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-30",
+          "text": "SO CUTE! They really go well with my aesthetics",
+          "language": "en"
+        }
+      ]
+    },
+    "envelope-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements": {
+      "handle": "envelope-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements",
+      "etsyListingId": 1834953893,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-07-02",
+          "text": "Top et très facile à mettre en place",
+          "language": "fr"
+        }
+      ]
+    },
+    "valorant-brimstone-character-chat-and-goal-widget-gaming-modern-theme-with-pronouns-alerts-for-twitch-streamelements-only": {
+      "handle": "valorant-brimstone-character-chat-and-goal-widget-gaming-modern-theme-with-pronouns-alerts-for-twitch-streamelements-only",
+      "etsyListingId": 4306870352,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-06-23",
+          "text": "Super simple setup, and just overall very sleek looking. VERY nice for a cyberpunk-themed Vtuber or streamer.",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-chicken-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-chicken-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1834815562,
+      "count": 5,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 5
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-06-09",
+          "text": "Excelent to have in the stream",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-21",
+          "text": "Setup video made this really easy to get working",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-02-05",
+          "text": "I love it so much, the customization to match my colors is the best!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-21",
+          "text": "Love that I can customize and change all colors to my liking!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-14",
+          "text": "cute chicken ;w; works exactly as expected",
+          "language": "en"
+        }
+      ]
+    },
+    "spooky-skull-moon-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "spooky-skull-moon-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1810190709,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-05-29",
+          "text": "Absolutely amazing! The aesthetic is so nice and I like how I can choose the colors of my liking. ❤️",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-blue-whale-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-blue-whale-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1714418210,
+      "count": 3,
+      "average": 4.7,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-05-23",
+          "text": "Super cute and useful for stream!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-29",
+          "text": "This is a cute little widget to have",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2024-07-25",
+          "text": "This is very cute, but there is a glitch with it where when it gets full there is an annoying box outline around it. I tried to contact support to fix this but it is very obvious they don't care about helping their customers. Wish I could write a better review, the concept is adorable.",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-love-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-love-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1791485718,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-05-17",
+          "text": "A little difficult to get installed for a complete techno-challenged person like me. But, it is so worth it. I love these!!!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-10",
+          "text": "This is soo cute, stream loves watching this fill up!!",
+          "language": "en"
+        }
+      ]
+    },
+    "p2u-glassy-chat-and-goal-widget-combo-minimal-modern-elegant-theme-alerts-for-twitch-streams-streamelements-only": {
+      "handle": "p2u-glassy-chat-and-goal-widget-combo-minimal-modern-elegant-theme-alerts-for-twitch-streams-streamelements-only",
+      "etsyListingId": 1892198146,
+      "count": 1,
+      "average": 1,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "reviews": [
+        {
+          "rating": 1,
+          "date": "2025-05-16",
+          "text": "je suis vraiment navré, j'aurais aimer que ce soit super, mais ne fonctionne pas, le codage est mal fait, ca detecte pas correctement les follows pour faire un goal.... bref je ne recommande pas du tout !",
+          "language": "fr"
+        }
+      ]
+    },
+    "cute-cat-paw-alert-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-cat-paw-alert-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1849162325,
+      "count": 6,
+      "average": 4.7,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 4
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-05-13",
+          "text": "Purrrr-fect for my streams and super cute!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-04-20",
+          "text": "great love it yayyyy hehe",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-14",
+          "text": "The quality of these is wonderful! I absolutely love them, they are easy to set up and adjust colors etc, I love that there is a way to do overall goals, goals per stream set it to reset after each session as well and other toggles that can customize your experience & the way they appear.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-07",
+          "text": "They are so cute to use!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-03-29",
+          "text": "i love it, totally in love",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-03-17",
+          "text": "Alles super Danke gerne wieder",
+          "language": "de"
+        }
+      ]
+    },
+    "starry-stream-widget-moon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "starry-stream-widget-moon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1742742952,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-04-02",
+          "text": "Is adorable and has improved enagement!",
+          "language": "en"
+        }
+      ]
+    },
+    "spooky-skull-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "spooky-skull-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1810207793,
+      "count": 2,
+      "average": 3,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 1,
+          "date": "2025-03-08",
+          "text": "Doesn't work, instruction are very unclear, seller doesn't get back to you with and answers or help, extremely overpriced for something I can't use, my money has been wasted.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-30",
+          "text": "Perfect 👌 good nice  job",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-melting-moon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-melting-moon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1726399702,
+      "count": 4,
+      "average": 3.8,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-03-08",
+          "text": "Very cute , it fits my set up so well",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-07",
+          "text": "Really liked the overlay its so good!",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2024-09-02",
+          "text": "Bought this just for the files to not even be there, contacted the selling for help to install it and only then found out I don’t even have the whole thing, I would recommend purchasing from someone else..",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2024-08-04",
+          "text": "Very nice and pretty easy to use<3",
+          "language": "en"
+        }
+      ]
+    },
+    "tombstone-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "tombstone-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1758354750,
+      "count": 4,
+      "average": 4.8,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 3
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-03-01",
+          "text": "Very Nice Thank You For Making",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-01-12",
+          "text": "Took awhile to figure out since never used before and would have liked a document explaining different setup options but testing out different scenarios.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-04",
+          "text": "Used it on my channel, it got lots of compliments, Tysm",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-08-05",
+          "text": "VERY EASY TO SETUP! GREAT INSTRUCTIONS, STREAM ELEMENTS, IS FASTER IMO, ITS LITERALLY SO QUICK, AND U CAN CHANGE THE COLORS OF FILL/ MIDDLE.. I WAS HOPING I COULD CHANGE THE COLOR OF THE TOMBSTONE AND ROSES.. BUT IT LOOKS AMAZING LOOKING FOR ANOTHER SCENE TO BUILD TO FIT THE TAN.",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-bloodworm-nature-insects-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-bloodworm-nature-insects-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1725330698,
+      "count": 3,
+      "average": 3.7,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": [
+        {
+          "rating": 1,
+          "date": "2025-02-24",
+          "text": "IT IS SO BIG and not cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-11-12",
+          "text": "There were some flaws to the coding so the widget wasn't finished, contacted the seller and maker and she fixed it for me. 100% recommend this seller",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-16",
+          "text": "Great asset to have available! I hope they make more!",
+          "language": "en"
+        }
+      ]
+    },
+    "love-pumpkin-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "love-pumpkin-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1797446192,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-02-24",
+          "text": "Excellent little widget, so cute and works so well. Directions were simple and easy to use. Thank you!",
+          "language": "en"
+        }
+      ]
+    },
+    "christmas-candy-cane-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "christmas-candy-cane-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1839828093,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-02-07",
+          "text": "great quality. I love it!",
+          "language": "en"
+        }
+      ]
+    },
+    "casino-card-slot-icon-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-streamelements-streamlabs-obs": {
+      "handle": "casino-card-slot-icon-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-streamelements-streamlabs-obs",
+      "etsyListingId": 1722104747,
+      "count": 3,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 3
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-02-01",
+          "text": "A+ will buy from again",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-26",
+          "text": "Super easy setup and video to follow.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-06-05",
+          "text": "Perfect! I was watching for so ong for the spades.",
+          "language": "en"
+        }
+      ]
+    },
+    "cute-sand-timer-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cute-sand-timer-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1728033126,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2025-01-29",
+          "text": "Thank you very much for creating this kind of graphics! It really looks so pretty and very useful as well. The installation instruction is also very easy! 100% highly recommended!",
+          "language": "en"
+        }
+      ]
+    },
+    "twin-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "twin-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1806958699,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2024-12-26",
+          "text": "Great product and great art!",
+          "language": "en"
+        }
+      ]
+    },
+    "cat-goth-goal-widget-cat-skull-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "cat-goth-goal-widget-cat-skull-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1790102864,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2024-12-12",
+          "text": "Adorable and super easy to set up!",
+          "language": "en"
+        }
+      ]
+    },
+    "snowman-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "snowman-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1827920187,
+      "count": 4,
+      "average": 4,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 3
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2024-12-08",
+          "text": "Great widget for Twitch goals!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-03",
+          "text": "Super easy instructions for installing, they are super cute and really added a bit of holiday flair to my stream. Great price, highly recommend.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-12-03",
+          "text": "Love your work! Merry Xmas!",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2024-12-03",
+          "text": "Super confusing to use with no instructions. Still haven't figured it out.",
+          "language": "en"
+        }
+      ]
+    },
+    "10x-frog-emotes-pack-1-2-for-twitch-cute-little-froggy-kawaii-twitch-add-on-stream-deco-cute-froggy": {
+      "handle": "10x-frog-emotes-pack-1-2-for-twitch-cute-little-froggy-kawaii-twitch-add-on-stream-deco-cute-froggy",
+      "etsyListingId": 1736513808,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "yakitori-skewered-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "yakitori-skewered-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1735046293,
+      "count": 4,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 4
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2024-09-19",
+          "text": "j'adore, cet item est trop beau et super simple a installé !",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2024-09-09",
+          "text": "it is very cute <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-08-02",
+          "text": "It is so cute! I cant wait to see it on stream. It's super easy to set up in stream elements and add to stream labs.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-07-31",
+          "text": "The widget is super adorable. It fits my theme and people love it.",
+          "language": "en"
         }
       ]
     }

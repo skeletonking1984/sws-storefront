@@ -1,0 +1,11 @@
+{
+  "shop": {
+    "average": 4.75,
+    "count": 990,
+    "soldCount": 7504,
+    "favoriteCount": 1274,
+    "url": "https://www.etsy.com/shop/StreamWidgetShop/reviews"
+  },
+  "generatedAt": "2026-09-10T23:19:55.069Z",
+  "sourceNote": "Shop-level Etsy stats only (rating, review count, sold count, favorite count), no review text. Safe to import client-side, see EtsyRating.jsx. Full per-product review text lives in etsy-reviews.json, server use only."
+}

@@ -4,6 +4,10 @@ import {Image, Money} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge, SHOP_STATS} from '~/components/EtsyRating';
 import {SHOP_RATING} from '~/components/EtsyReviews';
+// Full per-product Etsy review dataset, review text included. SERVER USE
+// ONLY (see scripts/build-etsy-reviews.mjs). Only ever referenced from
+// pickHomeReviews(), which is only called from loadCriticalData below, so
+// the homepage's client bundle never ships every product's review text.
 import etsyReviews from '~/data/etsy-reviews.json';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {EmailCapture} from '~/components/EmailCapture';
@@ -54,6 +58,7 @@ export async function loader(args) {
 async function loadCriticalData({context}) {
   return {
     isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
+    homeReviews: pickHomeReviews(),
   };
 }
 
@@ -181,7 +186,7 @@ export default function Homepage() {
         fallback={data.recommendedProducts}
       />
       <WorksWithStrip />
-      <ReviewsSection />
+      <ReviewsSection homeReviews={data.homeReviews} />
       <CustomCommissionCallout />
       <EmailCapture />
     </div>
@@ -486,9 +491,10 @@ function pickHomeReviews() {
     .slice(0, 3);
 }
 
-const HOME_REVIEWS = pickHomeReviews();
-
-function ReviewsSection() {
+/**
+ * @param {{homeReviews: ReturnType<typeof pickHomeReviews>}} props
+ */
+function ReviewsSection({homeReviews}) {
   const fullStars = Math.round(SHOP_RATING.average);
   return (
     <section className="home-reviews" aria-labelledby="home-reviews-heading">
@@ -496,7 +502,7 @@ function ReviewsSection() {
         What streamers say
       </h2>
       <div className="home-reviews-grid">
-        {HOME_REVIEWS.map((review, i) => (
+        {homeReviews.map((review, i) => (
           <div className="chat-bubble-review" key={i}>
             <div className="chat-bubble-review-head">
               <span className="chat-bubble-review-name">Verified buyer</span>
