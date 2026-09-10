@@ -6,7 +6,9 @@
     "title": "Neon Animated Twitch Chat and Goal Widget, Multistream Transparent Glow Stream Overlay (Digital Download) Youtube, Kick",
     "price": "18.99",
     "status": "ACTIVE",
-    "archived_duplicates": ["gid://shopify/Product/8591211069630"],
+    "archived_duplicates": [
+      "gid://shopify/Product/8591211069630"
+    ],
     "notes": "Matched existing active product by title/theme. Added 4 Etsy images, kept 10 pre-existing Shopify images. Archived 1 zero-inventory duplicate."
   },
   {
@@ -66,7 +68,9 @@
     "title": "Cosmic Galaxy Chat Widget, Twitch StreamElements Animated Chat Goal Stream Overlay, VTuber Streamer",
     "price": "14.99",
     "status": "ACTIVE",
-    "archived_duplicates": ["gid://shopify/Product/8591211135166"],
+    "archived_duplicates": [
+      "gid://shopify/Product/8591211135166"
+    ],
     "notes": "Confirmed match via exact Etsy CDN image ID (6951206756) matching the Shopify product's existing photo. Archived 1 zero-inventory duplicate."
   },
   {
@@ -86,7 +90,9 @@
     "title": "Sakura Floral Chat Widget, Twitch StreamElements Transparent Animated Chat Goal, VTuber Streamer",
     "price": "14.99",
     "status": "ACTIVE",
-    "archived_duplicates": ["gid://shopify/Product/8591217295550"],
+    "archived_duplicates": [
+      "gid://shopify/Product/8591217295550"
+    ],
     "notes": "Confirmed match via exact Etsy CDN image ID (6937288892) matching the Shopify product's existing photo. Archived 1 zero-inventory duplicate."
   },
   {
@@ -106,7 +112,9 @@
     "title": "Love Skeleton Goal Widget, Twitch Streamlabs StreamElements Halloween Animated Sub Goal, VTuber Streamer",
     "price": "9.57",
     "status": "ACTIVE",
-    "archived_duplicates": ["gid://shopify/Product/8591211364542"],
+    "archived_duplicates": [
+      "gid://shopify/Product/8591211364542"
+    ],
     "notes": "Matched by title/description (Etsy 'Love Skeleton' = Shopify internal name 'Heart Skeleton'). Archived 1 zero-inventory duplicate."
   },
   {
@@ -116,7 +124,9 @@
     "title": "Cloudy Moon Overlay for Twitch, Dreamy Starry Night StreamElements Theme for VTubers",
     "price": "18.99",
     "status": "ACTIVE",
-    "archived_duplicates": ["gid://shopify/Product/8591211823294"],
+    "archived_duplicates": [
+      "gid://shopify/Product/8591211823294"
+    ],
     "notes": "Matched by description text (Etsy 'Cloudy Moon Overlay' = Shopify internal name 'Crystal Moon'). Archived 1 zero-inventory duplicate ('Cloudy Moon Stream Widgets'). A second similarly-themed archived product ('Pastel Cloud Moon Chat Widget', 8591218016446) was left alone as its theme/tags differ enough to not be a confident duplicate."
   },
   {
@@ -158,5 +168,25 @@
     "status": "ACTIVE",
     "archived_duplicates": [],
     "notes": "Soul Blade / Demon Samurai overlay pack, listed on Etsy Sep 6 2026 (brand-new, not previously on Shopify). Created new product, productType 'Overlay Pack', tagged both Chat_widget and Goal_Widget. NOTE: live Etsy price is currently $15.99, not the $29.99 recorded in prior internal notes -- used the live Etsy price."
+  },
+  {
+    "etsy_listing_id": 1728594513,
+    "shopify_product_id": "gid://shopify/Product/8537284149438",
+    "handle": "celestial-moon-cute-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+    "title": "Celestial Moon Goal Widget | Animated Stream Tracker (Digital Download)",
+    "price": "17.10",
+    "status": "ACTIVE",
+    "archived_duplicates": [],
+    "notes": "Hand matched by Todd via hero art (GAP 1). Product already existed on Shopify with 5 images, 0 video. Attached the missing Etsy video (gve0ax5miymgarv5baf6.mp4, 455044 bytes) via stagedUploadsCreate + productCreateMedia, status READY, no fileErrors. Price is the live Shopify variant price."
+  },
+  {
+    "etsy_listing_id": 4505167275,
+    "shopify_product_id": "gid://shopify/Product/8971182244030",
+    "handle": "sakura-animated-twitch-chat-widget-kawaii-cherry-blossom-stream-decor-digital-download",
+    "title": "Sakura Animated Twitch Chat Widget - Kawaii Cherry Blossom Stream Decor (Digital Download)",
+    "price": "17.99",
+    "status": "ACTIVE",
+    "archived_duplicates": [],
+    "notes": "GAP 2: brand-new product, no prior Shopify counterpart existed (checked every sakura product, none matched). Created via productCreate, productType Chat Widget, tags Chat_widget + Goal_Widget. Set requiresShipping false and tracked false on the default variant (digital good). Attached 5 Etsy images (hero first) + 1 video, all READY. Published to Online Store, Stream Widget Shop Headless, SWS Storefront. Added to Top Widgets collection."
   }
 ]
