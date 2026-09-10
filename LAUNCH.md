@@ -407,7 +407,19 @@ Every claim ground-truthed against that product's own Etsy listing and file mani
 
 Found only because the copy pass produced a mapping that disagreed with the stored map, and the disagreement was checked instead of resolved in favour of the stored value.
 
-A full audit across all 104 mapped rows was dispatched and returned nothing, so it is still owed. The method is deterministic and needs no judgement: extract the numeric CDN id from each Etsy image URL (`il_fullxfull.<ID>_xxxx.jpg`), extract the same ids from the Shopify product's image filenames (Shopify keeps the Etsy filename behind a hash prefix), and a row is confirmed only when at least one id appears on both sides. Cross-check with the video filename, which independently names the source listing.
+A full audit of all 104 mapped rows completed: **86 confirmed** by direct image id overlap, **16 with no overlap**, **2 unknown** (the Spooky and Multistream kits, whose Shopify art is custom marketing images with no Etsy filenames to compare, which is expected and fine).
+
+Of the 16 no-overlap rows, exactly ONE pair is a proven mispairing: celestial-butterfly and sakura-butterfly, which appear in the broken list from opposite directions (1706402816 and 4339053159) and is consistent with the swap. The other 14 carry the stale-photo signature described below and are very likely benign, but each still needs the cross-match before being closed out.
+
+**Do not read "no image overlap" as "mispaired".** Working through the no-overlap rows showed two distinct failure modes with different fixes, and one agent overcalled its rows as "genuinely wrong" on evidence that does not support it:
+
+- **Stale photos, benign.** The Shopify image ids are strictly OLDER than the listing's current Etsy ids, and the title still matches. Potion Bottle (1790033028) is the clear case: Shopify holds 6863633024 and friends, Etsy now serves 7915097144 and friends. The listing's photos were refreshed on Etsy after the Shopify import. Product and video are correctly paired. Nothing is wrong for a buyer, the Shopify art is just an older cut.
+  The decisive proof that this mode is benign: the audit also flagged Celestial Moon Goal Widget (1728594513) as broken, and that is the exact product whose Etsy and Shopify hero art were compared side by side by eye earlier the same day and confirmed to be the same widget. Same crescent with an orbital ring, same hanging planet beads. Zero id overlap, correct pairing.
+- **Genuine mispairing, serious.** The Shopify image id is an EXACT match for a DIFFERENT listing's current `og_image`. That is what proved the celestial-butterfly case (7087440965 belongs to 4339053159).
+
+So the discriminating test is a cross-match, not a self-match: for a row with no overlap, ask whether some OTHER Etsy listing's current image ids match this Shopify product. Only then is it a mispairing. A self-comparison alone cannot tell the two apart, which is why the partial results overstate the damage.
+
+Method for finishing it: extract the numeric CDN id from each Etsy image URL (`il_fullxfull.<ID>_xxxx.jpg`) and from the Shopify product's image filenames (Shopify keeps the Etsy filename behind a hash prefix), build a reverse index of id to listing across ALL active Etsy listings once, then resolve every no-overlap row through that index. Cross-check with the video filename, which independently names the source listing the sync used.
 
 Verified this pass:
 - `node scripts/audit-catalog.mjs`: 131 storefront products, 0 issues on title, image, price, description, productType and tags.
