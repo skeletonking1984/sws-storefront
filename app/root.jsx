@@ -17,6 +17,8 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
+import {GA4} from './components/pixels/GA4';
+import {XPixel} from './components/pixels/XPixel';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -106,6 +108,18 @@ export async function loader(args) {
       storefront,
       publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
     }),
+    // Browser analytics config, read from env, never hardcoded. GA4 is
+    // live (PUBLIC_GA4_MEASUREMENT_ID). The X pixel IDs are pending from
+    // Auny on Linear BAT-145, undefined until she supplies them, at which
+    // point setting these four env vars is the only change needed, see
+    // GA4.jsx / XPixel.jsx for how an absent ID no-ops cleanly.
+    analyticsConfig: {
+      ga4MeasurementId: env.PUBLIC_GA4_MEASUREMENT_ID,
+      xPixelId: env.PUBLIC_X_PIXEL_ID,
+      xPageViewEventId: env.PUBLIC_X_EVENT_ID_PAGE_VIEW,
+      xViewContentEventId: env.PUBLIC_X_EVENT_ID_VIEW_CONTENT,
+      xAddToCartEventId: env.PUBLIC_X_EVENT_ID_ADD_TO_CART,
+    },
     consent: {
       checkoutDomain: env.PUBLIC_CHECKOUT_DOMAIN,
       storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
@@ -229,6 +243,13 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
+      <GA4 measurementId={data.analyticsConfig.ga4MeasurementId} />
+      <XPixel
+        pixelId={data.analyticsConfig.xPixelId}
+        pageViewEventId={data.analyticsConfig.xPageViewEventId}
+        viewContentEventId={data.analyticsConfig.xViewContentEventId}
+        addToCartEventId={data.analyticsConfig.xAddToCartEventId}
+      />
       <PageLayout {...data}>
         <Outlet />
       </PageLayout>
