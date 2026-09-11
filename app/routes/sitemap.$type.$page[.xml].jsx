@@ -9,9 +9,18 @@ import {
   SITEMAP_URLSET_CLOSE,
   SITEMAP_URLSET_OPEN,
   STATIC_ROUTES,
+  VIDEO_SITEMAP_URLSET_CLOSE,
+  VIDEO_SITEMAP_URLSET_OPEN,
   getAllArticles,
+  getVideoSitemapEntries,
   renderUrlTag,
+  renderVideoUrlTag,
 } from '~/lib/sitemap';
+// Real Admin-API uploadDate/duration for every Shopify video, see that
+// file's own sourceNote. Same file the PDP's VideoObject JSON-LD reads
+// (app/routes/products.$handle.jsx), so the sitemap and the structured data
+// can never disagree about a video's publication date or duration.
+import videoMetadata from '~/data/video-metadata.json';
 
 const RESOURCE_QUERIES = {
   products: PRODUCT_SITEMAP_QUERY,
@@ -34,6 +43,26 @@ export async function loader({request, params, context: {storefront}}) {
 
   if (!type || !pageNumber) {
     throw new Response('Not found', {status: 404});
+  }
+
+  // The video sitemap is its own shape (a `video:video` namespace child per
+  // `<url>`, not the plain changefreq/priority ones below), single page,
+  // built and returned separately from the generic urlTags path.
+  if (type === 'video') {
+    const entries = await getVideoSitemapEntries(storefront, baseUrl, videoMetadata);
+    const body =
+      VIDEO_SITEMAP_URLSET_OPEN +
+      '\n' +
+      entries.map((entry) => renderVideoUrlTag(entry)).join('\n') +
+      (entries.length ? '\n' : '') +
+      VIDEO_SITEMAP_URLSET_CLOSE;
+
+    return new Response(body, {
+      headers: {
+        'Content-Type': 'application/xml',
+        'Cache-Control': `max-age=${60 * 60 * 24}`,
+      },
+    });
   }
 
   let urlTags;

@@ -28,6 +28,8 @@ export async function loader({request, context: {storefront}}) {
   const entries = [
     // Static/homepage sitemap is always a single page.
     `${baseUrl}/sitemap/static/1.xml`,
+    // Video sitemap is also always a single page (see app/lib/sitemap.js).
+    `${baseUrl}/sitemap/video/1.xml`,
     ...sitemapUrlsForType(baseUrl, 'products', counts?.products?.pagesCount?.count),
     ...sitemapUrlsForType(
       baseUrl,

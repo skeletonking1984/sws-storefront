@@ -614,6 +614,38 @@ export type SitemapBlogArticlesQuery = {
   }>;
 };
 
+export type SitemapVideoProductsQueryVariables = StorefrontAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type SitemapVideoProductsQuery = {
+  products: {
+    nodes: Array<
+      Pick<StorefrontAPI.Product, 'handle' | 'title'> & {
+        media: {
+          nodes: Array<
+            | {__typename: 'ExternalVideo' | 'MediaImage' | 'Model3d'}
+            | ({__typename: 'Video'} & Pick<
+                StorefrontAPI.Video,
+                'id' | 'alt'
+              > & {
+                  previewImage?: StorefrontAPI.Maybe<
+                    Pick<StorefrontAPI.Image, 'url'>
+                  >;
+                  sources: Array<
+                    Pick<
+                      StorefrontAPI.VideoSource,
+                      'url' | 'mimeType' | 'format' | 'width' | 'height'
+                    >
+                  >;
+                })
+          >;
+        };
+      }
+    >;
+  };
+};
+
 export type LlmsTxtTopWidgetsQueryVariables = StorefrontAPI.Exact<{
   handle: StorefrontAPI.Scalars['String']['input'];
 }>;
@@ -1851,6 +1883,10 @@ interface GeneratedQueryTypes {
   '#graphql\n  query SitemapBlogArticles($blogHandle: String!, $cursor: String) {\n    blog(handle: $blogHandle) {\n      articles(first: 250, after: $cursor) {\n        nodes {\n          handle\n          publishedAt\n        }\n        pageInfo {\n          hasNextPage\n          endCursor\n        }\n      }\n    }\n  }\n': {
     return: SitemapBlogArticlesQuery;
     variables: SitemapBlogArticlesQueryVariables;
+  };
+  '#graphql\n  query SitemapVideoProducts {\n    products(first: 250) {\n      nodes {\n        handle\n        title\n        media(first: 25) {\n          nodes {\n            __typename\n            ... on Video {\n              id\n              alt\n              previewImage {\n                url\n              }\n              sources {\n                url\n                mimeType\n                format\n                width\n                height\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: SitemapVideoProductsQuery;
+    variables: SitemapVideoProductsQueryVariables;
   };
   '#graphql\n  query LlmsTxtTopWidgets($handle: String!) {\n    collection(handle: $handle) {\n      products(first: 30) {\n        nodes {\n          title\n          handle\n        }\n      }\n    }\n  }\n': {
     return: LlmsTxtTopWidgetsQuery;

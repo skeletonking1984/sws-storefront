@@ -9,6 +9,12 @@
  * locale alternates, a real homepage entry, and a page exclusion list.
  */
 
+import {
+  findVideoMedia,
+  lookupVideoMetadata,
+  pickBestMp4Source,
+} from '~/lib/video';
+
 /**
  * Shopify Pages that must never appear in the sitemap, keyed by handle, with
  * the reason next to each one. Add a page here (with a reason) to keep it
@@ -234,4 +240,131 @@ export async function getAllArticles(storefront) {
   }
 
   return articles;
+}
+
+/**
+ * Video sitemap. One page is plenty: the shop runs ~130 products, each with
+ * at most one demo video, far under the 50,000-URL sitemap limit, so this
+ * is never paginated like the product/collection/blog/page/article types.
+ */
+export const VIDEO_SITEMAP_URLSET_OPEN =
+  `${SITEMAP_XML_HEADER}\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" ` +
+  `xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">`;
+export const VIDEO_SITEMAP_URLSET_CLOSE = '</urlset>';
+
+/**
+ * Renders one `<url>` entry carrying a `<video:video>` child. Every field
+ * Google documents as required for a video sitemap entry
+ * (thumbnail_loc/title/description/content_loc) is always passed in by the
+ * caller; duration/publication_date are optional per the video schema and
+ * are only written when present.
+ */
+export function renderVideoUrlTag({
+  loc,
+  thumbnailLoc,
+  title,
+  description,
+  contentLoc,
+  durationSeconds,
+  publicationDate,
+}) {
+  const parts = [
+    '  <url>',
+    `    <loc>${escapeXml(loc)}</loc>`,
+    '    <video:video>',
+    `      <video:thumbnail_loc>${escapeXml(thumbnailLoc)}</video:thumbnail_loc>`,
+    `      <video:title>${escapeXml(title)}</video:title>`,
+    `      <video:description>${escapeXml(description)}</video:description>`,
+    `      <video:content_loc>${escapeXml(contentLoc)}</video:content_loc>`,
+  ];
+  if (Number.isFinite(durationSeconds)) {
+    parts.push(`      <video:duration>${durationSeconds}</video:duration>`);
+  }
+  if (publicationDate) {
+    parts.push(
+      `      <video:publication_date>${publicationDate}</video:publication_date>`,
+    );
+  }
+  parts.push('    </video:video>', '  </url>');
+  return parts.join('\n');
+}
+
+/**
+ * Every product's handle/title plus its media, used only to build the video
+ * sitemap. `sitemap(type: PRODUCT)` (used by the plain product sitemap
+ * above) doesn't expose media, so this queries the catalog directly instead.
+ * `first: 250` covers the whole ~130-product catalog in one page; if the
+ * catalog ever grows past that this would need the same cursor pagination
+ * `getAllArticles` uses above.
+ */
+export const VIDEO_SITEMAP_PRODUCTS_QUERY = `#graphql
+  query SitemapVideoProducts {
+    products(first: 250) {
+      nodes {
+        handle
+        title
+        media(first: 25) {
+          nodes {
+            __typename
+            ... on Video {
+              id
+              alt
+              previewImage {
+                url
+              }
+              sources {
+                url
+                mimeType
+                format
+                width
+                height
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Builds the video sitemap's entries: one per product that has a demo video
+ * AND a `video-metadata.json` match for it. A product with a video but no
+ * metadata match is skipped entirely, same rule as the PDP's VideoObject
+ * JSON-LD (see `buildVideoJsonLd` in `products.$handle.jsx`) and for the
+ * same reason: `publication_date` would otherwise have to be guessed.
+ * @param {import('@shopify/hydrogen').Storefront} storefront
+ * @param {string} baseUrl
+ * @param {{videos?: Record<string, {uploadDate: string, duration: string, durationMs: number}>}} videoMetadata
+ */
+export async function getVideoSitemapEntries(storefront, baseUrl, videoMetadata) {
+  const data = await storefront.query(VIDEO_SITEMAP_PRODUCTS_QUERY);
+  const products = data?.products?.nodes ?? [];
+  const entries = [];
+
+  for (const product of products) {
+    const videoMedia = findVideoMedia(product.media?.nodes);
+    if (!videoMedia) continue;
+
+    const meta = lookupVideoMetadata(videoMetadata, videoMedia.id);
+    if (!meta) continue;
+
+    const contentUrl = pickBestMp4Source(videoMedia.sources)?.url;
+    const thumbnailUrl = videoMedia.previewImage?.url;
+    if (!contentUrl || !thumbnailUrl) continue;
+
+    entries.push({
+      loc: `${baseUrl}/products/${product.handle}`,
+      thumbnailLoc: thumbnailUrl,
+      title: videoMedia.alt || `${product.title} demo video`,
+      description: `A demo video of the ${product.title} running on stream.`,
+      contentLoc: contentUrl,
+      durationSeconds: Number.isFinite(meta.durationMs)
+        ? Math.round(meta.durationMs / 1000)
+        : undefined,
+      publicationDate: meta.uploadDate,
+    });
+  }
+
+  return entries;
 }
