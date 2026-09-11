@@ -269,3 +269,109 @@ Two caveats, neither of them a blocker:
 
 - This is only true once the storefront is served from `streamwidgetshop.com`. Test attribution after the DNS cutover, not before.
 - `PUBLIC_CHECKOUT_DOMAIN` is unset and should be set to `streamwidgetshop.com` for the Customer Privacy API. It does not affect attribution, but it leaves consent handling half wired.
+
+---
+
+## ADDENDUM 2026-09-11: use gtag, not Measurement Protocol
+
+The Measurement Protocol recommendation above was written when checkout sat on a
+host that did not share a registrable domain with the storefront. That is no
+longer true, and it flips the decision.
+
+Measured on 2026-09-11 by building a real cart against the Storefront API:
+
+    checkout host   : shop.streamwidgetshop.com
+    storefront host : streamwidgetshop.com
+    same registrable domain: yes
+
+Two consequences:
+
+1. **The `_ga` cookie is readable at checkout.** gtag's default `cookie_domain:
+   'auto'` resolves to `streamwidgetshop.com`, so the client_id set on the
+   storefront carries straight through to the purchase event. Campaign
+   attribution works with no relay.
+2. **No API secret is needed.** Measurement Protocol would require a GA4
+   Measurement Protocol API secret AND manually reading the client_id out of the
+   `_ga` cookie through the async `browser.cookie.get`, then parsing it. gtag
+   does both natively. Fewer moving parts, and nothing to generate.
+
+The timing objection in Finding 3 is real but mitigated: `gtag()` calls push onto
+`window.dataLayer` immediately and are replayed when `gtag.js` finishes loading,
+so an event fired before the script lands is still queued, not lost. The residual
+risk is a buyer closing the tab within the second or so before the script loads.
+If that ever proves material, add the Measurement Protocol POST as a second,
+belt-and-braces send, but do NOT send both to the same measurement id without
+deduplicating on `transaction_id`, or every order counts twice.
+
+### Paste this into Admin > Settings > Customer events > Add custom pixel
+
+Permission: "Analytics". Name it `GA4 purchase`.
+
+```js
+const GA4_ID = 'G-X0978HDVTK';
+
+// cookie_domain 'auto' resolves to streamwidgetshop.com, the registrable domain
+// shared with the storefront, so the existing _ga client_id carries over and the
+// sale is attributed to the campaign that produced it.
+const s = document.createElement('script');
+s.async = true;
+s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+document.head.appendChild(s);
+
+window.dataLayer = window.dataLayer || [];
+function gtag() { window.dataLayer.push(arguments); }
+gtag('js', new Date());
+// send_page_view false: this pixel exists only to report the purchase. The
+// storefront already reports page views and never sends purchase, so nothing
+// double counts.
+gtag('config', GA4_ID, { send_page_view: false });
+
+analytics.subscribe('checkout_completed', (event) => {
+  const c = event.data && event.data.checkout;
+  if (!c || !c.totalPrice) return;
+
+  const items = (c.lineItems || []).map((li, i) => {
+    const variant = li.variant || {};
+    const product = variant.product || {};
+    return {
+      item_id: product.id ? String(product.id) : String(li.id),
+      item_name: li.title,
+      item_variant: variant.id ? String(variant.id) : undefined,
+      price: variant.price ? Number(variant.price.amount) : undefined,
+      quantity: li.quantity,
+      index: i,
+    };
+  });
+
+  const coupon = (c.discountApplications || [])
+    .map((d) => d.title || d.code)
+    .filter(Boolean)
+    .join(', ');
+
+  gtag('event', 'purchase', {
+    // order.id is populated only on checkout_completed. Falling back to the
+    // checkout token keeps the event deduplicable if it ever arrives null.
+    transaction_id: c.order && c.order.id ? String(c.order.id) : c.token,
+    value: Number(c.totalPrice.amount),
+    currency: c.totalPrice.currencyCode,
+    tax: c.totalTax ? Number(c.totalTax.amount) : undefined,
+    shipping: c.shippingLine && c.shippingLine.price ? Number(c.shippingLine.price.amount) : 0,
+    coupon: coupon || undefined,
+    items,
+  });
+});
+```
+
+### How to confirm it works
+
+1. Create a 100 percent off discount code, place a real order through the live
+   storefront, and download the file.
+2. GA4 > Reports > Realtime. The `purchase` event should appear within seconds.
+   Realtime is the right surface: standard reports lag up to 24 hours and will
+   look broken before they are.
+3. Check the event carries `value`, `currency`, `transaction_id` and `items`.
+4. Then GA4 > Reports > Monetisation > Ecommerce purchases the next day, which is
+   the report that read 0 purchases and $0.00 on 2026-09-11.
+
+A $0 order still fires `purchase` with `value: 0`, which proves the wiring even
+though it moves no revenue.
