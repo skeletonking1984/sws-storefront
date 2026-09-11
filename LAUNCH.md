@@ -522,6 +522,26 @@ The fix is Shopify's own **Hydrogen redirect theme**, `https://github.com/shopif
 
 Todd's action: publishing a theme is a live-store change and the Shopify connector blocks theme publishing outright, so no agent can do it. Rollback is republishing Energy, which stays in the theme library. Do it before ads run.
 
+#### Where this stands at the end of 2026-09-10 into 09-11
+`streamwidgetshop.com` is LIVE on Hydrogen and selling. Checkout is on `shop.streamwidgetshop.com`, same registrable domain, so ad attribution survives. Digital delivery is proven end to end by a real order that downloaded a real zip.
+
+**One deploy is owed, and it matters.** Production last deployed at `3cc02da`. Four commits are waiting and one of them is a live bug I caused:
+
+- `4e16ef5` **CSP allows the media subdomain.** Moving the Online Store's primary to `shop.streamwidgetshop.com` (to fix checkout) moved every product video's CDN URL with it. CSP host matching is exact, so all 121 videos are currently dead, silently, with no console error. This is the single most important thing in the queue.
+- `9fb422f` plain-language platform qualifier under the badges
+- `90c99e0` stops "Setup help included" and a blanket OBS claim on every page
+- `ed73aa7` og:image no longer double-prefixed, so shared links get a thumbnail
+
+Deploy: `npx shopify hydrogen deploy --env=production`, Todd only, the confirm prompt cannot be answered by an agent.
+
+**Open, roughly in order:**
+1. **Hydrogen redirect theme** is uploaded as a Draft with `storefront_hostname` set to `streamwidgetshop.com`. It needs publishing, or a customer finishing checkout clicks through onto the old Energy theme. Theme publishing is blocked for the connector, so this is Todd's.
+2. **Celestial Stream Kit decisions.** It is the only bundle with no Etsy listing (confirmed against all 186 active listings), while Spooky is live at $54.99 and the Multistream Pack at $145. Todd raised an Etsy link and then deferred; the open question is whether to list it on Etsy or pull a video onto its Shopify PDP from one of its component listings. Separately its contents are misstated in two directions: the zip holds **10 items, 5 chat, 4 goal bars, 1 scene overlay**, but the hero art says "9 widgets, 4 chat" and the Shopify title reads as 10+5+4+1=20. The title fix is drafted and waiting on Todd, since titles are the highest-SEO field and he asked to steer copy voice.
+3. **`docs/COPY-STANDARD.md` across the remaining ~110 products.** Now worth more than it was: every product migrated gets a correct badge row and qualifier.
+4. **10 products still show no badge row**, all with no mapped Etsy listing to ground-truth against.
+5. **Sci-Fi Neon is titled "Star Wars"** and ships `StarWarsTwitchChatcode.zip`. That is Disney IP on a live product about to be advertised. Rename both before ads.
+6. Soul Blade price still unconfirmed. Google Search Console and Merchant Center still need Todd's account. Auny's 5 X pixel IDs (BAT-145) still outstanding.
+
 #### The platform badges were lying, on 116 of 131 products 2026-09-11
 Todd opened the number one revenue PDP on the live site and said "this is twitch only". He was right, and the page disagreed with itself.
 
