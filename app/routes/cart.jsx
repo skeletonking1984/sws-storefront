@@ -2,6 +2,7 @@ import {useLoaderData, data} from 'react-router';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
 import {buildMeta, getOrigin} from '~/lib/seo';
+import {parseGaClientId} from '~/lib/gaCookie.server';
 
 /**
  * @type {Route.MetaFunction}
@@ -26,6 +27,13 @@ export const headers = ({actionHeaders}) => actionHeaders;
  */
 export async function action({request, context}) {
   const {cart} = context;
+
+  // Captured before the mutation below so we know whether this request is
+  // the one that creates the cart. Cart attributes are a full replace, not
+  // a merge, so the GA4 client_id relay only runs once, at creation, and is
+  // never touched again on later updates (this is what keeps it from
+  // clobbering, or being clobbered by, any other attribute).
+  const hadCartId = Boolean(cart.getCartId());
 
   const formData = await request.formData();
 
@@ -86,6 +94,25 @@ export async function action({request, context}) {
   const cartId = result?.cart?.id;
   const headers = cartId ? cart.setCartId(result.cart.id) : new Headers();
   const {cart: cartResult, errors, warnings} = result;
+
+  // Relay the GA4 client_id into this cart, once, at creation, so it
+  // survives into the order (Shopify cart attributes persist across later
+  // updates as long as nothing overwrites the attributes array) and can be
+  // read back out server side by the orders/create purchase webhook
+  // (app/routes/webhooks.orders.jsx). Attaching nothing if the cookie is
+  // missing or malformed rather than sending a broken value.
+  if (!hadCartId && cartId) {
+    const gaClientId = parseGaClientId(request.headers.get('Cookie'));
+    if (gaClientId) {
+      try {
+        await cart.updateAttributes([
+          {key: '_ga_client_id', value: gaClientId},
+        ]);
+      } catch (error) {
+        console.error('Failed to relay _ga client_id to cart attributes', error);
+      }
+    }
+  }
 
   const redirectTo = formData.get('redirectTo') ?? null;
   if (typeof redirectTo === 'string') {
