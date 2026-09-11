@@ -687,3 +687,26 @@ Next: apply `docs/COPY-STANDARD.md` to the remaining ~110 products, which also r
 
 Preview deploy: https://01m288d5z7t8n48kqzdj13pnf6-fb73b5b73c40344d0d20.myshopify.dev
 Commits: `cabe19f`, `ed07a89`.
+
+#### The forms send, but the free relay is not trustworthy 2026-09-11 (afternoon)
+Todd: "I need a form that when filled out it emails me." Built it, then watched the transport fail.
+
+FormSubmit was picked as the zero-config default so nothing had to be signed up for. It worked: a real POST returned its activation notice, and the activation mail landed. **Then it stopped responding entirely within about ten minutes.** Direct curl with a 20s cap returned `time=20.001 http=000`, with and without the Origin header, and the same hang reached the app: driving the real form in a browser left the submit button spinning on "Sending..." indefinitely, with the POST to `/pages/contact.data` never resolving.
+
+**So FormSubmit is not a dependency to put under ad spend.** It is still wired as the fallback, but the real transport is Resend and it needs a key from Todd. The code already prefers Resend whenever `PRIVATE_RESEND_API_KEY` is set, so that is an env var, not a change.
+
+Three fixes came out of driving it for real, none of which showed up in curl-only testing:
+1. **An 8 second ceiling on every outbound provider call.** A third party that hangs must never hang the visitor's form. Verified: a submit against the hung provider now returns in 8.4s with the mailto fallback instead of spinning forever.
+2. **The mailto fallback button was invisible.** `.page main a` (0,1,2) sets the cyan accent on every link in page content and beat `.contact-form-mailto-btn` (0,1,0), so the label rendered cyan on a cyan gradient stop. Found by reading the computed style in the browser, which returned exactly `rgb(127, 230, 255)`, the first gradient stop. Guessing at it twice did not fix it; measuring did.
+3. **The destination moved to `spacelabsdiy@gmail.com`.** Todd chose `streamwidgetshop@gmail.com`, but every piece of real business mail (Etsy sale notifications, Shopify order mail, Etsy customer messages) lands in spacelabsdiy, and that is the account the Gmail connector is attached to. The site still advertises streamwidgetshop publicly, which is a separate thing. Override with `CONTACT_TO_EMAIL`.
+
+**Do not re-pick a free no-signup relay for this.** That path was tried end to end on 2026-09-11 and failed inside one session.
+
+Verified in a real browser this time, not just curl: form fills, submits, shows a genuine pending state, fails fast, and renders a legible fallback button. `npm run build` exit 0.
+
+Needs Todd:
+- **A Resend API key.** resend.com, sign up, create a key. Then Admin > Hydrogen > SWS Storefront, Preview and Production: `PRIVATE_RESEND_API_KEY`, and `PRIVATE_CONTACT_TO_EMAIL` if the destination should differ from the default. That is the whole job; the code is done.
+- A production deploy, which agents cannot confirm.
+
+Preview: https://01m289xse7cr307h9r8cw22nfb-fb73b5b73c40344d0d20.myshopify.dev
+Commits: `e69d71b`, `fce8071`, `4a9bd40`.
