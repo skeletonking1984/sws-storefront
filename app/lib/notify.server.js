@@ -29,7 +29,18 @@
 const RESEND_ENDPOINT = 'https://api.resend.com/emails';
 const FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/ajax';
 const DEFAULT_FROM = 'onboarding@resend.dev';
-const DEFAULT_TO = 'streamwidgetshop@gmail.com';
+// Hard ceiling on any outbound provider call. A third party that hangs must
+// never hang the visitor's form: measured on 2026-09-11, FormSubmit answered
+// normally and then stopped responding entirely within ten minutes, leaving the
+// submit button spinning forever with no error. Failing fast shows the mailto
+// fallback instead, which actually works.
+const SEND_TIMEOUT_MS = 8000;
+// The inbox Todd actually works out of: Etsy sale notifications, Shopify order
+// mail and Etsy customer messages all land here, and it is the account the
+// Gmail connector is attached to. streamwidgetshop@gmail.com is the address the
+// site advertises publicly, but mail sent there went unread. Override with
+// CONTACT_TO_EMAIL to change the destination without touching code.
+const DEFAULT_TO = 'spacelabsdiy@gmail.com';
 
 /**
  * A subject line becomes a mail header, so it cannot carry line breaks.
@@ -77,6 +88,7 @@ async function sendViaResend({env, to, subject, text, replyTo}) {
         Authorization: `Bearer ${env.PRIVATE_RESEND_API_KEY}`,
         'Content-Type': 'application/json',
       },
+      signal: AbortSignal.timeout(SEND_TIMEOUT_MS),
       body: JSON.stringify({
         from: env.PRIVATE_CONTACT_FROM_EMAIL || DEFAULT_FROM,
         to,
@@ -119,6 +131,7 @@ async function sendViaFormSubmit({to, subject, text, replyTo, origin}) {
         Origin: site,
         Referer: site,
       },
+      signal: AbortSignal.timeout(SEND_TIMEOUT_MS),
       body: JSON.stringify({
         _subject: subject,
         _captcha: 'false',
