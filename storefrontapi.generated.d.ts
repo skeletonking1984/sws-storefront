@@ -614,6 +614,64 @@ export type SitemapBlogArticlesQuery = {
   }>;
 };
 
+export type LlmsTxtTopWidgetsQueryVariables = StorefrontAPI.Exact<{
+  handle: StorefrontAPI.Scalars['String']['input'];
+}>;
+
+export type LlmsTxtTopWidgetsQuery = {
+  collection?: StorefrontAPI.Maybe<{
+    products: {nodes: Array<Pick<StorefrontAPI.Product, 'title' | 'handle'>>};
+  }>;
+};
+
+export type LlmsTxtFallbackProductsQueryVariables = StorefrontAPI.Exact<{
+  handle0: StorefrontAPI.Scalars['String']['input'];
+  handle1: StorefrontAPI.Scalars['String']['input'];
+  handle2: StorefrontAPI.Scalars['String']['input'];
+  handle3: StorefrontAPI.Scalars['String']['input'];
+  handle4: StorefrontAPI.Scalars['String']['input'];
+  handle5: StorefrontAPI.Scalars['String']['input'];
+  handle6: StorefrontAPI.Scalars['String']['input'];
+  handle7: StorefrontAPI.Scalars['String']['input'];
+}>;
+
+export type LlmsTxtFallbackProductsQuery = {
+  product0?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+  >;
+  product1?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+  >;
+  product2?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+  >;
+  product3?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+  >;
+  product4?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+  >;
+  product5?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+  >;
+  product6?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+  >;
+  product7?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+  >;
+};
+
+export type LlmsTxtCollectionsQueryVariables = StorefrontAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type LlmsTxtCollectionsQuery = {
+  collections: {
+    nodes: Array<Pick<StorefrontAPI.Collection, 'title' | 'handle'>>;
+  };
+};
+
 export type RecommendedProductFragment = Pick<
   StorefrontAPI.Product,
   'id' | 'title' | 'productType' | 'handle'
@@ -1785,6 +1843,18 @@ interface GeneratedQueryTypes {
   '#graphql\n  query SitemapBlogArticles($blogHandle: String!, $cursor: String) {\n    blog(handle: $blogHandle) {\n      articles(first: 250, after: $cursor) {\n        nodes {\n          handle\n          publishedAt\n        }\n        pageInfo {\n          hasNextPage\n          endCursor\n        }\n      }\n    }\n  }\n': {
     return: SitemapBlogArticlesQuery;
     variables: SitemapBlogArticlesQueryVariables;
+  };
+  '#graphql\n  query LlmsTxtTopWidgets($handle: String!) {\n    collection(handle: $handle) {\n      products(first: 30) {\n        nodes {\n          title\n          handle\n        }\n      }\n    }\n  }\n': {
+    return: LlmsTxtTopWidgetsQuery;
+    variables: LlmsTxtTopWidgetsQueryVariables;
+  };
+  '#graphql\n  query LlmsTxtFallbackProducts(\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n    $handle5: String!\n    $handle6: String!\n    $handle7: String!\n  ) {\n    product0: product(handle: $handle0) { title handle }\n    product1: product(handle: $handle1) { title handle }\n    product2: product(handle: $handle2) { title handle }\n    product3: product(handle: $handle3) { title handle }\n    product4: product(handle: $handle4) { title handle }\n    product5: product(handle: $handle5) { title handle }\n    product6: product(handle: $handle6) { title handle }\n    product7: product(handle: $handle7) { title handle }\n  }\n': {
+    return: LlmsTxtFallbackProductsQuery;
+    variables: LlmsTxtFallbackProductsQueryVariables;
+  };
+  '#graphql\n  query LlmsTxtCollections {\n    collections(first: 20) {\n      nodes {\n        title\n        handle\n      }\n    }\n  }\n': {
+    return: LlmsTxtCollectionsQuery;
+    variables: LlmsTxtCollectionsQueryVariables;
   };
   '#graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    productType\n    handle\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    featuredImage {\n      id\n      url\n      altText\n    }\n  }\n  query RecommendedProducts (\n    $country: CountryCode\n    $language: LanguageCode\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n    $handle5: String!\n    $handle6: String!\n    $handle7: String!\n  ) @inContext(country: $country, language: $language) {\n    product0: product(handle: $handle0) { ...RecommendedProduct }\n    product1: product(handle: $handle1) { ...RecommendedProduct }\n    product2: product(handle: $handle2) { ...RecommendedProduct }\n    product3: product(handle: $handle3) { ...RecommendedProduct }\n    product4: product(handle: $handle4) { ...RecommendedProduct }\n    product5: product(handle: $handle5) { ...RecommendedProduct }\n    product6: product(handle: $handle6) { ...RecommendedProduct }\n    product7: product(handle: $handle7) { ...RecommendedProduct }\n  }\n': {
     return: RecommendedProductsQuery;

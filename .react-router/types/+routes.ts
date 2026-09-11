@@ -83,6 +83,9 @@ type Pages = {
   "/blogs": {
     params: {};
   };
+  "/llms.txt": {
+    params: {};
+  };
   "/account": {
     params: {};
   };
@@ -126,7 +129,7 @@ type Pages = {
 type RouteFiles = {
   "root.jsx": {
     id: "root";
-    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/account/logout" | "/collections/all" | "/policies" | "/account/login" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/blogs" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/cart" | "/cart/:lines" | "/*";
+    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/account/logout" | "/collections/all" | "/policies" | "/account/login" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/blogs" | "/llms.txt" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/cart" | "/cart/:lines" | "/*";
   };
   "routes/blogs.$blogHandle.$articleHandle.jsx": {
     id: "routes/blogs.$blogHandle.$articleHandle";
@@ -195,6 +198,10 @@ type RouteFiles = {
   "routes/blogs._index.jsx": {
     id: "routes/blogs._index";
     page: "/blogs";
+  };
+  "routes/[llms.txt].jsx": {
+    id: "routes/[llms.txt]";
+    page: "/llms.txt";
   };
   "routes/account.jsx": {
     id: "routes/account";
@@ -265,6 +272,7 @@ type RouteModules = {
   "routes/pages.$handle": typeof import("./app/routes/pages.$handle.jsx");
   "routes/[robots.txt]": typeof import("./app/routes/[robots.txt].jsx");
   "routes/blogs._index": typeof import("./app/routes/blogs._index.jsx");
+  "routes/[llms.txt]": typeof import("./app/routes/[llms.txt].jsx");
   "routes/account": typeof import("./app/routes/account.jsx");
   "routes/account.orders._index": typeof import("./app/routes/account.orders._index.jsx");
   "routes/account.orders.$id": typeof import("./app/routes/account.orders.$id.jsx");

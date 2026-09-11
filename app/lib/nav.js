@@ -86,3 +86,21 @@ export const OVERLAY_FEATURED_HANDLES = [
  */
 export const WIDGETS_FEATURED_HANDLE =
   'neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only';
+
+/**
+ * Curated from real StreamWidgetShop Etsy data (etsy_list_active_listings,
+ * sorted by num_favorers), matched to their Shopify handles. Used for the
+ * homepage hero composite, as a fallback for Top Widgets if that collection
+ * doesn't exist or is empty, and as the same fallback for `/llms.txt`.
+ * Update this list periodically as Etsy favorites shift.
+ */
+export const FAN_FAVORITE_HANDLES = [
+  WIDGETS_FEATURED_HANDLE,
+  'combo-goal-widget-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
+  'dreamy-moon-cloud-glass-goal-widget-customisable-for-twitch-and-tiktok-studio',
+  'cute-peach-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-tiktok-studio-streamelements-streamlabs-obs',
+  'spooky-cauldron-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
+  'boba-drink-cute-fruit-drink-goal-widget-for-twitch-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
+  'cute-rabbit-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
+  'goth-spell-book-spooky-vibes-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
+];

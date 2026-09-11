@@ -17,9 +17,9 @@ import {useVariantUrl} from '~/lib/variants';
 import {absoluteAsset, buildMeta, getOrigin} from '~/lib/seo';
 import {sendNotificationEmail} from '~/lib/notify.server';
 import {
+  FAN_FAVORITE_HANDLES,
   OVERLAY_FEATURED_HANDLES,
   VIBES,
-  WIDGETS_FEATURED_HANDLE,
   WORKS_WITH_PLATFORMS,
 } from '~/lib/nav';
 import logo from '~/assets/logo.png';
@@ -134,24 +134,6 @@ function loadDeferredData({context}) {
     kitsAndOverlayPacks,
   };
 }
-
-/**
- * Curated from real StreamWidgetShop Etsy data (etsy_list_active_listings,
- * sorted by num_favorers), matched to their Shopify handles. Used for the
- * hero composite and as a fallback for Top Widgets if that collection
- * doesn't exist or is empty. Update this list periodically as Etsy
- * favorites shift.
- */
-const FAN_FAVORITE_HANDLES = [
-  WIDGETS_FEATURED_HANDLE,
-  'combo-goal-widget-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
-  'dreamy-moon-cloud-glass-goal-widget-customisable-for-twitch-and-tiktok-studio',
-  'cute-peach-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-tiktok-studio-streamelements-streamlabs-obs',
-  'spooky-cauldron-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements',
-  'boba-drink-cute-fruit-drink-goal-widget-for-twitch-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
-  'cute-rabbit-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
-  'goth-spell-book-spooky-vibes-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements',
-];
 
 /**
  * Handles for the "Kits and overlay packs" homepage band. Two of these
