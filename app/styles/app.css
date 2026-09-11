@@ -2581,6 +2581,20 @@ button.reset:hover:not(:has(> *)) {
   width: 100%;
 }
 
+/* Real <video> markup for crawlers (see ProductGallery.jsx), kept out of
+ * the visible layout without display:none, which some crawlers treat as
+ * "not really there".
+ */
+.product-gallery-video-seo {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 .product-gallery-arrow {
   align-items: center;
   background: rgba(10, 10, 18, 0.6);
