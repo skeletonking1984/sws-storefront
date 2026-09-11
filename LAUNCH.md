@@ -499,27 +499,22 @@ Open question for Todd, 5 seconds in the app versus an hour of agent fumbling: f
 
 **Digital delivery is PROVEN.** A real checkout with a 100% off code delivered the Y2K Sticker Chat Widget zip from a working download page. Todd's 14 uploads are real. The long-running number one blocker is closed.
 
-**Open, and the top item for the next pass: checkout is on the wrong domain.**
+**RESOLVED the same night: checkout is back on the brand domain.**
 
-Retargeting the apex to Hydrogen left the Online Store with no brand domain, and everything the Online Store serves fell back to the raw myshopify host. Measured, not assumed:
+Retargeting the apex to Hydrogen had left the Online Store with no brand domain, so checkout and the Digital Products download proxy both fell back to `72470e-33.myshopify.com`. That changed domain on the buyer at the payment step and, worse for the ads plan, put `_ga` out of reach at `checkout_completed` so every paid conversion would have landed unattributed.
 
-    checkoutUrl host: 72470e-33.myshopify.com
-    download page:    72470e-33.myshopify.com/a/downloads/... (rendered in the old Energy theme)
+Fixed with Shopify's documented headless pattern: `shop.streamwidgetshop.com` added with **Target set to Online Store inside the Add subdomain dialog**, then Change domain type to Primary domain for that channel. Setting the target at creation is the trick; two earlier attempts left it on "Select target", which put it in the Hydrogen group where making it primary would have demoted the live apex.
 
-Two consequences. The buyer changes domain at the payment step, to a host that looks nothing like the shop. And `_ga` is set on `streamwidgetshop.com` and is unreadable on the myshopify host, so the planned `checkout_completed` pixel cannot recover the client id and **every paid conversion would land unattributed**. `docs/checkout-purchase-pixel.md` previously certified the opposite and has been corrected.
+The guard that caught that near miss, worth reusing: the Change domain type dialog names the channel in every option. If it says SWS Storefront (Production) when you mean the Online Store, the target never moved and confirming would break the live site.
 
-`PUBLIC_CHECKOUT_DOMAIN` does not fix this. It only feeds the Customer Privacy API.
+Measured after the change, not read off the Admin screen:
 
-The fix is Shopify's documented headless pattern: keep a subdomain on the Online Store and make it that channel's primary.
+    checkoutUrl host:              shop.streamwidgetshop.com
+    https://shop.streamwidgetshop.com/   200 (Online Store, as intended)
+    https://streamwidgetshop.com/        200, powered-by Shopify, Oxygen, Hydrogen
+    https://www.streamwidgetshop.com/    301 -> https://streamwidgetshop.com/
 
-**What has already been tried.** `shop.streamwidgetshop.com` was created twice and is gone both times. An earlier version of this entry blamed ⋯ > Change target for deleting it. **That was wrong and is withdrawn: Todd removed it himself.** There is no evidence Change target destroys a subdomain, and the next pass should not avoid it on my say so. What is true and worth keeping: after the last removal the auto-created CNAME survives (`shop.streamwidgetshop.com` resolves to `shops.myshopify.com` / 23.227.38.74) while no domain is attached in Shopify, so HTTPS returns nothing. That orphan CNAME should make a reconnect verify instantly.
-
-Next thing to try, in order:
-1. **Connect existing** (top right of Settings > Domains) with `shop.streamwidgetshop.com`, since the CNAME already points at Shopify. Pick Online Store as the target if it asks.
-2. Or ⋯ on `streamwidgetshop.com` > Add subdomain, setting **Target = Online Store inside that dialog**. The dialog has a Target selector and it was left on "Select target" the first time, which is why it landed in the Hydrogen group. Setting it there is the shortest correct path.
-3. Once it reads Connected under Online Store: ⋯ > Change domain type > Primary domain. **Read the dialog text before confirming.** It must say "when visitors are browsing Online Store". If it says SWS Storefront (Production) the target never moved, and confirming would demote `streamwidgetshop.com` and start serving the live store as shop.streamwidgetshop.com. That near miss happened tonight.
-
-Verify with the cart probe, never from the Admin screen: build a real cart on the Storefront API and read `checkoutUrl`. Success is `host: shop.streamwidgetshop.com`.
+Checkout now shares a registrable domain with the storefront, so the cookie is readable and the `checkout_completed` pixel in `docs/checkout-purchase-pixel.md` will attribute correctly once it is created.
 
 Also still open, unchanged: anyone landing on `72470e-33.myshopify.com` gets the old Energy theme. Shopify publishes a Hydrogen redirect theme for exactly this. Worth doing before ads.
 
