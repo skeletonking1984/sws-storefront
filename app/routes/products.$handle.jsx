@@ -15,7 +15,11 @@ import {ProductHighlights} from '~/components/ProductHighlights';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge} from '~/components/EtsyRating';
 import {EtsyReviews} from '~/components/EtsyReviews';
-import {ProductRatingBadge, ProductReviews} from '~/components/ProductReviews';
+import {
+  ProductRatingBadge,
+  ProductReviews,
+  REVIEWS_ALWAYS_IN_DOM,
+} from '~/components/ProductReviews';
 import {FaqAccordion} from '~/components/FaqAccordion';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {formatProductDescription} from '~/lib/productDescription';
@@ -192,6 +196,43 @@ function stripHtml(html) {
     .trim();
 }
 
+// Cap on how many Review entries go into the Product JSON-LD. Kept
+// identical to REVIEWS_ALWAYS_IN_DOM (ProductReviews.jsx) by importing it
+// rather than duplicating the number, so this can never emit more reviews
+// than are already sitting in the DOM before the "Show all N" expander is
+// clicked, most recent first, whichever star rating they carry.
+const MAX_JSONLD_REVIEWS = REVIEWS_ALWAYS_IN_DOM;
+
+/**
+ * Builds the `review` array for the Product JSON-LD from this product's real
+ * Etsy reviews. Verbatim text only, never invented or edited. A review with
+ * no text is skipped: a Review needs a body to be useful, and this repo
+ * never fabricates one.
+ * @param {{reviews: Array<{rating: number, date: string, text: string}>}} productReviews
+ */
+function buildReviewJsonLd(productReviews) {
+  if (!productReviews?.reviews?.length) return undefined;
+  const withText = productReviews.reviews.filter((review) =>
+    review.text && review.text.trim(),
+  );
+  if (!withText.length) return undefined;
+  return withText.slice(0, MAX_JSONLD_REVIEWS).map((review) => ({
+    '@type': 'Review',
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: review.rating,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    author: {
+      '@type': 'Person',
+      name: 'Verified Etsy buyer',
+    },
+    datePublished: review.date,
+    reviewBody: review.text,
+  }));
+}
+
 export default function Product() {
   /** @type {LoaderReturnData} */
   const {product, relatedProducts, faq, productReviews} = useLoaderData();
@@ -231,15 +272,18 @@ export default function Product() {
   }
 
   // Real per-product Etsy reviews (see ProductReviews.jsx and the loader
-  // above). Three is the floor for any averaged number anywhere on this
-  // page: the JSON-LD aggregateRating, the badge beside the price, and the
-  // summary in the review section all use it, so the structured data, the
-  // buy panel and the visible page can never disagree. Below the floor the
-  // reviews themselves still render in full, they just are not averaged.
+  // above). One review is the floor for any own-product number anywhere on
+  // this page: the JSON-LD aggregateRating, the badge beside the price, and
+  // the summary in the review section all use it, so the structured data,
+  // the buy panel and the visible page can never disagree. Below the floor
+  // (zero reviews) there is nothing real to show or emit, so both stay off.
   const showsProductReviews =
     Boolean(productReviews) && productReviews.reviews.length > 0;
   const hasEnoughReviewsForJsonLd =
-    showsProductReviews && productReviews.count >= 3;
+    showsProductReviews && productReviews.count >= 1;
+  const reviewJsonLd = hasEnoughReviewsForJsonLd
+    ? buildReviewJsonLd(productReviews)
+    : undefined;
 
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -247,7 +291,14 @@ export default function Product() {
     name: title,
     description: stripHtml(description || descriptionHtml),
     image: imageUrls,
-    ...(selectedVariant?.sku ? {sku: selectedVariant.sku} : {}),
+    // This catalog has no merchant SKUs (checked, all variants null); the
+    // Shopify variant id is the only real per-offer identifier, so it's
+    // used as productID instead rather than inventing a SKU string.
+    ...(selectedVariant?.sku
+      ? {sku: selectedVariant.sku}
+      : selectedVariant?.id
+        ? {productID: selectedVariant.id}
+        : {}),
     brand: {
       '@type': 'Brand',
       name: 'Stream Widget Shop',
@@ -261,7 +312,31 @@ export default function Product() {
             availability: selectedVariant.availableForSale
               ? 'https://schema.org/InStock'
               : 'https://schema.org/OutOfStock',
+            // Every widget is a finished digital file, never a used or
+            // refurbished item.
+            itemCondition: 'https://schema.org/NewCondition',
             url: productUrl,
+            // Real FAQ copy (checked live via the Storefront API, "ORDERS &
+            // REFUNDS" section): "we do not offer refunds once the file has
+            // been downloaded." That is MerchantReturnNotPermitted, not a
+            // generic no-returns default.
+            hasMerchantReturnPolicy: {
+              '@type': 'MerchantReturnPolicy',
+              returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+            },
+            // Instant digital download: nothing ships, nothing costs to
+            // ship. Variants on this catalog are set requiresShipping:
+            // false, so a zero shipping rate is accurate, not a placeholder.
+            shippingDetails: {
+              '@type': 'OfferShippingDetails',
+              shippingRate: {
+                '@type': 'MonetaryAmount',
+                value: '0',
+                currency: 'USD',
+              },
+            },
+            // No fixed sale window on these listings, so no priceValidUntil
+            // date could be defended as real; omitted rather than guessed.
           },
         }
       : {}),
@@ -274,6 +349,7 @@ export default function Product() {
           },
         }
       : {}),
+    ...(reviewJsonLd ? {review: reviewJsonLd} : {}),
   };
 
   const breadcrumbJsonLd = {

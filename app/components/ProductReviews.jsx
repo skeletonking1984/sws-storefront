@@ -21,27 +21,34 @@ function formatReviewDate(dateStr) {
 }
 
 /**
- * Minimum reviews before a headline average and a distribution chart are
- * worth showing.
+ * Minimum reviews before a per-star distribution chart is worth showing.
  *
- * Below this the summary is not a rating, it is one or two people rendered
- * as a statistic. A single unhappy buyer became a "1.0 out of 5" banner over
- * a product with no other feedback, and two buyers became "3.0" with a bar
- * chart implying a measured distribution. Both read as a verdict on the
- * product and neither is one.
- *
- * This is NOT a filter. Every review still renders in full, most recent
- * first, whatever it says. What is suppressed is the false precision on top
- * of them. The same threshold already gates `aggregateRating` in the PDP's
- * JSON-LD (see app/routes/products.$handle.jsx), so this makes the page
- * agree with the structured data it already emits.
+ * Below this a bar chart implies a measured distribution over one or two
+ * people. This gate is ONLY for the bar chart. The average and review count
+ * themselves are shown starting at 1 review (see `hasRating` below) because
+ * the PDP's JSON-LD now emits `aggregateRating` starting at 1 review too
+ * (see app/routes/products.$handle.jsx): the number and the count sit right
+ * next to each other on the page, so a "5.0" from a single review can never
+ * read as more than it is, and the structured data always matches what a
+ * visitor can see.
  */
-const MIN_REVIEWS_FOR_SUMMARY = 3;
+const MIN_REVIEWS_FOR_DISTRIBUTION = 3;
+
+/**
+ * How many reviews render in the DOM by default (collapsed, no click
+ * needed). Must match the cap the PDP's JSON-LD uses for its `review` array
+ * (see MAX_JSONLD_REVIEWS in app/routes/products.$handle.jsx, which imports
+ * this constant) - Google reads the DOM as it stands, not what a "Show all
+ * N" click would reveal, so whatever the schema promises has to already be
+ * sitting on the page before anyone touches the expander.
+ */
+export const REVIEWS_ALWAYS_IN_DOM = 8;
 
 /**
  * Per-product Etsy reviews, real and verbatim, for this exact listing (not
  * the shop-wide sample in EtsyReviews.jsx). Sorted most recent first,
- * whatever the rating, first 3 shown with an expander for the rest.
+ * whatever the rating; the first REVIEWS_ALWAYS_IN_DOM render immediately,
+ * an expander reveals any beyond that.
  * @param {{data: {count: number, average: number, distribution: object, reviews: Array}}} props
  */
 export function ProductReviews({data}) {
@@ -52,9 +59,12 @@ export function ProductReviews({data}) {
   // Floor, never round. A 4.5 average rounded up paints 5 solid stars and
   // overstates the product, the exact number sits right next to it anyway.
   const fullStars = Math.floor(data.average);
-  const showSummary = data.count >= MIN_REVIEWS_FOR_SUMMARY;
-  const visibleReviews = expanded ? data.reviews : data.reviews.slice(0, 3);
-  const hasMore = data.reviews.length > 3;
+  const hasRating = data.count >= 1;
+  const showDistribution = data.count >= MIN_REVIEWS_FOR_DISTRIBUTION;
+  const visibleReviews = expanded
+    ? data.reviews
+    : data.reviews.slice(0, REVIEWS_ALWAYS_IN_DOM);
+  const hasMore = data.reviews.length > REVIEWS_ALWAYS_IN_DOM;
 
   return (
     <section
@@ -64,7 +74,7 @@ export function ProductReviews({data}) {
     >
       <h2 id="product-reviews-heading">What buyers say about this widget</h2>
 
-      {showSummary ? (
+      {hasRating ? (
         <div className="product-reviews-summary">
           <span className="product-reviews-summary-number">
             {data.average.toFixed(1)}
@@ -79,15 +89,9 @@ export function ProductReviews({data}) {
             listing
           </span>
         </div>
-      ) : (
-        <p className="product-reviews-summary-label">
-          {data.count} review{data.count === 1 ? '' : 's'} left on this
-          widget&rsquo;s Etsy listing. Too few to average, so here they are in
-          full.
-        </p>
-      )}
+      ) : null}
 
-      {showSummary ? (
+      {showDistribution ? (
         <div className="product-reviews-distribution">
           {[5, 4, 3, 2, 1].map((star) => {
             const n = data.distribution[String(star)] || 0;
@@ -163,12 +167,12 @@ export function ProductReviews({data}) {
  * @param {{data: {count: number, average: number, distribution: object, reviews: Array}}} props
  */
 export function ProductRatingBadge({data}) {
-  // Same floor as the review section. This badge sits directly beside the
-  // price and the Add to cart button, so a one-review "1.0" here is the most
-  // expensive place in the whole site to print a meaningless average. Below
-  // the threshold the route falls back to the shop-wide badge, which is
-  // labelled as shop-wide and is a real number over 990 reviews.
-  if (!data || data.count < MIN_REVIEWS_FOR_SUMMARY) return null;
+  // Shown starting at 1 review. This badge sits directly beside the price
+  // and the Add to cart button, so the review count is printed right next
+  // to the average (below) so a one-review "5.0" can never read as more
+  // than it is. Below 1 review the route falls back to the shop-wide badge,
+  // which is labelled as shop-wide and is a real number over 990 reviews.
+  if (!data || data.count < 1) return null;
   const fullStars = Math.floor(data.average);
   return (
     <a className="etsy-rating etsy-rating-compact" href="#product-reviews">
