@@ -76,17 +76,26 @@ export async function action({request, context}) {
 
       // Shopify accepts an unrecognised code and simply marks it
       // applicable: false, so a wrong code is otherwise indistinguishable
-      // from a right one. Only judge that when the mutation actually gave
-      // back a cart to judge from: `result.cart` can come back undefined
-      // here, and treating that as "invalid" reported a valid, correctly
-      // applied WELCOME10 as a bad code. No data means no claim.
-      const returnedCodes = result?.cart?.discountCodes;
-      if (typedDiscountCode && Array.isArray(returnedCodes)) {
-        const applied = returnedCodes.some(
-          (discount) =>
-            discount.applicable &&
-            discount.code?.toLowerCase() === typedDiscountCode.toLowerCase(),
-        );
+      // from a right one: the request succeeds and nothing changes.
+      //
+      // The mutation's own return value cannot be trusted to answer this.
+      // `result.cart` comes back undefined here often enough that reading it
+      // as "not applicable" reported a valid, correctly applied WELCOME10 as
+      // a bad code. Re-read the cart instead, which is authoritative.
+      if (typedDiscountCode) {
+        let applied = false;
+        try {
+          const updatedCart = await cart.get();
+          applied = (updatedCart?.discountCodes || []).some(
+            (discount) =>
+              discount.applicable &&
+              discount.code?.toLowerCase() === typedDiscountCode.toLowerCase(),
+          );
+        } catch {
+          // If the re-read fails we genuinely do not know, so say nothing
+          // rather than risk calling a working code invalid.
+          applied = true;
+        }
         if (!applied) {
           result = {
             ...result,
