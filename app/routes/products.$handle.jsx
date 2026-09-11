@@ -231,9 +231,11 @@ export default function Product() {
   }
 
   // Real per-product Etsy reviews (see ProductReviews.jsx and the loader
-  // above). Only used for aggregateRating when there are at least 3, and
-  // the numbers here must match exactly what ProductReviews renders on the
-  // page.
+  // above). Three is the floor for any averaged number anywhere on this
+  // page: the JSON-LD aggregateRating, the badge beside the price, and the
+  // summary in the review section all use it, so the structured data, the
+  // buy panel and the visible page can never disagree. Below the floor the
+  // reviews themselves still render in full, they just are not averaged.
   const showsProductReviews =
     Boolean(productReviews) && productReviews.reviews.length > 0;
   const hasEnoughReviewsForJsonLd =
@@ -307,7 +309,7 @@ export default function Product() {
         <ProductGallery media={media} />
         <div className="product-main sws-glass-card">
           <h1>{title}</h1>
-          {showsProductReviews ? (
+          {hasEnoughReviewsForJsonLd ? (
             <ProductRatingBadge data={productReviews} />
           ) : (
             <EtsyRatingBadge compact />

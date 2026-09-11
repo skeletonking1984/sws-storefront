@@ -14,8 +14,10 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}) {
           <footer className="footer">
             <div className="footer-top">
               <div className="footer-brand">
-                <img src={logo} alt="" />
-                <span className="sws-holo">Stream Widget Shop</span>
+                {/* logo.png is the horizontal v3 lockup and already carries
+                    the wordmark, so there is no text beside it. The alt text
+                    is the fallback if the image ever fails to load. */}
+                <img src={logo} alt="Stream Widget Shop" />
               </div>
               <p className="footer-tagline">
                 Animated chat and goal widgets for Twitch, YouTube, and

@@ -734,16 +734,14 @@ button.reset:hover:not(:has(> *)) {
   gap: 0.6rem;
 }
 
+/* logo.png is a 900x250 horizontal lockup. Pinning both height AND width
+   squashes it into a square, which is what the footer did until 2026-09-10.
+   Set height only and let width follow the natural ratio, same as
+   .header-brand img. */
 .footer-brand img {
-  height: 36px;
-  width: 36px;
+  height: 44px;
+  width: auto;
   filter: drop-shadow(0 0 10px rgba(242, 166, 216, 0.35));
-}
-
-.footer-brand span {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 800;
 }
 
 .footer-etsy-link {

@@ -21,6 +21,24 @@ function formatReviewDate(dateStr) {
 }
 
 /**
+ * Minimum reviews before a headline average and a distribution chart are
+ * worth showing.
+ *
+ * Below this the summary is not a rating, it is one or two people rendered
+ * as a statistic. A single unhappy buyer became a "1.0 out of 5" banner over
+ * a product with no other feedback, and two buyers became "3.0" with a bar
+ * chart implying a measured distribution. Both read as a verdict on the
+ * product and neither is one.
+ *
+ * This is NOT a filter. Every review still renders in full, most recent
+ * first, whatever it says. What is suppressed is the false precision on top
+ * of them. The same threshold already gates `aggregateRating` in the PDP's
+ * JSON-LD (see app/routes/products.$handle.jsx), so this makes the page
+ * agree with the structured data it already emits.
+ */
+const MIN_REVIEWS_FOR_SUMMARY = 3;
+
+/**
  * Per-product Etsy reviews, real and verbatim, for this exact listing (not
  * the shop-wide sample in EtsyReviews.jsx). Sorted most recent first,
  * whatever the rating, first 3 shown with an expander for the rest.
@@ -34,6 +52,7 @@ export function ProductReviews({data}) {
   // Floor, never round. A 4.5 average rounded up paints 5 solid stars and
   // overstates the product, the exact number sits right next to it anyway.
   const fullStars = Math.floor(data.average);
+  const showSummary = data.count >= MIN_REVIEWS_FOR_SUMMARY;
   const visibleReviews = expanded ? data.reviews : data.reviews.slice(0, 3);
   const hasMore = data.reviews.length > 3;
 
@@ -45,41 +64,51 @@ export function ProductReviews({data}) {
     >
       <h2 id="product-reviews-heading">What buyers say about this widget</h2>
 
-      <div className="product-reviews-summary">
-        <span className="product-reviews-summary-number">
-          {data.average.toFixed(1)}
-        </span>
-        <span className="etsy-rating-stars" aria-hidden="true">
-          {Array.from({length: 5}, (_, i) =>
-            i < fullStars ? '★' : '☆',
-          ).join('')}
-        </span>
-        <span className="product-reviews-summary-label">
-          {data.count} review{data.count === 1 ? '' : 's'} on Etsy for this
-          listing
-        </span>
-      </div>
+      {showSummary ? (
+        <div className="product-reviews-summary">
+          <span className="product-reviews-summary-number">
+            {data.average.toFixed(1)}
+          </span>
+          <span className="etsy-rating-stars" aria-hidden="true">
+            {Array.from({length: 5}, (_, i) =>
+              i < fullStars ? '★' : '☆',
+            ).join('')}
+          </span>
+          <span className="product-reviews-summary-label">
+            {data.count} review{data.count === 1 ? '' : 's'} on Etsy for this
+            listing
+          </span>
+        </div>
+      ) : (
+        <p className="product-reviews-summary-label">
+          {data.count} review{data.count === 1 ? '' : 's'} left on this
+          widget&rsquo;s Etsy listing. Too few to average, so here they are in
+          full.
+        </p>
+      )}
 
-      <div className="product-reviews-distribution">
-        {[5, 4, 3, 2, 1].map((star) => {
-          const n = data.distribution[String(star)] || 0;
-          const pct = data.count ? Math.round((n / data.count) * 100) : 0;
-          return (
-            <div className="product-reviews-distribution-row" key={star}>
-              <span className="product-reviews-distribution-label">
-                {star}★
-              </span>
-              <span className="product-reviews-distribution-bar">
-                <span
-                  className="product-reviews-distribution-fill"
-                  style={{width: `${pct}%`}}
-                />
-              </span>
-              <span className="product-reviews-distribution-count">{n}</span>
-            </div>
-          );
-        })}
-      </div>
+      {showSummary ? (
+        <div className="product-reviews-distribution">
+          {[5, 4, 3, 2, 1].map((star) => {
+            const n = data.distribution[String(star)] || 0;
+            const pct = data.count ? Math.round((n / data.count) * 100) : 0;
+            return (
+              <div className="product-reviews-distribution-row" key={star}>
+                <span className="product-reviews-distribution-label">
+                  {star}★
+                </span>
+                <span className="product-reviews-distribution-bar">
+                  <span
+                    className="product-reviews-distribution-fill"
+                    style={{width: `${pct}%`}}
+                  />
+                </span>
+                <span className="product-reviews-distribution-count">{n}</span>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
 
       <p className="product-reviews-note">
         Real reviews left on this widget&apos;s Etsy listing, most recent
@@ -134,7 +163,12 @@ export function ProductReviews({data}) {
  * @param {{data: {count: number, average: number, distribution: object, reviews: Array}}} props
  */
 export function ProductRatingBadge({data}) {
-  if (!data || data.reviews.length === 0) return null;
+  // Same floor as the review section. This badge sits directly beside the
+  // price and the Add to cart button, so a one-review "1.0" here is the most
+  // expensive place in the whole site to print a meaningless average. Below
+  // the threshold the route falls back to the shop-wide badge, which is
+  // labelled as shop-wide and is a real number over 990 reviews.
+  if (!data || data.count < MIN_REVIEWS_FOR_SUMMARY) return null;
   const fullStars = Math.floor(data.average);
   return (
     <a className="etsy-rating etsy-rating-compact" href="#product-reviews">
