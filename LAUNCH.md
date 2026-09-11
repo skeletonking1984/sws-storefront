@@ -463,3 +463,18 @@ Verified: video at index 1 on 105 products and index 0 on 1, none last. `audit-c
 Not verified: still nothing opened in a browser from this session. Whether the video visibly plays is unconfirmed by eye.
 
 Preview deploy with the media fix: https://01m26rgc01zap8zdpvtwhyfqkf-fb73b5b73c40344d0d20.myshopify.dev
+
+#### Correction: the Digital Products "dead end" was overstated 2026-09-10
+Earlier entries say the Digital Products app is a confirmed dead end and tell future agents to stop re-testing it. That was half right and the wrong half got propagated.
+
+What is true: the app exposes nothing through the Admin API. It is invisible to `appInstallations` and it does not store attachments in metafields, so a product that HAS a file and one that does not are indistinguishable over the API. That was tested properly.
+
+What was wrong: "no API" was allowed to become "unknowable and unfixable", and nobody opened the app's own interface. Driving Chrome into Admin > Apps > Digital Products > Open app shows a full product table with an **Assets column giving the file count per product**, plus a "Filter digital files" control and a Sort control. The state is entirely visible, and editable, in the UI. That conclusion sat in this file from 2026-09-07 and told four days of agents to stop looking at the number one launch blocker.
+
+Observed while there, which also contradicts the assumption that most products are empty: 10x FROG Emotes 1 file, Angel Love Bar 3, Boba Drink 6, Broken Heart Bar 3, Broken Heart First Aid 3, Broken Star Bar 3, Butterfly Galaxy Chat and Goal 7, Butterfly Liquid Filling 3. Many products already have files attached.
+
+What still blocks an agent-driven fix: the app renders in a cross-origin iframe. `get_page_text` returns only the Admin shell, `find` reports no matching elements, `document.querySelectorAll('iframe')` finds it but `contentDocument` is blocked, and synthetic clicks, typing and scrolling inside its area all fail to register (verified by clicking the Draft tab, the Filter control and the search box with no state change). The window cannot be resized taller than the screen either, so only the first eight or so rows can be read without scrolling.
+
+So the honest position: the audit is a two minute job for a human in that UI and currently not completable by this tooling. In the app, Sort by assets, or the "Filter digital files" control, surfaces the zero-file products immediately.
+
+Do not re-run the API probe. Do go look at the UI.
