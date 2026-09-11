@@ -14,6 +14,15 @@ const puppeteer = require('puppeteer-core');
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(HERE);
 const OUT = path.join(ROOT, 'app/assets/og-image.jpg');
+
+// og.html loads the wordmark from this folder, which used to be a checked in
+// copy of its own. That copy went stale the moment the storefront moved to the
+// v3 lockup in 665fc4e: app/assets/logo.png became a 900x250 horizontal
+// lockup while og/logo.png stayed a 256x140 relic, so every link shared to
+// Discord or X kept unfurling the old brand for days. Same failure as the
+// squashed footer logo, a second copy of the same asset. Copy the canonical
+// one in at build time so the card cannot drift from the site again.
+fs.copyFileSync(path.join(ROOT, 'app/assets/logo.png'), path.join(HERE, 'logo.png'));
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const PORT = 8795;
 const TYPES = { '.html': 'text/html', '.png': 'image/png' };
