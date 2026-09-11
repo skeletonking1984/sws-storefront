@@ -83,11 +83,20 @@ export async function sendNotificationEmail({env, subject, text, replyTo, origin
 }
 
 /**
+ * Until a domain is verified, Resend's shared `onboarding@resend.dev` sender may
+ * only deliver to the address that owns the Resend account. A cc to any other
+ * address makes Resend reject the WHOLE send with 403, so the notification that
+ * mattered is lost along with the copy.
+ *
+ * Rather than make that a silent failure on day one, a rejected send with a cc
+ * is retried once without it. The primary notification gets through, and the
+ * copy starts working by itself once a real domain is verified. Nothing else is
+ * retried, so a genuinely broken key still fails fast.
  * @returns {Promise<NotifyResult>}
  */
 async function sendViaResend({env, to, cc, subject, text, replyTo}) {
-  try {
-    const response = await fetch(RESEND_ENDPOINT, {
+  const post = (recipients) =>
+    fetch(RESEND_ENDPOINT, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${env.PRIVATE_RESEND_API_KEY}`,
@@ -97,14 +106,27 @@ async function sendViaResend({env, to, cc, subject, text, replyTo}) {
       body: JSON.stringify({
         from: env.PRIVATE_CONTACT_FROM_EMAIL || DEFAULT_FROM,
         to,
-        ...(cc ? {cc} : {}),
+        ...(recipients.cc ? {cc: recipients.cc} : {}),
         ...(replyTo ? {reply_to: replyTo} : {}),
         subject,
         text,
       }),
     });
 
-    return response.ok ? {ok: true} : {ok: false, reason: 'send_failed'};
+  try {
+    const response = await post({cc});
+    if (response.ok) {
+      return {ok: true};
+    }
+
+    if (cc) {
+      const retry = await post({});
+      if (retry.ok) {
+        return {ok: true};
+      }
+    }
+
+    return {ok: false, reason: 'send_failed'};
   } catch {
     return {ok: false, reason: 'send_failed'};
   }
