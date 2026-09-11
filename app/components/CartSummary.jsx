@@ -14,6 +14,21 @@ export function CartSummary({cart, layout}) {
   const giftCardHeadingId = useId();
   const giftCardInputId = useId();
 
+  // Money needs a full {amount, currencyCode}. Only build one when there is
+  // a real difference, so a cart with no discount renders exactly as before.
+  const subtotal = Number(cart?.cost?.subtotalAmount?.amount);
+  const total = Number(cart?.cost?.totalAmount?.amount);
+  const savings =
+    Number.isFinite(subtotal) && Number.isFinite(total) && subtotal - total > 0
+      ? {
+          amount: (subtotal - total).toFixed(2),
+          currencyCode:
+            cart?.cost?.totalAmount?.currencyCode ||
+            cart?.cost?.subtotalAmount?.currencyCode ||
+            'USD',
+        }
+      : null;
+
   return (
     <div aria-labelledby={summaryId} className={className}>
       <h4 id={summaryId}>Totals</h4>
@@ -27,6 +42,28 @@ export function CartSummary({cart, layout}) {
           )}
         </dd>
       </dl>
+      {/* Subtotal is the pre-discount figure and never moves when a code is
+          applied, so showing it alone made a working discount look broken:
+          the shopper typed a valid code, the number stayed put, and nothing
+          said otherwise. Show what they actually pay, and the saving, only
+          when the two figures genuinely differ. */}
+      {savings ? (
+        <>
+          <dl role="group" className="cart-discount-line">
+            <dt>Discount</dt>
+            <dd>
+              {'-'}
+              <Money data={savings} />
+            </dd>
+          </dl>
+          <dl role="group" className="cart-total">
+            <dt>Total</dt>
+            <dd>
+              <Money data={cart.cost.totalAmount} />
+            </dd>
+          </dl>
+        </>
+      ) : null}
       <CartDiscounts
         discountCodes={cart?.discountCodes}
         discountsHeadingId={discountsHeadingId}
@@ -149,7 +186,24 @@ function UpdateDiscountForm({discountCodes, children}) {
         discountCodes: discountCodes || [],
       }}
     >
-      {children}
+      {/* CartForm hands the fetcher to a function child. The cart action
+          returns an errors array when a typed code did not apply, and
+          without rendering it a wrong code looks exactly like a right one:
+          the request succeeds, the discount never appears, and nothing
+          says why. */}
+      {(fetcher) => {
+        const errors = fetcher?.data?.errors;
+        return (
+          <>
+            {children}
+            {errors?.length ? (
+              <p className="cart-discount-error" role="status">
+                {errors[0].message}
+              </p>
+            ) : null}
+          </>
+        );
+      }}
     </CartForm>
   );
 }

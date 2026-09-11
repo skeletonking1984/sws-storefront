@@ -4586,3 +4586,18 @@ button.reset:hover:not(:has(> *)) {
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
+
+.cart-discount-error {
+  color: var(--sws-accent-1);
+  font-size: 0.85rem;
+  margin: 0.5rem 0 0;
+}
+
+.cart-discount-line dd {
+  color: var(--sws-accent-2);
+}
+
+.cart-total {
+  font-weight: 700;
+  font-size: 1.05rem;
+}

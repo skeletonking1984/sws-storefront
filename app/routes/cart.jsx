@@ -50,15 +50,53 @@ export async function action({request, context}) {
       result = await cart.removeLines(inputs.lineIds);
       break;
     case CartForm.ACTIONS.DiscountCodesUpdate: {
-      const formDiscountCode = inputs.discountCode;
+      // `CartForm` only serialises its own `inputs` prop into the hidden
+      // cartFormInput field, so the code the shopper types into the sibling
+      // <input name="discountCode"> never arrives in `inputs`. Reading it
+      // from `inputs` left it undefined, which collapsed the update to the
+      // codes already on the cart (usually none) and called
+      // updateDiscountCodes([]). That is a successful no-op: the request
+      // returned 200 and the discount silently never applied. Read the typed
+      // value off the raw form data instead.
+      const typedDiscountCode = String(formData.get('discountCode') || '').trim();
+      const existingDiscountCodes = inputs.discountCodes || [];
 
-      // User inputted discount code
-      const discountCodes = formDiscountCode ? [formDiscountCode] : [];
-
-      // Combine discount codes already applied on cart
-      discountCodes.push(...inputs.discountCodes);
+      // Dedupe case-insensitively: re-applying a code already on the cart
+      // must not send it twice.
+      const discountCodes = typedDiscountCode
+        ? [
+            ...existingDiscountCodes.filter(
+              (code) => code.toLowerCase() !== typedDiscountCode.toLowerCase(),
+            ),
+            typedDiscountCode,
+          ]
+        : existingDiscountCodes;
 
       result = await cart.updateDiscountCodes(discountCodes);
+
+      // Shopify accepts an unrecognised code and simply marks it
+      // applicable: false, so a wrong code is otherwise indistinguishable
+      // from a right one. Only judge that when the mutation actually gave
+      // back a cart to judge from: `result.cart` can come back undefined
+      // here, and treating that as "invalid" reported a valid, correctly
+      // applied WELCOME10 as a bad code. No data means no claim.
+      const returnedCodes = result?.cart?.discountCodes;
+      if (typedDiscountCode && Array.isArray(returnedCodes)) {
+        const applied = returnedCodes.some(
+          (discount) =>
+            discount.applicable &&
+            discount.code?.toLowerCase() === typedDiscountCode.toLowerCase(),
+        );
+        if (!applied) {
+          result = {
+            ...result,
+            errors: [
+              ...(result?.errors || []),
+              {message: `"${typedDiscountCode}" is not a valid discount code.`},
+            ],
+          };
+        }
+      }
       break;
     }
     case CartForm.ACTIONS.GiftCardCodesAdd: {
