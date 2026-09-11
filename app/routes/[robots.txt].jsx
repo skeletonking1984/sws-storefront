@@ -61,6 +61,15 @@ Crawl-delay: 1
  * Online Store has as defaults for their robots.txt
  * @param {{sitemapUrl?: string}}
  */
+/**
+ * Shopify's default robots.txt disallows /policies/. That is dropped here on
+ * purpose: the refund, shipping, privacy, terms, contact and legal notice
+ * pages are exactly what a shopping agent needs to read before recommending
+ * or buying, and Shopify's own Agentic Storefronts setup asks merchants to
+ * "update your policies so AI agents can read them". Blocking them defeats
+ * that, and there is nothing thin or duplicative about these pages worth
+ * hiding from a crawler.
+ */
 function generalDisallowRules({sitemapUrl}) {
   return `Disallow: /cart
 Disallow: /account
@@ -79,7 +88,6 @@ Disallow: /blogs/*%2b*
 Disallow: /*/blogs/*+*
 Disallow: /*/blogs/*%2B*
 Disallow: /*/blogs/*%2b*
-Disallow: /policies/
 Disallow: /search
 Allow: /search/
 Disallow: /search/?*
