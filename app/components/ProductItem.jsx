@@ -1,8 +1,30 @@
+import {useRef, useState} from 'react';
 import {Link} from 'react-router';
 import {Image, Money, useAnalytics} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
 import {detectPlatforms, isMultistream} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
+import {findVideoMedia, pickBestMp4Source} from '~/lib/video';
+
+/**
+ * True on devices that support a real `:hover` (mouse/trackpad). Touch
+ * devices report `hover: none` even if a mouseenter event ever sneaks
+ * through, so gate playback on this rather than trusting the event alone
+ * -- the point is no autoplay on tap, not just no stuck hover state.
+ */
+function canHover() {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia('(hover: hover)').matches
+  );
+}
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
 
 /**
  * The card's "Chat" or "Goal" badge.
@@ -77,15 +99,71 @@ export function ProductItem({product, loading, listId, listName, index}) {
   const platforms = detectPlatforms(product.title).slice(0, 4);
   const multistream = isMultistream(product);
   const {publish} = useAnalytics();
+
+  const videoMedia = findVideoMedia(product.media?.nodes);
+  const videoSource = videoMedia && pickBestMp4Source(videoMedia.sources);
+  const videoRef = useRef(null);
+  const [videoActive, setVideoActive] = useState(false);
+
+  function playPreview() {
+    if (!videoSource || prefersReducedMotion()) return;
+    setVideoActive(true);
+    const el = videoRef.current;
+    if (!el) return;
+    el.currentTime = 0;
+    // .play() rejects for several ordinary reasons (interrupted by a fast
+    // leave, tab backgrounded, etc.) -- swallow it, a grid of tiles is not
+    // the place for an unhandled rejection.
+    el.play()?.catch(() => {});
+  }
+
+  function stopPreview() {
+    setVideoActive(false);
+    const el = videoRef.current;
+    if (!el) return;
+    el.pause();
+    el.currentTime = 0;
+  }
+
+  function handleMouseEnter() {
+    if (!canHover()) return;
+    playPreview();
+  }
+
+  function handleMouseLeave() {
+    if (!canHover()) return;
+    stopPreview();
+  }
+
+  // Keyboard focus should trigger the preview too ("not mouse only"), but a
+  // touch tap also moves focus to a link right before it navigates, and a
+  // touch device has no hover -- gating on canHover() here as well is what
+  // keeps a tap on a phone from ever kicking off playback, while a real
+  // keyboard on an ordinary mouse-equipped desktop still works.
+  function handleFocus() {
+    if (!canHover()) return;
+    playPreview();
+  }
+
+  function handleBlur() {
+    if (!canHover()) return;
+    stopPreview();
+  }
+
   return (
     <Link
       className="product-item"
       key={product.id}
       prefetch="intent"
+      title={product.title}
       to={variantUrl}
       onClick={() =>
         publishSelectItem({publish, product, listId, listName, index})
       }
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
     >
       {image && (
         // No aspectRatio prop: it makes Hydrogen add `crop=center` to the
@@ -100,6 +178,9 @@ export function ProductItem({product, loading, listId, listName, index}) {
               role="img"
               aria-label="Multistream: reads chat from more than one platform"
             >
+              <span className="product-item-ribbon-star" aria-hidden="true">
+                ✦
+              </span>
               Multistream
             </span>
           )}
@@ -109,6 +190,20 @@ export function ProductItem({product, loading, listId, listName, index}) {
             loading={loading}
             sizes="(min-width: 45em) 400px, 100vw"
           />
+          {videoSource && (
+            <video
+              ref={videoRef}
+              className={`product-item-video${videoActive ? ' is-active' : ''}`}
+              src={videoSource.url}
+              poster={videoMedia.previewImage?.url}
+              muted
+              loop
+              playsInline
+              preload="none"
+              tabIndex={-1}
+              aria-hidden="true"
+            />
+          )}
         </div>
       )}
       <h4>{product.title}</h4>

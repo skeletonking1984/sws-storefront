@@ -687,6 +687,24 @@ const RELATED_PRODUCTS_QUERY = `#graphql
           altText
           url
         }
+        media(first: 25) {
+          nodes {
+            __typename
+            ... on Video {
+              id
+              previewImage {
+                url
+              }
+              sources {
+                url
+                mimeType
+                format
+                width
+                height
+              }
+            }
+          }
+        }
       }
     }
   }

@@ -591,6 +591,24 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       url
       altText
     }
+    media(first: 25) {
+      nodes {
+        __typename
+        ... on Video {
+          id
+          previewImage {
+            url
+          }
+          sources {
+            url
+            mimeType
+            format
+            width
+            height
+          }
+        }
+      }
+    }
   }
   query RecommendedProducts (
     $country: CountryCode
@@ -677,6 +695,24 @@ const TOP_WIDGETS_COLLECTION_QUERY = `#graphql
             id
             url
             altText
+          }
+          media(first: 25) {
+            nodes {
+              __typename
+              ... on Video {
+                id
+                previewImage {
+                  url
+                }
+                sources {
+                  url
+                  mimeType
+                  format
+                  width
+                  height
+                }
+              }
+            }
           }
         }
       }

@@ -167,6 +167,24 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
       altText
       url
     }
+    media(first: 25) {
+      nodes {
+        __typename
+        ... on Video {
+          id
+          previewImage {
+            url
+          }
+          sources {
+            url
+            mimeType
+            format
+            width
+            height
+          }
+        }
+      }
+    }
     priceRange {
       minVariantPrice {
         ...MoneyCollectionItem
