@@ -31,7 +31,12 @@ import heroWidgets from '~/assets/hero-widgets.webp';
 export const meta = ({matches, location}) => {
   const origin = getOrigin(matches);
   return buildMeta({
-    title: 'Stream Widget Shop | Animated Twitch Chat + Goal Widgets',
+    // 60 chars exactly, which is the ceiling before Google truncates. Twitch
+    // stays first because it is the highest volume term and most of the
+    // catalogue is Twitch; Multistream earns its place because the kits and
+    // the multistream chat widgets are the highest priced products in the
+    // shop and nothing else in the title reached that buyer.
+    title: 'Stream Widget Shop | Twitch, Multistream Chat + Goal Widgets',
     description:
       'Chunky, holographic, animated chat and goal widgets for Twitch, YouTube, Kick, and multistream. Instant download, drop into OBS in minutes.',
     url: `${origin}${location.pathname}`,
