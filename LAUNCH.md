@@ -522,6 +522,27 @@ The fix is Shopify's own **Hydrogen redirect theme**, `https://github.com/shopif
 
 Todd's action: publishing a theme is a live-store change and the Shopify connector blocks theme publishing outright, so no agent can do it. Rollback is republishing Energy, which stays in the theme library. Do it before ads run.
 
+#### The platform badges were lying, on 116 of 131 products 2026-09-11
+Todd opened the number one revenue PDP on the live site and said "this is twitch only". He was right, and the page disagreed with itself.
+
+`detectPlatforms()` matched platform names as substrings anywhere in title plus description. It cannot tell a claim from its denial. That product's own FAQ reads:
+
+> Does this widget support YouTube or Kick chat? No. This listing reads Twitch chat through StreamElements only, it does not pull YouTube or Kick chat.
+
+and the badge row above it rendered **YouTube** and **Kick** off those very words. The honest FAQ the 2026-09-10 copy pass wrote is what produced the false claim.
+
+Measured across the catalogue: **116 of 131 storefront products carried at least one badge their own copy does not support.** Only 20 had a "Works With" section at all. This is the most load-bearing claim on a product page, it is what a buyer checks before paying, and it is the likely source of the "Doesn't work, instruction are very unclear ... my money has been wasted" one star review.
+
+Fixed: `worksWithPlatforms()` reads the **"Works With" section only**, which is the section `docs/COPY-STANDARD.md` defines for this claim and which was ground-truthed per product against that product's Etsy listing and file manifest. No section means no badges, rather than guessed badges. `ProductHighlights` no longer takes `title` either, since a product named "... for Twitch" was earning a Twitch badge from its name alone.
+
+Verified against live data: the top seller now reads `Twitch, OBS, StreamElements`, matching its FAQ exactly. 21 of 131 products render a badge row; the other 110 render none until their copy is migrated.
+
+**That tradeoff is the point, and it puts a number on the copy backlog.** An absent badge row costs a little scannability. A wrong one costs a refund and a one star review. Every product moved onto `COPY-STANDARD.md` gets its badge row back, correct, so the remaining ~110 product copy pass is now worth more than it looked.
+
+Worth a spot check when that pass runs: Potion Bottle's Works With block claims six platforms (Twitch, YouTube, Kick, OBS, Streamlabs, StreamElements). It came from the ground-truthed pass so it is probably right, but it is the widest claim in the catalogue.
+
+Not verified: nothing was opened in a browser. Dev servers are blocked in this session. The badge output was checked by running `worksWithPlatforms()` against every live product description rather than by eye.
+
 #### The Etsy map was wrong in four places, and the proof was sitting in the filenames 2026-09-10 (night)
 Metrics (2026-09-10, day not closed): 30 sessions, 2 add to cart, 2 reached checkout, 0 completed, 0 orders, $0 net sales. Sep 9 was 23 / 2 / 3 / 0. Still all on the OLD Energy theme, not the Hydrogen build.
 

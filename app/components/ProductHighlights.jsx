@@ -1,13 +1,20 @@
-import {detectPlatforms} from '~/lib/platforms';
+import {worksWithPlatforms} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
 
 /**
  * Etsy-style "Highlights" block: platform badges + scannable digital-good
  * facts, shown between the buy box and the long description.
- * @param {{title: string; description: string}}
+ *
+ * Deliberately takes no `title`. The title used to feed platform detection
+ * too, which is how a product called "... for Twitch" earned a Twitch badge
+ * whether or not the widget reads Twitch chat.
+ * @param {{description: string}}
  */
-export function ProductHighlights({title, description}) {
-  const platforms = detectPlatforms(`${title} ${description}`);
+export function ProductHighlights({description}) {
+  // Only ever from the "Works With" section, never from free text. See
+  // worksWithPlatforms() for why scanning the whole description badged the
+  // top seller with the two platforms its own FAQ says it does not support.
+  const platforms = worksWithPlatforms(description) || [];
   const customizable = /customi[sz]/i.test(description);
 
   return (

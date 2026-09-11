@@ -318,7 +318,7 @@ export default function Product() {
             price={selectedVariant?.price}
             compareAtPrice={selectedVariant?.compareAtPrice}
           />
-          <ProductHighlights title={title} description={description} />
+          <ProductHighlights description={description} />
           <ProductForm
             productOptions={productOptions}
             selectedVariant={selectedVariant}
