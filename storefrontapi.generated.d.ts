@@ -514,6 +514,106 @@ export type NavQuery = {
   >;
 };
 
+export type SitemapCountsQueryVariables = StorefrontAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type SitemapCountsQuery = {
+  products: {
+    pagesCount?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Count, 'count'>>;
+  };
+  collections: {
+    pagesCount?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Count, 'count'>>;
+  };
+  pages: {pagesCount?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Count, 'count'>>};
+  blogs: {pagesCount?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Count, 'count'>>};
+};
+
+export type SitemapProductsPageQueryVariables = StorefrontAPI.Exact<{
+  page: StorefrontAPI.Scalars['Int']['input'];
+}>;
+
+export type SitemapProductsPageQuery = {
+  sitemap: {
+    resources?: StorefrontAPI.Maybe<{
+      items: Array<
+        | Pick<StorefrontAPI.SitemapResource, 'handle' | 'updatedAt'>
+        | Pick<StorefrontAPI.SitemapResourceMetaobject, 'handle' | 'updatedAt'>
+      >;
+    }>;
+  };
+};
+
+export type SitemapCollectionsPageQueryVariables = StorefrontAPI.Exact<{
+  page: StorefrontAPI.Scalars['Int']['input'];
+}>;
+
+export type SitemapCollectionsPageQuery = {
+  sitemap: {
+    resources?: StorefrontAPI.Maybe<{
+      items: Array<
+        | Pick<StorefrontAPI.SitemapResource, 'handle' | 'updatedAt'>
+        | Pick<StorefrontAPI.SitemapResourceMetaobject, 'handle' | 'updatedAt'>
+      >;
+    }>;
+  };
+};
+
+export type SitemapPagesPageQueryVariables = StorefrontAPI.Exact<{
+  page: StorefrontAPI.Scalars['Int']['input'];
+}>;
+
+export type SitemapPagesPageQuery = {
+  sitemap: {
+    resources?: StorefrontAPI.Maybe<{
+      items: Array<
+        | Pick<StorefrontAPI.SitemapResource, 'handle' | 'updatedAt'>
+        | Pick<StorefrontAPI.SitemapResourceMetaobject, 'handle' | 'updatedAt'>
+      >;
+    }>;
+  };
+};
+
+export type SitemapBlogsPageQueryVariables = StorefrontAPI.Exact<{
+  page: StorefrontAPI.Scalars['Int']['input'];
+}>;
+
+export type SitemapBlogsPageQuery = {
+  sitemap: {
+    resources?: StorefrontAPI.Maybe<{
+      items: Array<
+        | Pick<StorefrontAPI.SitemapResource, 'handle' | 'updatedAt'>
+        | Pick<StorefrontAPI.SitemapResourceMetaobject, 'handle' | 'updatedAt'>
+      >;
+    }>;
+  };
+};
+
+export type SitemapBlogHandlesQueryVariables = StorefrontAPI.Exact<{
+  cursor?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['String']['input']>;
+}>;
+
+export type SitemapBlogHandlesQuery = {
+  blogs: {
+    nodes: Array<Pick<StorefrontAPI.Blog, 'handle'>>;
+    pageInfo: Pick<StorefrontAPI.PageInfo, 'hasNextPage' | 'endCursor'>;
+  };
+};
+
+export type SitemapBlogArticlesQueryVariables = StorefrontAPI.Exact<{
+  blogHandle: StorefrontAPI.Scalars['String']['input'];
+  cursor?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['String']['input']>;
+}>;
+
+export type SitemapBlogArticlesQuery = {
+  blog?: StorefrontAPI.Maybe<{
+    articles: {
+      nodes: Array<Pick<StorefrontAPI.Article, 'handle' | 'publishedAt'>>;
+      pageInfo: Pick<StorefrontAPI.PageInfo, 'hasNextPage' | 'endCursor'>;
+    };
+  }>;
+};
+
 export type RecommendedProductFragment = Pick<
   StorefrontAPI.Product,
   'id' | 'title' | 'productType' | 'handle'
@@ -1657,6 +1757,34 @@ interface GeneratedQueryTypes {
   '#graphql\n  fragment NavCollection on Collection {\n    id\n    handle\n    title\n    image {\n      url\n      altText\n    }\n    products(first: 250) {\n      nodes {\n        id\n      }\n    }\n  }\n  fragment NavProduct on Product {\n    id\n    handle\n    title\n    featuredImage {\n      url\n      altText\n    }\n    selectedOrFirstAvailableVariant {\n      price {\n        amount\n        currencyCode\n      }\n    }\n  }\n  query Nav(\n    $country: CountryCode\n    $language: LanguageCode\n    $featuredWidgetHandle: String!\n    $overlayHandle0: String!\n    $overlayHandle1: String!\n    $overlayHandle2: String!\n    $overlayHandle3: String!\n  ) @inContext(language: $language, country: $country) {\n    allWidgets: collection(handle: "widgets") {\n      ...NavCollection\n    }\n    chatWidgets: collection(handle: "frontpage") {\n      ...NavCollection\n    }\n    goalWidgets: collection(handle: "stream-widgets-templates") {\n      ...NavCollection\n    }\n    topWidgets: collection(handle: "top-widgets") {\n      ...NavCollection\n      thumbs: products(first: 8) {\n        nodes {\n          ...NavProduct\n        }\n      }\n    }\n    overlays: collection(handle: "overlays") {\n      ...NavCollection\n    }\n    bundles: collection(handle: "bundles") {\n      ...NavCollection\n    }\n    featuredWidget: product(handle: $featuredWidgetHandle) {\n      ...NavProduct\n    }\n    overlayFeatured0: product(handle: $overlayHandle0) {\n      ...NavProduct\n    }\n    overlayFeatured1: product(handle: $overlayHandle1) {\n      ...NavProduct\n    }\n    overlayFeatured2: product(handle: $overlayHandle2) {\n      ...NavProduct\n    }\n    overlayFeatured3: product(handle: $overlayHandle3) {\n      ...NavProduct\n    }\n  }\n': {
     return: NavQuery;
     variables: NavQueryVariables;
+  };
+  '#graphql\n  query SitemapCounts {\n    products: sitemap(type: PRODUCT) {\n      pagesCount {\n        count\n      }\n    }\n    collections: sitemap(type: COLLECTION) {\n      pagesCount {\n        count\n      }\n    }\n    pages: sitemap(type: PAGE) {\n      pagesCount {\n        count\n      }\n    }\n    blogs: sitemap(type: BLOG) {\n      pagesCount {\n        count\n      }\n    }\n  }\n': {
+    return: SitemapCountsQuery;
+    variables: SitemapCountsQueryVariables;
+  };
+  '#graphql\n  query SitemapProductsPage($page: Int!) {\n    sitemap(type: PRODUCT) {\n      resources(page: $page) {\n        items {\n          handle\n          updatedAt\n        }\n      }\n    }\n  }\n': {
+    return: SitemapProductsPageQuery;
+    variables: SitemapProductsPageQueryVariables;
+  };
+  '#graphql\n  query SitemapCollectionsPage($page: Int!) {\n    sitemap(type: COLLECTION) {\n      resources(page: $page) {\n        items {\n          handle\n          updatedAt\n        }\n      }\n    }\n  }\n': {
+    return: SitemapCollectionsPageQuery;
+    variables: SitemapCollectionsPageQueryVariables;
+  };
+  '#graphql\n  query SitemapPagesPage($page: Int!) {\n    sitemap(type: PAGE) {\n      resources(page: $page) {\n        items {\n          handle\n          updatedAt\n        }\n      }\n    }\n  }\n': {
+    return: SitemapPagesPageQuery;
+    variables: SitemapPagesPageQueryVariables;
+  };
+  '#graphql\n  query SitemapBlogsPage($page: Int!) {\n    sitemap(type: BLOG) {\n      resources(page: $page) {\n        items {\n          handle\n          updatedAt\n        }\n      }\n    }\n  }\n': {
+    return: SitemapBlogsPageQuery;
+    variables: SitemapBlogsPageQueryVariables;
+  };
+  '#graphql\n  query SitemapBlogHandles($cursor: String) {\n    blogs(first: 250, after: $cursor) {\n      nodes {\n        handle\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n    }\n  }\n': {
+    return: SitemapBlogHandlesQuery;
+    variables: SitemapBlogHandlesQueryVariables;
+  };
+  '#graphql\n  query SitemapBlogArticles($blogHandle: String!, $cursor: String) {\n    blog(handle: $blogHandle) {\n      articles(first: 250, after: $cursor) {\n        nodes {\n          handle\n          publishedAt\n        }\n        pageInfo {\n          hasNextPage\n          endCursor\n        }\n      }\n    }\n  }\n': {
+    return: SitemapBlogArticlesQuery;
+    variables: SitemapBlogArticlesQueryVariables;
   };
   '#graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    productType\n    handle\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    featuredImage {\n      id\n      url\n      altText\n    }\n  }\n  query RecommendedProducts (\n    $country: CountryCode\n    $language: LanguageCode\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n    $handle5: String!\n    $handle6: String!\n    $handle7: String!\n  ) @inContext(country: $country, language: $language) {\n    product0: product(handle: $handle0) { ...RecommendedProduct }\n    product1: product(handle: $handle1) { ...RecommendedProduct }\n    product2: product(handle: $handle2) { ...RecommendedProduct }\n    product3: product(handle: $handle3) { ...RecommendedProduct }\n    product4: product(handle: $handle4) { ...RecommendedProduct }\n    product5: product(handle: $handle5) { ...RecommendedProduct }\n    product6: product(handle: $handle6) { ...RecommendedProduct }\n    product7: product(handle: $handle7) { ...RecommendedProduct }\n  }\n': {
     return: RecommendedProductsQuery;

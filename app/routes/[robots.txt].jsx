@@ -20,10 +20,14 @@ export function loader({request}) {
  */
 function robotsTxtData({url}) {
   const sitemapUrl = url ? `${url}/sitemap.xml` : undefined;
+  const llmsTxtUrl = url ? `${url}/llms.txt` : undefined;
 
   return `
 User-agent: *
 ${generalDisallowRules({sitemapUrl})}
+
+# llms.txt (https://llmstxt.org/): plain-text site summary for LLMs/AI crawlers
+${llmsTxtUrl ? `# ${llmsTxtUrl}` : ''}
 
 # Google adsbot ignores robots.txt unless specifically named!
 User-agent: adsbot-google
