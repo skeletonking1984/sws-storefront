@@ -15,6 +15,7 @@ import {HappyClients} from '~/components/HappyClients';
 import {SOCIALS} from '~/components/SocialLinks';
 import {useVariantUrl} from '~/lib/variants';
 import {absoluteAsset, buildMeta, getOrigin} from '~/lib/seo';
+import {sendNotificationEmail} from '~/lib/notify.server';
 import {
   OVERLAY_FEATURED_HANDLES,
   VIBES,
@@ -158,6 +159,41 @@ const FAN_FAVORITE_HANDLES = [
  * alongside this change and may resolve to null for a few minutes.
  */
 const KITS_AND_OVERLAY_PACKS_HANDLES = OVERLAY_FEATURED_HANDLES;
+
+/**
+ * Newsletter signup from the homepage email capture. Returns `intent` on
+ * every result so the component only reacts to its own submissions if another
+ * form is ever added to this route.
+ * @param {Route.ActionArgs} args
+ */
+export async function action({request, context}) {
+  const form = await request.formData();
+  const email = (form.get('email') || '').toString().trim();
+  const company = (form.get('company') || '').toString().trim();
+  const base = {intent: 'newsletter'};
+
+  // Honeypot: bots fill every field. Absorb it without sending.
+  if (company) {
+    return {...base, ok: true};
+  }
+
+  if (!email || !email.includes('@')) {
+    return {...base, ok: false, reason: 'invalid', values: {email}};
+  }
+
+  const sent = await sendNotificationEmail({
+    env: context.env,
+    subject: `SWS newsletter signup: ${email}`,
+    text: `New newsletter signup from the homepage email capture.\n\n${email}`,
+    replyTo: email,
+  });
+
+  if (!sent.ok) {
+    return {...base, ok: false, reason: sent.reason, values: {email}};
+  }
+
+  return {...base, ok: true};
+}
 
 export default function Homepage() {
   /** @type {LoaderReturnData} */

@@ -1,43 +1,32 @@
-import {useState} from 'react';
+import {Form, useActionData, useNavigation} from 'react-router';
 
-// Same canonical custom domain as ContactPage.jsx, the myshopify.com
-// subdomain silently drops submissions. form_type=customer creates/updates
-// a Shopify customer record from just an email, no account required.
-const STORE_DOMAIN = 'streamwidgetshop.com';
+export const WELCOME_CODE = 'WELCOME10';
 
 /**
- * "Get the next drop first" email capture, posted straight to Shopify's
- * customer form endpoint. Promises a 10% code (WELCOME10, created in
- * Admin), see LAUNCH.md for whether that code exists yet.
+ * "Get the next drop first" email capture.
+ *
+ * Submits to the homepage route's own server side `action` (see
+ * `app/routes/_index.jsx`). It used to post client side with
+ * `fetch(mode: 'no-cors')` to `streamwidgetshop.com/contact`, which has
+ * returned 405 since the DNS cutover put the Hydrogen app on that domain. An
+ * opaque no-cors response never rejects, so it reported success for every
+ * dropped signup.
+ *
+ * Uses `Form` + `useActionData()` rather than a fetcher, for the same reason
+ * `ContactPage` does: a fetcher's result only reaches the browser through the
+ * client hydration stream, so the no-JS case renders no result at all.
+ *
+ * The 10% code is shown on the page rather than only promised by email. It is
+ * a real, active, open ended discount, so showing it keeps the promise even
+ * when the signup itself could not be recorded.
  */
 export function EmailCapture() {
-  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const data = new FormData(form);
-
-    setStatus('sending');
-    try {
-      const body = new URLSearchParams();
-      body.set('form_type', 'customer');
-      body.set('utf8', '✓');
-      body.set('contact[email]', data.get('email'));
-      body.set('contact[tags]', 'newsletter');
-
-      await fetch(`https://${STORE_DOMAIN}/contact#contact_form`, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body,
-      });
-      setStatus('sent');
-      form.reset();
-    } catch {
-      setStatus('error');
-    }
-  }
+  const result = useActionData();
+  const navigation = useNavigation();
+  const sending = navigation.state !== 'idle';
+  const isSignup = result?.intent === 'newsletter';
+  const sent = isSignup && result.ok === true;
+  const failed = isSignup && result.ok === false;
 
   return (
     <section className="email-capture" aria-labelledby="email-capture-heading">
@@ -45,33 +34,58 @@ export function EmailCapture() {
         <h2 id="email-capture-heading">Get the next drop first</h2>
         <p>
           New widget packs and seasonal themes, straight to your inbox. Sign
-          up now and get 10% off your next order (code WELCOME10).
+          up now and get 10% off your next order.
         </p>
-        {status === 'sent' ? (
-          <p className="email-capture-success">
-            You&rsquo;re on the list. Check your inbox for the code.
-          </p>
+
+        {sent ? (
+          <div className="email-capture-success">
+            <p>
+              You&rsquo;re on the list. Use code{' '}
+              <strong className="email-capture-code">{WELCOME_CODE}</strong> at
+              checkout for 10% off.
+            </p>
+          </div>
         ) : (
-          <form className="email-capture-form" onSubmit={handleSubmit}>
+          <Form className="email-capture-form" method="post">
+            <input type="hidden" name="intent" value="newsletter" />
             <input
               type="email"
               name="email"
               required
+              defaultValue={result?.values?.email}
               placeholder="you@example.com"
               aria-label="Email address"
             />
+            <div className="contact-form-honeypot" aria-hidden="true">
+              <label htmlFor="newsletter-company">Company</label>
+              <input
+                id="newsletter-company"
+                name="company"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
             <button
               type="submit"
               className="sws-btn sws-btn-primary"
-              disabled={status === 'sending'}
+              disabled={sending}
             >
-              {status === 'sending' ? 'Sending...' : 'Get the code'}
+              {sending ? 'Sending...' : 'Get the code'}
             </button>
-          </form>
+          </Form>
         )}
-        {status === 'error' && (
+
+        {failed && result.reason === 'invalid' && (
+          <p className="email-capture-error">Enter a valid email address.</p>
+        )}
+
+        {failed && result.reason !== 'invalid' && (
           <p className="email-capture-error">
-            Something went wrong. Try again in a moment.
+            We could not add you to the list just now, so here is the code
+            anyway: use{' '}
+            <strong className="email-capture-code">{WELCOME_CODE}</strong> at
+            checkout for 10% off.
           </p>
         )}
       </div>

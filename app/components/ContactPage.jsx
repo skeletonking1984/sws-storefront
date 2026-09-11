@@ -154,9 +154,11 @@ function buildMailtoHref(values) {
   const name = values?.name || '';
   const message = values?.message || '';
   const subject = `Question from ${name}`;
-  const params = new URLSearchParams({
+  // encodeURIComponent, not URLSearchParams: URLSearchParams encodes a space
+  // as "+", and mail clients render that literally in a mailto subject or
+  // body rather than as a space.
+  const query = `subject=${encodeURIComponent(
     subject,
-    body: message,
-  });
-  return `mailto:${SUPPORT_EMAIL}?${params.toString()}`;
+  )}&body=${encodeURIComponent(message)}`;
+  return `mailto:${SUPPORT_EMAIL}?${query}`;
 }

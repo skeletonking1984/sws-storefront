@@ -4,6 +4,7 @@ import {FaqAccordion} from '~/components/FaqAccordion';
 import {HowItWorksSteps} from '~/components/HowItWorksSteps';
 import {ContactPage} from '~/components/ContactPage';
 import {buildMeta, getOrigin} from '~/lib/seo';
+import {sendNotificationEmail} from '~/lib/notify.server';
 
 const CUSTOM_LAYOUTS = {
   'faq-frequently-asked-questions': (page) => <FaqAccordion html={page.body} />,
@@ -129,40 +130,20 @@ export async function action({request, context, params}) {
     return {ok: false, reason: 'invalid', fieldErrors, values};
   }
 
-  const {
-    PRIVATE_RESEND_API_KEY,
-    PRIVATE_CONTACT_TO_EMAIL,
-    PRIVATE_CONTACT_FROM_EMAIL,
-  } = context.env;
+  const sent = await sendNotificationEmail({
+    env: context.env,
+    subject: `SWS contact form: ${name}`,
+    // Name and address go in the body as well as reply_to, so the message is
+    // still actionable if a client strips or ignores the reply_to header.
+    text: `From: ${name} <${email}>\n\n${message}`,
+    replyTo: email,
+  });
 
-  if (!PRIVATE_RESEND_API_KEY || !PRIVATE_CONTACT_TO_EMAIL) {
-    return {ok: false, reason: 'not_configured', values};
+  if (!sent.ok) {
+    return {ok: false, reason: sent.reason, values};
   }
 
-  try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${PRIVATE_RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: PRIVATE_CONTACT_FROM_EMAIL || 'onboarding@resend.dev',
-        to: PRIVATE_CONTACT_TO_EMAIL,
-        reply_to: email,
-        subject: `SWS contact form: ${name}`,
-        text: message,
-      }),
-    });
-
-    if (!response.ok) {
-      return {ok: false, reason: 'send_failed', values};
-    }
-
-    return {ok: true};
-  } catch {
-    return {ok: false, reason: 'send_failed', values};
-  }
+  return {ok: true};
 }
 
 export default function Page() {
