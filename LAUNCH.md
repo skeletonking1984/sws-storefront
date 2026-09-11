@@ -494,6 +494,37 @@ What that session established, which corrects several claims above:
 
 Open question for Todd, 5 seconds in the app versus an hour of agent fumbling: filter the Digital Products table to empty assets and say which of the 14 still show the blue "Add asset" link.
 
+#### CUTOVER DONE, and one thing left open 2026-09-10 (late)
+`streamwidgetshop.com` now serves the Hydrogen storefront. Verified by `node scripts/verify-cutover.mjs`: 12 checks, Hydrogen serving with no Liquid theme markers, real title, Happy Clients present, canonical on the live host, GA4 id in the bundle, PDP 200 with video and Product schema, robots and sitemap self-referencing, `/account` redirecting to oauth with `redirect_uri=https://streamwidgetshop.com/account/authorize`, and `www` 301ing to the apex. Oxygen URL privacy on Production was switched Private to Public, which was the last wall.
+
+**Digital delivery is PROVEN.** A real checkout with a 100% off code delivered the Y2K Sticker Chat Widget zip from a working download page. Todd's 14 uploads are real. The long-running number one blocker is closed.
+
+**Open, and the top item for the next pass: checkout is on the wrong domain.**
+
+Retargeting the apex to Hydrogen left the Online Store with no brand domain, and everything the Online Store serves fell back to the raw myshopify host. Measured, not assumed:
+
+    checkoutUrl host: 72470e-33.myshopify.com
+    download page:    72470e-33.myshopify.com/a/downloads/... (rendered in the old Energy theme)
+
+Two consequences. The buyer changes domain at the payment step, to a host that looks nothing like the shop. And `_ga` is set on `streamwidgetshop.com` and is unreadable on the myshopify host, so the planned `checkout_completed` pixel cannot recover the client id and **every paid conversion would land unattributed**. `docs/checkout-purchase-pixel.md` previously certified the opposite and has been corrected.
+
+`PUBLIC_CHECKOUT_DOMAIN` does not fix this. It only feeds the Customer Privacy API.
+
+The fix is Shopify's documented headless pattern: keep a subdomain on the Online Store and make it that channel's primary.
+
+**What has already been tried, so the next pass does not repeat it.** Creating `shop.streamwidgetshop.com` and then using ⋯ > Change target to move it to Online Store **deleted the domain entry, twice**. Both times it vanished from the Domains list entirely. After the second attempt the auto-created CNAME survives (`shop.streamwidgetshop.com` resolves to `shops.myshopify.com` / 23.227.38.74) but no domain is attached, so HTTPS returns nothing. That orphan CNAME is still in place and should make a reconnect verify instantly.
+
+Next thing to try, in order:
+1. **Connect existing** (top right of Settings > Domains) with `shop.streamwidgetshop.com`, since the CNAME already points at Shopify. Pick Online Store as the target if it asks.
+2. Failing that, ⋯ on `streamwidgetshop.com` > Add subdomain, and set **Target = Online Store inside that dialog**. The dialog does have a Target selector; leaving it on "Select target" is what put it in the Hydrogen group both times.
+3. Once it reads Connected under Online Store: ⋯ > Change domain type > Primary domain. **Read the dialog text before confirming.** It must say "when visitors are browsing Online Store". If it says SWS Storefront (Production) the target never moved, and confirming would demote `streamwidgetshop.com` and start serving the live store as shop.streamwidgetshop.com. That near miss happened tonight.
+
+Do not use Change target on a subdomain again until someone understands why it deletes it.
+
+Verify with the cart probe, never from the Admin screen: build a real cart on the Storefront API and read `checkoutUrl`. Success is `host: shop.streamwidgetshop.com`.
+
+Also still open, unchanged: anyone landing on `72470e-33.myshopify.com` gets the old Energy theme. Shopify publishes a Hydrogen redirect theme for exactly this. Worth doing before ads.
+
 #### The Etsy map was wrong in four places, and the proof was sitting in the filenames 2026-09-10 (night)
 Metrics (2026-09-10, day not closed): 30 sessions, 2 add to cart, 2 reached checkout, 0 completed, 0 orders, $0 net sales. Sep 9 was 23 / 2 / 3 / 0. Still all on the OLD Energy theme, not the Hydrogen build.
 
