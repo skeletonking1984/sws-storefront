@@ -512,14 +512,12 @@ Two consequences. The buyer changes domain at the payment step, to a host that l
 
 The fix is Shopify's documented headless pattern: keep a subdomain on the Online Store and make it that channel's primary.
 
-**What has already been tried, so the next pass does not repeat it.** Creating `shop.streamwidgetshop.com` and then using ⋯ > Change target to move it to Online Store **deleted the domain entry, twice**. Both times it vanished from the Domains list entirely. After the second attempt the auto-created CNAME survives (`shop.streamwidgetshop.com` resolves to `shops.myshopify.com` / 23.227.38.74) but no domain is attached, so HTTPS returns nothing. That orphan CNAME is still in place and should make a reconnect verify instantly.
+**What has already been tried.** `shop.streamwidgetshop.com` was created twice and is gone both times. An earlier version of this entry blamed ⋯ > Change target for deleting it. **That was wrong and is withdrawn: Todd removed it himself.** There is no evidence Change target destroys a subdomain, and the next pass should not avoid it on my say so. What is true and worth keeping: after the last removal the auto-created CNAME survives (`shop.streamwidgetshop.com` resolves to `shops.myshopify.com` / 23.227.38.74) while no domain is attached in Shopify, so HTTPS returns nothing. That orphan CNAME should make a reconnect verify instantly.
 
 Next thing to try, in order:
 1. **Connect existing** (top right of Settings > Domains) with `shop.streamwidgetshop.com`, since the CNAME already points at Shopify. Pick Online Store as the target if it asks.
-2. Failing that, ⋯ on `streamwidgetshop.com` > Add subdomain, and set **Target = Online Store inside that dialog**. The dialog does have a Target selector; leaving it on "Select target" is what put it in the Hydrogen group both times.
+2. Or ⋯ on `streamwidgetshop.com` > Add subdomain, setting **Target = Online Store inside that dialog**. The dialog has a Target selector and it was left on "Select target" the first time, which is why it landed in the Hydrogen group. Setting it there is the shortest correct path.
 3. Once it reads Connected under Online Store: ⋯ > Change domain type > Primary domain. **Read the dialog text before confirming.** It must say "when visitors are browsing Online Store". If it says SWS Storefront (Production) the target never moved, and confirming would demote `streamwidgetshop.com` and start serving the live store as shop.streamwidgetshop.com. That near miss happened tonight.
-
-Do not use Change target on a subdomain again until someone understands why it deletes it.
 
 Verify with the cart probe, never from the Admin screen: build a real cart on the Storefront API and read `checkoutUrl`. Success is `host: shop.streamwidgetshop.com`.
 
