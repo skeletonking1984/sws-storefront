@@ -516,7 +516,11 @@ Measured after the change, not read off the Admin screen:
 
 Checkout now shares a registrable domain with the storefront, so the cookie is readable and the `checkout_completed` pixel in `docs/checkout-purchase-pixel.md` will attribute correctly once it is created.
 
-Also still open, unchanged: anyone landing on `72470e-33.myshopify.com` gets the old Energy theme. Shopify publishes a Hydrogen redirect theme for exactly this. Worth doing before ads.
+**Still open: the Online Store still serves the old Energy theme on its own domain.** Now that `shop.streamwidgetshop.com` is the Online Store's primary, its homepage is the old site, and Todd hit this immediately after a test purchase: finishing checkout and clicking through lands on the Energy theme, which still says Spacelabs Shop in the hero copy. Same for any stale backlink to `72470e-33.myshopify.com`.
+
+The fix is Shopify's own **Hydrogen redirect theme**, `https://github.com/shopify/hydrogen-redirect-theme`. It redirects Online Store page views to the Hydrogen storefront while preserving checkout, the app proxy, discount links and the bot-protection checkpoint. Download the ZIP, Online Store > Themes > Add theme > Upload zip, Customize > Theme settings > Storefront, set `storefront_hostname` to `streamwidgetshop.com`, then publish.
+
+Todd's action: publishing a theme is a live-store change and the Shopify connector blocks theme publishing outright, so no agent can do it. Rollback is republishing Energy, which stays in the theme library. Do it before ads run.
 
 #### The Etsy map was wrong in four places, and the proof was sitting in the filenames 2026-09-10 (night)
 Metrics (2026-09-10, day not closed): 30 sessions, 2 add to cart, 2 reached checkout, 0 completed, 0 orders, $0 net sales. Sep 9 was 23 / 2 / 3 / 0. Still all on the OLD Energy theme, not the Hydrogen build.
