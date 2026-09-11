@@ -35,6 +35,9 @@ const DEFAULT_FROM = 'onboarding@resend.dev';
 // submit button spinning forever with no error. Failing fast shows the mailto
 // fallback instead, which actually works.
 const SEND_TIMEOUT_MS = 8000;
+// Todd works out of spacelabsdiy but wants the public shop address copied in.
+// Override either with CONTACT_TO_EMAIL / CONTACT_CC_EMAIL.
+const DEFAULT_CC = 'streamwidgetshop@gmail.com';
 // The inbox Todd actually works out of: Etsy sale notifications, Shopify order
 // mail and Etsy customer messages all land here, and it is the account the
 // Gmail connector is attached to. streamwidgetshop@gmail.com is the address the
@@ -68,19 +71,21 @@ function singleLine(value) {
  */
 export async function sendNotificationEmail({env, subject, text, replyTo, origin}) {
   const to = env?.PRIVATE_CONTACT_TO_EMAIL || env?.CONTACT_TO_EMAIL || DEFAULT_TO;
+  const cc = env?.CONTACT_CC_EMAIL ?? DEFAULT_CC;
   const cleanSubject = singleLine(subject);
 
   if (env?.PRIVATE_RESEND_API_KEY) {
-    return sendViaResend({env, to, subject: cleanSubject, text, replyTo});
+    return sendViaResend({env, to, cc, subject: cleanSubject, text, replyTo});
   }
 
-  return sendViaFormSubmit({to, subject: cleanSubject, text, replyTo, origin});
+  // FormSubmit has no cc field, so the copy rides along as a second recipient.
+  return sendViaFormSubmit({to, cc, subject: cleanSubject, text, replyTo, origin});
 }
 
 /**
  * @returns {Promise<NotifyResult>}
  */
-async function sendViaResend({env, to, subject, text, replyTo}) {
+async function sendViaResend({env, to, cc, subject, text, replyTo}) {
   try {
     const response = await fetch(RESEND_ENDPOINT, {
       method: 'POST',
@@ -92,6 +97,7 @@ async function sendViaResend({env, to, subject, text, replyTo}) {
       body: JSON.stringify({
         from: env.PRIVATE_CONTACT_FROM_EMAIL || DEFAULT_FROM,
         to,
+        ...(cc ? {cc} : {}),
         ...(replyTo ? {reply_to: replyTo} : {}),
         subject,
         text,
@@ -120,7 +126,7 @@ async function sendViaResend({env, to, subject, text, replyTo}) {
  * delivery and the JSON body has to be read.
  * @returns {Promise<NotifyResult>}
  */
-async function sendViaFormSubmit({to, subject, text, replyTo, origin}) {
+async function sendViaFormSubmit({to, cc, subject, text, replyTo, origin}) {
   const site = origin || 'https://streamwidgetshop.com';
   try {
     const response = await fetch(`${FORMSUBMIT_ENDPOINT}/${encodeURIComponent(to)}`, {
@@ -136,6 +142,7 @@ async function sendViaFormSubmit({to, subject, text, replyTo, origin}) {
         _subject: subject,
         _captcha: 'false',
         _template: 'table',
+        ...(cc ? {_cc: cc} : {}),
         ...(replyTo ? {email: replyTo} : {}),
         message: text,
       }),
