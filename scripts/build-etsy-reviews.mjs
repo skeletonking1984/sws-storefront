@@ -52,6 +52,12 @@ const TRUSTED_CONFIDENCE = new Set([
   'verified',
   'high',
   'reviewed',
+  // Written by scripts/audit-etsy-mapping.mjs --apply. The strongest tier
+  // here: the listing and the product serve byte-identical Etsy CDN image
+  // ids, so the pairing is proven rather than inferred from a title. It
+  // replaced four rows that title matching had got wrong, two of which were
+  // sitting at "reviewed" and showing another widget's reviews.
+  'image_verified',
 ]);
 
 /**

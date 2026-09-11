@@ -6,6 +6,6 @@
     "favoriteCount": 1275,
     "url": "https://www.etsy.com/shop/StreamWidgetShop/reviews"
   },
-  "generatedAt": "2026-09-10T23:24:35.683Z",
+  "generatedAt": "2026-09-11T01:27:11.117Z",
   "sourceNote": "Shop-level Etsy stats only (rating, review count, sold count, favorite count), no review text. Safe to import client-side, see EtsyRating.jsx. Full per-product review text lives in etsy-reviews.json, server use only."
 }
