@@ -132,6 +132,7 @@ export async function action({request, context, params}) {
 
   const sent = await sendNotificationEmail({
     env: context.env,
+    origin: new URL(request.url).origin,
     subject: `SWS contact form: ${name}`,
     // Name and address go in the body as well as reply_to, so the message is
     // still actionable if a client strips or ignores the reply_to header.

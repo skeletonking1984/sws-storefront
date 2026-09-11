@@ -5,17 +5,31 @@
  * SERVER ONLY. The `.server.js` suffix keeps the API key out of the client
  * bundle. Never import this from a component.
  *
- * There is deliberately no fallback transport. Relaying to Shopify's own
+ * Two providers, tried in order:
+ *
+ * 1. **Resend**, used when `PRIVATE_RESEND_API_KEY` and
+ *    `PRIVATE_CONTACT_TO_EMAIL` are both set. Preferred once it exists: SWS
+ *    owns the sending, the mail comes from an SWS domain, and no third party
+ *    holds customer messages.
+ * 2. **FormSubmit**, the zero-config default so the forms work with no
+ *    credential at all. It relays to `CONTACT_TO_EMAIL`. The address has to
+ *    confirm itself once, on the first submission, by clicking the activation
+ *    link FormSubmit mails it. Until that click, submissions are accepted and
+ *    held rather than delivered.
+ *
+ * There is deliberately no Shopify fallback. Relaying to Shopify's own
  * `/contact` endpoint does not work from here: since the DNS cutover the apex
  * is the Hydrogen app and returns 405, and the Online Store on
  * shop.streamwidgetshop.com answers a server side POST with its bot
- * checkpoint (403 "Verifying your connection..."), warm session or not. So
- * either a real mail API is configured or nothing is sent, and the caller is
- * told which. It must never report a send that did not happen.
+ * checkpoint (403 "Verifying your connection..."), warm session or not.
+ *
+ * Whatever the provider, this must never report a send that did not happen.
  */
 
 const RESEND_ENDPOINT = 'https://api.resend.com/emails';
+const FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/ajax';
 const DEFAULT_FROM = 'onboarding@resend.dev';
+const DEFAULT_TO = 'streamwidgetshop@gmail.com';
 
 /**
  * A subject line becomes a mail header, so it cannot carry line breaks.
@@ -28,34 +42,89 @@ function singleLine(value) {
 }
 
 /**
+ * @typedef {{ok: true} | {ok: false, reason: 'not_configured'|'send_failed'}} NotifyResult
+ */
+
+/**
  * @param {object} args
  * @param {Record<string, string|undefined>} args.env
  * @param {string} args.subject
  * @param {string} args.text
  * @param {string} [args.replyTo]
- * @returns {Promise<{ok: true} | {ok: false, reason: 'not_configured'|'send_failed'}>}
+ * @param {string} [args.origin] Site origin. FormSubmit rejects a request with
+ *   no Origin or Referer, so this is required for that provider.
+ * @returns {Promise<NotifyResult>}
  */
-export async function sendNotificationEmail({env, subject, text, replyTo}) {
-  const apiKey = env?.PRIVATE_RESEND_API_KEY;
-  const to = env?.PRIVATE_CONTACT_TO_EMAIL;
+export async function sendNotificationEmail({env, subject, text, replyTo, origin}) {
+  const to = env?.PRIVATE_CONTACT_TO_EMAIL || env?.CONTACT_TO_EMAIL || DEFAULT_TO;
+  const cleanSubject = singleLine(subject);
 
-  if (!apiKey || !to) {
-    return {ok: false, reason: 'not_configured'};
+  if (env?.PRIVATE_RESEND_API_KEY) {
+    return sendViaResend({env, to, subject: cleanSubject, text, replyTo});
   }
 
+  return sendViaFormSubmit({to, subject: cleanSubject, text, replyTo, origin});
+}
+
+/**
+ * @returns {Promise<NotifyResult>}
+ */
+async function sendViaResend({env, to, subject, text, replyTo}) {
   try {
     const response = await fetch(RESEND_ENDPOINT, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${env.PRIVATE_RESEND_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         from: env.PRIVATE_CONTACT_FROM_EMAIL || DEFAULT_FROM,
         to,
         ...(replyTo ? {reply_to: replyTo} : {}),
-        subject: singleLine(subject),
+        subject,
         text,
+      }),
+    });
+
+    return response.ok ? {ok: true} : {ok: false, reason: 'send_failed'};
+  } catch {
+    return {ok: false, reason: 'send_failed'};
+  }
+}
+
+/**
+ * FormSubmit's `/ajax` route answers with JSON and a real status code, unlike
+ * its plain route which redirects to an HTML page. Three things it will
+ * silently refuse on, each measured against the live endpoint:
+ *
+ * - **No Origin or Referer header.** It answers `success: "false"` with
+ *   "Make sure you open this page through a web server".
+ * - **`_captcha` left on.** It holds the submission behind a challenge the
+ *   visitor never sees, so the mail never arrives.
+ * - **An unactivated target address.** It answers `success: "false"` with an
+ *   activation notice until someone clicks the link it mails once.
+ *
+ * All three return HTTP 200, so the status code alone is not proof of
+ * delivery and the JSON body has to be read.
+ * @returns {Promise<NotifyResult>}
+ */
+async function sendViaFormSubmit({to, subject, text, replyTo, origin}) {
+  const site = origin || 'https://streamwidgetshop.com';
+  try {
+    const response = await fetch(`${FORMSUBMIT_ENDPOINT}/${encodeURIComponent(to)}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Origin: site,
+        Referer: site,
+      },
+      body: JSON.stringify({
+        _subject: subject,
+        _captcha: 'false',
+        _template: 'table',
+        ...(replyTo ? {email: replyTo} : {}),
+        message: text,
       }),
     });
 
@@ -63,7 +132,10 @@ export async function sendNotificationEmail({env, subject, text, replyTo}) {
       return {ok: false, reason: 'send_failed'};
     }
 
-    return {ok: true};
+    const body = await response.json().catch(() => null);
+    const success = String(body?.success ?? 'true') === 'true';
+
+    return success ? {ok: true} : {ok: false, reason: 'send_failed'};
   } catch {
     return {ok: false, reason: 'send_failed'};
   }

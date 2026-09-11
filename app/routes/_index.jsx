@@ -183,6 +183,7 @@ export async function action({request, context}) {
 
   const sent = await sendNotificationEmail({
     env: context.env,
+    origin: new URL(request.url).origin,
     subject: `SWS newsletter signup: ${email}`,
     text: `New newsletter signup from the homepage email capture.\n\n${email}`,
     replyTo: email,
