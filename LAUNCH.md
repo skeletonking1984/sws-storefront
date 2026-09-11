@@ -33,7 +33,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 - [ ] Top 15 mapped to Shopify products, ACTIVE, price = Etsy price, images = Etsy images, description normalized, in Top Widgets collection (sorted by revenue)
 - [ ] Duplicates archived (keep one active per Etsy listing)
 - [x] Every active product: title, image, price, product type, Chat/Goal tag correct (`node scripts/audit-catalog.mjs` exits 0: 131 storefront products, 0 issues, 2026-09-10)
-- [ ] Digital download delivery verified end to end (order -> file)
+- [ ] Digital download delivery verified end to end (order -> file). Mechanism proven: Butterfly Galaxy has 1 real sale and 1 real download. Remaining gap is coverage: 14 products had no asset, staged at `~/Desktop/SWS-EMPTY-14/`, Todd uploading, count landed unverified (the app is a cross origin iframe)
 ### Storefront (Hydrogen)
 - [x] Pending work committed + deployed
 - [ ] Homepage sells: hero, top 15, social proof, one clear CTA
@@ -479,6 +479,21 @@ So the honest position: the audit is a two minute job for a human in that UI and
 
 Do not re-run the API probe. Do go look at the UI.
 
+#### Digital delivery: the real number was 14, and Todd has been uploading them 2026-09-10 (evening, parallel session)
+Written into this file after the fact, because it was not. A second session that evening (`Shopify daily launch pass`, `local_ecc7bf4f`) did the work with Todd live, and the scheduled night pass then re-reported the four day old blocker as if nothing had happened. **A scheduled run reads this file and nothing else. Work done with Todd in another session does not exist until it is written here.**
+
+What that session established, which corrects several claims above:
+
+- The Digital Products app's own product table has a **Assets** column and an empty-assets view. The true list of products with no file attached was **14**, not "8 of the top 16 plus all 3 bundles". Everything else in the shop already delivered a file.
+- **The number one revenue product (Neon Animated, Etsy 4333471272) was NOT on that list.** It already has assets attached in Shopify. The 2026-09-10 digital delivery audit flagged it as "ZERO files found locally", which is true and irrelevant: local staging state is not Shopify attachment state, and this file let the two be confused.
+- The two files previously said to be obtainable only from Etsy Shop Manager, `NeonChatandGoalCodefile.zip` and `SakuraGlassyChatWidget.zip`, were found. They are staged in folders 09 and 11 below. That ask is closed.
+- Staging for the 14 lives at **`~/Desktop/SWS-EMPTY-14/`**, folders named to match the app's product names exactly and ordered A to Z like the app, files numbered in upload order, with `CHECKLIST.txt`. The older `~/Desktop/SWS-Shopify-Uploads/` (104 folders, all mapped products) stays as the long term reference.
+- Todd uploaded a batch on the evening of 2026-09-10. **How many of the 14 landed is not verified.** That session could not read the result: the app renders in a cross origin iframe, so `get_page_text` returns only the Admin shell and synthetic clicks, typing and scrolling inside it do not register. The checkboxes in `CHECKLIST.txt` are a paper form, not state.
+- Also observed there, and worth more than it looks: **Butterfly Galaxy shows 1 sale and 1 download.** A real customer bought and successfully downloaded. The delivery mechanism works when a file is attached.
+- Flagged in passing and still open: product 12 is titled "Sci-Fi Neon Twitch Chat Widget Star Wars" and ships `StarWarsTwitchChatcode.zip`. That is Disney IP on a live product about to be advertised. Rename both before ads run.
+
+Open question for Todd, 5 seconds in the app versus an hour of agent fumbling: filter the Digital Products table to empty assets and say which of the 14 still show the blue "Add asset" link.
+
 #### The Etsy map was wrong in four places, and the proof was sitting in the filenames 2026-09-10 (night)
 Metrics (2026-09-10, day not closed): 30 sessions, 2 add to cart, 2 reached checkout, 0 completed, 0 orders, $0 net sales. Sep 9 was 23 / 2 / 3 / 0. Still all on the OLD Energy theme, not the Hydrogen build.
 
@@ -523,7 +538,7 @@ Not verified: nothing was opened in a browser. Dev servers and browser tools are
 
 Needs Todd:
 - **Go-ahead to swap 4 wrong demo videos.** Each of the four mispaired products is currently playing a different widget's clip, which is worse than no clip. Fixing it means deleting the wrong video first, and a delete is his call. The replacements are already identified in the table above. This is now 4 products, not the 2 reported this morning.
-- Everything else on the list is unchanged: **the DNS cutover**, **the digital files** (17 of 19 staged at `~/Desktop/SWS-Shopify-Uploads/`), the two Hydrogen env vars (`PUBLIC_GA4_MEASUREMENT_ID`, `PUBLIC_CHECKOUT_DOMAIN`), the `checkout_completed` pixel, Auny's 5 X pixel IDs (BAT-145), Google Search Console and Merchant Center, and the Soul Blade price.
+- Everything else on the list is unchanged: **the DNS cutover**, **the digital files** (see the entry above, the real list is 14 products staged at `~/Desktop/SWS-EMPTY-14/` and Todd has already uploaded a batch), the two Hydrogen env vars (`PUBLIC_GA4_MEASUREMENT_ID`, `PUBLIC_CHECKOUT_DOMAIN`), the `checkout_completed` pixel, Auny's 5 X pixel IDs (BAT-145), Google Search Console and Merchant Center, and the Soul Blade price.
 
 Next: apply `docs/COPY-STANDARD.md` to the remaining catalog beyond the 18 launch-set products, since the catalog's structural data is now clean and copy is the last thing standing between the storefront and an ads launch.
 
