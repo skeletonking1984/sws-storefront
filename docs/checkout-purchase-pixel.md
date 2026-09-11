@@ -49,6 +49,36 @@ Measurement Protocol via `fetch` is the right call here, not an injected `gtag.j
 
 Sources: measured directly against the live Storefront API on 2026-09-10, plus [Hydrogen headless analytics consent](https://shopify.dev/docs/storefronts/headless/hydrogen/analytics/consent) and this repo's `app/root.jsx:124`.
 
+**Corrected again 2026-09-11, after the cutover. Checkout is NOT on streamwidgetshop.com any more.**
+Measured immediately after the domain was retargeted to Hydrogen:
+
+    checkoutUrl host: 72470e-33.myshopify.com
+
+Retargeting the apex to the Hydrogen storefront left the Online Store with no brand domain, and
+checkout is Online-Store-served, so it fell back to the raw myshopify host. The same happened to the
+Digital Products download page, which now serves from `72470e-33.myshopify.com/a/downloads/...` in
+the old Energy theme.
+
+Two consequences, both real:
+
+1. The buyer changes domain at the payment step, to a host that looks nothing like the shop.
+2. `_ga` is set on `streamwidgetshop.com` and is NOT readable on `72470e-33.myshopify.com`, so the
+   `checkout_completed` pixel below cannot recover the client id and every paid conversion lands
+   unattributed. That is the exact failure an earlier draft of this doc predicted for the wrong
+   reason and this one now has for the right one.
+
+`PUBLIC_CHECKOUT_DOMAIN` does not fix this. It only feeds the Customer Privacy API through
+`Analytics.Provider` (`app/root.jsx`, `app/entry.server.jsx`); it does not decide where checkout is
+served.
+
+The fix is the pattern Shopify documents for headless: keep a SUBDOMAIN on the Online Store.
+Settings > Domains > the ⋯ on `streamwidgetshop.com` > Add subdomain, then Change target on that
+subdomain to Online Store and set it as the Online Store's primary. Checkout and the download proxy
+then serve from that subdomain, which shares a registrable domain with the storefront, so the cookie
+is readable and the buyer never leaves the brand.
+
+Re-measure with the cart probe before trusting any of this again.
+
 **Corrected 2026-09-10.** An earlier draft of this section concluded that checkout runs on a different registrable domain and that paid conversions would land unattributed. That was wrong. It was inferred from `PUBLIC_CHECKOUT_DOMAIN` being unset in `.env`, not from the checkout URL itself. The env var is genuinely unset, but that does not decide where checkout is served.
 
 Measured instead: a real cart was created through the Storefront API and its `checkoutUrl` read back. It is
