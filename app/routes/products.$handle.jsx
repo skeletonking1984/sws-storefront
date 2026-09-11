@@ -318,7 +318,11 @@ export default function Product() {
             price={selectedVariant?.price}
             compareAtPrice={selectedVariant?.compareAtPrice}
           />
-          <ProductHighlights description={description} worksWith={worksWith?.value} />
+          <ProductHighlights
+            description={description}
+            worksWith={worksWith?.value}
+            productType={product.productType}
+          />
           <ProductForm
             productOptions={productOptions}
             selectedVariant={selectedVariant}

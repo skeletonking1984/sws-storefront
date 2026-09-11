@@ -36,10 +36,32 @@ function parseWorksWith(raw) {
  * product with neither shows no badge row at all, which is the honest
  * default: a wrong badge costs a refund, a missing one costs a little
  * scannability.
- * @param {{description: string, worksWith?: string | null}}
+ * @param {{description: string, worksWith?: string | null, productType?: string}}
  */
-export function ProductHighlights({description, worksWith}) {
+export function ProductHighlights({description, worksWith, productType}) {
   const platforms = parseWorksWith(worksWith) || worksWithPlatforms(description) || [];
+
+  // Badges alone still leave a buyer guessing. Two things decide whether this
+  // widget works for them, and neither is obvious from a row of logos: the
+  // account it runs on, and whether it reads chat from anywhere but Twitch.
+  // Both are said in words, generated from the same platform list, so they
+  // can never drift from the badges above them.
+  const host = platforms.includes('StreamElements')
+    ? platforms.includes('Streamlabs')
+      ? 'a free StreamElements or Streamlabs account'
+      : 'a free StreamElements account'
+    : platforms.includes('Streamlabs')
+      ? 'a free Streamlabs account'
+      : null;
+
+  // Only say this on chat widgets. A goal widget does not read chat at all,
+  // so "does not pull YouTube chat" would answer a question nobody asked.
+  const isChat = /chat/i.test(productType || '');
+  const missing = ['YouTube', 'Kick'].filter((p) => !platforms.includes(p));
+  const chatNote =
+    isChat && missing.length === 2 && platforms.includes('Twitch')
+      ? 'Reads Twitch chat only. It does not pull YouTube or Kick chat.'
+      : null;
   const customizable = /customi[sz]/i.test(description);
 
   return (
@@ -56,6 +78,13 @@ export function ProductHighlights({description, worksWith}) {
             ))}
           </div>
         </>
+      )}
+      {(host || chatNote) && (
+        <p className="product-highlights-note">
+          {chatNote}
+          {chatNote && host ? ' ' : null}
+          {host ? `Runs on ${host}.` : null}
+        </p>
       )}
       <p className="product-highlights-label">What you get</p>
       <ul className="product-highlights-list">

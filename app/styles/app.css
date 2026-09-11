@@ -4533,3 +4533,13 @@ button.reset:hover:not(:has(> *)) {
     transform: none;
   }
 }
+
+/* The plain-language qualifier under the platform badges. Deliberately not
+   styled as fine print: it answers the two questions that otherwise turn
+   into a refund, so it reads at body size. */
+.product-highlights-note {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin: 0.6rem 0 0;
+}
