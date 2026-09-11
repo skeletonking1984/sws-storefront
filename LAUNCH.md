@@ -710,3 +710,42 @@ Needs Todd:
 
 Preview: https://01m289xse7cr307h9r8cw22nfb-fb73b5b73c40344d0d20.myshopify.dev
 Commits: `e69d71b`, `fce8071`, `4a9bd40`.
+
+### 2026-09-11 (afternoon, Todd present)
+
+Shipped in one long session with Todd driving. **35 commits.** Everything below is committed and preview deployed; production is Todd's.
+
+**Both site forms were silently discarding everything.** Contact form and homepage email capture both posted client side to `https://streamwidgetshop.com/contact` with `fetch(mode: 'no-cors')`. Since the cutover that path is the Hydrogen app and returns **405**, and an opaque no-cors response never rejects, so both rendered success for a request that had failed. Every message and every WELCOME10 signup since the cutover was dropped. Now real server side actions with a shared `app/lib/notify.server.js`, an 8 second timeout, and a honeypot. FormSubmit was tried as a zero-credential transport and **stopped responding entirely within ten minutes** (`time=20.001 http=000`), so Resend is the transport and Todd's key is live. Do not re-pick a free no-signup relay; that was tried end to end and failed inside one session.
+
+**Sitemap was feeding Google 604 dead URLs.** The stock Hydrogen scaffold still carried `locales: ['EN-US','EN-CA','FR-CA']`, so every entry advertised three alternates that all 404, and all 43 article URLs pointed at `/articles/<handle>` which does not exist on this storefront (real path is `/blogs/news/<handle>`). Homepage was in no sitemap at all. Rebuilt from what the Storefront API actually serves: **186 URLs, all 200, zero hreflang alternates, zero spec violations**. Verified the set matches storefront-visible products exactly in both directions, so an unpublished product (Sci-Fi Neon) cannot leak.
+
+**`/llms.txt` shipped**, generated from live catalog data. `agents.txt` deliberately skipped: renamed to `agent-manifest.txt` in March 2026 after an IETF collision, three competing proposals, nothing consumes it at scale.
+
+**Product schema enriched.** `aggregateRating` 56 to **97 of 130**, `review[]` 0 to **97** (404 real review entries), merchant fields on all 130. The 33 products with no reviews get nothing, deliberately. A real bug surfaced: the reviews component rendered only 3 cards into the DOM regardless of count, so 8 reviews in JSON-LD against 3 on the page would have been a schema-contradicts-page mismatch. Both numbers now come from one shared constant.
+
+**Video indexing.** Search Console reported 0 videos indexed. No `VideoObject`, no `<video>` in SSR, no video sitemap. Pulled real `createdAt` and `duration` for all 143 videos from the Admin API into `app/data/video-metadata.json`, because the Storefront API exposes neither and Google **requires** `uploadDate`. **120 of 130 products now emit a complete VideoObject**, plus a video sitemap. A crawler-only hidden `<video>` was added and then removed: hiding media from users to feed a crawler is what Google's own video guidance warns against.
+
+**All six Shopify policies rewritten for digital downloads.** The live refund policy promised "unworn or unused, with tags, in its original packaging" and a **return shipping label** for a zip file, contradicting both the FAQ and the `MerchantReturnNotPermitted` schema. Privacy opened "Welcome to spacelabs shop.com". Terms of service, Shipping, Contact information and Legal notice were all empty, with Contact marked Required. Todd pasted all six. A fact check caught a real error in the draft: the legal notice claimed every design is original work owned by SWS, and the catalog sells **four live Pokemon character widgets**. Fixed before it shipped.
+
+**Purchase tracking, the long one.** GA4 showed 0 purchases and $0.00 because the storefront deliberately never sends `purchase` and the Admin pixel had never been created. Built, then rebuilt:
+- A gtag custom pixel first, on the measurement that checkout runs on `shop.streamwidgetshop.com` and therefore shares the registrable domain. **That was incomplete.** Shop Pay runs on `shop.app`, where the `_ga` cookie is unreachable and custom pixels are documented as not firing `checkout_completed` at all.
+- So purchase moved server side: an HMAC verified `orders/create` webhook at `/webhooks/orders`, verified in production (GET 405, unsigned POST 401, forged HMAC 401). **Todd created the webhook and a real test order produced `purchase` in GA4 Realtime.**
+- Then generalised into a standard, `docs/conversion-tracking.md`: capture click ids server side, carry them on the cart, fan out from one webhook. Captures `_ga_client_id`, `_twclid`, `_fbclid`, `_gclid`, `_ttclid`, `_msclkid`, `_epik` **today**, because a click id not captured cannot be recovered later. Adding X is one adapter file plus env vars.
+
+**The cart discount field was never broken.** Queried the live cart after applying WELCOME10: `applicable: true`, subtotal 24.99, total 22.50. The cart rendered only Subtotal, which is pre-discount and never moves, so a working discount looked like a dead button. Now shows Discount and Total. **WELCOME10 has been applying correctly this whole time**; buyers just could not see it.
+
+Diagnostic lessons worth keeping:
+- **Brave Shields block GA4.** Hours were nearly lost to "analytics is broken" that was a browser blocking trackers. Verify with a clean browser before debugging code.
+- **DebugView needs `debug_mode`**, it is not a general realtime view. Realtime is the right screen.
+- **Clicking a covered element produces no event, correctly.** Two false bug reports came from clicking a button behind an open cart drawer or off a 383px viewport. Check `document.elementFromPoint` before believing a handler is broken.
+- **`webhookSubscriptions` only returns webhooks owned by the querying app**, so an empty result says nothing about Admin-created ones.
+
+Needs Todd:
+- **A production deploy.** 35 commits are waiting and none of today's work is live.
+- Disconnect the **GA4 Purchases** custom pixel once the webhook is confirmed as the sender, or every order double counts.
+- `robots.txt` still has `Disallow: /policies/`, so AI agents cannot read the policies just written. Directly fights the Agentic Storefronts task.
+- **Four Pokemon widgets are live** and about to carry ad spend, same IP exposure as the Star Wars widget already unpublished. Sci-Fi Neon is also still live on Etsy as listing 4498789564.
+- Auny's X pixel IDs (BAT-145) and an X CAPI token, for the X destination.
+- The `_ga_client_id` relay did not attach on order #1040. Retest with a fresh cart and Shields down.
+
+Preview: https://01m28p3g5jhdw6jfgj23y7ewqm-fb73b5b73c40344d0d20.myshopify.dev
