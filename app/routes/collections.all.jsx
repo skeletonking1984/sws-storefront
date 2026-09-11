@@ -161,6 +161,7 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
     handle
     title
     productType
+    worksWith: metafield(namespace: "custom", key: "works_with") { value }
     featuredImage {
       id
       altText

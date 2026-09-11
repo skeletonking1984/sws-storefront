@@ -2310,6 +2310,35 @@ button.reset:hover:not(:has(> *)) {
   color: var(--sws-ink);
 }
 
+/* Opposite corner from .product-item-tag (top-left) so the two never
+   collide. Colour is restated explicitly rather than inherited: a gradient
+   badge with an inherited text colour is how the contact form button went
+   invisible on its own background (see the note above
+   .contact-form-error a.contact-form-mailto-btn), so this sets both the
+   gradient and the ink colour/outline on the same rule. */
+.product-item-ribbon {
+  background: linear-gradient(
+    120deg,
+    var(--sws-holo-1),
+    var(--sws-holo-2),
+    var(--sws-holo-4)
+  );
+  border: 2px solid var(--sws-ink);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0 var(--sws-outline);
+  color: var(--sws-ink);
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 0.2rem 0.55rem;
+  position: absolute;
+  right: 0.6rem;
+  text-transform: uppercase;
+  top: 0.6rem;
+  z-index: 1;
+}
+
 .product-item h4 {
   color: var(--sws-text);
   font-size: 0.95rem;

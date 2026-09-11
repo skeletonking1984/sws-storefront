@@ -579,6 +579,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     title
     productType
     handle
+    worksWith: metafield(namespace: "custom", key: "works_with") { value }
     priceRange {
       minVariantPrice {
         amount
@@ -665,6 +666,7 @@ const TOP_WIDGETS_COLLECTION_QUERY = `#graphql
           id
           title
           handle
+          worksWith: metafield(namespace: "custom", key: "works_with") { value }
           priceRange {
             minVariantPrice {
               amount

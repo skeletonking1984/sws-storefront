@@ -68,3 +68,51 @@ export function worksWithPlatforms(description) {
   const found = detectPlatforms(block);
   return found.length ? found : null;
 }
+
+/**
+ * Parses the `custom.works_with` product metafield, which Shopify stores as
+ * a JSON encoded array of strings for a `list.single_line_text_field`.
+ * Returns null on anything missing or unexpected so callers fall through to
+ * a description-based guess rather than trusting garbage.
+ * @param {string | null | undefined} raw
+ * @returns {string[] | null}
+ */
+export function parseWorksWith(raw) {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length) return parsed;
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+/**
+ * Whether a product earns the "Multistream" ribbon: its `works_with`
+ * metafield lists BOTH YouTube and Kick (case-insensitively). That is the
+ * honest definition of "reads chat from more than one platform" for this
+ * catalog, ground-truthed against `data/widget-code-signals.json`, which
+ * records what each product's actually shipped widget code references.
+ *
+ * Never derive this from the title or description. Titles here are SEO
+ * stuffed with platform names the widget does not read (see the
+ * `detectPlatforms` warning above), and a goal widget can reference Kick in
+ * its own code with no YouTube, and a goal bar does not read chat from
+ * anywhere, so requiring both platforms already excludes it correctly.
+ *
+ * No metafield, or a single platform, means no ribbon.
+ *
+ * @param {{worksWith?: {value?: string | null} | string | null}} product
+ * @returns {boolean}
+ */
+export function isMultistream(product) {
+  const raw =
+    typeof product?.worksWith === 'string'
+      ? product.worksWith
+      : product?.worksWith?.value;
+  const platforms = parseWorksWith(raw);
+  if (!platforms) return false;
+  const lower = platforms.map((p) => String(p).toLowerCase());
+  return lower.includes('youtube') && lower.includes('kick');
+}

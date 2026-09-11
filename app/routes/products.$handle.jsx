@@ -675,6 +675,7 @@ const RELATED_PRODUCTS_QUERY = `#graphql
         id
         title
         handle
+        worksWith: metafield(namespace: "custom", key: "works_with") { value }
         priceRange {
           minVariantPrice {
             amount

@@ -1,7 +1,7 @@
 import {Link} from 'react-router';
 import {Image, Money, useAnalytics} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
-import {detectPlatforms} from '~/lib/platforms';
+import {detectPlatforms, isMultistream} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
 
 /**
@@ -75,6 +75,7 @@ export function ProductItem({product, loading, listId, listName, index}) {
   const image = product.featuredImage;
   const kind = widgetKind(product.title, product.productType);
   const platforms = detectPlatforms(product.title).slice(0, 4);
+  const multistream = isMultistream(product);
   const {publish} = useAnalytics();
   return (
     <Link
@@ -93,6 +94,15 @@ export function ProductItem({product, loading, listId, listName, index}) {
         // contain instead, so the full image stays visible.
         <div className="product-item-image">
           {kind && <span className={`product-item-tag tag-${kind.toLowerCase()}`}>{kind}</span>}
+          {multistream && (
+            <span
+              className="product-item-ribbon"
+              role="img"
+              aria-label="Multistream: reads chat from more than one platform"
+            >
+              Multistream
+            </span>
+          )}
           <Image
             alt={image.altText || product.title}
             data={image}

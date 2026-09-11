@@ -1,23 +1,5 @@
-import {worksWithPlatforms} from '~/lib/platforms';
+import {worksWithPlatforms, parseWorksWith} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
-
-/**
- * Reads the `custom.works_with` metafield value, which Shopify stores as a
- * JSON encoded array of strings for a list.single_line_text_field. Returns
- * null on anything unexpected so the caller falls through to the description
- * rather than rendering garbage.
- * @param {string | null | undefined} raw
- */
-function parseWorksWith(raw) {
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length) return parsed;
-  } catch {
-    return null;
-  }
-  return null;
-}
 
 /**
  * Etsy-style "Highlights" block: platform badges + scannable digital-good
