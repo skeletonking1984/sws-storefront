@@ -1,6 +1,7 @@
 import * as serverBuild from 'virtual:react-router/server-build';
 import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
 import {createHydrogenRouterContext} from '~/lib/context';
+import {buildFirstTouchSetCookieHeaders} from '~/lib/clickIds.server';
 
 /**
  * Export a fetch handler in module format.
@@ -37,6 +38,18 @@ export default {
           'Set-Cookie',
           await hydrogenContext.session.commit(),
         );
+      }
+
+      // First-touch click id capture (see app/lib/clickIds.server.js). A
+      // click id only ever arrives on the landing request's URL, not on
+      // whatever later request creates the cart, so it has to be pinned to
+      // a first-party cookie here, on every request, before it is gone.
+      // Cheap on requests with no known click id param (the common case):
+      // one URLSearchParams scan against a short list of names. Uses
+      // `.append()`, never `.set()`, so an unrelated Set-Cookie already on
+      // the response (the session commit above) is never clobbered.
+      for (const cookieHeader of buildFirstTouchSetCookieHeaders(request)) {
+        response.headers.append('Set-Cookie', cookieHeader);
       }
 
       if (response.status === 404) {

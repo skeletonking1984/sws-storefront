@@ -30,7 +30,10 @@ export function parseGaClientId(cookieHeader) {
 }
 
 /**
- * Reads a single cookie value out of a raw `Cookie` header.
+ * Reads a single cookie value out of a raw `Cookie` header. Exported (as
+ * `readCookieValue`) so app/lib/clickIds.server.js can read the other click
+ * id cookies (`sws_twclid`, `sws_gclid`, ...) through the same parser
+ * instead of a second copy of this loop.
  * @param {string | null | undefined} cookieHeader
  * @param {string} name
  * @returns {string | undefined}
@@ -50,3 +53,5 @@ function readCookie(cookieHeader, name) {
 
   return undefined;
 }
+
+export {readCookie as readCookieValue};

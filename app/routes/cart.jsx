@@ -2,7 +2,7 @@ import {useLoaderData, data} from 'react-router';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
 import {buildMeta, getOrigin} from '~/lib/seo';
-import {parseGaClientId} from '~/lib/gaCookie.server';
+import {readClickIds} from '~/lib/clickIds.server';
 
 /**
  * @type {Route.MetaFunction}
@@ -27,13 +27,6 @@ export const headers = ({actionHeaders}) => actionHeaders;
  */
 export async function action({request, context}) {
   const {cart} = context;
-
-  // Captured before the mutation below so we know whether this request is
-  // the one that creates the cart. Cart attributes are a full replace, not
-  // a merge, so the GA4 client_id relay only runs once, at creation, and is
-  // never touched again on later updates (this is what keeps it from
-  // clobbering, or being clobbered by, any other attribute).
-  const hadCartId = Boolean(cart.getCartId());
 
   const formData = await request.formData();
 
@@ -95,21 +88,38 @@ export async function action({request, context}) {
   const headers = cartId ? cart.setCartId(result.cart.id) : new Headers();
   const {cart: cartResult, errors, warnings} = result;
 
-  // Relay the GA4 client_id into this cart, once, at creation, so it
-  // survives into the order (Shopify cart attributes persist across later
-  // updates as long as nothing overwrites the attributes array) and can be
-  // read back out server side by the orders/create purchase webhook
-  // (app/routes/webhooks.orders.jsx). Attaching nothing if the cookie is
-  // missing or malformed rather than sending a broken value.
-  if (!hadCartId && cartId) {
-    const gaClientId = parseGaClientId(request.headers.get('Cookie'));
-    if (gaClientId) {
+  // Carry every captured click id (GA4, X, Meta, Google Ads, TikTok,
+  // Microsoft, Pinterest -- see app/lib/clickIds.server.js) onto this cart
+  // so it survives into the order and can be read back out server side by
+  // the orders/create purchase webhook (app/routes/webhooks.orders.jsx).
+  //
+  // Runs on EVERY cart mutation, not only creation. `cartAttributesUpdate`
+  // is a full replace of the attributes array, not a merge (confirmed
+  // against Hydrogen's own mutation), so a cart that already existed
+  // before an id was captured -- the exact gap that left order #1040 with
+  // empty customAttributes -- would otherwise never get backfilled. Fixed
+  // here by re-checking on every mutation and merging in only what is
+  // still missing.
+  //
+  // Never overwrites: any attribute already present (a captured click id
+  // from an earlier request, or an unrelated attribute this cart carries
+  // for some other reason) is passed straight through untouched.
+  if (cartId && cartResult) {
+    const clickIds = readClickIds(request);
+    const existingAttributes = cartResult.attributes || [];
+    const existingKeys = new Set(existingAttributes.map((attr) => attr.key));
+    const missingAttributes = Object.entries(clickIds)
+      .filter(([key, value]) => value && !existingKeys.has(key))
+      .map(([key, value]) => ({key, value}));
+
+    if (missingAttributes.length > 0) {
       try {
         await cart.updateAttributes([
-          {key: '_ga_client_id', value: gaClientId},
+          ...existingAttributes.map(({key, value}) => ({key, value})),
+          ...missingAttributes,
         ]);
       } catch (error) {
-        console.error('Failed to relay _ga client_id to cart attributes', error);
+        console.error('Failed to relay click ids to cart attributes', error);
       }
     }
   }
