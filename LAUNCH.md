@@ -33,7 +33,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 - [ ] Top 15 mapped to Shopify products, ACTIVE, price = Etsy price, images = Etsy images, description normalized, in Top Widgets collection (sorted by revenue)
 - [ ] Duplicates archived (keep one active per Etsy listing)
 - [x] Every active product: title, image, price, product type, Chat/Goal tag correct (`node scripts/audit-catalog.mjs` exits 0: 131 storefront products, 0 issues, 2026-09-10)
-- [ ] Digital download delivery verified end to end (order -> file). Mechanism proven: Butterfly Galaxy has 1 real sale and 1 real download. Coverage: the 14 empty products were staged at `~/Desktop/SWS-EMPTY-14/` and Todd reports all 14 uploaded on 2026-09-10. Not agent verifiable (cross origin iframe, no API). Closes on a real order that delivers a file
+- [x] Digital download delivery verified end to end (order -> file). PROVEN by a real checkout that downloaded the Y2K Sticker zip. Mechanism proven: Butterfly Galaxy has 1 real sale and 1 real download. Coverage: the 14 empty products were staged at `~/Desktop/SWS-EMPTY-14/` and Todd reports all 14 uploaded on 2026-09-10. Not agent verifiable (cross origin iframe, no API). Closes on a real order that delivers a file
 ### Storefront (Hydrogen)
 - [x] Pending work committed + deployed
 - [ ] Homepage sells: hero, top 15, social proof, one clear CTA
@@ -56,7 +56,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
   - Hydrogen ships no analytics tag on its own. Build `app/components/pixels/` (GA4.jsx, XPixel.jsx) mounted inside the existing `Analytics.Provider` in `app/root.jsx`; subscribe via `useAnalytics()` to `page_viewed`, `product_viewed`, `product_added_to_cart`; load `gtag`/`uwt.js` with `useNonce()` for CSP; fire only after consent. GA4 can go in now. X waits on Auny's 5 IDs (1 pixel + PageView/ViewContent/AddToCart/Purchase) on BAT-145.
   - Purchase events cannot come from Hydrogen (checkout is Shopify-hosted). They go in Shopify Admin > Settings > Customer events > custom pixel on `checkout_completed`, sending X `Purchase` + GA4 `purchase` with order value. Site pixel must NOT also fire Purchase, or orders double count.
   - Item stays unchecked until a real test order shows once in X Events Manager and once in GA4.
-- [ ] DNS cutover streamwidgetshop.com -> Hydrogen (Todd approves)
+- [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
 ### 2026-09-07
@@ -637,3 +637,53 @@ Next: apply `docs/COPY-STANDARD.md` to the remaining catalog beyond the 18 launc
 
 Preview deploy: https://01m271dhd8afwfya6h8kdgcdg2-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `72175c5`.
+
+### 2026-09-11
+Metrics (2026-09-10): 92 sessions, 5 add to cart, 5 reached checkout, **2 completed**, 3 orders, $15.08 net. 2026-09-11 so far: 21 sessions, 5 add to cart, 4 reached checkout, 1 completed, 1 order, $0 net. First completed checkouts this log has ever recorded, but **all four recent orders are Todd Kueny**: #1035 a real $15.08 card charge, #1036 to #1038 at $0 on a 100% off code. No customer order yet. Last real customer order was #1034 on 2026-05-15.
+
+Shipped: **both site forms were silently discarding everything. Fixed.**
+
+Todd submitted the contact form on the live site and got nothing. He was right, and the page was lying to him.
+
+`ContactPage.jsx` posted client side to `https://streamwidgetshop.com/contact` with `fetch(mode: 'no-cors')`. Since the cutover that domain is the Hydrogen app, not the Online Store, so the path does not exist: measured **405**. A `no-cors` response is opaque and never rejects, so the component set status `sent` unconditionally and rendered "Message sent!" for a request that had failed. Every message since the cutover was discarded with a success panel shown to the sender.
+
+`EmailCapture.jsx` on the homepage had the identical bug against the identical dead path, so **every newsletter signup since the cutover was dropped too**, each one promised a WELCOME10 code. WELCOME10 is ACTIVE with **0 uses**. Its success copy also said "check your inbox for the code", which nothing in the system has ever sent.
+
+**There is no credential free transport, and this was measured rather than assumed.** Relaying server side to the Online Store does not work either: `POST https://shop.streamwidgetshop.com/contact` answers **403 "Verifying your connection..."**, Shopify's bot checkpoint, even with a warmed cookie jar and a real browser user agent. The Online Store also runs the Hydrogen Redirect Theme now, so it has no contact form of its own. Do not re-attempt the relay.
+
+So both forms now post to real server side actions, and the transport is env gated:
+- Contact posts to an `action` in `pages.$handle.jsx`, guarded to the `contact` handle, everything else 405s.
+- Newsletter posts to a new `action` in `_index.jsx`. Note it submits to `/?index`, the index route disambiguator React Router's `<Form>` adds automatically; a curl to bare `/` hits the root route and 405s, which looks exactly like a broken action and is not one.
+- One shared `app/lib/notify.server.js`. The `.server.js` suffix keeps the key out of the client bundle.
+- With `PRIVATE_RESEND_API_KEY` and `PRIVATE_CONTACT_TO_EMAIL` set, both send. Without them both return `not_configured` and **say so**, rather than claiming a send. Contact then offers a prefilled `mailto:` carrying the visitor's own text, which is a working path with zero infrastructure. Newsletter shows the real WELCOME10 code inline on both the success and the failure path, so the promise is kept by the page instead of by an email.
+- Honeypot `company` field on both, absorbed silently as success.
+
+`Form` + `useActionData`, not `useFetcher`. A fetcher's result only reaches the browser through the client hydration stream, so a no-JS POST re-rendered the idle form with no result at all even though the action ran. Verified by curl as a true no-JS client, before and after the switch.
+
+**Three things this file listed as open were already done by Todd and never recorded.** Measured today, not read off a screen:
+- **Hydrogen redirect theme is PUBLISHED.** `themes` reports `hydrogen-redirect-theme-main` role MAIN, Energy UNPUBLISHED. Open item 1 is closed.
+- **The owed production deploy happened.** The live homepage title carries "Multistream", which only exists in `6e13292`, the newest commit. All four owed commits are live.
+- **The CSP video bug is fixed in production.** Live CSP includes `https://*.streamwidgetshop.com`, and a real PDP video on `shop.streamwidgetshop.com` returns **206 video/mp4**. The 121 videos are not dead.
+
+Verified:
+- `npm run build` exit 0.
+- Secret containment measured, not assumed: after a build, `api.resend.com` and `PRIVATE_` appear in `dist/server/index.js` and **nowhere in `dist/client/`**.
+- Both actions exercised against a real dev server. Contact: valid POST 200 with the honest failure banner and a `mailto:` using `%20` not `+`; wrong handle 405. Newsletter at `/?index`: valid 200 honest failure with WELCOME10 inline, honeypot 200 absorbed as success, invalid email 200 with the field error and the typed value retained.
+- SSR HTML confirms the newsletter form emits `action="/?index"`, so it degrades correctly without JS.
+- `npx eslint` on all 5 touched files: 2 errors, both pre-existing and on untouched lines (unescaped apostrophe in "We'll", unused `context` in `loadDeferredData`), plus this repo's standard array-index-key warning. The two new files are clean.
+- No em or en dash in the diff.
+
+A trap that cost time and is worth recording: a **stale dev server from an earlier run was still holding port 3000**, so the first round of newsletter POSTs hit a build that predated the action and returned 405. `lsof -ti:3000` showed a lower PID than the one just started. Check the port owner before believing a 405 from a local server.
+
+Not verified: nothing opened in a browser, and no mail was actually delivered through Resend, because no key exists. The send path is code reviewed, not live tested.
+
+Needs Todd:
+- **Pick an email provider and set two env vars.** Both forms are inert until then and will keep telling visitors they could not send. Admin > Hydrogen > SWS Storefront, Preview and Production: `PRIVATE_RESEND_API_KEY` and `PRIVATE_CONTACT_TO_EMAIL` (optionally `PRIVATE_CONTACT_FROM_EMAIL`, which needs a domain verified with the provider). Resend was chosen because it is a single HTTPS POST with no SDK and works on the Workers runtime; swapping providers is a few lines in one file. **This is a choice, not a done deal, so say if you want a different one.**
+- **The store's contact email is `spacelabsdiy@gmail.com`**, not the `streamwidgetshop@gmail.com` the site advertises in `ContactPage.jsx` and `policyContent.js`. Shopify's own customer mail carries the old Spacelabs identity. Worth fixing in Settings > General regardless of the form work.
+- **A production deploy** for these two commits. Agents cannot answer the confirm prompt.
+- Unchanged: the 4 wrong demo videos need a go-ahead to delete before swapping, the `checkout_completed` pixel, Auny's 5 X pixel IDs (BAT-145), Google Search Console and Merchant Center, the Soul Blade price, and the Sci-Fi Neon rename plus its still-live Etsy listing 4498789564.
+
+Next: apply `docs/COPY-STANDARD.md` to the remaining ~110 products, which also restores a correct badge row on each.
+
+Preview deploy: https://01m288d5z7t8n48kqzdj13pnf6-fb73b5b73c40344d0d20.myshopify.dev
+Commits: `cabe19f`, `ed07a89`.
