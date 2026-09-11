@@ -61,8 +61,14 @@ export function ProductHighlights({description, worksWith}) {
       <ul className="product-highlights-list">
         <li>⚡ Instant digital download after purchase</li>
         <li>🎨 {customizable ? 'Customizable colors & fonts' : 'Ready to use out of the box'}</li>
-        <li>🛠️ Works with OBS Studio via browser source</li>
-        <li>💬 Setup help included if you get stuck</li>
+        {/* Only claimed when OBS is actually in this product's platform list.
+            It used to print on every product regardless, which is the same
+            blanket-claim habit that put YouTube and Kick on a StreamElements
+            only widget. */}
+        {platforms.includes('OBS') && (
+          <li>🛠️ Works with OBS Studio via browser source</li>
+        )}
+        <li>💬 Setup help if you get stuck</li>
       </ul>
     </div>
   );
