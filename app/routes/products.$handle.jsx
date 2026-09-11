@@ -214,7 +214,7 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, description, descriptionHtml} = product;
+  const {title, description, descriptionHtml, worksWith} = product;
   const media = product.media?.nodes ?? [];
   const formattedDescription = formatProductDescription(descriptionHtml, title);
   const kindLabel = widgetKindFromTitle(title);
@@ -318,7 +318,7 @@ export default function Product() {
             price={selectedVariant?.price}
             compareAtPrice={selectedVariant?.compareAtPrice}
           />
-          <ProductHighlights description={description} />
+          <ProductHighlights description={description} worksWith={worksWith?.value} />
           <ProductForm
             productOptions={productOptions}
             selectedVariant={selectedVariant}
@@ -439,6 +439,7 @@ const PRODUCT_FRAGMENT = `#graphql
     handle
     productType
     descriptionHtml
+    worksWith: metafield(namespace: "custom", key: "works_with") { value }
     description
     encodedVariantExistence
     encodedVariantAvailability

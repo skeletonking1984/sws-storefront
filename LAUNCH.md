@@ -535,7 +535,20 @@ Measured across the catalogue: **116 of 131 storefront products carried at least
 
 Fixed: `worksWithPlatforms()` reads the **"Works With" section only**, which is the section `docs/COPY-STANDARD.md` defines for this claim and which was ground-truthed per product against that product's Etsy listing and file manifest. No section means no badges, rather than guessed badges. `ProductHighlights` no longer takes `title` either, since a product named "... for Twitch" was earning a Twitch badge from its name alone.
 
-Verified against live data: the top seller now reads `Twitch, OBS, StreamElements`, matching its FAQ exactly. 21 of 131 products render a badge row; the other 110 render none until their copy is migrated.
+Verified against live data: the top seller now reads `Twitch, OBS, StreamElements`, matching its FAQ exactly.
+
+**Then backfilled the rest the same night, on Todd's "fix all products with this issue".** The claim now lives in a `custom.works_with` product metafield (`list.single_line_text_field`, storefront readable) rather than in prose a later copy edit can silently break. `ProductHighlights` prefers the metafield, falls back to parsing a "Works With" section, and renders nothing when it has neither.
+
+How each product's list was derived, and why not from the obvious sources:
+- **Not** from filenames. The Etsy file manifest gives a clear StreamElements/Streamlabs signal on only 24 of 110; the other 86 are generic (`goalcode.zip`, `hencode.zip`), so deriving from them would have been the same guessing that caused the bug.
+- **Not** from titles. SWS titles are SEO stuffed with platforms the widget does not read.
+- **From each product's own Etsy listing body**, pulled locally through the sibling `sws-etsy-mcp` client, with a platform claimed only when the body ties it to a support verb and does not deny it nearby. Same rule the 2026-09-10 hand pass applied to 18 products, applied to 110.
+
+One refinement the spot check forced: "TikTok Studio" is broadcast software, the TikTok equivalent of OBS, and it appears in nearly every SEO title line. Claiming TikTok off it would imply the widget reads TikTok chat. TikTok is now only claimed when the body says "TikTok chat", which drops it from 2 products to the 2 genuine multistream ones.
+
+Result across the catalogue: **120 of 131 products now carry a truthful badge row** (99 from the metafield, 21 from a Works With section), up from 15 that were even arguably right. Only 3 products claim YouTube and Kick, and all three are genuine multistream products verified by eye against their listing text.
+
+The 11 with no badge row are all products with no mapped Etsy listing, so there is no body to ground-truth against. Ten are unmapped goal widgets; the eleventh is `celestial-stream-kit`, a Shopify-only bundle with no Etsy listing at all, which is worth doing by hand since it is a real seller.
 
 **That tradeoff is the point, and it puts a number on the copy backlog.** An absent badge row costs a little scannability. A wrong one costs a refund and a one star review. Every product moved onto `COPY-STANDARD.md` gets its badge row back, correct, so the remaining ~110 product copy pass is now worth more than it looked.
 

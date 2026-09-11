@@ -2,19 +2,44 @@ import {worksWithPlatforms} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
 
 /**
+ * Reads the `custom.works_with` metafield value, which Shopify stores as a
+ * JSON encoded array of strings for a list.single_line_text_field. Returns
+ * null on anything unexpected so the caller falls through to the description
+ * rather than rendering garbage.
+ * @param {string | null | undefined} raw
+ */
+function parseWorksWith(raw) {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length) return parsed;
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+/**
  * Etsy-style "Highlights" block: platform badges + scannable digital-good
  * facts, shown between the buy box and the long description.
  *
  * Deliberately takes no `title`. The title used to feed platform detection
  * too, which is how a product called "... for Twitch" earned a Twitch badge
  * whether or not the widget reads Twitch chat.
- * @param {{description: string}}
+ *
+ * `worksWith` is the raw value of the `custom.works_with` product metafield,
+ * a JSON array of platform names. It is the preferred source because it is
+ * structured data that a later copy edit cannot silently break, and because
+ * each product's list was derived from that product's own Etsy listing body
+ * rather than from whatever words happen to appear on the page. Products not
+ * yet backfilled fall back to parsing their "Works With" section, and a
+ * product with neither shows no badge row at all, which is the honest
+ * default: a wrong badge costs a refund, a missing one costs a little
+ * scannability.
+ * @param {{description: string, worksWith?: string | null}}
  */
-export function ProductHighlights({description}) {
-  // Only ever from the "Works With" section, never from free text. See
-  // worksWithPlatforms() for why scanning the whole description badged the
-  // top seller with the two platforms its own FAQ says it does not support.
-  const platforms = worksWithPlatforms(description) || [];
+export function ProductHighlights({description, worksWith}) {
+  const platforms = parseWorksWith(worksWith) || worksWithPlatforms(description) || [];
   const customizable = /customi[sz]/i.test(description);
 
   return (
