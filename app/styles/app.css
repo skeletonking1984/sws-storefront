@@ -2109,11 +2109,13 @@ button.reset:hover:not(:has(> *)) {
   margin: 0 0 0.6rem;
 }
 
-.contact-form-mailto-btn {
-  /* This button sits inside .contact-form-error, which sets a pink color, so
-     an <a> in there inherited pink text onto the pink holo gradient and was
-     unreadable. Both the color and the dark sticker border have to be restated
-     rather than inherited. */
+/* Specificity matters here. `.page main a` (0,1,2) sets the cyan accent colour
+   on every link in page content, which beat a plain `.contact-form-mailto-btn`
+   (0,1,0) and painted this button's label cyan on a cyan gradient stop, so the
+   text was invisible. Qualifying with the parent gets to (0,2,1) and wins.
+   `border: none` also has to go, or the button loses the dark sticker outline
+   that makes the primary button legible. */
+.contact-form-error a.contact-form-mailto-btn {
   color: var(--sws-ink);
   border: 3px solid var(--sws-ink);
   cursor: pointer;
