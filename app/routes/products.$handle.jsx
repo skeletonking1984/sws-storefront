@@ -24,6 +24,17 @@ import {FaqAccordion} from '~/components/FaqAccordion';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {formatProductDescription} from '~/lib/productDescription';
 import {buildMeta, getOrigin} from '~/lib/seo';
+import {
+  findVideoMedia,
+  lookupVideoMetadata,
+  pickBestMp4Source,
+} from '~/lib/video';
+// Real Admin-API uploadDate/duration for every Shopify video on the shop,
+// keyed by numeric video id (see the file's own sourceNote). The Storefront
+// API exposes neither field, and Google requires uploadDate on VideoObject,
+// so this is generated once and committed rather than derived at request
+// time.
+import videoMetadata from '~/data/video-metadata.json';
 // Full per-product Etsy review dataset, review text included. SERVER USE
 // ONLY (see scripts/build-etsy-reviews.mjs). This import is only ever
 // referenced from loadCriticalData below, never from the component body,
@@ -233,6 +244,35 @@ function buildReviewJsonLd(productReviews) {
   }));
 }
 
+/**
+ * Builds the VideoObject JSON-LD for a product's demo video. Returns
+ * `undefined` (emitting no VideoObject at all) whenever any required field
+ * is missing: `video-metadata.json` has no entry for this video's id, there
+ * is no mp4 source, or there is no preview image. A wrong or guessed
+ * `uploadDate` is worse than no VideoObject, so nothing here is ever
+ * substituted or invented.
+ * @param {{title: string, videoMedia: any, meta: {uploadDate: string, duration: string} | undefined}}
+ */
+function buildVideoJsonLd({title, videoMedia, meta}) {
+  if (!meta) return undefined;
+  const contentUrl = pickBestMp4Source(videoMedia?.sources)?.url;
+  const thumbnailUrl = videoMedia?.previewImage?.url;
+  if (!contentUrl || !thumbnailUrl) return undefined;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    // Real alt text on the Shopify video ("Animated Star Goal Widget
+    // demo") when present; otherwise a plain factual name derived from the
+    // product title, never invented marketing copy.
+    name: videoMedia.alt || `${title} demo video`,
+    description: `A demo video of the ${title} running on stream.`,
+    thumbnailUrl,
+    uploadDate: meta.uploadDate,
+    duration: meta.duration,
+    contentUrl,
+  };
+}
+
 export default function Product() {
   /** @type {LoaderReturnData} */
   const {product, relatedProducts, faq, productReviews} = useLoaderData();
@@ -352,6 +392,14 @@ export default function Product() {
     ...(reviewJsonLd ? {review: reviewJsonLd} : {}),
   };
 
+  const videoMedia = findVideoMedia(media);
+  const videoMeta = videoMedia
+    ? lookupVideoMetadata(videoMetadata, videoMedia.id)
+    : undefined;
+  const videoJsonLd = videoMedia
+    ? buildVideoJsonLd({title, videoMedia, meta: videoMeta})
+    : undefined;
+
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -381,6 +429,14 @@ export default function Product() {
           __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, '\\u003c'),
         }}
       />
+      {videoJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(videoJsonLd).replace(/</g, '\\u003c'),
+          }}
+        />
+      )}
       <div className="product-top">
         <ProductGallery media={media} />
         <div className="product-main sws-glass-card">
@@ -546,12 +602,16 @@ const PRODUCT_FRAGMENT = `#graphql
         }
         ... on Video {
           id
+          alt
           previewImage {
             url
           }
           sources {
             url
             mimeType
+            format
+            width
+            height
           }
         }
       }
