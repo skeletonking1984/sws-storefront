@@ -3,12 +3,13 @@
  *
  * Shop Pay (shop.app checkout) is documented to not reliably fire
  * `checkout_completed` for guest/Shop Pay fast-path checkouts, and even
- * when it does fire, the Admin custom pixel described in
- * docs/checkout-purchase-pixel.md can lose attribution if the buyer ends up
- * on a host that cannot see the storefront's `_ga` cookie. This route
- * receives Shopify's `orders/create` webhook and sends a GA4 Measurement
- * Protocol `purchase` event directly, so revenue lands in GA4 regardless of
- * what happened in the browser.
+ * when it does fire, an Admin custom pixel can lose attribution if the
+ * buyer ends up on a host that cannot see the storefront's `_ga` cookie.
+ * This route receives Shopify's `orders/create` webhook and fans the order
+ * out to every registered conversion destination (see
+ * app/lib/conversions/index.server.js) so revenue lands wherever it needs
+ * to regardless of what happened in the browser. See
+ * docs/conversion-tracking.md for the full standard this implements.
  *
  * Resource route: no default export (see app/routes/[robots.txt].jsx for
  * the same pattern). Everything happens in `action`; `loader` exists only
@@ -22,11 +23,7 @@
  * both this and the Admin custom pixel on at once.
  */
 
-const GA4_ENDPOINT = 'https://www.google-analytics.com/mp/collect';
-// Same hard ceiling app/lib/notify.server.js uses on its own outbound
-// fetches: a slow third party must never hang this handler, and Shopify
-// must always get its 200 quickly regardless of how GA4 is behaving.
-const SEND_TIMEOUT_MS = 8000;
+import {destinations} from '~/lib/conversions/index.server';
 
 export function loader() {
   return new Response('Method Not Allowed', {status: 405});
@@ -71,100 +68,72 @@ export async function action({request, context}) {
     return new Response('OK', {status: 200});
   }
 
-  const measurementId = context.env?.PUBLIC_GA4_MEASUREMENT_ID;
-  const apiSecret = context.env?.PRIVATE_GA4_API_SECRET;
-  if (!measurementId || !apiSecret) {
-    // GA4 not configured. Ack the webhook, send nothing.
-    return new Response('OK', {status: 200});
-  }
-
   const orderId = String(order.id);
   const noteAttributes = Array.isArray(order.note_attributes)
     ? order.note_attributes
     : [];
-  const relayedClientId = noteAttributes.find(
-    (attr) => attr && attr.name === '_ga_client_id',
-  )?.value;
+  // Every click id captured on the storefront (see
+  // app/lib/clickIds.server.js) that made it onto the cart as an attribute
+  // rides along on the order as a note_attribute with the same key. Read
+  // them all once here, keyed the same way, so every destination below
+  // gets the same map rather than each re-parsing note_attributes itself.
+  const clickIds = Object.fromEntries(
+    noteAttributes
+      .filter((attr) => attr && attr.name && attr.value)
+      .map((attr) => [attr.name, attr.value]),
+  );
 
-  // Deterministic fallback keyed on the order id, never random: Shopify
-  // redelivers webhooks on retry, and a random client_id per delivery
-  // would split one order across multiple GA4 users. This trades
-  // attribution (the purchase will not join the buyer's earlier browsing
-  // session) for at least counting the revenue.
-  const clientId = relayedClientId || `webhook.${orderId}`;
+  // Shared across every destination for this order. Lets a platform dedupe
+  // a server-sent event against a browser pixel event for the same
+  // purchase, should one ever also fire. See docs/conversion-tracking.md,
+  // "eventId for deduplication".
+  const eventId = `order_${orderId}`;
 
-  const lineItems = Array.isArray(order.line_items) ? order.line_items : [];
-  const items = lineItems.map((lineItem) => ({
-    item_id:
-      lineItem.product_id !== undefined
-        ? String(lineItem.product_id)
-        : undefined,
-    item_variant:
-      lineItem.variant_id !== undefined
-        ? String(lineItem.variant_id)
-        : undefined,
-    item_name: lineItem.title,
-    price: lineItem.price !== undefined ? Number(lineItem.price) : undefined,
-    quantity: lineItem.quantity,
-  }));
+  // Fan out to every registered destination (see
+  // app/lib/conversions/index.server.js), isolating each one: a
+  // destination that throws, times out, or was never configured must never
+  // stop another destination from sending, and must never fail this
+  // webhook. Promise.allSettled, not a for-loop with try/catch per
+  // iteration, so all sends race in parallel rather than queuing behind a
+  // slow one.
+  const results = await Promise.allSettled(
+    destinations.map(async (destination) => {
+      if (!destination.isConfigured(context.env)) {
+        return {id: destination.id, ok: false, reason: 'not_configured'};
+      }
+      const result = await destination.sendPurchase({
+        env: context.env,
+        order,
+        clickIds,
+        eventId,
+      });
+      return {id: destination.id, ...result};
+    }),
+  );
 
-  const discountCodes = Array.isArray(order.discount_codes)
-    ? order.discount_codes
-    : [];
-  const coupon = discountCodes
-    .map((discount) => discount?.code)
-    .filter(Boolean)
-    .join(', ');
-
-  const payload = {
-    client_id: clientId,
-    events: [
-      {
-        name: 'purchase',
-        params: {
-          // Same field the Admin custom pixel uses (see
-          // docs/checkout-purchase-pixel.md), so if both ever run at once
-          // the two hits at least collide on this for manual cleanup.
-          transaction_id: orderId,
-          value:
-            order.total_price !== undefined
-              ? Number(order.total_price)
-              : undefined,
-          currency: order.currency,
-          tax: order.total_tax !== undefined ? Number(order.total_tax) : 0,
-          discount:
-            order.total_discounts !== undefined
-              ? Number(order.total_discounts)
-              : 0,
-          coupon: coupon || undefined,
-          items,
-        },
-      },
-    ],
-  };
-
-  let sendOk = false;
-  try {
-    const response = await fetch(
-      `${GA4_ENDPOINT}?measurement_id=${encodeURIComponent(
-        measurementId,
-      )}&api_secret=${encodeURIComponent(apiSecret)}`,
-      {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(SEND_TIMEOUT_MS),
-      },
-    );
-    sendOk = response.ok;
-  } catch {
-    sendOk = false;
+  // Never log the order body, customer data, or any API secret. Order id
+  // and a per-destination outcome is enough to debug delivery.
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      const {id: destinationId, ok, reason} = result.value;
+      console.error(
+        `webhooks.orders: order ${orderId} ${destinationId} ${
+          ok ? 'ok' : `failed${reason ? ` (${reason})` : ''}`
+        }`,
+      );
+    } else {
+      // A destination is only supposed to reach here if it threw instead
+      // of returning {ok: false}, which every destination's own interface
+      // contract says it must not do -- logged loudly because it means a
+      // destination module has a bug, not that a third party is down.
+      console.error(
+        `webhooks.orders: order ${orderId} a destination threw unexpectedly`,
+        result.reason,
+      );
+    }
   }
 
-  // Never log the order body, customer data, or the API secret. Order id
-  // and a success boolean is enough to debug delivery.
-  console.error(`webhooks.orders: order ${orderId} GA4 send ${sendOk ? 'ok' : 'failed'}`);
-
-  // Always 200 on a verified receive, even when the GA4 send itself
+  // Always 200 on a verified receive, even when every destination send
   // failed, so Shopify never retry-storms this endpoint over an upstream
   // analytics outage.
   return new Response('OK', {status: 200});
