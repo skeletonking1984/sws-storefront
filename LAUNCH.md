@@ -32,7 +32,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 ### Catalog
 - [ ] Top 15 mapped to Shopify products, ACTIVE, price = Etsy price, images = Etsy images, description normalized, in Top Widgets collection (sorted by revenue)
 - [ ] Duplicates archived (keep one active per Etsy listing)
-- [ ] Every active product: title, image, price, product type, Chat/Goal tag correct
+- [x] Every active product: title, image, price, product type, Chat/Goal tag correct (`node scripts/audit-catalog.mjs` exits 0: 131 storefront products, 0 issues, 2026-09-10)
 - [ ] Digital download delivery verified end to end (order -> file)
 ### Storefront (Hydrogen)
 - [x] Pending work committed + deployed
@@ -478,3 +478,54 @@ What still blocks an agent-driven fix: the app renders in a cross-origin iframe.
 So the honest position: the audit is a two minute job for a human in that UI and currently not completable by this tooling. In the app, Sort by assets, or the "Filter digital files" control, surfaces the zero-file products immediately.
 
 Do not re-run the API probe. Do go look at the UI.
+
+#### The Etsy map was wrong in four places, and the proof was sitting in the filenames 2026-09-10 (night)
+Metrics (2026-09-10, day not closed): 30 sessions, 2 add to cart, 2 reached checkout, 0 completed, 0 orders, $0 net sales. Sep 9 was 23 / 2 / 3 / 0. Still all on the OLD Energy theme, not the Hydrogen build.
+
+Shipped: **`data/etsy-video-map.json` rebuilt from image identity instead of title similarity, and the 15 products that unlocked now carry their demo video. 106 of 131 products had video, 121 do.**
+
+The map is not a video lookup table, it is the join that decides which customer reviews appear on which product page, so a wrong row is fake social proof by accident. The 2026-09-10 second pass found one bad pair and left 16 no-overlap rows unresolved with a method written down but not run. Run properly, the method is `scripts/audit-etsy-mapping.mjs`.
+
+The discriminating test is a CROSS match, not a self match. Both sides expose the same numeric Etsy CDN id, because Shopify keeps the original `il_fullxfull.<ID>_xxxx.jpg` filename behind a hash prefix. A row with no self overlap is only mispaired when some OTHER active listing currently serves that product's exact ids. Otherwise the listing's photos were simply refreshed on Etsy after the Shopify import and the pairing is fine.
+
+Result across all 186 active listings and all 131 storefront products:
+- **108 rows confirmed** by direct id overlap.
+- **13 stale photos**, no overlap in either direction, left untouched. That is the benign mode, and reading it as damage is what overstated the problem last time.
+- **4 mispaired**, up from the 1 previously known. Not a swap, as assumed: three of the four are one-directional chains.
+- **1 ambiguous** listing (1806978669) whose art appears on two Shopify products, which means a duplicate product, not a bad row. Left alone.
+
+The four, each proven by an exact id match against a different listing's current images:
+
+| Shopify product | was mapped to | actually is |
+|---|---|---|
+| celestial-butterfly | 1706402816 | 4339053159 Butterfly Chat Widget (x10 ids) |
+| sakura-butterfly | 4339053159 | 4336747713 Floral Pastel Chat Widget (x10) |
+| broken-heart-bar | 1785508867 | 1902602881 Broken Heart Goal Widget (x4) |
+| pastel chat bubble | 4459400046 | 4341725255 Pastel Glow Chat Widget (x5) |
+
+`--apply` rewrote the map from that proof: 2 rows corrected, **19 listings paired for the first time** (title matching had never matched them at all), 2 rows unmapped because their product provably belongs to someone else. Unmapping drops those reviews rather than moving them to a page they were not written about. New rows carry `confidence: image_verified`, a tier `build-etsy-reviews.mjs` now trusts, because byte identical image ids beat every inference-based tier already in that list.
+
+An order-of-operations trap worth recording: a row can be unmapped by one proven pair and then mapped by its own a few iterations later, so classifying a change against the live object reports the same row as both a delete and an add. The apply step snapshots the starting state and classifies against that.
+
+**Reviews rebuilt: 791 real reviews across 98 products, up from 727 across 83.** No product lost a review. 15 products got their first ones, among them Bulbasaur 21, Butterfly Galaxy 7, Pikachu 7, Star Bottle Glass 6, Eevee 6.
+
+**Then the 15 newly paired products got their Etsy demo clip**, additive only, nothing deleted. Staged in two batches of 8 and 7, every target created immediately before its bytes went up and every one consumed, so no abandoned reservations against the 250 cap. Video moved to media index 1 on each, per the ordering lesson from this morning, or it lands last and is invisible.
+
+Verified:
+- `node scripts/audit-etsy-mapping.mjs` after the rewrite: 121 mapped rows, 108 confirmed, 13 stale photos, **0 mispaired**.
+- Storefront API sweep: 131 products, 121 carry a VIDEO node, **all 121 at media index 0 or 1**, none buried.
+- Admin API: `media_type:VIDEO AND status:PROCESSING` returns 0, `status:FAILED` returns 0. All 15 new clips READY.
+- `node scripts/audit-catalog.mjs` exit 0 (131 products, 0 issues), `node scripts/audit-shipping.mjs` exit 0.
+- `npm run build` exit 0. `npx eslint` on both touched scripts: 0 errors, only this repo's standard no-console warnings.
+- Review diff computed against the committed file, not asserted: 0 products lost reviews, 15 gained, 0 counts changed.
+
+Not verified: nothing was opened in a browser. Dev servers and browser tools are blocked in an unattended run, and both the Oxygen preview and production URLs sit behind Shopify OAuth, so no rendered page could be fetched from here.
+
+Needs Todd:
+- **Go-ahead to swap 4 wrong demo videos.** Each of the four mispaired products is currently playing a different widget's clip, which is worse than no clip. Fixing it means deleting the wrong video first, and a delete is his call. The replacements are already identified in the table above. This is now 4 products, not the 2 reported this morning.
+- Everything else on the list is unchanged: **the DNS cutover**, **the digital files** (17 of 19 staged at `~/Desktop/SWS-Shopify-Uploads/`), the two Hydrogen env vars (`PUBLIC_GA4_MEASUREMENT_ID`, `PUBLIC_CHECKOUT_DOMAIN`), the `checkout_completed` pixel, Auny's 5 X pixel IDs (BAT-145), Google Search Console and Merchant Center, and the Soul Blade price.
+
+Next: apply `docs/COPY-STANDARD.md` to the remaining catalog beyond the 18 launch-set products, since the catalog's structural data is now clean and copy is the last thing standing between the storefront and an ads launch.
+
+Preview deploy: https://01m271dhd8afwfya6h8kdgcdg2-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `72175c5`.
