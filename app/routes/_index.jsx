@@ -11,6 +11,7 @@ import {SHOP_RATING} from '~/components/EtsyReviews';
 import etsyReviews from '~/data/etsy-reviews.json';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {EmailCapture} from '~/components/EmailCapture';
+import {HappyClients} from '~/components/HappyClients';
 import {SOCIALS} from '~/components/SocialLinks';
 import {useVariantUrl} from '~/lib/variants';
 import {buildMeta, getOrigin} from '~/lib/seo';
@@ -187,6 +188,7 @@ export default function Homepage() {
       />
       <WorksWithStrip />
       <ReviewsSection homeReviews={data.homeReviews} />
+      <HappyClients />
       <CustomCommissionCallout />
       <EmailCapture />
     </div>

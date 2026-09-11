@@ -4409,3 +4409,127 @@ button.reset:hover:not(:has(> *)) {
   font-size: 0.9rem;
   line-height: 1.5;
 }
+
+/*
+* --------------------------------------------------
+* components/HappyClients
+* --------------------------------------------------
+*/
+.happy-clients {
+  padding: 3rem 1.5rem 1rem;
+  text-align: center;
+}
+
+.happy-clients h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  margin: 0 0 0.35rem;
+}
+
+.happy-clients-sub {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  margin: 0 auto 2rem;
+  max-width: 34ch;
+}
+
+/* Wrapping grid, never a scroller. The old theme put these on a slider with
+   a visible scrollbar, which hid most of the faces on every viewport. */
+.happy-clients-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 1.25rem;
+  justify-content: center;
+  list-style: none;
+  margin: 0 auto;
+  max-width: 900px;
+  padding: 0;
+}
+
+.happy-clients-link {
+  align-items: center;
+  color: var(--sws-sub);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-decoration: none;
+  width: 6.5rem;
+}
+
+/* The holo ring is a gradient border drawn as padding behind the avatar, so
+   the image itself is never tinted. */
+.happy-clients-ring {
+  background: linear-gradient(
+    135deg,
+    var(--sws-holo-1),
+    var(--sws-holo-2),
+    var(--sws-holo-3)
+  );
+  border-radius: 50%;
+  display: block;
+  padding: 2px;
+  position: relative;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.happy-clients-ring img {
+  border-radius: 50%;
+  display: block;
+  height: 84px;
+  object-fit: cover;
+  width: 84px;
+}
+
+.happy-clients-clip {
+  background: var(--sws-bg);
+  border: 1px solid var(--sws-holo-2);
+  border-radius: 50%;
+  bottom: -2px;
+  color: var(--sws-holo-2);
+  font-size: 0.6rem;
+  height: 1.4rem;
+  line-height: 1.3rem;
+  position: absolute;
+  right: -2px;
+  width: 1.4rem;
+}
+
+.happy-clients-handle {
+  font-size: 0.78rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.happy-clients-note {
+  color: var(--sws-holo-2);
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+.happy-clients-link:hover .happy-clients-ring,
+.happy-clients-link:focus-visible .happy-clients-ring {
+  filter: drop-shadow(0 0 12px rgba(242, 166, 216, 0.55));
+  transform: translateY(-4px);
+}
+
+.happy-clients-link:hover .happy-clients-handle,
+.happy-clients-link:focus-visible .happy-clients-handle {
+  color: var(--sws-text);
+}
+
+.happy-clients-link:focus-visible {
+  border-radius: 12px;
+  outline: 2px solid var(--sws-holo-2);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .happy-clients-ring {
+    transition: none;
+  }
+
+  .happy-clients-link:hover .happy-clients-ring,
+  .happy-clients-link:focus-visible .happy-clients-ring {
+    transform: none;
+  }
+}
