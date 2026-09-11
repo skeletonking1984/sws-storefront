@@ -2103,7 +2103,32 @@ button.reset:hover:not(:has(> *)) {
 .contact-form-error {
   color: var(--sws-accent-1);
   font-size: 0.85rem;
+}
+
+.contact-form-error p {
+  margin: 0 0 0.6rem;
+}
+
+.contact-form-mailto-btn {
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.contact-form-field-error {
+  color: var(--sws-accent-1);
+  font-size: 0.8rem;
   margin: 0;
+}
+
+.contact-form-honeypot {
+  height: 1px;
+  left: -9999px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
 }
 
 .contact-form-success {

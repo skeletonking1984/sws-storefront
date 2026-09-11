@@ -1,53 +1,35 @@
-import {useState} from 'react';
-import {Link} from 'react-router';
+import {Form, Link, useActionData, useNavigation} from 'react-router';
 
 const SUPPORT_EMAIL = 'streamwidgetshop@gmail.com';
-
-// Shopify's built-in contact-form endpoint, matched to the exact field
-// names used by the live theme's own contact form (verified by inspecting
-// the real form at streamwidgetshop.com/pages/contact) and posted to the
-// canonical custom domain, the myshopify.com subdomain silently drops
-// submissions. Posted via fetch(no-cors) so the visitor stays on our
-// branded page instead of bouncing to another domain.
-const STORE_DOMAIN = 'streamwidgetshop.com';
 
 /**
  * The Shopify "Contact" page has no body content configured, so this
  * renders a real, working contact experience instead of a blank page.
+ * Submits to this route's own server side `action` (see
+ * `app/routes/pages.$handle.jsx`) so the message actually gets sent.
+ *
+ * Uses `Form` + `useActionData()` rather than `useFetcher()`/`fetcher.Form`.
+ * Verified with curl (a true no-JS client): a fetcher's result only reaches
+ * the browser through the client-side hydration stream, so a no-JS POST
+ * re-rendered the idle form with no success or error shown even though the
+ * action ran correctly. `useActionData()` puts the result straight into the
+ * server rendered HTML for the request that submitted it, so it actually
+ * works without JS. `useNavigation()` still gives a real pending state once
+ * JS is on.
  */
 export function ContactPage() {
-  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const result = useActionData();
+  const navigation = useNavigation();
+  const sending = navigation.state !== 'idle';
+  const sent = result?.ok === true;
+  const values = result?.values || {};
+  const fieldErrors = result?.fieldErrors || {};
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const data = new FormData(form);
-
-    setStatus('sending');
-    try {
-      const body = new URLSearchParams();
-      body.set('form_type', 'contact');
-      body.set('utf8', '✓');
-      body.set('contact[First name]', data.get('name'));
-      body.set('contact[email]', data.get('email'));
-      body.set('contact[Phone number]', '');
-      body.set('contact[Comment]', data.get('message'));
-
-      // no-cors: we can't read the response, but the request still reaches
-      // Shopify's server and gets processed, this is the standard pattern
-      // for posting to Shopify's contact endpoint from off-domain.
-      await fetch(`https://${STORE_DOMAIN}/contact`, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body,
-      });
-      setStatus('sent');
-      form.reset();
-    } catch {
-      setStatus('error');
-    }
-  }
+  const mailtoHref =
+    result?.ok === false &&
+    (result.reason === 'not_configured' || result.reason === 'send_failed')
+      ? buildMailtoHref(values)
+      : null;
 
   return (
     <div className="contact-page">
@@ -56,7 +38,7 @@ export function ContactPage() {
         custom? We respond within 4 hours.
       </p>
 
-      {status === 'sent' ? (
+      {sent ? (
         <div className="contact-form-success">
           <h3>Message sent!</h3>
           <p>
@@ -66,33 +48,83 @@ export function ContactPage() {
           </p>
         </div>
       ) : (
-        <form className="contact-form" onSubmit={handleSubmit}>
+        <Form className="contact-form" method="post">
           <div className="contact-form-row">
             <label htmlFor="contact-name">Name</label>
-            <input id="contact-name" name="name" type="text" required />
+            <input
+              id="contact-name"
+              name="name"
+              type="text"
+              defaultValue={values.name}
+              required
+            />
+            {fieldErrors.name && (
+              <p className="contact-form-field-error">{fieldErrors.name}</p>
+            )}
           </div>
           <div className="contact-form-row">
             <label htmlFor="contact-email">Email</label>
-            <input id="contact-email" name="email" type="email" required />
+            <input
+              id="contact-email"
+              name="email"
+              type="email"
+              defaultValue={values.email}
+              required
+            />
+            {fieldErrors.email && (
+              <p className="contact-form-field-error">{fieldErrors.email}</p>
+            )}
           </div>
           <div className="contact-form-row">
             <label htmlFor="contact-message">Message</label>
-            <textarea id="contact-message" name="message" rows={5} required />
+            <textarea
+              id="contact-message"
+              name="message"
+              rows={5}
+              defaultValue={values.message}
+              required
+            />
+            {fieldErrors.message && (
+              <p className="contact-form-field-error">
+                {fieldErrors.message}
+              </p>
+            )}
+          </div>
+          <div className="contact-form-honeypot" aria-hidden="true">
+            <label htmlFor="contact-company">Company</label>
+            <input
+              id="contact-company"
+              name="company"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+            />
           </div>
           <button
             type="submit"
             className="sws-btn sws-btn-primary"
-            disabled={status === 'sending'}
+            disabled={sending}
           >
-            {status === 'sending' ? 'Sending...' : 'Send message'}
+            {sending ? 'Sending...' : 'Send message'}
           </button>
-          {status === 'error' && (
-            <p className="contact-form-error">
-              Something went wrong. Email us directly at{' '}
-              <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> instead.
-            </p>
+
+          {result?.ok === false && result.reason !== 'invalid' && (
+            <div className="contact-form-error">
+              <p>
+                We could not send that just now. Please try again, or send it
+                straight from your own email app instead:
+              </p>
+              {mailtoHref && (
+                <a
+                  href={mailtoHref}
+                  className="sws-btn sws-btn-primary contact-form-mailto-btn"
+                >
+                  Send it from your email app instead
+                </a>
+              )}
+            </div>
           )}
-        </form>
+        </Form>
       )}
 
       <p className="contact-alt-email">
@@ -116,4 +148,15 @@ export function ContactPage() {
       </div>
     </div>
   );
+}
+
+function buildMailtoHref(values) {
+  const name = values?.name || '';
+  const message = values?.message || '';
+  const subject = `Question from ${name}`;
+  const params = new URLSearchParams({
+    subject,
+    body: message,
+  });
+  return `mailto:${SUPPORT_EMAIL}?${params.toString()}`;
 }

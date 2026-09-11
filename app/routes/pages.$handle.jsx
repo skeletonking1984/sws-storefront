@@ -1,4 +1,4 @@
-import {useLoaderData} from 'react-router';
+import {data, useLoaderData} from 'react-router';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {FaqAccordion} from '~/components/FaqAccordion';
 import {HowItWorksSteps} from '~/components/HowItWorksSteps';
@@ -77,6 +77,92 @@ async function loadCriticalData({context, request, params}) {
  */
 function loadDeferredData({context}) {
   return {};
+}
+
+const CONTACT_MESSAGE_MAX_LENGTH = 5000;
+
+/**
+ * Server side handler for the contact page form. Only the `contact` handle
+ * accepts a POST, everything else 405s. Validates input, absorbs bot
+ * submissions via a honeypot, and sends real email through Resend when the
+ * env vars are configured. Never throws, never claims a send that did not
+ * happen.
+ * @param {Route.ActionArgs} args
+ */
+export async function action({request, context, params}) {
+  if (params.handle !== 'contact') {
+    return data({ok: false, reason: 'not_found'}, {status: 405});
+  }
+
+  if (request.method !== 'POST') {
+    return data({ok: false, reason: 'method_not_allowed'}, {status: 405});
+  }
+
+  const form = await request.formData();
+  const name = (form.get('name') || '').toString().trim();
+  const email = (form.get('email') || '').toString().trim();
+  const message = (form.get('message') || '').toString().trim();
+  const company = (form.get('company') || '').toString().trim();
+
+  const values = {name, email, message};
+
+  // Honeypot: bots fill every field including the hidden one. Silently
+  // absorb it and report success so the bot moves on.
+  if (company) {
+    return {ok: true};
+  }
+
+  const fieldErrors = {};
+  if (!name) fieldErrors.name = 'Enter your name.';
+  if (!email) {
+    fieldErrors.email = 'Enter your email.';
+  } else if (!email.includes('@')) {
+    fieldErrors.email = 'Enter a valid email.';
+  }
+  if (!message) {
+    fieldErrors.message = 'Enter a message.';
+  } else if (message.length > CONTACT_MESSAGE_MAX_LENGTH) {
+    fieldErrors.message = `Message must be ${CONTACT_MESSAGE_MAX_LENGTH} characters or fewer.`;
+  }
+
+  if (Object.keys(fieldErrors).length > 0) {
+    return {ok: false, reason: 'invalid', fieldErrors, values};
+  }
+
+  const {
+    PRIVATE_RESEND_API_KEY,
+    PRIVATE_CONTACT_TO_EMAIL,
+    PRIVATE_CONTACT_FROM_EMAIL,
+  } = context.env;
+
+  if (!PRIVATE_RESEND_API_KEY || !PRIVATE_CONTACT_TO_EMAIL) {
+    return {ok: false, reason: 'not_configured', values};
+  }
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${PRIVATE_RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: PRIVATE_CONTACT_FROM_EMAIL || 'onboarding@resend.dev',
+        to: PRIVATE_CONTACT_TO_EMAIL,
+        reply_to: email,
+        subject: `SWS contact form: ${name}`,
+        text: message,
+      }),
+    });
+
+    if (!response.ok) {
+      return {ok: false, reason: 'send_failed', values};
+    }
+
+    return {ok: true};
+  } catch {
+    return {ok: false, reason: 'send_failed', values};
+  }
 }
 
 export default function Page() {
