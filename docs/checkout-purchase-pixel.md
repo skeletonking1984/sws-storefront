@@ -375,3 +375,25 @@ analytics.subscribe('checkout_completed', (event) => {
 
 A $0 order still fires `purchase` with `value: 0`, which proves the wiring even
 though it moves no revenue.
+
+## Server-side webhook + Admin custom pixel: do not run both unmanaged
+
+A second, independent purchase path now exists: `app/routes/webhooks.orders.jsx`
+receives Shopify's `orders/create` webhook and sends its own GA4 Measurement
+Protocol `purchase` event. It exists because Shop Pay (shop.app checkout) is
+documented to not reliably fire `checkout_completed` for guest/Shop Pay
+fast-path checkouts, which the Admin custom pixel above depends on entirely.
+
+Once this webhook is live and registered in Shopify (`orders/create` topic
+pointed at `/webhooks/orders` on the production domain, not done as part of
+building the route, Todd registers it), the Admin custom pixel described
+earlier in this doc MUST be DISCONNECTED. They must never both run against
+the same GA4 measurement id at the same time. GA4 does not reliably dedupe
+`purchase` events on `transaction_id` alone: real dedup needs either the
+same `client_id` plus the same event within GA4's own dedup window, or
+manual filtering after the fact, and neither is guaranteed here.
+
+Both paths already use the Shopify order id as `transaction_id`, so if
+someone does run both briefly, at least the two hits collide on that field
+for later manual cleanup and investigation. That is a fallback for spotting
+the overlap, not a fix for it.
