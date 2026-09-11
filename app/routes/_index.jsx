@@ -14,7 +14,7 @@ import {EmailCapture} from '~/components/EmailCapture';
 import {HappyClients} from '~/components/HappyClients';
 import {SOCIALS} from '~/components/SocialLinks';
 import {useVariantUrl} from '~/lib/variants';
-import {buildMeta, getOrigin} from '~/lib/seo';
+import {absoluteAsset, buildMeta, getOrigin} from '~/lib/seo';
 import {
   OVERLAY_FEATURED_HANDLES,
   VIBES,
@@ -167,7 +167,7 @@ export default function Homepage() {
     '@type': 'Organization',
     name: 'Stream Widget Shop',
     url: origin,
-    logo: `${origin}${logo}`,
+    logo: absoluteAsset(origin, logo),
     sameAs: SOCIALS.map((social) => social.href),
   };
 

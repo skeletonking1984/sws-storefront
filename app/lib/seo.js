@@ -22,6 +22,26 @@ export function getOrigin(matches) {
 }
 
 /**
+ * Turn a Vite asset import into an absolute URL, without double-prefixing.
+ *
+ * The trap: in dev, Vite hands back a root-relative path (`/assets/og-image
+ * -<hash>.jpg`) and the origin has to be prepended. On Oxygen it hands back
+ * a FULL absolute Shopify CDN URL, and prepending the origin then produces
+ * `https://streamwidgetshop.comhttps://cdn.shopify.com/...`, which is a
+ * valid-looking string and a dead link. It shipped that way to production on
+ * 2026-09-10 and every shared link rendered with no thumbnail.
+ *
+ * Anything already absolute is returned untouched.
+ *
+ * @param {string} origin
+ * @param {string} asset
+ */
+export function absoluteAsset(origin, asset) {
+  if (!asset) return asset;
+  return /^https?:\/\//.test(asset) ? asset : `${origin}${asset}`;
+}
+
+/**
  * Builds the shared React Router meta descriptor array for a route: title,
  * description, canonical link, Open Graph tags, and Twitter Card tags.
  *
@@ -50,7 +70,7 @@ export function buildMeta({
   noIndex = false,
 }) {
   const origin = new URL(url).origin;
-  const ogImage = image || `${origin}${ogImageAsset}`;
+  const ogImage = image || absoluteAsset(origin, ogImageAsset);
 
   const tags = [
     {title},

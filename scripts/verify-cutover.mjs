@@ -44,8 +44,29 @@ check('Happy clients section', /happy-clients/.test(home.body),
 // 4. SEO tags must name the live host, never a preview or myshopify host.
 const canonical = (home.body.match(/rel="canonical"\s+href="([^"]+)"/) || [])[1] || '';
 const og = (home.body.match(/property="og:image"\s+content="([^"]+)"/) || [])[1] || '';
-check('canonical host', canonical.startsWith(ORIGIN), canonical || 'no canonical');
-check('og:image host', og.startsWith(ORIGIN), og || 'no og:image');
+
+/**
+ * A "starts with the origin" test is not enough, and passing a broken value
+ * is exactly how this script certified a live bug on 2026-09-10: the
+ * og:image read `https://streamwidgetshop.comhttps://cdn.shopify.com/...`,
+ * which starts with the origin and is a dead link. Parse it, and reject any
+ * value carrying a second scheme.
+ */
+function wellFormedUrl(value, {sameHostAs} = {}) {
+  if (!value) return false;
+  if (value.slice(8).includes('://')) return false;
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    return false;
+  }
+  if (sameHostAs && parsed.host !== new URL(sameHostAs).host) return false;
+  return true;
+}
+
+check('canonical url', wellFormedUrl(canonical, {sameHostAs: ORIGIN}), canonical || 'no canonical');
+check('og:image url', wellFormedUrl(og), og || 'no og:image');
 
 // 5. GA4 only fires if the Oxygen env var survived the deploy.
 check('GA4 tag', /G-X0978HDVTK/.test(home.body),
