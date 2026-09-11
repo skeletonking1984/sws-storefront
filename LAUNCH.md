@@ -546,7 +546,17 @@ How each product's list was derived, and why not from the obvious sources:
 
 One refinement the spot check forced: "TikTok Studio" is broadcast software, the TikTok equivalent of OBS, and it appears in nearly every SEO title line. Claiming TikTok off it would imply the widget reads TikTok chat. TikTok is now only claimed when the body says "TikTok chat", which drops it from 2 products to the 2 genuine multistream ones.
 
-Result across the catalogue: **120 of 131 products now carry a truthful badge row** (99 from the metafield, 21 from a Works With section), up from 15 that were even arguably right. Only 3 products claim YouTube and Kick, and all three are genuine multistream products verified by eye against their listing text.
+Result across the catalogue: **120 of 131 products now carry a truthful badge row** (99 from the metafield, 21 from a Works With section), up from 15 that were even arguably right. **Todd then challenged one of them, and was right, which found a weakness in the method.** He asked whether Sci-Fi Neon is really multistream. Its Etsy body says "designed for Twitch, Kick, YouTube, OBS Studio, and Streamlabs", so the body rule claimed all of them. Its actual shipped code is `css.txt / data.txt / fields.txt / html.txt / js.txt`, the StreamElements custom widget structure, with **zero** references to Kick, YouTube, Streamlabs, tmi.twitch or any socket. It shows whatever StreamElements is connected to and pulls no Kick or YouTube chat itself. Corrected to Twitch, OBS, Streamlabs, StreamElements.
+
+So **the listing body inherits marketing the code does not support**, and it is a weaker source than it looked. The strongest source is the widget code, and a lot of it is on this machine: 114 zips across `~/Desktop/SWS-Shopify-Uploads/`, `~/Desktop/SWS-EMPTY-14/` and `content/catalog/*/files/`, matched to listings by exact filename against the Etsy manifest. That covers 37 listings, and the signals are cached in `data/widget-code-signals.json`.
+
+Reconciled all 37 against their claims: **exactly one over-claimed**, the one Todd spotted. The body rule held everywhere else it could be checked.
+
+Every remaining YouTube/Kick claim in the catalogue is now code-verified: Spooky Stream Kit, Multistream Chat Pack, Multistream Chat Widget and Neon Multistream all carry real Kick, YouTube and TikTok references in their shipped code.
+
+Streamlabs was deliberately NOT stripped where the code lacks it (25 of 37). Unlike a Kick chat claim, "works in Streamlabs" is a browser-source claim, and these listings' own install instructions say to add the widget as a browser source in OBS or Streamlabs. That is plausible and it is Todd's own wording.
+
+**Known limit, stated plainly:** only 37 of 131 products can be checked against code. The other ~83 rest on listing-body evidence, and the Sci-Fi case is proof that source can be wrong. Getting the remaining zips would let this be closed properly.
 
 The 11 with no badge row are all products with no mapped Etsy listing, so there is no body to ground-truth against. Ten are unmapped goal widgets; the eleventh is `celestial-stream-kit`, a Shopify-only bundle with no Etsy listing at all, which is worth doing by hand since it is a real seller.
 
