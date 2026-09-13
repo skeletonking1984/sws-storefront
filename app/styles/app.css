@@ -1338,11 +1338,41 @@ button.reset:hover:not(:has(> *)) {
   display: block;
   filter: drop-shadow(0 0 22px rgba(240, 80, 154, 0.5))
     drop-shadow(0 0 42px rgba(127, 230, 255, 0.3));
-  margin: 0 auto 1.5rem;
+  margin: 0;
   width: 260px;
+  /* The hero row is pfp + lockup. At 375px those two together are wider
+     than the column, so the lockup has to be allowed to give. */
+  max-width: 100%;
+  min-width: 0;
   @media (min-width: 55em) {
-    margin: 0 0 1.75rem;
     width: 420px;
+  }
+}
+
+/* Row that holds the pfp beside the hero lockup. Centred with the rest of
+   the hero copy on mobile, left aligned once the hero goes two column. */
+.hero-brand {
+  align-items: center;
+  display: flex;
+  gap: 0.85rem;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  @media (min-width: 55em) {
+    justify-content: flex-start;
+    margin: 0 0 1.75rem;
+  }
+}
+
+.hero-brand img.hero-pfp {
+  border: 2px solid rgba(242, 166, 216, 0.5);
+  border-radius: 50%;
+  filter: drop-shadow(0 0 14px rgba(240, 80, 154, 0.45));
+  flex-shrink: 0;
+  height: 58px;
+  width: 58px;
+  @media (min-width: 55em) {
+    height: 92px;
+    width: 92px;
   }
 }
 

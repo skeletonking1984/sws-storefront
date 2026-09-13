@@ -24,6 +24,7 @@ import {
 } from '~/lib/nav';
 import logo from '~/assets/logo.png';
 import logoStacked from '~/assets/logo-stacked.png';
+import pfp from '~/assets/pfp.png';
 import heroWidgets from '~/assets/hero-widgets.webp';
 
 /**
@@ -224,7 +225,25 @@ function Hero() {
     <section className="hero">
       <div className="hero-grid">
         <div className="hero-copy">
-          <img src={logoStacked} alt="Stream Widget Shop" className="hero-logo" />
+          {/* The pfp rides alongside the hero lockup for the same reason it
+              is in the header: it is the mark people recognise from X and
+              Etsy, and the wordmark on its own reads as a different shop.
+              Decorative next to the lockup, so alt is empty. Remove when the
+              new logo work lands. */}
+          <div className="hero-brand">
+            <img
+              className="brand-pfp hero-pfp"
+              src={pfp}
+              alt=""
+              width="200"
+              height="200"
+            />
+            <img
+              src={logoStacked}
+              alt="Stream Widget Shop"
+              className="hero-logo"
+            />
+          </div>
           <h1 className="sws-glow">
             Widgets that make chat <span className="sws-holo">pop.</span>
           </h1>

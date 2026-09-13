@@ -9,12 +9,13 @@ import {HAPPY_CLIENTS} from '~/data/happyClients';
  * were looking at or that the circles were even clickable.
  *
  * Here they are a wrapping grid, no scrollbar, each face carrying its own
- * handle and a holo ring that lights up on hover and keyboard focus. Two of
- * the links go to a Twitch clip rather than a channel, and those say so,
+ * handle and a holo ring that lights up on hover and keyboard focus. One of
+ * the links goes to a Twitch clip rather than a channel, and it says so,
  * because a clip is the stronger proof and a visitor should know which kind
  * of link they are about to follow.
  *
- * Every name and face is real, read out of the old theme. Nothing here is
+ * Every name and face is real and every link is checked against Twitch. See
+ * `~/data/happyClients` for what the last check changed. Nothing here is
  * invented, and no testimonial text is put in anyone's mouth.
  */
 export function HappyClients() {

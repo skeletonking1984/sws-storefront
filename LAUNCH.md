@@ -755,4 +755,16 @@ Needs Todd:
 - Verified in the dev server at 375px and desktop: circular in both places, header still fits beside the nav icons on mobile. Build clean, no new lint problems.
 - NOT deployed. Waiting on Todd, same as the other 35 commits.
 
+### 2026-09-12 (second pass, Todd present)
+- **Deployed.** The pfp commit plus the 31 commits behind it went to Oxygen production and are live on streamwidgetshop.com. Verified in the live HTML: header serves `assets/pfp-DdVrK3Fg.png`, the deployed CSS carries all three `brand-pfp` rules.
+- **Hero pfp added.** The homepage hero lockup now has the pfp beside it, same reasoning as the header. New `.hero-brand` flex row in `app/styles/app.css`, 58px mobile / 92px desktop. Checked at 375px: no horizontal overflow, the row is 303px of 375.
+- **Happy clients re-verified against Twitch's own API**, every handle and every link. Findings:
+  - `chubzz24` no longer resolves as a Twitch user at all. Removed. That face was linking to a dead page.
+  - `thiccctoasttt`'s clip slug no longer resolves. Kept the person, dropped the clip, link now goes to the channel.
+  - `themakcident`'s clip still resolves ("Spooky Bohemian Rhapsody", May 2024) so it stays, but that channel last broadcast 2024-09-26. It is the one genuinely dormant name left on the list.
+  - Every avatar was refreshed from the account's current Twitch profile image. Most had changed since the old Energy theme captured them, and `gaming_girl160` was still a 70x70 thumbnail. Now 9 files at 192x192 (2x the 96px render), 492 KB total, down from what a 600px pull would have cost.
+  - Order is now roughly most-active first. Last broadcast at time of check: chow1617 Sep 11, gaming_girl160 Sep 11, celestialaurelia Sep 4, tonia2dawn Sep 12, strawberrynekomajo Sep 12, kykaku Sep 12, thiccctoasttt Jun 26, shiorifps May 1, themakcident Sep 2024.
+- **Cannot add new happy clients without Todd.** Etsy reviews carry no buyer name and no channel, so there is no data path from a sale to a streamer's handle. Adding faces needs Todd to name them. Nothing was invented.
+- NOT deployed yet (this second batch). Todd runs the deploy.
+
 Preview: https://01m28p3g5jhdw6jfgj23y7ewqm-fb73b5b73c40344d0d20.myshopify.dev
