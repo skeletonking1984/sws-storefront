@@ -61,6 +61,9 @@ type Pages = {
   "/policies": {
     params: {};
   };
+  "/webhooks/orders": {
+    params: {};
+  };
   "/account/login": {
     params: {};
   };
@@ -111,6 +114,9 @@ type Pages = {
   "/search": {
     params: {};
   };
+  "/api/e": {
+    params: {};
+  };
   "/cart": {
     params: {};
   };
@@ -129,7 +135,7 @@ type Pages = {
 type RouteFiles = {
   "root.jsx": {
     id: "root";
-    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/account/logout" | "/collections/all" | "/policies" | "/account/login" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/blogs" | "/llms.txt" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/cart" | "/cart/:lines" | "/*";
+    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/account/logout" | "/collections/all" | "/policies" | "/webhooks/orders" | "/account/login" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/blogs" | "/llms.txt" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/api/e" | "/cart" | "/cart/:lines" | "/*";
   };
   "routes/blogs.$blogHandle.$articleHandle.jsx": {
     id: "routes/blogs.$blogHandle.$articleHandle";
@@ -174,6 +180,10 @@ type RouteFiles = {
   "routes/policies._index.jsx": {
     id: "routes/policies._index";
     page: "/policies";
+  };
+  "routes/webhooks.orders.jsx": {
+    id: "routes/webhooks.orders";
+    page: "/webhooks/orders";
   };
   "routes/account_.login.jsx": {
     id: "routes/account_.login";
@@ -239,6 +249,10 @@ type RouteFiles = {
     id: "routes/search";
     page: "/search";
   };
+  "routes/api.e.jsx": {
+    id: "routes/api.e";
+    page: "/api/e";
+  };
   "routes/cart.jsx": {
     id: "routes/cart";
     page: "/cart" | "/cart/:lines";
@@ -266,6 +280,7 @@ type RouteModules = {
   "routes/account_.logout": typeof import("./app/routes/account_.logout.jsx");
   "routes/collections.all": typeof import("./app/routes/collections.all.jsx");
   "routes/policies._index": typeof import("./app/routes/policies._index.jsx");
+  "routes/webhooks.orders": typeof import("./app/routes/webhooks.orders.jsx");
   "routes/account_.login": typeof import("./app/routes/account_.login.jsx");
   "routes/discount.$code": typeof import("./app/routes/discount.$code.jsx");
   "routes/[sitemap.xml]": typeof import("./app/routes/[sitemap.xml].jsx");
@@ -282,6 +297,7 @@ type RouteModules = {
   "routes/account.$": typeof import("./app/routes/account.$.jsx");
   "routes/_index": typeof import("./app/routes/_index.jsx");
   "routes/search": typeof import("./app/routes/search.jsx");
+  "routes/api.e": typeof import("./app/routes/api.e.jsx");
   "routes/cart": typeof import("./app/routes/cart.jsx");
   "routes/cart.$lines": typeof import("./app/routes/cart.$lines.jsx");
   "routes/$": typeof import("./app/routes/$.jsx");

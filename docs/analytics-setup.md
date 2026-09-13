@@ -18,6 +18,13 @@ platform with no credentials yet (X, Meta) does not break the site.
 
 Live today. Property "SpaceLabs - Shopify" (451083860), stream 8496264324.
 
+Also backs the ad-blocker-survival pieces in
+`docs/conversion-tracking.md` ("Surviving ad blockers"): the app-owned
+`sws_cid` client id cookie (`app/lib/firstPartyId.server.js`) and the
+same-origin event relay (`app/routes/api.e.jsx`, GA4's `sendEvent` in
+`app/lib/conversions/ga4.server.js`). Neither needs a new env var -- both
+reuse the two below.
+
 | Variable | Where to get it |
 |---|---|
 | `PUBLIC_GA4_MEASUREMENT_ID` | GA4 Admin > Data Streams > SpaceLabs - Shopify stream > Measurement ID (top of the stream detail page, `G-XXXXXXXXXX`). |

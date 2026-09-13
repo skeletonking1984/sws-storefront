@@ -18,11 +18,18 @@
  *
  * GA4 is the one entry with no query param: Google's own `_ga` cookie
  * already carries the client id (written by gtag.js on the storefront),
- * so there is nothing for this app to capture or persist itself, only to
- * read at cart-mutation time. See app/lib/gaCookie.server.js.
+ * so the first choice is to read it, not capture it. But `_ga` only
+ * exists when gtag.js actually ran, and a content blocker that stops
+ * gtag.js stops `_ga` from ever being set. For that case this app does
+ * own a fallback: a first-party `sws_cid` cookie it mints and sets itself
+ * (see app/lib/firstPartyId.server.js), in GA4's own client_id shape, so
+ * a blocked visitor's purchase still joins a session instead of arriving
+ * as a bare, unattributed order. See app/lib/gaCookie.server.js for the
+ * `_ga` parser and app/lib/firstPartyId.server.js for the fallback.
  */
 
 import {parseGaClientId, readCookieValue} from '~/lib/gaCookie.server';
+import {readFirstPartyClientId} from '~/lib/firstPartyId.server';
 
 // SameSite=Lax (not None) because these cookies only ever need to be read
 // on first-party requests to this storefront, never cross-site. ~90 days:
@@ -38,10 +45,13 @@ const FIRST_TOUCH_COOKIE_MAX_AGE_SECONDS = 90 * 24 * 60 * 60;
  *   null for an id this app never sets a cookie for itself (GA4).
  * @property {string} cookie First-party cookie name storing the captured
  *   value. For GA4 this is `_ga` itself, a cookie gtag.js owns, not one
- *   this app writes.
+ *   this app writes -- though GA4 also has a second, app-owned fallback
+ *   cookie (`sws_cid`) not represented in this field, see `readClickIds`.
  * @property {string} platform Human label, for the docs table / comments.
  * @property {boolean} ownedCookie Whether this app is responsible for
- *   setting the cookie (false for GA4, whose cookie gtag.js writes).
+ *   setting the cookie (false for GA4's `_ga`, whose cookie gtag.js
+ *   writes; GA4's own `sws_cid` fallback cookie is app-owned, but that is
+ *   handled outside this registry, see app/lib/firstPartyId.server.js).
  */
 
 /** @type {ClickIdEntry[]} */
@@ -109,6 +119,13 @@ export const CLICK_ID_REGISTRY = [
  * Only present, non-empty values are included in the returned object, so
  * callers can safely spread the result without checking each key.
  *
+ * `_ga_client_id` prefers Google's own `_ga` cookie over this app's
+ * `sws_cid` fallback, deliberately: when gtag.js did run, `_ga` is GA4's
+ * own idea of the session, and staying on it keeps a purchase joined to
+ * whatever GA4 already knows about that visitor. `sws_cid` only ever
+ * fills in when `_ga` is missing (blocked, or aged out under Safari's
+ * 7-day cap on JS-written cookies) -- see app/lib/firstPartyId.server.js.
+ *
  * @param {Request} request
  * @returns {Record<string, string>}
  */
@@ -120,7 +137,7 @@ export function readClickIds(request) {
 
   for (const entry of CLICK_ID_REGISTRY) {
     if (entry.attributeKey === '_ga_client_id') {
-      const clientId = parseGaClientId(cookieHeader);
+      const clientId = parseGaClientId(cookieHeader) || readFirstPartyClientId(cookieHeader);
       if (clientId) found[entry.attributeKey] = clientId;
       continue;
     }

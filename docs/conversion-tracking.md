@@ -52,7 +52,7 @@ wired up yet:
 
 | Attribute key | URL param | Cookie | Platform |
 |---|---|---|---|
-| `_ga_client_id` | none | `_ga` (Google's own, parsed to a client_id) | GA4 |
+| `_ga_client_id` | none | `_ga` (Google's own), falls back to `sws_cid` (this app's own) | GA4 |
 | `_twclid` | `twclid` | `sws_twclid` | X |
 | `_fbclid` | `fbclid` | `sws_fbclid` | Meta |
 | `_gclid` | `gclid` | `sws_gclid` | Google Ads |
@@ -77,7 +77,13 @@ campaign brought the visitor the first time.
 
 GA4 has no query param of its own: `_ga` is Google's cookie, written by
 `gtag.js`, and is only ever read (via `parseGaClientId` in
-`app/lib/gaCookie.server.js`), never set by this app.
+`app/lib/gaCookie.server.js`), never set by this app. But `_ga` only
+exists when gtag.js actually ran, so this app also owns a fallback: a
+`sws_cid` cookie it mints and sets itself, in GA4's own client_id shape,
+from `app/lib/firstPartyId.server.js`, set on every request from
+`server.js`. `readClickIds` prefers `_ga` when present (staying joined to
+GA4's own idea of the session) and only falls back to `sws_cid` when it is
+not. See "Surviving ad blockers" below for why this exists.
 
 ### 2. Carry
 
@@ -125,14 +131,22 @@ destinations. Every destination module exports exactly this shape:
 export const id = 'ga4';
 export function isConfigured(env) { ... }          // sync, no network call
 export async function sendPurchase({env, order, clickIds, eventId}) { ... }
-// returns {ok: true} or {ok: false, reason: '...'}, never throws
+export async function sendEvent({env, name, params, clickIds}) { ... } // optional
+// sendPurchase/sendEvent return {ok: true} or {ok: false, reason: '...'}, never throw
 ```
 
-- `isConfigured(env)` is a pure check of env vars. The webhook skips a
-  destination entirely (no call, no log noise) when this is false.
+- `isConfigured(env)` is a pure check of env vars. The webhook (and the
+  event relay, see below) skips a destination entirely (no call, no log
+  noise) when this is false.
 - `sendPurchase` must never throw. Every destination catches its own
   network/parse errors and returns `{ok: false, reason}` instead, so one
   destination's failure is just a log line, never an outage for the others.
+- `sendEvent` is optional: it covers the pre-purchase funnel events
+  (page_view, view_item, add_to_cart, ...) relayed by
+  `app/routes/api.e.jsx` for a visitor whose browser pixel did not load
+  (see "Surviving ad blockers" below). A destination that omits it is
+  simply filtered out of the relay's fan-out, same never-throw contract as
+  `sendPurchase`. GA4 is the only destination that implements it today.
 
 Registered today:
 
@@ -162,6 +176,51 @@ double counting. GA4's own dedup key is `transaction_id`, already sent as
 the order id; X's is `conversion_id`, sent as this `eventId`. When wiring
 a future platform, check what field it uses for dedup and pass `eventId`
 into it.
+
+## Surviving ad blockers
+
+A content blocker acts on three things: the third-party script host
+(`googletagmanager.com`, `ads-twitter.com`, `connect.facebook.net`), the
+collect endpoint those scripts talk to, and sometimes the cookies those
+scripts set. This storefront's tracking is now immune to two of those and
+partially immune to the third:
+
+- **Purchase/revenue is fully immune.** It never depends on a browser
+  script at all -- Shopify's own `orders/create` webhook fires
+  server-to-server, verified by HMAC, regardless of what ran (or was
+  blocked) in the buyer's browser. This has been true since before this
+  section was written; see "The rule: purchase is always server side"
+  above.
+- **The GA4 client id is now immune.** `app/lib/firstPartyId.server.js`
+  mints and sets a `sws_cid` cookie from this app's own server, on this
+  app's own domain, `HttpOnly` so no page script (blocked or not) ever
+  touches it. A blocker acts on requests and on scripts; it has no
+  mechanism for stripping a Set-Cookie header from a first-party response
+  it did not block from a host it has no reason to block. This closes the
+  gap where a blocked `gtag.js` meant `_ga` never existed and a purchase
+  landed under a bare `webhook.<orderId>` id with no session attached.
+- **The pre-purchase funnel events are partially immune.** `/api/e` (see
+  `app/routes/api.e.jsx`) is a same-origin path, not a third-party host,
+  and PixelBus.jsx only sends to it when it has confirmed GA4's own pixel
+  did not load (`app/lib/analytics/pixels/ga4.js`'s `didLoad`), so a
+  normal visitor never touches it and nothing double counts. This is
+  genuinely harder for a blocker to target than a third-party host: there
+  is no vendor domain to put on a list, and the path itself
+  (`/api/e`) was chosen specifically to avoid the generic analytics-path
+  rules (`/track`, `/collect`, `/analytics`, `/pixel`) that some filter
+  lists ship independent of any vendor.
+
+**What is still lost, honestly:** a blocked visitor's relayed events carry
+none of gtag.js's own automatic enrichment (referrer parsing,
+session/engagement metrics, source/medium heuristics gtag derives from the
+landing context) -- the relay's attribution rests entirely on whatever
+click id this app captured itself (see "Capture" above), which is solid
+for a paid click with a `twclid`/`gclid`/etc. on the URL but weaker for
+organic or direct traffic. And no method here is claimed to be 100 percent
+blocker-proof: `/api/e` is obscure today, not secret, and a blocker
+popular enough to justify writing a bespoke rule for one storefront's own
+same-origin path could still add one. This narrows the gap, it does not
+close it.
 
 ## Measured facts behind this design
 

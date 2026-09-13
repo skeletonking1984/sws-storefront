@@ -10,10 +10,27 @@
  *   export function isConfigured(config) { ... }        // sync, no network
  *   export function loadScript(config, nonce) { ... }    // inject once
  *   export function send(event, config) { ... }          // fire one event
+ *   export function didLoad() { ... }                    // optional, see below
  *
  * `config` here is this adapter's own slice of the app-wide analytics
  * config (see app/lib/analytics/registry.js), keyed by this file's own
  * envKeys names, not the raw env object.
+ *
+ * `didLoad` is optional on this shared interface (see
+ * app/components/pixels/PixelBus.jsx and app/lib/conversions/index.server.js
+ * for the other optional piece, `sendEvent`) and only implemented here.
+ * It answers "did gtag.js actually execute", not just "did window.gtag
+ * exist" -- `loadScript` above defines a stub `window.gtag` itself before
+ * the real script even starts loading, so the stub existing proves
+ * nothing about whether a blocker killed the request. What is checked
+ * instead: the injected script tag's own `onload`/`onerror` (a blocked
+ * request almost always fires `onerror`, not `onload`), combined with
+ * `window.google_tag_manager` -- an object gtag.js's real body constructs
+ * during initialization, which a blocker that answers the request with an
+ * empty stub script (a pattern some filter engines use instead of
+ * failing the request outright) would never create. Neither signal alone
+ * is airtight; together they are the best available proof that gtag.js's
+ * real code ran, not just that some HTTP response came back.
  *
  * Fires nothing until PixelBus.jsx has already checked Shopify's consent
  * API (canTrack()) -- this file does not check consent itself. Never
@@ -28,6 +45,11 @@ export const id = 'ga4';
 export const envKeys = {
   measurementId: 'PUBLIC_GA4_MEASUREMENT_ID',
 };
+
+// Module scoped, not component state: PixelBus.jsx checks this via
+// `didLoad()` some time after `loadScript` runs, on a plain function call,
+// not a React render, so there is nothing to subscribe to here.
+let scriptOutcome = /** @type {'loaded' | 'failed' | null} */ (null);
 
 /**
  * @param {{measurementId?: string}} config
@@ -66,6 +88,16 @@ export function loadScript(config, nonce) {
     measurementId,
   )}`;
   if (nonce) loader.nonce = nonce;
+  // See `didLoad` below for why both this and window.google_tag_manager
+  // are checked: onload alone does not prove the real script executed,
+  // some blockers answer with an empty 200 stub instead of failing the
+  // request.
+  loader.onload = () => {
+    scriptOutcome = 'loaded';
+  };
+  loader.onerror = () => {
+    scriptOutcome = 'failed';
+  };
   document.head.appendChild(loader);
 
   window.gtag('js', new Date());
@@ -129,4 +161,20 @@ function toGa4Item(item) {
     item_list_id: item.listId,
     item_list_name: item.listName,
   };
+}
+
+/**
+ * Whether gtag.js actually loaded and ran, checked by PixelBus.jsx a beat
+ * after `loadScript` to decide whether to relay events to the same-origin
+ * fallback (see app/routes/api.e.jsx). See the file header comment above
+ * for exactly what this checks and why neither signal is trusted alone.
+ * @returns {boolean}
+ */
+export function didLoad() {
+  if (typeof window === 'undefined') return false;
+  return (
+    scriptOutcome === 'loaded' &&
+    typeof window.google_tag_manager === 'object' &&
+    window.google_tag_manager !== null
+  );
 }

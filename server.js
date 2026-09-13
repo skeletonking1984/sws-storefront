@@ -2,6 +2,7 @@ import * as serverBuild from 'virtual:react-router/server-build';
 import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
 import {createHydrogenRouterContext} from '~/lib/context';
 import {buildFirstTouchSetCookieHeaders} from '~/lib/clickIds.server';
+import {ensureFirstPartyClientId} from '~/lib/firstPartyId.server';
 
 /**
  * Export a fetch handler in module format.
@@ -50,6 +51,17 @@ export default {
       // the response (the session commit above) is never clobbered.
       for (const cookieHeader of buildFirstTouchSetCookieHeaders(request)) {
         response.headers.append('Set-Cookie', cookieHeader);
+      }
+
+      // First-party GA4 client id (see app/lib/firstPartyId.server.js).
+      // Minted once, HttpOnly, on this app's own domain -- survives a
+      // blocker that stops gtag.js (and so the `_ga` cookie) from ever
+      // existing. `.append()`, never `.set()`, for the same reason as
+      // above: it must not clobber the session commit or the first-touch
+      // click id cookies already on this response.
+      const {setCookie: firstPartyIdSetCookie} = ensureFirstPartyClientId(request);
+      if (firstPartyIdSetCookie) {
+        response.headers.append('Set-Cookie', firstPartyIdSetCookie);
       }
 
       if (response.status === 404) {

@@ -11,6 +11,13 @@
  *   export function loadScript(config, nonce) { ... }
  *   export function send(event, config) { ... }
  *
+ * A fifth piece, `export function didLoad() { ... }`, is optional and
+ * only implemented by ga4.js today -- see that file for what it checks
+ * and why. PixelBus.jsx uses it to decide whether to relay an event to
+ * the same-origin fallback (app/routes/api.e.jsx) when a blocker kept the
+ * real pixel script from ever loading. A pixel without `didLoad` never has
+ * its events relayed, it is assumed to have loaded.
+ *
  * `envKeys` maps this adapter's own config keys to the env var names that
  * fill them, so `buildAnalyticsConfig` below can derive the whole
  * analytics config for every platform without app/root.jsx ever knowing
