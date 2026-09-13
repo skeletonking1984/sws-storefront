@@ -30,7 +30,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 
 ## Checklist
 ### Catalog
-- [ ] Top 15 mapped to Shopify products, ACTIVE, price = Etsy price, images = Etsy images, description normalized, in Top Widgets collection (sorted by revenue)
+- [x] Top 15 mapped to Shopify products, ACTIVE, price = Etsy price, images = Etsy images, description normalized, in Top Widgets collection (sorted by revenue). Verified 2026-09-13: Top Widgets is MANUAL sort, 32 products, and its first 16 are exactly the revenue order above plus Soul Blade, all ACTIVE. `audit-catalog.mjs` exit 0 on title/image/price/description/productType/tags
 - [ ] Duplicates archived (keep one active per Etsy listing)
 - [x] Every active product: title, image, price, product type, Chat/Goal tag correct (`node scripts/audit-catalog.mjs` exits 0: 131 storefront products, 0 issues, 2026-09-10)
 - [x] Digital download delivery verified end to end (order -> file). PROVEN by a real checkout that downloaded the Y2K Sticker zip. Mechanism proven: Butterfly Galaxy has 1 real sale and 1 real download. Coverage: the 14 empty products were staged at `~/Desktop/SWS-EMPTY-14/` and Todd reports all 14 uploaded on 2026-09-10. Not agent verifiable (cross origin iframe, no API). Closes on a real order that delivers a file
@@ -49,7 +49,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 - [x] Wordmark, palette, favicon, OG image consistent with Etsy/X
 ### Conversion
 - [x] Purchase path clean: no storefront product forces a shipping checkout, verify with `node scripts/audit-shipping.mjs` (fixed 9 products 2026-09-09)
-- [ ] Checkout tested (real $ test order then refund) - verified in a browser up to the payment step, WELCOME10 applies, the actual charge still needs Todd
+- [x] Checkout tested. Closed by something better than a test order: **order #1041 on 2026-09-13 is a real paying customer** (not Todd), $19.10, PAID and FULFILLED, and it carried `_ga_client_id`. First non-Todd order since #1034 on 2026-05-15
 - [x] Email capture + welcome discount (WELCOME10, 10% off, all products, all customers, no end date)
 - [ ] Pixels (X, Google) installed. Tracking issue for Auny's half: BAT-145. Decided 2026-09-10:
   - GA4: reuse existing property **SpaceLabs - Shopify** (451083860), stream 8496264324, Measurement ID `G-X0978HDVTK`. Same ID the old Online Store theme already serves on streamwidgetshop.com (verified by curl 2026-09-10), so history stays continuous across cutover. Keep the Etsy property (450644449) separate. Cosmetic: Todd renames property + sets stream URL to `https://streamwidgetshop.com` (still says spacelabsshop.com, which now 404s).
@@ -779,3 +779,60 @@ Needs Todd:
 - NOT deployed. Todd runs the deploy.
 
 Preview: https://01m28p3g5jhdw6jfgj23y7ewqm-fb73b5b73c40344d0d20.myshopify.dev
+
+### 2026-09-13 (second pass, scheduled)
+Metrics (2026-09-12): 19 sessions, 3 add to cart, 3 reached checkout, 0 completed, 0 orders, $0 net. 2026-09-13 so far: 15 sessions, 3 add to cart, 1 reached checkout, 1 completed, 1 order, $19.10 net. Sep 11 was 63 / 13 / 6 / 2.
+
+**A real customer bought.** Order #1041, 2026-09-13, $19.10, PAID and FULFILLED, Twitch Liquid Combo Goal Bar Widget. Not Todd. The last non-Todd order before it was #1034 on 2026-05-15. It also **carried `_ga_client_id`**, which answers the open question left on 2026-09-11 about order #1040: the relay does attach. Digital delivery proven again on an order nobody here staged.
+
+#### Conversion tracking health check (A2), 2026-09-13
+| # | Check | Result |
+|---|---|---|
+| 1 | Endpoint alive and locked | PASS. Production `/webhooks/orders`: GET 405, unsigned POST 401, bogus HMAC POST 401 |
+| 2 | Storefront events fire | PASS, in a real browser on the live site. gtag loaded, `_ga` and `_ga_X0978HDVTK` set, `/g/collect` sent with `tid=G-X0978HDVTK` carrying `view_item` (real item, 18.99) and `page_view`. A real Add to cart click produced `add_to_cart` in `dataLayer` and one more `/g/collect` |
+| 3 | Attribution attaching | PASS. Last order checked: **#1041**, and it carries `_ga_client_id=1820205494.1789312128` |
+| 4 | No double counting | **NOT AGENT VERIFIABLE.** `webPixel` needs the `read_pixels` scope, which this connector does not have. Same class of blind spot as the Digital Products app. Todd: Settings > Customer events, confirm "GA4 Purchases" is still disconnected. #1041 is the first real order since the webhook went live, so if it shows twice in GA4, that pixel is back on |
+| 5 | Env vars still set | PASS by behaviour, not by reading them. `PUBLIC_GA4_MEASUREMENT_ID`: the id is in the live production bundle. `PRIVATE_SHOPIFY_WEBHOOK_SECRET`: the route returns **503 when the secret is missing** and production returns 401, so it is set. `PRIVATE_GA4_API_SECRET` is the one still inferred only from #1041 having reached GA4 |
+
+False alarms ruled out before reporting anything: tested in the clean in-app browser, not Brave; used real `/g/collect` requests rather than DebugView or an exploration; clicked the real Add to cart via its element ref, not a blind coordinate.
+
+Also closed out while checking: the catalogue is **125 storefront-visible products**, down from 131, and every one of the 6 is accounted for. Sci-Fi Neon went DRAFT on 2026-09-11, and the **4 Pokemon widgets plus a Genshin one went DRAFT the same evening at 17:56Z**. That closes the IP exposure flagged on 2026-09-11 before ads run. `audit-catalog.mjs` and `audit-shipping.mjs` both exit 0.
+
+Shipped: **conversion and revenue tracking that survives ad blockers.** Todd asked for it mid-pass.
+
+The honest starting position: **revenue already survived.** Purchase comes from the HMAC verified `orders/create` webhook, server side, so no blocker can touch it. Two holes remained, and both were upstream of the sale.
+
+**1. The GA4 client id was the one id this app did not own.** The `_ga_client_id` registry entry read the `_ga` cookie that gtag.js writes, marked `ownedCookie: false`. Block gtag and that cookie never exists, so `readClickIds` returns nothing and `ga4.server.js` falls back to `webhook.<orderId>`: the revenue still counts, but it lands as a brand new sessionless user with no campaign attached. Safari ITP separately caps JS written cookies at 7 days.
+
+Now `server.js` mints `sws_cid` on first request: **HttpOnly**, SameSite=Lax, 2 years, in GA4's own client id shape. HttpOnly is the load bearing part, no page JS reads it, so a content blocker has nothing to strip and ITP's JS cookie cap does not apply. `readClickIds` still prefers `_ga` when it exists, deliberately, so a visitor whose gtag did run stays joined to GA4's own sessions rather than being split across two ids.
+
+**2. The funnel events died with the blocker.** `page_view`, `view_item`, `add_to_cart`, `view_item_list`, `begin_checkout` all came from third party script hosts. New same origin relay at **`/api/e`**, POST only, same origin enforced via `Sec-Fetch-Site` with an `Origin` fallback, and **`purchase` rejected outright** so the route can never be used to forge revenue. The path is deliberately generic: `/track`, `/collect`, `/analytics` and `/pixel` are generic path rules on public filter lists, `/api/e` is not.
+
+It fans out through a new **optional `sendEvent`** on the existing conversions destinations, GA4 only for now (X and Meta CAPI auth is still unconfirmed, and wiring an event relay on top of an unconfirmed purchase auth scheme is doing it twice). A destination without `sendEvent` is filtered out, so **adding a platform is still one adapter file plus one array entry plus env vars**. No new env vars at all for this.
+
+**The dedup problem is where this was nearly got wrong, and it is worth recording.** The relay must fire only when the real pixel did not load, or every visitor double counts. The first implementation treated the detection window as "not loaded", so during the ~1.5s before gtag's onload settles, `page_view` and `view_item` would have been sent by gtag AND relayed. Those two events fire inside that window on essentially every page load, so it would have double counted nearly all of them, in the exact direction nobody notices, GA4 just reading high. Caught on review and rebuilt as three states: events arriving while the answer is still unknown are **buffered**, then flushed to the relay only if the pixel turns out to be absent. A normal visitor never double counts, and a blocked visitor never loses the first events, which are the ones carrying the landing page and the campaign.
+
+Verified in a real browser, both directions, which is the first time one of these scheduled passes has had working browser tools:
+- **Normal load** (dev server, real PDP): gtag loaded, `window.google_tag_manager` present, 1 `/g/collect`, **0 calls to `/api/e`**. No double count.
+- **Blocked load**, simulated by temporarily pointing the gtag script URL at a dead path and reverting after: gtag absent, **0 `/g/collect`**, and **3 events relayed to `/api/e`, all 204**. The buffered events flushed exactly as designed.
+- `/api/e`: GET 405, POST with no origin 403, POST `{"name":"purchase"}` **400**, valid event 204, `navigator.sendBeacon` delivers.
+- `sws_cid` minted once with `HttpOnly; SameSite=Lax; Max-Age=63072000`, matches `^\d+\.\d+$`, and a replay of that cookie gets no second Set-Cookie. Not readable from `document.cookie`, which is the point.
+- `npm run build` exit 0, `npx eslint` 0 problems on all 9 touched files, `api_secret` present in `dist/server/index.js` and **nowhere in `dist/client/`**.
+
+**Stated plainly, because overclaiming here would be worse than the gap:** nothing makes tracking 100 percent blocker proof. A same origin path can have a rule written for it if it becomes popular enough. And a blocked visitor's relayed events arrive without gtag's own automatic source and medium enrichment, so their attribution rests entirely on the click ids this app captures itself (`twclid`, `gclid`, `fbclid`, `ttclid`, `msclkid`, `epik`, all already captured server side into first party cookies since 2026-09-11). That is why capturing every click id now, before the ads run, was the right call.
+
+Still open and unchanged from this morning: **`view_cart` fires on non-cart pages** whenever the session has a cart, because Hydrogen publishes `cart_viewed` there. Observed again today on a PDP. It will inflate `view_cart` in GA4. Not introduced by any of this.
+
+Needs Todd:
+- **A production deploy.** Four commits are waiting now, including all of today's tracking work. None of it is live. Agents cannot answer the confirm prompt.
+- **Confirm the "GA4 Purchases" custom pixel is still disconnected** (Settings > Customer events). Cannot be checked from here, and #1041 is the test case: if it shows twice in GA4, the pixel is back on and every order is double counting.
+- Auny's X pixel IDs and a CAPI token (BAT-145), and a Meta pixel ID plus CAPI token. Everything no-ops silently until they are set.
+- Google Search Console and Merchant Center still need his account.
+- Soul Blade price still unconfirmed (Etsy live 15.99, notes said 29.99, Shopify 15.99).
+- Go-ahead to delete and swap the 4 wrong demo videos.
+- Sci-Fi Neon is still live on Etsy as listing 4498789564 carrying `StarWarsTwitchChatcode.zip`. The Shopify side is DRAFT, the Etsy side is his call.
+
+Next: the `view_cart` over-fire, then `docs/COPY-STANDARD.md` across the remaining ~110 products.
+
+Preview: https://01m2egt35mkq201zk2c0j2hk53-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `dfef309`.
