@@ -38,6 +38,13 @@
  * server side, from the orders/create webhook (see
  * app/lib/conversions/ga4.server.js). Sending purchase from here would
  * double count every order.
+ *
+ * Internal/QA traffic (see app/lib/analytics/internalTraffic.js) is tagged
+ * with GA4's own `traffic_type` parameter here, never dropped -- that is
+ * the mechanism GA4 Data Filters match on to exclude it later, see
+ * docs/analytics-setup.md. Set in both places, the `gtag('config', ...)`
+ * call in `loadScript` AND every event's params in `send`, because config
+ * alone is not reliably applied to every event that follows it.
  */
 
 export const id = 'ga4';
@@ -66,8 +73,11 @@ export function isConfigured(config) {
  *
  * @param {{measurementId?: string}} config
  * @param {string} nonce
+ * @param {boolean} [internal] Whether this session is internal/QA traffic,
+ *   see app/lib/analytics/internalTraffic.js. Passed through from
+ *   PixelBus.jsx, not read by this file from anywhere else.
  */
-export function loadScript(config, nonce) {
+export function loadScript(config, nonce, internal) {
   if (!isConfigured(config)) return;
   if (typeof document === 'undefined') return;
   if (document.getElementById('ga4-gtag-js')) return;
@@ -104,7 +114,12 @@ export function loadScript(config, nonce) {
   // send_page_view is off, page_view is fired explicitly from the
   // normalized page_view event instead, otherwise a client side route
   // change never fires GA4's own automatic pageview and traffic undercounts.
-  window.gtag('config', measurementId, {send_page_view: false});
+  // traffic_type is only added when internal -- a normal visitor's config
+  // call carries no such key, matching GA4's own default behavior.
+  window.gtag('config', measurementId, {
+    send_page_view: false,
+    ...(internal ? {traffic_type: 'internal'} : null),
+  });
 }
 
 /**
@@ -115,22 +130,34 @@ export function send(event, config) {
   if (!isConfigured(config)) return;
   if (typeof window.gtag !== 'function') return;
 
+  // Config-time traffic_type (see loadScript above) is not reliably
+  // applied to every event that follows it, so it is also stamped on each
+  // event's own params here. Omitted entirely when not internal, so a
+  // normal visitor's payload shape never changes.
+  const trafficTypeParams =
+    event.trafficType === 'internal' ? {traffic_type: 'internal'} : null;
+
   switch (event.name) {
     case 'page_view':
       window.gtag('event', 'page_view', {
         page_location: event.pageLocation,
         page_path: event.pagePath,
         page_title: event.pageTitle,
+        ...trafficTypeParams,
       });
       return;
     case 'search':
-      window.gtag('event', 'search', {search_term: event.searchTerm});
+      window.gtag('event', 'search', {
+        search_term: event.searchTerm,
+        ...trafficTypeParams,
+      });
       return;
     case 'view_item_list':
       window.gtag('event', 'view_item_list', {
         item_list_id: event.listId,
         item_list_name: event.listName,
         items: (event.items || []).map(toGa4Item),
+        ...trafficTypeParams,
       });
       return;
     default:
@@ -143,6 +170,7 @@ export function send(event, config) {
     currency: event.currency,
     value: event.value,
     items: event.items.map(toGa4Item),
+    ...trafficTypeParams,
   });
 }
 

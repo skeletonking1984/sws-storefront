@@ -222,6 +222,16 @@ popular enough to justify writing a bespoke rule for one storefront's own
 same-origin path could still add one. This narrows the gap, it does not
 close it.
 
+## Internal and QA traffic
+
+Automated browser QA and Todd's own manual testing fire real events into
+GA4 same as a buyer would. This is tagged with GA4's `traffic_type`
+parameter, never dropped, so tracking can still be verified in a real
+browser. See `docs/analytics-setup.md`, "Excluding internal and QA
+traffic", for detection rules, the manual `?sws_qa=1` switch, and the
+exact GA4 Data Filter steps (it defaults to Testing, which excludes
+nothing, until switched to Active).
+
 ## Measured facts behind this design
 
 - **Checkout is Shopify hosted and can land on a different host than the

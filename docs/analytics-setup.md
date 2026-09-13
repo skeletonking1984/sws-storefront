@@ -65,6 +65,54 @@ Browser adapter: `app/lib/analytics/pixels/meta.js`, standard events
 PageView, ViewContent, AddToCart, InitiateCheckout, Search. Server
 adapter: `app/lib/conversions/meta.server.js`.
 
+## Excluding internal and QA traffic
+
+Automated browser QA (agent sessions driving the live site) and Todd's own
+manual testing fire real `add_to_cart` / `view_item` / `page_view` events
+into GA4, same as a real buyer. Measured 2026-09-13: the Multistream Chat
+Widget showed 10 items viewed and 8 added to cart over 28 days, with zero
+of those carts ever starting checkout, because they were our own test
+runs. Left alone, this contaminates every conversion number once ads are
+running.
+
+**Why tagged, not dropped.** This traffic is marked with GA4's own
+`traffic_type` parameter, never suppressed. Suppressing it would make it
+impossible to verify tracking works at all in a real browser, which is
+exactly how the double-count bug and the `/api/e` relay (see
+`docs/conversion-tracking.md`) were both proven out in the first place.
+Tagging keeps every event flowing and visible in GA4's real-time/debug
+views, and lets it be excluded from reports with one Data Filter, set up
+below.
+
+**What is auto-detected**, by `app/lib/analytics/internalTraffic.js`:
+- `navigator.webdriver === true`, set by Puppeteer, Playwright, or any
+  other CDP-driven script.
+- `navigator.userAgent` containing `Claude/`, the in-app browser used by
+  Claude Code / agent sessions. Its `navigator.webdriver` is FALSE, so
+  this is the signal that actually catches it, not a backup.
+
+**Manual switch**, for Todd's own testing on his own devices:
+- `https://streamwidgetshop.com/?sws_qa=1` marks this browser as internal
+  (sets a `sws_qa` cookie, 2 year lifetime).
+- `https://streamwidgetshop.com/?sws_qa=0` clears it.
+
+**The GA4 steps, exact, because the tag does nothing until these are
+done:**
+
+1. GA4 Admin > Data Streams > SpaceLabs - Shopify stream > Configure tag
+   settings > Show all > Define internal traffic. (This step lets GA4
+   recognize the parameter; the filter below is what actually excludes it.)
+2. GA4 Admin > Data settings > Data filters > create (or enable) a filter
+   of type "Internal Traffic" matching `traffic_type` equals `internal`.
+3. Set that filter to **Active**. It defaults to **Testing**, which does
+   NOT exclude anything from reports, it only lets you preview the effect.
+   This is the usual reason a traffic filter silently does nothing: it
+   was left on Testing.
+
+**Filters are not retroactive.** The 28 days of contaminated data behind
+the Multistream Chat Widget numbers above stay contaminated. Only traffic
+tagged after the filter is Active gets excluded going forward.
+
 ## Adding a platform Todd is not already tracking
 
 1. Write `app/lib/analytics/pixels/<platform>.js` (browser) and, if the

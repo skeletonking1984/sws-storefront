@@ -105,6 +105,11 @@ export function send(event, config) {
   if (!isConfigured(config)) return;
   if (typeof window.fbq !== 'function') return;
 
+  // Internal/QA traffic (event.trafficType, see
+  // app/lib/analytics/internalTraffic.js) is deliberately not added to
+  // this payload -- Meta has no equivalent traffic-exclusion filter, and
+  // this adapter is not configured yet anyway (see file header).
+
   switch (event.name) {
     case 'page_view':
       window.fbq('track', 'PageView');

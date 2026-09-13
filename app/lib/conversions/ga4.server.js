@@ -148,7 +148,11 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
  * @param {string} args.name Normalized event name, see
  *   app/lib/analytics/events.js. Never `purchase` -- api.e.jsx rejects
  *   that before this is ever called.
- * @param {object} args.params Normalized event payload for `name`.
+ * @param {object} args.params Normalized event payload for `name`. May
+ *   carry `trafficType: 'internal'` (see
+ *   app/lib/analytics/internalTraffic.js), already validated by
+ *   app/routes/api.e.jsx to be exactly that literal or absent -- this file
+ *   trusts the caller's validation rather than re-checking it.
  * @param {Record<string, string>} args.clickIds Click ids for this
  *   request (see app/lib/clickIds.server.js). Only `_ga_client_id` is
  *   used here, same as `sendPurchase`.
@@ -203,16 +207,23 @@ export async function sendEvent({env, name, params, clickIds}) {
  * @returns {object}
  */
 function buildEventParams(name, params) {
+  // Stamped on every branch below, same as the browser adapter
+  // (app/lib/analytics/pixels/ga4.js) does per event -- omitted entirely
+  // when not internal, so a normal visitor's payload shape never changes.
+  const trafficTypeParams =
+    params.trafficType === 'internal' ? {traffic_type: 'internal'} : null;
+
   if (name === 'page_view') {
     return {
       page_location: params.pageLocation,
       page_path: params.pagePath,
       page_title: params.pageTitle,
+      ...trafficTypeParams,
     };
   }
 
   if (name === 'search') {
-    return {search_term: params.searchTerm};
+    return {search_term: params.searchTerm, ...trafficTypeParams};
   }
 
   if (name === 'view_item_list') {
@@ -220,6 +231,7 @@ function buildEventParams(name, params) {
       item_list_id: params.listId,
       item_list_name: params.listName,
       items: (params.items || []).map(toGa4EventItem),
+      ...trafficTypeParams,
     };
   }
 
@@ -227,6 +239,7 @@ function buildEventParams(name, params) {
     currency: params.currency,
     value: params.value,
     items: (params.items || []).map(toGa4EventItem),
+    ...trafficTypeParams,
   };
 }
 

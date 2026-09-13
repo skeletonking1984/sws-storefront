@@ -82,6 +82,16 @@ export async function action({request, context}) {
   const params =
     body?.params && typeof body.params === 'object' ? body.params : {};
 
+  // Internal/QA traffic tag (see app/lib/analytics/internalTraffic.js),
+  // validated like any other client input: only the exact literal string
+  // `internal` is accepted, anything else is dropped rather than echoed
+  // into a destination's payload. This is the one place a blocked
+  // internal browser's tag reaches GA4's Measurement Protocol, since the
+  // gtag('config', ...) traffic_type set in ga4.js never fires for it.
+  if (params.trafficType !== 'internal') {
+    delete params.trafficType;
+  }
+
   // Same precedence as the purchase path (see app/lib/clickIds.server.js),
   // which is exactly why Part 1 (the app-owned `sws_cid` fallback) has to
   // exist before this route is worth building: without it, a blocked

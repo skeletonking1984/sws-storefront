@@ -2,6 +2,10 @@ import {useEffect} from 'react';
 import {useAnalytics, useNonce} from '@shopify/hydrogen';
 import {pixels} from '~/lib/analytics/registry';
 import {normalizeEvent} from '~/lib/analytics/events';
+import {
+  isInternalTraffic,
+  markInternalTrafficFromUrl,
+} from '~/lib/analytics/internalTraffic';
 
 /**
  * Every raw Hydrogen (or custom) bus event this app maps to an ecommerce
@@ -68,13 +72,22 @@ export function PixelBus({config}) {
   const nonce = useNonce();
 
   useEffect(() => {
+    // Before anything else, so a `?sws_qa=1`/`?sws_qa=0` landing request
+    // takes effect on the very same page load that carries it, see
+    // app/lib/analytics/internalTraffic.js.
+    markInternalTrafficFromUrl();
+    const internal = isInternalTraffic();
+
     const configuredPixels = pixels.filter((pixel) =>
       pixel.isConfigured(config?.[pixel.id]),
     );
     if (!configuredPixels.length) return;
 
     for (const pixel of configuredPixels) {
-      pixel.loadScript(config[pixel.id], nonce);
+      // `internal` is passed to every adapter's loadScript, harmless for
+      // one that ignores it (see x.js/meta.js), used today only by ga4.js
+      // to set GA4's traffic_type at config time.
+      pixel.loadScript(config[pixel.id], nonce, internal);
     }
 
     // Whether GA4's own pixel actually loaded, decided a beat after
@@ -129,6 +142,10 @@ export function PixelBus({config}) {
         if (!canTrack()) return;
         const event = normalizeEvent(hydrogenEventName, payload, shop);
         if (!event) return;
+        // Tag, never suppress, see app/lib/analytics/internalTraffic.js.
+        // Omitted (not set to false) on a normal visitor, so nothing about
+        // this field changes shape for the traffic that matters most.
+        if (internal) event.trafficType = 'internal';
         for (const pixel of configuredPixels) {
           pixel.send(event, config[pixel.id]);
         }

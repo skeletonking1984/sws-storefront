@@ -106,6 +106,11 @@ export function send(event, config) {
   if (!isConfigured(config)) return;
   if (typeof window.twq !== 'function') return;
 
+  // Internal/QA traffic (event.trafficType, see
+  // app/lib/analytics/internalTraffic.js) is deliberately not added to
+  // this payload -- X has no equivalent traffic-exclusion filter, and this
+  // adapter is not configured yet anyway (see file header).
+
   if (event.name === 'page_view') {
     if (!config.pageViewEventId) return;
     window.twq('event', config.pageViewEventId, {});
