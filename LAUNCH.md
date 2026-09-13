@@ -836,3 +836,24 @@ Next: the `view_cart` over-fire, then `docs/COPY-STANDARD.md` across the remaini
 
 Preview: https://01m2egt35mkq201zk2c0j2hk53-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `dfef309`.
+
+#### Production deploy verified 2026-09-13 (Todd deployed)
+All 39 waiting commits are live, including the ad blocker work.
+
+| Check | Result |
+|---|---|
+| `/api/e` GET / no origin / foreign origin / purchase / valid | 405 / 403 / 403 / 400 / 204 |
+| `/webhooks/orders` GET / unsigned / bogus HMAC | 405 / 401 / 401 |
+| `sws_cid` | set once, `Max-Age=63072000; SameSite=Lax; HttpOnly; Secure`. **`Secure` present in production**, absent on local http, so the protocol conditional works. Replay re-mints 0 times. Not readable from `document.cookie` |
+| PDP, normal load | gtag and `window.google_tag_manager` present, `page_view` + `view_item` in dataLayer, 1 `/g/collect`, **0 calls to `/api/e`** |
+| PDP, real Add to cart click | `add_to_cart` in dataLayer, `en=add_to_cart` on `/g/collect`, still **0 relay calls** |
+| Console, clean tab | 0 errors on home and PDP |
+| Site | home, `/collections/all`, `/cart`, `robots.txt`, `sitemap.xml`, `/llms.txt`, refund policy all 200. Canonical on the live host. PDP video range request 206. robots no longer disallows `/policies/` |
+
+**Zero relay calls with the pixel loaded is the load bearing number here.** It is the proof the buffered detection window does not double count, measured on production rather than on a dev server.
+
+A first pass read 9 React #421 errors and a 404 in the console. Both were residue in that tab from earlier navigations this session (a wrong product handle, and a localhost dev server). A fresh tab on production is clean on both pages. Recorded because "console errors on the live site" nearly got reported as a regression it was not.
+
+**Todd corrected an assumption in the pass above: the GA4 Purchases custom pixel is LIVE, not disconnected**, and he saw order #1041's revenue attribute in GA4. So the Admin pixel and the `orders/create` webhook are both sending `purchase` for the same order. Open question, and the only thing here that could distort ad numbers: does #1041 show once at $19.10 in GA4, or twice at $38.20. If twice, disconnect the Admin pixel and keep the webhook, which is the one that survives Shop Pay and ad blockers.
+
+Still present, unchanged: `view_cart` fires on non-cart pages (seen again on this PDP). Next item.
