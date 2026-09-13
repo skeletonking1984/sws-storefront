@@ -869,3 +869,16 @@ Caught before any ad spend, which is the point: double counted revenue makes ROA
 Next day's check: one Shopify order should equal one GA4 purchase at the real value.
 
 Still present, unchanged: `view_cart` fires on non-cart pages (seen again on this PDP). Next item.
+
+#### GA4 double count fixed at the source, and a second one caught before it happened 2026-09-13
+Todd **deleted** the "GA4 Purchases" custom pixel (and the unconnected "X Conversion" one, which was doing nothing). The `orders/create` webhook is now the only sender of `purchase`. Closes the double count above. Confirms on the next real order: one Shopify order should read one GA4 purchase at the real value, not double.
+
+**The Customer events screen then showed something worth more than the fix.** Shopify's own first party pixel apps are installed and several already send purchases **server side**: Facebook & Instagram, Google & YouTube and Pinterest all read **Server + Web, Optimized**. TikTok is present but not connected.
+
+So `app/lib/conversions/meta.server.js` was a loaded gun. Setting `PRIVATE_META_ACCESS_TOKEN` and `PUBLIC_META_PIXEL_ID` would have made two senders for one order, the exact GA4 failure again, on the platform most likely to carry ad spend next. Both that file and `docs/analytics-setup.md` now carry the warning and the safe order of operations: check Customer events first, decide which sender wins, disable the loser and confirm, only then set the vars.
+
+Also worth keeping: the webhook should usually win over Shopify's app pixel, because Shop Pay checkout on `shop.app` does not reliably fire `checkout_completed`, blockers kill browser pixels, and the webhook carries the click ids from `app/lib/clickIds.server.js`.
+
+If GA4 still reads 2 per order after this, **Google & YouTube is the next suspect**, since it is Server + Web and could be posting into the same property. GA4 showed exactly 2 and not 3, so it probably points elsewhere, but that is the thing to check.
+
+`X Conversion` being deleted costs nothing, it was never connected. It is re-addable from Explore pixel apps and may be a simpler route for X than Auny's manual pixel IDs on BAT-145.

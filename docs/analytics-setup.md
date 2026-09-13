@@ -80,3 +80,19 @@ adapter: `app/lib/conversions/meta.server.js`.
    platform's own heading, and add a row to this file.
 4. Nothing in `app/root.jsx`, `app/components/pixels/PixelBus.jsx`, or
    `app/routes/webhooks.orders.jsx` needs to change.
+
+## Before enabling ANY server side purchase destination, check Shopify's own pixel apps
+
+Shopify Admin > Settings > Customer events lists first party pixel apps, and several of them already send purchases **server side** on their own. Observed 2026-09-13: Facebook & Instagram, Google & YouTube and Pinterest all read **Server + Web, Optimized**. TikTok is present but not connected.
+
+If one of those is connected for a platform, setting this repo's env vars for that same platform creates **two senders for one order**.
+
+This is not theoretical. On 2026-09-13 a single real $19.10 Shopify order appeared in GA4 as **2 purchases, $38.20**, because the Admin custom pixel "GA4 Purchases" and the `orders/create` webhook were both live. Both carried the same `transaction_id` and GA4 counted both anyway, so a shared event id is not a dedup guarantee. Todd deleted the custom pixel; the webhook is the keeper.
+
+Safe order of operations for a new platform:
+1. Look at Customer events and see whether Shopify already covers it.
+2. If it does, decide which sender wins. This repo's webhook usually should: Shop Pay checkout on `shop.app` does not reliably fire `checkout_completed`, ad blockers kill browser pixels, and the webhook carries the click ids captured in `app/lib/clickIds.server.js`.
+3. Remove or disable the loser FIRST and confirm the platform stops receiving from it.
+4. Only then set the env vars.
+
+Catch a duplicate by comparing the platform's purchase count against **Shopify's own order count for the same day**, never against itself. One healthy looking report in isolation is what hid this for a day.

@@ -10,6 +10,22 @@
  * PRIVATE_META_ACCESS_TOKEN and PUBLIC_META_PIXEL_ID are both set,
  * isConfigured() returns false and this never sends or throws.
  *
+ * DO NOT SET THOSE TWO VARS WITHOUT CHECKING SHOPIFY FIRST. Observed in
+ * Admin > Settings > Customer events on 2026-09-13: the first party
+ * "Facebook & Instagram" pixel app is installed and reports **Server and
+ * Web, Optimized**, which means Shopify is ALREADY sending purchases to
+ * Meta server side. Turning this destination on alongside it makes two
+ * senders for one order, which is exactly what happened to GA4 the same
+ * day: one real $19.10 Shopify order showed in GA4 as 2 purchases and
+ * $38.20, because the Admin custom pixel and the orders/create webhook
+ * both fired. A shared event id did not dedupe them there, so do not
+ * assume Meta's `event_id` will save this either. Same warning applies to
+ * Google and Pinterest, both also Server and Web today.
+ *
+ * The safe order of operations: remove or disable Shopify's own app pixel
+ * for that platform FIRST, confirm the platform stops receiving from it,
+ * and only then set these vars. See docs/conversion-tracking.md.
+ *
  * Docs: https://developers.facebook.com/docs/marketing-api/conversions-api
  */
 
