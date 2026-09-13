@@ -854,6 +854,18 @@ All 39 waiting commits are live, including the ad blocker work.
 
 A first pass read 9 React #421 errors and a 404 in the console. Both were residue in that tab from earlier navigations this session (a wrong product handle, and a localhost dev server). A fresh tab on production is clean on both pages. Recorded because "console errors on the live site" nearly got reported as a regression it was not.
 
-**Todd corrected an assumption in the pass above: the GA4 Purchases custom pixel is LIVE, not disconnected**, and he saw order #1041's revenue attribute in GA4. So the Admin pixel and the `orders/create` webhook are both sending `purchase` for the same order. Open question, and the only thing here that could distort ad numbers: does #1041 show once at $19.10 in GA4, or twice at $38.20. If twice, disconnect the Admin pixel and keep the webhook, which is the one that survives Shop Pay and ad blockers.
+**Todd corrected an assumption in the pass above: the GA4 Purchases custom pixel is LIVE, not disconnected**, and he saw order #1041's revenue attribute in GA4. So the Admin pixel and the `orders/create` webhook are both sending `purchase` for the same order.
+
+**RESOLVED THE SAME EVENING, AND IT WAS DOUBLE COUNTING.** Todd pulled the GA4 Ecommerce purchases by Item name report twice. Range ending Sep 12: 1 purchased, $19.10. Range extended to include Sep 13: **2 purchased, $38.20**, both on the Twitch Liquid Combo Goal Bar Widget.
+
+Shopify for the same window, measured not assumed: Sep 12 **0 orders, $0**, Sep 13 **1 order, $19.10** (#1041). So there is exactly one real sale and GA4 holds two copies of it, $38.20 being exactly 2 x $19.10 on the same item. The $19.10 that appeared in the Sep 12 view was never a Sep 12 order, it was one of #1041's two copies.
+
+Both senders were live: the Admin custom pixel (browser, `checkout_completed`) and the `orders/create` webhook (server, Measurement Protocol). **They both carry `transaction_id` and GA4 still counted both, so transaction_id is not a dedup guarantee across sources.** The rule in `docs/conversion-tracking.md` about never running both against one measurement id is now demonstrated, not just asserted.
+
+Fix: **disconnect the Admin pixel, keep the webhook.** Settings > Customer events > GA4 Purchases > Disconnect. The webhook is the stronger sender on three counts: Shop Pay checkout on `shop.app` does not reliably fire `checkout_completed` so the pixel silently misses those orders, ad blockers kill the pixel and cannot touch the webhook, and the webhook already carries `_ga_client_id` (proven on #1041). Disconnecting loses nothing the webhook does not already send.
+
+Caught before any ad spend, which is the point: double counted revenue makes ROAS read 2x, and that is the direction that gets budget raised on a campaign that is not working.
+
+Next day's check: one Shopify order should equal one GA4 purchase at the real value.
 
 Still present, unchanged: `view_cart` fires on non-cart pages (seen again on this PDP). Next item.
