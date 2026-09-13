@@ -5,6 +5,21 @@ ad platform. GA4 is the only destination actually sending today; everything
 else in this doc is the standard that makes adding X, Meta, TikTok, Google
 Ads, Microsoft or Pinterest a small, obvious change instead of a rebuild.
 
+For where every ID comes from and where to paste it in production, see
+`docs/analytics-setup.md`. This doc covers the architecture; that one
+covers the config surface.
+
+The browser half (page_view, view_item, add_to_cart, ... -- everything
+except purchase) is a matching registry on the client side:
+`app/lib/analytics/registry.js` lists every browser pixel adapter under
+`app/lib/analytics/pixels/`, `app/lib/analytics/events.js` normalizes
+Hydrogen's analytics bus into one ecommerce event shape so every adapter
+maps from it instead of each re-reading the raw bus, and
+`app/components/pixels/PixelBus.jsx` is the single subscriber that fans a
+normalized event out to every configured adapter. Adding a platform's
+browser pixel is the same shape as adding its server destination: one file,
+one array entry.
+
 ## The rule: purchase is always server side
 
 Checkout is Shopify hosted, not this app. A browser pixel on the
@@ -125,13 +140,15 @@ Registered today:
 |---|---|---|
 | GA4 | `app/lib/conversions/ga4.server.js` | `PUBLIC_GA4_MEASUREMENT_ID`, `PRIVATE_GA4_API_SECRET` |
 | X | `app/lib/conversions/x.server.js` | `PRIVATE_X_CAPI_TOKEN`, `PUBLIC_X_PIXEL_ID`, `PRIVATE_X_PURCHASE_EVENT_ID` |
+| Meta | `app/lib/conversions/meta.server.js` | `PRIVATE_META_ACCESS_TOKEN`, `PUBLIC_META_PIXEL_ID` |
 
-X is wired structurally but **inert**: no credentials exist yet (tracked
-on Linear BAT-145). `isConfigured` returns false with those vars unset, so
-it never runs and never throws. Its request shape is built from X's own
-public docs and has three unconfirmed details flagged with `TODO` comments
-directly in the file (auth scheme, API version number, and the need for a
-separate Purchase event id) -- read those before flipping it on.
+X and Meta are wired structurally but **inert**: no credentials exist yet
+for either (X tracked on Linear BAT-145, Meta has no pixel created yet).
+`isConfigured` returns false with those vars unset, so neither ever runs
+or throws. X's request shape is built from X's own public docs and has
+three unconfirmed details flagged with `TODO` comments directly in the
+file (auth scheme, API version number, and the need for a separate
+Purchase event id) -- read those before flipping it on.
 
 ## eventId, for deduplication
 

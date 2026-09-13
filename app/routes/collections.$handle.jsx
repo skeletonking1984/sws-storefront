@@ -134,8 +134,9 @@ export default function Collection() {
             title: collection.title,
           },
           // Extra field on top of Hydrogen's CollectionPayload shape (which
-          // is only {collection: {id, handle}}), read back in GA4.jsx's
-          // collection_viewed subscriber to build view_item_list's items.
+          // is only {collection: {id, handle}}), read back in
+          // app/lib/analytics/events.js's collection_viewed handling to
+          // build view_item_list's items.
           // The generic view component spreads this whole data object into
           // the published payload, so it survives the round trip.
           products: collection.products.nodes.map((node, i) => ({

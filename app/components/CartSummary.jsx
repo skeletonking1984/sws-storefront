@@ -83,8 +83,9 @@ export function CartSummary({cart, layout}) {
  * Checkout is Shopify hosted, so Hydrogen never publishes a begin_checkout
  * equivalent on its own. This fires one at click time, before the browser
  * navigates away to the hosted checkout, via the same publish/subscribe
- * bus GA4.jsx already listens on (see its `custom_begin_checkout`
- * subscriber) rather than calling gtag directly here.
+ * bus PixelBus.jsx already listens on (see its `custom_begin_checkout`
+ * handling in app/lib/analytics/events.js) rather than calling gtag
+ * directly here.
  * @param {{checkoutUrl?: string; cart?: CartApiQueryFragment | OptimisticCart<CartApiQueryFragment | null>}}
  */
 function CartCheckoutActions({checkoutUrl, cart}) {

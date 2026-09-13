@@ -36,11 +36,11 @@ export default async function handleRequest(
     // Hydrogen's CSP helper has no mediaSrc option, and media-src falls
     // back to default-src per the CSP spec, so extend that instead,
     // without this, video playback silently fails with no console error.
-    // GA4 (gtag.js) and the X pixel (uwt.js) are also loaded as plain
-    // <script> tags with no scriptSrc directive set, so they land here too,
-    // script-src falls back to default-src the same way media-src does.
-    // Same trap as the video one: a blocked script fails with no console
-    // error, it just never fires.
+    // GA4 (gtag.js), the X pixel (uwt.js) and the Meta pixel (fbevents.js)
+    // are also loaded as plain <script> tags with no scriptSrc directive
+    // set, so they land here too, script-src falls back to default-src the
+    // same way media-src does. Same trap as the video one: a blocked
+    // script fails with no console error, it just never fires.
     defaultSrc: [
       "'self'",
       'https://cdn.shopify.com',
@@ -51,6 +51,8 @@ export default async function handleRequest(
       'https://static.ads-twitter.com',
       'https://analytics.twitter.com',
       'https://t.co',
+      'https://connect.facebook.net',
+      'https://www.facebook.com',
     ],
     // Brand fonts (Baloo 2 + Nunito) come from Google Fonts. Without these two
     // the stylesheet is blocked and the whole site silently falls back to system font.
@@ -74,6 +76,8 @@ export default async function handleRequest(
       'https://analytics.google.com',
       'https://analytics.twitter.com',
       'https://t.co',
+      'https://connect.facebook.net',
+      'https://www.facebook.com',
     ],
   });
 

@@ -80,9 +80,9 @@ export function CartMain({layout, cart: originalCart}) {
       {/*
         No `data` prop needed: Hydrogen's generic view component always
         merges in the AnalyticsProvider's own current `cart` regardless of
-        what `data` carries (see GA4.jsx for the cart_viewed subscriber
-        that reads payload.cart), so this fires view_cart with the real
-        cart already attached.
+        what `data` carries (see app/lib/analytics/events.js, the
+        cart_viewed handling that reads payload.cart), so this fires
+        view_cart with the real cart already attached.
       */}
       {cartHasItems && <Analytics.CartView />}
     </section>

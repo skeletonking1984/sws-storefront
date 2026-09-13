@@ -1,5 +1,5 @@
 import {Form, Link, useLoaderData, useSearchParams} from 'react-router';
-import {getPaginationVariables} from '@shopify/hydrogen';
+import {Analytics, getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
 import {CATEGORY_LINKS} from '~/components/CollectionFilterBar';
@@ -147,6 +147,30 @@ export default function Collection() {
           )}
         </PaginatedResourceSection>
       )}
+      {/* This route is a products query, not a real Shopify collection, so
+          there is no collection object to hand Hydrogen. Without this the
+          main browse page published no collection_viewed at all and fired
+          no view_item_list, while every real /collections/<handle> page
+          did. The synthetic id/handle/title match the listId and listName
+          already passed to ProductItem above, so a click here reports the
+          same list it was viewed in. Shape of `products` must stay in sync
+          with normalizeViewItemList in app/lib/analytics/events.js. */}
+      <Analytics.CollectionView
+        data={{
+          collection: {
+            id: 'all-products',
+            handle: 'all-products',
+            title: 'All Products',
+          },
+          products: products.nodes.map((node, i) => ({
+            id: node.id,
+            title: node.title,
+            price: node.priceRange?.minVariantPrice?.amount,
+            productType: node.productType,
+            index: i,
+          })),
+        }}
+      />
     </div>
   );
 }

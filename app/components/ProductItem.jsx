@@ -53,8 +53,9 @@ function widgetKind(title, productType) {
 
 /**
  * Publishes a `custom_select_item` event on the Hydrogen analytics bus so
- * GA4.jsx can map it to GA4's `select_item`, joining it back to whichever
- * `view_item_list` the card was shown in. `listId`/`listName` are only
+ * PixelBus.jsx (via app/lib/analytics/events.js) can map it to
+ * `select_item`, joining it back to whichever `view_item_list` the card
+ * was shown in. `listId`/`listName` are only
  * passed by callers that also fire a matching `view_item_list` (collection
  * pages); other callers (home, search) still pass a stable list label so
  * the click is attributable even without a paired list view.

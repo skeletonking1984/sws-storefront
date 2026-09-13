@@ -23,5 +23,6 @@
 
 import * as ga4 from './ga4.server';
 import * as x from './x.server';
+import * as meta from './meta.server';
 
-export const destinations = [ga4, x];
+export const destinations = [ga4, x, meta];
