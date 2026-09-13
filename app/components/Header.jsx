@@ -12,6 +12,7 @@ import {
   WORKS_WITH_PLATFORMS,
 } from '~/lib/nav';
 import logo from '~/assets/logo.png';
+import pfp from '~/assets/pfp.png';
 
 /**
  * @param {HeaderProps}
@@ -49,11 +50,19 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain, navData}) {
  */
 function BrandMark({shopName}) {
   const [imgFailed, setImgFailed] = useState(false);
-  if (imgFailed) {
-    return <strong className="sws-holo">{shopName}</strong>;
-  }
   return (
-    <img src={logo} alt={shopName} onError={() => setImgFailed(true)} />
+    <>
+      {/* The pfp is the shop's avatar on X and Etsy. It sits beside the
+          wordmark so shoppers arriving from either place recognise the
+          shop before they read anything. Decorative next to the lockup,
+          so alt is empty. Remove this when the new logo is finished. */}
+      <img className="brand-pfp" src={pfp} alt="" width="200" height="200" />
+      {imgFailed ? (
+        <strong className="sws-holo">{shopName}</strong>
+      ) : (
+        <img src={logo} alt={shopName} onError={() => setImgFailed(true)} />
+      )}
+    </>
   );
 }
 

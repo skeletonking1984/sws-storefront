@@ -2,6 +2,7 @@ import {Suspense} from 'react';
 import {Await, NavLink} from 'react-router';
 import {SocialLinks} from '~/components/SocialLinks';
 import logo from '~/assets/logo.png';
+import pfp from '~/assets/pfp.png';
 
 /**
  * @param {FooterProps}
@@ -17,6 +18,13 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}) {
                 {/* logo.png is the horizontal v3 lockup and already carries
                     the wordmark, so there is no text beside it. The alt text
                     is the fallback if the image ever fails to load. */}
+                <img
+                  className="brand-pfp"
+                  src={pfp}
+                  alt=""
+                  width="200"
+                  height="200"
+                />
                 <img src={logo} alt="Stream Widget Shop" />
               </div>
               <p className="footer-tagline">

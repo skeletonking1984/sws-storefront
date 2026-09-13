@@ -4683,3 +4683,42 @@ button.reset:hover:not(:has(> *)) {
   font-weight: 700;
   font-size: 1.05rem;
 }
+
+/* ------------------------------------------------------------------
+   Brand pfp (temporary). The avatar people already know from X and
+   Etsy, shown beside the wordmark so the new logo does not read as a
+   different shop. Scoped overrides beat the generic
+   `.header-brand img` / `.footer-brand img` height rules above.
+   Remove once the new logo work lands.
+   ------------------------------------------------------------------ */
+.brand-pfp {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.header-brand img.brand-pfp {
+  height: 28px;
+  width: 28px;
+  /* `.header-brand img` above sets border-radius: 0, and that selector is
+     as specific as `.brand-pfp`, so the round crop has to be restated
+     here where the selector is stronger. */
+  border-radius: 50%;
+  border: 1px solid rgba(242, 166, 216, 0.45);
+  filter: drop-shadow(0 0 8px rgba(242, 166, 216, 0.35));
+}
+
+@media (min-width: 45em) {
+  .header-brand img.brand-pfp {
+    height: 40px;
+    width: 40px;
+  }
+}
+
+.footer-brand img.brand-pfp {
+  height: 38px;
+  width: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(242, 166, 216, 0.4);
+  filter: drop-shadow(0 0 8px rgba(242, 166, 216, 0.3));
+}

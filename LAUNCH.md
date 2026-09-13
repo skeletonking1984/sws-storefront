@@ -748,4 +748,11 @@ Needs Todd:
 - Auny's X pixel IDs (BAT-145) and an X CAPI token, for the X destination.
 - The `_ga_client_id` relay did not attach on order #1040. Retest with a fresh cart and Shields down.
 
+### 2026-09-12 (Todd present)
+- **Brand pfp added to header and footer.** The "coding love" avatar people already know from X and Etsy now sits left of the wordmark lockup in the header (40px desktop, 28px mobile, circular) and in the footer brand block (38px). Reason: the new logo is a full identity change and the pfp is the instant recognition cue, so both run together until the logo work lands.
+- Source: `app/assets/pfp.png`, 200x200, pulled from the live X avatar (@streamwidget). Canonical copy also at `content/brand/logo/pfp.png`. The only version in the repo before this was `content/brand/logo/avatar.webp` at 100x100, too small to use. If a 400x400 original turns up, drop it in over both.
+- Styles are scoped `.header-brand img.brand-pfp` / `.footer-brand img.brand-pfp` in `app/styles/app.css`, because the generic `.header-brand img` rule sets `border-radius: 0` at equal specificity and squared the avatar off. Marked as temporary in the CSS comment.
+- Verified in the dev server at 375px and desktop: circular in both places, header still fits beside the nav icons on mobile. Build clean, no new lint problems.
+- NOT deployed. Waiting on Todd, same as the other 35 commits.
+
 Preview: https://01m28p3g5jhdw6jfgj23y7ewqm-fb73b5b73c40344d0d20.myshopify.dev
