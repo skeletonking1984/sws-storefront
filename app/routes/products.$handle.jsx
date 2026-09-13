@@ -12,6 +12,7 @@ import {ProductPrice} from '~/components/ProductPrice';
 import {ProductGallery} from '~/components/ProductGallery';
 import {ProductForm} from '~/components/ProductForm';
 import {ProductHighlights} from '~/components/ProductHighlights';
+import {ShareRow} from '~/components/ShareRow';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge} from '~/components/EtsyRating';
 import {EtsyReviews} from '~/components/EtsyReviews';
@@ -459,6 +460,7 @@ export default function Product() {
             productOptions={productOptions}
             selectedVariant={selectedVariant}
           />
+          <ShareRow title={title} />
         </div>
       </div>
       <div className="product-description">

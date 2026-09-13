@@ -4752,3 +4752,67 @@ button.reset:hover:not(:has(> *)) {
   border: 1px solid rgba(242, 166, 216, 0.4);
   filter: drop-shadow(0 0 8px rgba(242, 166, 216, 0.3));
 }
+
+/* ------------------------------------------------------------------
+   Product page share row. Same circular button as `.social-link` in
+   the footer, but these are share intents for THIS page rather than
+   links to the shop's own accounts, so they live apart: the footer
+   set must not pick up a "Copied" state or a copy button.
+   ------------------------------------------------------------------ */
+.share-row {
+  align-items: center;
+  border-top: 1px solid var(--sws-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+}
+
+.share-row-label {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.share-row-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.share-btn {
+  align-items: center;
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 50%;
+  color: var(--sws-sub);
+  cursor: pointer;
+  display: flex;
+  height: 38px;
+  justify-content: center;
+  padding: 0;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+  width: 38px;
+}
+
+.share-btn:hover,
+.share-btn:focus-visible {
+  border-color: var(--sws-holo-4);
+  color: var(--sws-holo-4);
+  transform: translateY(-2px);
+}
+
+.share-btn svg {
+  fill: currentColor;
+  height: 16px;
+  width: 16px;
+}
+
+/* Always in the DOM so the live region can announce into it without the
+   row reflowing when the word appears. */
+.share-row-copied {
+  color: var(--sws-holo-4);
+  font-size: 0.8rem;
+  min-height: 1em;
+}
