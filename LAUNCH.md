@@ -767,4 +767,15 @@ Needs Todd:
 - **Cannot add new happy clients without Todd.** Etsy reviews carry no buyer name and no channel, so there is no data path from a sale to a streamer's handle. Adding faces needs Todd to name them. Nothing was invented.
 - NOT deployed yet (this second batch). Todd runs the deploy.
 
+### 2026-09-13 (Todd present)
+- **PDP share row** (`68d9ea8`): X, Reddit, Copy link, plus the OS share sheet where it exists. Each outbound URL carries its own `utm_source`, safe because the PDP canonical is pathname-only (verified against a UTM'd URL: canonical comes back clean). Share buttons are not an SEO signal; the OG/Twitter block that makes a pasted link render was already correct.
+- **Browser pixel layer standardized** (`bda6a83`). The server half was already a registry; the browser half was two bespoke components duplicating payload mapping. Now: `app/lib/analytics/events.js` normalizes Hydrogen's bus once, `app/lib/analytics/pixels/{ga4,x,meta}.js` are adapters with the same interface as `conversions/`, `registry.js` derives config from each adapter's own `envKeys`, and `PixelBus.jsx` subscribes once and fans out. GA4.jsx and XPixel.jsx deleted. **Adding a platform is now one adapter file plus one array entry plus env vars. root.jsx never changes again.**
+- **Meta added on both halves** as proof the shape works: browser adapter plus a Conversions API purchase destination, `fbc` built from the `fbclid` already being captured. CSP updated for `connect.facebook.net` / `www.facebook.com`.
+- **`docs/analytics-setup.md` is the new single page** for "where do I paste the IDs". Per platform: every variable, which screen in that ad platform's UI it comes from, and that production values go in Shopify Admin > Hydrogen > SWS Storefront > Environments and variables. `.env.example` matches it.
+- **Coverage gap fixed while verifying:** `/collections/all` had no `Analytics.CollectionView`, so the main browse page fired no `view_item_list` while every real `/collections/<handle>` page did. Pre-existing, not a regression.
+- Verified myself in the dev server, fresh server and fresh tab, zero console errors: `page_view`, `view_item` (USD 15.35, real item + price), `add_to_cart` (real value, qty), `view_item_list` (24 items, list "All Products"), `view_cart`. GA4 script injected; X and Meta scripts NOT injected and nothing thrown, both unconfigured. Build clean, lint unchanged at 12 errors / 74 warnings.
+- **Still blocked on IDs, not code.** X needs `PUBLIC_X_PIXEL_ID` plus one event ID per event (Auny, BAT-145) and its CAPI auth scheme is still unconfirmed in `x.server.js`. Meta needs a pixel ID and a CAPI token, and the pixel does not exist yet. Everything no-ops silently until set.
+- Watch: `view_cart` fires on non-cart pages whenever the session has a cart. Hydrogen publishes `cart_viewed` there. Not introduced by this change, but it will inflate `view_cart` in GA4 if left alone.
+- NOT deployed. Todd runs the deploy.
+
 Preview: https://01m28p3g5jhdw6jfgj23y7ewqm-fb73b5b73c40344d0d20.myshopify.dev
