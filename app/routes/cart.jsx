@@ -5,6 +5,15 @@ import {buildMeta, getOrigin} from '~/lib/seo';
 import {readClickIds} from '~/lib/clickIds.server';
 
 /**
+ * Cart attributes that must track the CURRENT value rather than the first
+ * one ever seen. Everything else on the cart is first touch wins.
+ */
+const REFRESHED_ATTRIBUTE_KEYS = new Set([
+  '_ga_session_id',
+  '_ga_session_number',
+]);
+
+/**
  * @type {Route.MetaFunction}
  */
 export const meta = ({matches, location}) => {
@@ -148,23 +157,45 @@ export async function action({request, context}) {
   // here by re-checking on every mutation and merging in only what is
   // still missing.
   //
-  // Never overwrites: any attribute already present (a captured click id
-  // from an earlier request, or an unrelated attribute this cart carries
-  // for some other reason) is passed straight through untouched.
+  // Click ids are never overwritten: an attribute already on the cart (a
+  // click id captured on an earlier request, or anything else this cart
+  // carries) is passed straight through, so first touch keeps the credit.
+  //
+  // The GA4 SESSION is the deliberate exception and is always refreshed to
+  // the current value. A session is not a first touch fact: a cart built
+  // on Monday and checked out on Friday is a different GA4 session, and
+  // pinning the order to the session that happened to be open when the
+  // cart was created is exactly the misattribution this relay exists to
+  // prevent. See REFRESHED_ATTRIBUTE_KEYS below.
   if (cartId && cartResult) {
     // Second arg lets readClickIds also resolve the GA4 session cookie
     // name (_ga_<measurement id>) -- see app/lib/clickIds.server.js.
     const clickIds = readClickIds(request, context.env);
     const existingAttributes = cartResult.attributes || [];
     const existingKeys = new Set(existingAttributes.map((attr) => attr.key));
-    const missingAttributes = Object.entries(clickIds)
-      .filter(([key, value]) => value && !existingKeys.has(key))
+    const changedAttributes = Object.entries(clickIds)
+      .filter(([key, value]) => {
+        if (!value) return false;
+        if (REFRESHED_ATTRIBUTE_KEYS.has(key)) {
+          // Only write when it actually moved, so an unchanged session does
+          // not cost a cart mutation on every single request.
+          const current = existingAttributes.find((a) => a.key === key);
+          return !current || current.value !== value;
+        }
+        return !existingKeys.has(key);
+      })
       .map(([key, value]) => ({key, value}));
+    const changedKeys = new Set(changedAttributes.map((a) => a.key));
+    const missingAttributes = changedAttributes;
 
     if (missingAttributes.length > 0) {
       try {
         await cart.updateAttributes([
-          ...existingAttributes.map(({key, value}) => ({key, value})),
+          // Drop the stale copy of anything being refreshed, otherwise the
+          // replaced array would carry the key twice.
+          ...existingAttributes
+            .filter(({key}) => !changedKeys.has(key))
+            .map(({key, value}) => ({key, value})),
           ...missingAttributes,
         ]);
       } catch (error) {

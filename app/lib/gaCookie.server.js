@@ -64,10 +64,35 @@ export function parseGaSession(cookieHeader, measurementId) {
   const value = readCookie(cookieHeader, cookieName);
   if (!value) return undefined;
 
+  if (!value.startsWith('GS')) return undefined;
+
+  // GA4 has shipped TWO different shapes for this cookie and BOTH are live
+  // in the wild, so both are parsed here.
+  //
+  //   GS2.1.s1789350851$o2$g1$t1789351798$j60$l0$h0
+  //     the current shape, dollar delimited with letter prefixed fields.
+  //     `s` is the session id, `o` is the session number.
+  //
+  //   GS1.1.1789346700.5.1.1789346730.0.0.0
+  //     the older shape, plain dot separated positional fields, session id
+  //     third and session number fourth.
+  //
+  // This was found the hard way on 2026-09-14: only the dot shape was
+  // handled, the live cookie on streamwidgetshop.com was the dollar shape,
+  // so every order went out with no session id and GA4 reassigned the
+  // purchase to a brand new session. The unit test passed the whole time
+  // because it was written against a made up dot shaped value, which
+  // tested the assumption rather than reality. Check a real cookie.
+  if (value.includes('$')) {
+    const sessionId = (value.match(/[.$]s(\d+)(?:[$]|$)/) || [])[1];
+    const sessionNumber = (value.match(/[$]o(\d+)(?:[$]|$)/) || [])[1];
+    if (!sessionId || !sessionNumber) return undefined;
+    return {sessionId, sessionNumber};
+  }
+
   const parts = value.split('.');
   // GS1.1.<sessionId>.<sessionNumber>.<...more fields> is at least 4 parts.
   if (parts.length < 4) return undefined;
-  if (!parts[0].startsWith('GS')) return undefined;
 
   const [, , sessionId, sessionNumber] = parts;
   if (!/^\d+$/.test(sessionId) || !/^\d+$/.test(sessionNumber)) {
