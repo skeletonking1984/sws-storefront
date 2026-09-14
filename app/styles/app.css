@@ -5,8 +5,6 @@
 */
 :root {
   --aside-width: 400px;
-  --cart-aside-summary-height-with-discount: 300px;
-  --cart-aside-summary-height: 250px;
   --grid-item-width: 320px;
   --header-height: 72px;
 
@@ -371,16 +369,25 @@ aside header h3 {
 
 aside header .close {
   align-items: center;
+  /*
+   * Reads as a button, not as a stray glyph. Todd could not find this
+   * control at all on a phone: it was a muted 20px x in a transparent box,
+   * and the site header was painting over it. Given a real border and
+   * surface it is unmistakable, and 44px square is the Apple minimum tap
+   * target.
+   */
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border-strong);
   border-radius: 999px;
-  color: var(--sws-sub);
+  color: var(--sws-text);
   display: flex;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: bold;
   height: 44px;
   justify-content: center;
   line-height: 1;
   text-decoration: none;
-  transition: color 200ms, background 200ms;
+  transition: color 200ms, background 200ms, border-color 200ms;
   width: 44px;
 }
 
@@ -408,6 +415,15 @@ aside main {
   height: calc(100% - var(--header-height) - 2rem);
   margin: 1rem;
   overflow-y: auto;
+  /*
+   * Keep the drag inside the drawer. Without this, a touch scroll that
+   * reaches either end of this container chains to the page behind, so the
+   * background moves while the menu appears stuck. Chrome for Android does
+   * this by default; a wheel event in a desktop emulator does not, which is
+   * why it only shows up on a real phone.
+   */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 aside p {
@@ -446,7 +462,23 @@ aside li {
   transition: opacity 400ms ease-in-out;
   transition: opacity 400ms;
   visibility: hidden;
-  z-index: 10;
+  /*
+   * An aside is `aria-modal`, so it must sit above ALL site chrome: the
+   * sticky header (20) and the desktop mega panel (30).
+   *
+   * At 10 it sat below the header, and the header is 72px tall, which is
+   * exactly where each aside's own header and its close button live. So the
+   * site header painted over the drawer's "CART" title and its close
+   * button, and `document.elementFromPoint` at the centre of that close
+   * button returned `a.header-cart-btn`. Tapping the X to close the cart
+   * actually hit the site header's cart icon underneath it. Todd asked for
+   * "a close button on the menu pop out and the checkout pop out" on
+   * 2026-09-14; there already was one, it was buried and unclickable.
+   *
+   * Same family as the sticky Add to cart bar that covered Continue to
+   * Checkout. Nothing that is page chrome may outrank an open modal.
+   */
+  z-index: 40;
 }
 
 .overlay .close-outside {
@@ -867,10 +899,31 @@ button.reset:hover:not(:has(> *)) {
   margin-bottom: 1.5rem;
 }
 
+/*
+ * The drawer is a flex column: the line items take whatever room is left and
+ * scroll, the summary sits under them at its real height.
+ *
+ * This used to be `max-height: calc(100vh - var(--cart-aside-summary-height))`,
+ * a hardcoded GUESS at how tall the summary is, with a second constant for
+ * the with-discount case. The guess was about 300px. On a 360px wide phone
+ * the discount and gift card forms wrap and the summary is 559px, so the
+ * scroll area was sized 340px while the summary absolutely positioned over it
+ * covered 104% of the drawer. Every cart line sat underneath it and
+ * `scrollHeight === clientHeight`, so there was nothing to scroll: the cart
+ * opened straight onto "Totals" with no products visible and no way to reach
+ * them. Todd, 2026-09-14: "cant scroll, stuff cutoff".
+ *
+ * `min-height: 0` is load bearing. A flex child defaults to `min-height: auto`
+ * and refuses to shrink below its content, so without it this never scrolls,
+ * it just grows and pushes the summary off the bottom.
+ *
+ * No constant here may restate a dimension the layout already knows.
+ */
 .cart-main {
-  height: 100%;
-  max-height: calc(100vh - var(--cart-aside-summary-height));
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   width: auto;
 }
 
@@ -880,9 +933,11 @@ button.reset:hover:not(:has(> *)) {
   overflow: visible;
 }
 
-.cart-main.with-discount {
-  max-height: calc(100vh - var(--cart-aside-summary-height-with-discount));
-}
+/*
+ * Intentionally no longer changes the height. The flex layout above already
+ * gives the summary exactly the room it needs, discount row or not, which is
+ * what the two `--cart-aside-summary-height*` constants were guessing at.
+ */
 
 .cart-main ul {
   list-style: none;
@@ -1034,7 +1089,13 @@ button.reset:hover:not(:has(> *)) {
   border-top: 1px solid var(--sws-border);
   bottom: 0;
   padding-top: 0.75rem;
-  position: absolute;
+  /*
+   * In flow, not absolutely positioned over the scroll area. See the note on
+   * `.cart-main`: pinned to the drawer's bottom it covered every cart line on
+   * a phone. As a flex child it sits after the items at its natural height and
+   * is always fully visible, and the items scroll above it.
+   */
+  flex: 0 0 auto;
   /*
    * Span the drawer, do not restate its width. This used to be
    * `width: calc(var(--aside-width) - 40px)`, a flat 360px, while the drawer
@@ -1053,8 +1114,6 @@ button.reset:hover:not(:has(> *)) {
    * `main` carries `margin: 1rem`, so left/right of 1rem lines this up with
    * the content column exactly: 327px at a 360px viewport, measured.
    */
-  left: 1rem;
-  right: 1rem;
   width: auto;
 }
 

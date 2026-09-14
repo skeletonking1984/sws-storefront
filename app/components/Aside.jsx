@@ -89,6 +89,48 @@ Aside.Provider = function AsideProvider({children}) {
     setType('closed');
   }, [location.key]);
 
+  /*
+   * Lock the page while an aside is open. Standard modal behaviour and its
+   * absence is a real bug on touch: with the body still scrollable, a drag
+   * inside the drawer that reaches its end hands the gesture to the page, so
+   * the background slides around under a menu that looks frozen. Todd on a
+   * Moto G5, 2026-09-14: "cant scroll, stuff cutoff".
+   *
+   * Position is preserved and restored rather than using `overflow: hidden`
+   * alone, because on iOS Safari `overflow: hidden` on the body does not
+   * stop the scroll and the page jumps to the top when the modal closes.
+   */
+  useEffect(() => {
+    if (type === 'closed') return undefined;
+    const {body} = document;
+    const scrollY = window.scrollY;
+    // Locking the body removes the scrollbar, which widens the layout and
+    // jumps every fixed element. Measured at 1024px: the header went 1009 to
+    // 1024, a visible 15px shift on every cart open. Hold the width with
+    // padding. Touch devices overlay their scrollbar, so this is 0 there.
+    const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+    const previous = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+      paddingRight: body.style.paddingRight,
+    };
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+    if (scrollbar > 0) body.style.paddingRight = `${scrollbar}px`;
+    return () => {
+      body.style.position = previous.position;
+      body.style.top = previous.top;
+      body.style.width = previous.width;
+      body.style.overflow = previous.overflow;
+      body.style.paddingRight = previous.paddingRight;
+      window.scrollTo(0, scrollY);
+    };
+  }, [type]);
+
   return (
     <AsideContext.Provider
       value={{
