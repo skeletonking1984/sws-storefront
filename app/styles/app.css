@@ -1078,7 +1078,29 @@ button.reset:hover:not(:has(> *)) {
     border-top: 3px solid var(--sws-ink);
     padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom, 0px));
     width: 100%;
-    z-index: 15;
+    /*
+     * MUST stay below `.overlay` (z-index 10), which is every aside: the
+     * cart drawer, the search palette and the mobile menu.
+     *
+     * At z-index 15 this bar painted ON TOP of the cart drawer it had just
+     * opened, and it is pinned to the same bottom edge, so it covered the
+     * bottom ~60px of the drawer, which is exactly where "Continue to
+     * Checkout" sits. Measured on production 2026-09-14: the checkout link
+     * occupied y 731-788, this bar occupied y 750-810, and
+     * document.elementFromPoint at the centre of the checkout link returned
+     * this button. Tapping Checkout on a phone re-added the item to the cart
+     * instead of going to checkout, and scrolling the drawer did not free it
+     * because both are fixed to the viewport. Todd could not check out on
+     * mobile at all.
+     *
+     * The button stayed visibly present and looked perfectly normal, which
+     * is why a check that only asserted the checkout URL loads never caught
+     * it. Press the button, do not navigate to its href.
+     *
+     * 5 keeps it above page content (which tops out at z-index 2) and below
+     * every modal. Do not raise it.
+     */
+    z-index: 5;
   }
 
   .product {
