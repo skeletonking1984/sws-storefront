@@ -1321,3 +1321,31 @@ Still open, needs a component split rather than CSS: with a large cart the check
 Also shipped: an optional `PRIVATE_PREVIEW_PASSWORD` gate (`app/lib/previewGate.server.js`) so a non production build can be opened on a phone without a Shopify login. Inert unless the variable is set, verified both ways. Oxygen preview URLs cannot be opened any other way: the CLI's `--auth-bypass-token` works as a header (200) but not as any query parameter (302), and a phone browser cannot send headers.
 
 Commits: `2ff7345`, `7268c90`, `1746c31`, on top of `36ad225` and `42dcf30`.
+
+#### Production deploy verified 2026-09-14 (Todd deployed)
+All 34 waiting commits are live. Verified on production by driving it, not by loading URLs.
+
+**Mobile, 360x640** (the width every earlier pass missed):
+
+| Check | Result |
+|---|---|
+| Header controls | Open menu, Sign in, Search, Cart all **44x44** |
+| Menu | opens, heading renders, X is 44x44 and hittable, **closes by X**, 6 nav links |
+| Background while a drawer is open | locked, and unlocked again after close |
+| Cart drawer | 5 line items, 4 visible at once, **scrolls**, X 44x44 |
+| Cart summary and checkout width | 327px each, **0px past the right edge** |
+| Checkout, pressed not navigated | reached `shop.streamwidgetshop.com/checkouts/...`, Contact + Payment, **no shipping step**, express wallets present, no overflow |
+| Collection grid | cards **296px**, right edge 328 inside 360, **not clipped** |
+| Document overflow | none on home, PDP or collection |
+
+**Desktop, 1440x900**: `window.scrollX` reaches **0** (was 68 before the header fix), header children end at 242 / 1104 / 1405 inside 1425, all 7 nav items present.
+
+**Tracking**: `/webhooks/orders` GET 405, unsigned POST 401, bogus HMAC 401. `/api/e` GET 405, no-origin POST 403, `purchase` 400. On a real PDP: gtag loaded, `_ga` set, `view_item` and `page_view` in `dataLayer`, one batched `/g/collect`, and **0 calls to `/api/e`**, which is the proof the blocker-detection window is not double counting.
+
+**Pages**: `/`, `/collections/all`, `/cart`, a PDP, `/sitemap.xml`, `/robots.txt` all 200.
+
+**Catalogue**: `audit-catalog`, `audit-shipping`, `audit-platform-claims --check` and `build-seo-fields --check` all exit 0. 125 products, 0 issues, 0 requiring shipping, 0 overclaiming a platform, 0 without a `works_with` metafield, 0 needing SEO fields.
+
+**And the one that matters**: Todd completed a purchase on his own phone. **Order #1043**, 20:34Z, PAID, Moon Jar Goal Widget, carrying `_ga_client_id`, `_ga_session_id` and `_ga_session_number`. A $0.00 discounted test, so it proves the path rather than the revenue, but the path is what was broken all day.
+
+Still open, unchanged: with a large cart the checkout button is reached by scrolling past the line items. Pinning it needs the summary rendered as a sibling of the scroll area, a component split rather than CSS, because the summary is 559px tall at 360px and cannot simply be made sticky.
