@@ -3474,9 +3474,24 @@ button.reset:hover:not(:has(> *)) {
 * routes/blog.$articlehandle.tsx
 * --------------------------------------------------
 */
+/*
+  Article body images come from Shopify's blog editor as raw <img> in
+  contentHtml, so their intrinsic size is whatever the author uploaded.
+  This used to be `width: 100%`, which force-stretched EVERY one of them to
+  the full content column no matter how small the source was. Measured on
+  2026-09-13: the lunar cat image in "Best VTuber Overlays 2026" rendered
+  at 913 CSS px from a 921px source, so on a 2x display it painted at half
+  the density it needed and read as blurry.
+
+  `max-width` instead of `width` means an image is never scaled UP past its
+  own resolution. A small image now sits at its true size and stays sharp
+  instead of being blown up. See enlargeArticleImages() in
+  app/routes/blogs.$blogHandle.$articleHandle.jsx for the other half, which
+  asks the CDN for a source big enough for a retina screen.
+*/
 .article img {
   height: auto;
-  width: 100%;
+  max-width: 100%;
 }
 
 /*

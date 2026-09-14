@@ -84,10 +84,77 @@ function loadDeferredData({context}) {
   return {};
 }
 
+/**
+ * Rewrites Shopify CDN <img> URLs inside a blog article's body so they are
+ * sharp on a high density screen.
+ *
+ * The body arrives as raw HTML from Shopify's blog editor, so each image
+ * carries whatever URL the author pasted, usually with a small `width`
+ * baked in. Measured on the live site 2026-09-13: the lunar cat image in
+ * "Best VTuber Overlays 2026" was requested at `width=400` and painted at
+ * 913 CSS px. A 2x display needs roughly 1826 real pixels there, so it
+ * rendered soft. The CSS half of this fix (`.article img`, app.css) stops
+ * images being scaled UP past their own resolution; this half asks the CDN
+ * for enough pixels in the first place.
+ *
+ * Only touches `cdn.shopify.com` URLs, and only ones that already carry a
+ * `width` parameter, because those are the resized ones. `crop` and
+ * `height` are dropped with it: they were sized for the old small width
+ * and keeping them would crop the larger source to the same small box.
+ * Anything else in the body, an external image, an inline SVG, a video, is
+ * left exactly as the author wrote it.
+ *
+ * @param {string} html Raw article `contentHtml`.
+ * @returns {string}
+ */
+function sharpenArticleImages(html) {
+  if (!html) return html;
+
+  return html.replace(/<img\b[^>]*>/gi, (tag) => {
+    const srcMatch = tag.match(/\ssrc=["']([^"']+)["']/i);
+    if (!srcMatch) return tag;
+
+    const rawSrc = srcMatch[1];
+    if (!rawSrc.includes('cdn.shopify.com')) return tag;
+
+    let url;
+    try {
+      url = new URL(rawSrc, 'https://cdn.shopify.com');
+    } catch {
+      return tag;
+    }
+    if (!url.searchParams.has('width')) return tag;
+
+    // Sized for the article column, which is capped well under 1000px, so
+    // 1600 covers a 2x display without asking for the full original on
+    // every page load.
+    const widths = [800, 1200, 1600];
+    const withWidth = (w) => {
+      const next = new URL(url);
+      next.searchParams.delete('crop');
+      next.searchParams.delete('height');
+      next.searchParams.set('width', String(w));
+      return next.toString();
+    };
+
+    const srcSet = widths.map((w) => `${withWidth(w)} ${w}w`).join(', ');
+    const rebuilt = tag
+      .replace(/\ssrcset=["'][^"']*["']/i, '')
+      .replace(/\ssizes=["'][^"']*["']/i, '')
+      .replace(/\ssrc=["'][^"']+["']/i, ` src="${withWidth(1200)}"`)
+      .replace(
+        /\s*\/?>$/,
+        ` srcset="${srcSet}" sizes="(min-width: 60em) 900px, 92vw" loading="lazy" decoding="async" />`,
+      );
+    return rebuilt;
+  });
+}
+
 export default function Article() {
   /** @type {LoaderReturnData} */
   const {article} = useLoaderData();
   const {title, image, contentHtml, author} = article;
+  const bodyHtml = sharpenArticleImages(contentHtml);
 
   const publishedDate = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -107,7 +174,7 @@ export default function Article() {
 
       {image && <Image data={image} sizes="90vw" loading="eager" />}
       <div
-        dangerouslySetInnerHTML={{__html: contentHtml}}
+        dangerouslySetInnerHTML={{__html: bodyHtml}}
         className="article"
       />
     </div>
