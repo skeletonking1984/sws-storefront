@@ -654,6 +654,48 @@ button.reset:hover:not(:has(> *)) {
   min-width: fit-content;
 }
 
+/*
+ * The desktop header overflows its own viewport between roughly 1280px and
+ * 1500px, where the horizontal nav is already showing but there is not yet
+ * room for it.
+ *
+ * Measured on production at 1440x900: the header content box is 1361px
+ * (1425 minus 32px padding each side) while its three children need
+ * 222 + 890 + 275 plus two 12px gaps = 1411px. `.header-menu-desktop` is
+ * `flex: 0 1 auto` but inherits `min-width: auto`, so it refuses to shrink
+ * below its content and pushes `.header-ctas` to a right edge of 1491.
+ * `body { overflow-x: hidden }` hides the scrollbar but does not stop the
+ * scroll: window.scrollX reached 68 on the live site.
+ *
+ * Tightening the gaps and the nav item padding recovers the 68px without
+ * clipping or hiding anything: after this the three children end at 242,
+ * 1104 and 1405, all inside 1425, and scrollX is 0.
+ *
+ * Found 2026-09-14 while verifying checkout at desktop widths. Pre-existing,
+ * and not caught by the 2026-09-08 mega menu pass, which measured the panel
+ * rather than the header row itself.
+ */
+@media (max-width: 1500px) {
+  .header {
+    gap: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .header-menu-desktop {
+    min-width: 0;
+  }
+
+  .header-menu-desktop .header-menu-item {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .header-ctas {
+    grid-gap: 4px;
+  }
+}
+
 .header-ctas a,
 .header-ctas button {
   font-size: 0.85rem;
@@ -3901,6 +3943,17 @@ button.reset:hover:not(:has(> *)) {
   border-radius: 14px;
   display: flex;
   gap: 0.75rem;
+  /*
+   * A grid child defaults to min-width: auto, which is its CONTENT width,
+   * not its track width, so a tile wider than its column silently overflows
+   * the grid instead of shrinking. `.mega-tile-body` already carries this
+   * for the same reason; the tile itself was missed, and in the 375px mobile
+   * accordion the right hand column of tiles ran to x=397 in a 375px
+   * viewport, clipping "Goal widgets" and "All widgets" off screen. Measured
+   * on production 2026-09-14: adding this moved that edge 397 -> 355.
+   * Same root cause as the 2026-09-08 mega menu overflow fix.
+   */
+  min-width: 0;
   padding: 0.6rem;
   text-decoration: none;
   transition: border-color 0.2s ease, transform 0.2s ease;

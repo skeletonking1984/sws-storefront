@@ -1,5 +1,6 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import {useId} from 'react';
+import {useLocation} from 'react-router';
 
 /**
  * A side bar component with Overlay
@@ -62,6 +63,31 @@ const AsideContext = createContext(null);
 
 Aside.Provider = function AsideProvider({children}) {
   const [type, setType] = useState('closed');
+  const location = useLocation();
+
+  /*
+   * Close whatever aside is open as soon as a navigation commits.
+   *
+   * Without this the mobile menu is a full screen overlay that never goes
+   * away: tapping "Chat widgets" in the accordion DID navigate, the route
+   * behind it really did become /collections/frontpage, but the menu stayed
+   * covering the whole viewport, so the only thing a visitor sees is the
+   * same menu they just tapped. Todd reported it as "clicking, no redirect
+   * happens and gets buggy", and that is exactly how it reads. Verified on
+   * production 2026-09-14: after the tap, location.pathname was
+   * /collections/frontpage, document.title was "Chat Widget", and the
+   * overlay was still expanded.
+   *
+   * Keyed on location.key rather than pathname so that tapping a link to the
+   * page you are already on still closes the menu.
+   *
+   * Safe for the cart drawer: add to cart goes through CartForm, which
+   * submits with a fetcher and never changes location, so opening the drawer
+   * from the PDP is not undone by this.
+   */
+  useEffect(() => {
+    setType('closed');
+  }, [location.key]);
 
   return (
     <AsideContext.Provider
