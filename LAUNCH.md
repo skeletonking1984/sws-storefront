@@ -1081,3 +1081,69 @@ The three reproduction runs created 3 real, empty, buyer-less carts on productio
 2. A check that only asserts the presence of what the code writes cannot catch deletion of what it does not. Drive a decoy value through the live path and assert it survives.
 
 Commit: `32fb854` reviewed. No production deploy from this pass.
+
+### 2026-09-14 (fourth pass, scheduled QA)
+
+First run of the QA role's own pass. **Purchase path green, tracking green, truth of claims is not.**
+
+#### Verified green
+| Check | Result |
+|---|---|
+| `node scripts/audit-shipping.mjs` | exit 0, 125 storefront products, none require shipping |
+| `node scripts/audit-catalog.mjs` | exit 0, 125 products, 0 with an issue |
+| `npm run verify:tracking` (production) | exit 0, **25 passed, 0 failed** |
+| Real browser checkout drive | PASS, detail below |
+| Reviews freshness | no drift, detail below |
+| Mobile 375px, horizontal overflow | 0px on homepage and on a PDP |
+| Mobile 375px, images upscaled past their own resolution | 0 of 28 visible on homepage, 0 of 21 on a PDP |
+
+**Purchase path, driven end to end on the live site.** Opened a real PDP on `streamwidgetshop.com`, clicked Add to cart through its element ref, landed on the hosted checkout at `shop.streamwidgetshop.com/checkouts/cn/hWNGnrwiTEwGIBH3Mu2oT5Oc/en-us`. Sections rendered: Express checkout, Contact, Payment, Billing address, Finalize order. **No shipping address step and no delivery step**, which is the whole point of the `requiresShipping: false` fix. Subtotal $60.96 across 4 line items. **Stopped at the payment form. No purchase completed.**
+
+**Tracking endpoints** are covered by `verify:tracking` and all 7 assertions the QA task names passed inside it: `/api/e` GET 405, cross origin POST 403, forged `purchase` 400, valid same origin event 204; `/webhooks/orders` GET 405, unsigned POST 401, forged HMAC 401.
+
+**Revenue comparison, Shopify first.** 2026-09-13: Shopify reports **2 orders, $19.10 net** ($27.09 gross). One of those two is the $0 test order #1042, so **one real sale at $19.10**. X Ads for the same day: $4.87 spend, 20531 impressions, 325 clicks, **$0 conversion revenue, 0 conversions**. That is the expected reading, not a discrepancy: X CAPI has no token yet (BAT-145), so X under reports to zero by design. No platform over reported.
+
+#### Findings
+
+**1. HIGH. Live products claim Kick and YouTube that their own shipped code and Etsy listing deny. BAT-150**
+
+The Dreamy Lotus PDP, read off the live site right now: `h1` and `<title>` are "Dreamy Lotus Chat & Goal Widgets for **Twitch Kick YouTube** | Glass Theme | StreamElements Streamlabs OBS", the live meta description is "Elegant glass-theme chat & goal stream widget for Twitch, **Kick & YouTube**. Works with StreamElements, Streamlabs & OBS.", and its own `custom.works_with` metafield says `["Twitch","OBS","StreamElements"]`. The badge row and the headline on the same page disagree.
+
+Checked at tier 1, the shipped widget code. Unzipped `content/products/lotus-glass/lotuschat.zip` and grepped it: 21 hits for `streamelements`, 2 for `Twitch`, **0 for `youtube`, 0 for `kick`**. Checked at tier 2, the Etsy body (listing 4328622333): opens "... Clean Vibe **Streamelement Only**", says "role icons for **Twitch** using Streamelements", and never once says Kick or YouTube. Same wording verified on 4310437865, 4322607453, 1892198146 and 4333466716.
+
+Scope across the live Storefront API: **8 product titles** claim Kick and YouTube that `works_with` does not confirm, and **4 live meta descriptions** claim Kick and/or YouTube. A further 3 name TikTok or Twitch where the platform word sits inside the product's own name, which needs a human read and is not claimed here.
+
+Root cause, and it is worth naming precisely because it looks like a regression and is not. `scripts/build-seo-fields.mjs` **did** hold its guard: none of the 4 bad descriptions are in `data/seo-applied-2026-09-14.json`, and `data/seo-backup-2026-09-14.json` carries the Dreamy Lotus one verbatim, so it predates this morning's pass. The 2026-09-14 pass wrote fields only for the 78 products missing them plus 7 over length, and never re-audited the roughly 46 products that already had hand written `seo` fields, and never touched catalog titles at all. **The claim guard exists and has never been pointed at copy that was already live.**
+
+Why it matters today rather than later: ads point at this site and 130 organic Google sessions landed in 30 days. A Kick streamer who buys a StreamElements-only Twitch widget is a refund and a one star review.
+
+**2. HIGH. 26 live products have no `works_with` at all, so they render no badges and no Multistream ribbon. BAT-151**
+
+26 of 125 storefront-visible products have a null `custom.works_with`: 16 Goal Widget, 8 Chat Widget, 1 Overlay Pack, 1 Emotes. Confirmed in the rendering code, not inferred: `platforms.js:109` `isMultistream` reads the metafield, `ProductItem.jsx:101` calls it and line 176 gates the ribbon on it, and `parseWorksWith` returns null on anything missing so the caller renders no badges. Multistream is the thing `app/styles/app.css:2416` calls "the differentiator worth paying for", and any of these 26 that genuinely multistreams is selling it silently. Count unchanged since it was first noted this morning, and it had no owner.
+
+**3. MEDIUM. Mobile menu button is 22x22. BAT-152**
+
+At an emulated 375x812, exactly one visible control on the homepage and on a PDP is under 24px in either dimension: `aria-label="Open menu"`, `.header-menu-mobile-toggle`, **22 x 22 CSS px including padding**. WCAG 2.5.8 AA wants 24x24, Apple wants 44x44. It is the only way into navigation on a phone. Every other sub-24px hit is an inline text link, which WCAG exempts, so those are not findings.
+
+**4. Escalated, unchanged. 5 live listings carry someone else's IP. BAT-153**
+
+`npm run audit:ip` exits 1 with the same five as this morning: Charizard and Valorant Brimstone ACTIVE on Shopify, and Charizard (1881347726), Among Us (1741695722) and Valorant Brimstone (4306870352) live on Etsy. Genshin, Valorant Waylay and Sci-Fi Neon are still DRAFT, so that part of the 2026-09-11 cleanup held. Filed as a Linear issue because it had been logged twice in this file with nothing tracking it, and ad spend on a catalogue carrying others' IP risks the ad account, not just the listing.
+
+Layer 2 surfaced 4 capitalised names (`Character` 2x, `Charizard`, `Brimstone`, `Gaming`). All four come from the two products layer 1 already flagged, so **no genuinely new name today and nothing was added to `DENY_TERMS`.**
+
+#### Reviews: checked, no refresh needed
+`app/data/etsy-shop-stats.json` says `count: 997`. `etsy_get_shop` right now says `review_count: 997`. No drift, so `pull-etsy-reviews.mjs` and `build-etsy-reviews.mjs` were not run and **no deploy is owed for reviews**. `soldCount` has drifted 7542 to 7550, but the homepage renders it as "7,542+ widgets sold" at `_index.jsx:281`, and with the plus sign that is still true, so it is not a false claim. It will pick up the new number on the next real review refresh.
+
+#### UNCONFIRMED, and why
+- **One Shopify order equals one GA4 purchase at the real value.** Still not verifiable from here, and this is the third pass to say so. There is no GA4 read path in this session: no GA4 MCP connector, and `scripts/` contains no `runReport` or Data API script. The `webPixel` read needs the `read_pixels` scope the Shopify connector does not have. What CAN be said is that nothing over reported on 2026-09-13 from the one platform that is readable: Shopify 1 real order at $19.10, X Ads 0 conversions and $0. Closing this needs either a GA4 Data API credential in the repo or Todd reading the GA4 purchase count for a day with a known order.
+- **LCP and any "broken image" claim on mobile.** `document.visibilityState` read `hidden` for the entire browser pass even after fronting the tab, so no paint timing was recorded. Per `analytics-debugging-traps` a hidden pane is a known false alarm source for both, so **no LCP number is reported**. The upscale check did run against 28 and 21 images that reported a real `naturalWidth`, so it is a real measurement, but images that only load on a visible paint may not be covered.
+
+#### Cleanup note
+The checkout drive added 1 line item to an existing QA cart that already held 3. It carries no email or buyer identity, so it never becomes an abandoned checkout. No purchase was made and no product data was changed by this pass.
+
+#### What changed about the QA pass itself
+Check 3 as written spot-checks 5 products and asks whether `works_with` matches that product's evidence. It does not ask the reverse question, which is the one that actually caught today's finding: **does anything else the page says contradict `works_with`?** The metafield was right on all 8 bad products. The title and the meta description were wrong. A check that only validates the metafield passes a page that contradicts itself in its own headline.
+
+Added to the task file: check 3 now also compares each product's title, `seo.title` and `seo.description` against `works_with` across the whole catalogue, not just the 5 in rotation, since it is a data scan and costs nothing to run wide. Also corrected a stale line in the task file claiming the IP layer 2 list is currently empty; it returns 4 names today, all derived from products layer 1 already flags, and that is the shape to expect rather than a genuinely new name.
+
+Commit: LAUNCH.md only. No deploy from this pass. The commit `203d5dc` noted this morning as waiting on Todd is still waiting.
