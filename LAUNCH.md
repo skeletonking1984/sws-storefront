@@ -1247,3 +1247,38 @@ One false alarm caught before it was written up: a first sweep reported all 7 mo
 
 Preview: https://01m2gghrf2h88ngs3ztaj0f1p5-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `42dcf30`.
+
+#### The cart drawer ran off the right edge of narrow phones 2026-09-14
+Todd, on a Moto G5: the checkout button is cut off when the drawer is opened from the home page, and it works on product pages.
+
+**The cut was HORIZONTAL, not vertical.** Three separate attempts measured the wrong axis and the wrong page. What finally found it was a screenshot: the Apply buttons and Continue to Checkout were visibly clipped by the right edge of the screen.
+
+`.cart-summary-aside` was `width: calc(var(--aside-width) - 40px)`, a flat **360px**, while the drawer itself is `width: min(var(--aside-width), 100vw)`. On any screen narrower than 400px the drawer shrinks and the summary block does not.
+
+| Viewport | `main` | summary block | Checkout past right edge |
+|---|---|---|---|
+| 360px (most common Android width) | 327px | **360px** | **17px** |
+| 375px (iPhone SE / mini) | 343px | 360px | 2px |
+| 1024px | 367px | 360px | 0, but 7px narrow |
+
+**The 2px version was observed earlier the same day, written off as "minor", and not chased.** At 360px the same defect takes the right end of the checkout button off the screen. That was the whole bug.
+
+Fixed by spanning the containing block (`left: 1rem; right: 1rem; width: auto`) instead of restating a width the block cannot know. Measured after: 327px at 360px and 367px at 1024px, matching `main` exactly at both.
+
+**Two more real bugs fixed while reproducing**, both from the first report ("half the button is visible and cannot scroll in the pop out"):
+
+- **`aside { height: 100vh }` is wrong on Android.** Chrome for Android resolves `100vh` to the viewport with the URL bar HIDDEN, so a fixed drawer sized in vh extends behind the URL bar, and nothing can scroll it into view because the drawer is fixed and its own scroll container ends off screen. Modelled at a 568px visible height against a 640px `100vh`: checkout showed **9 of its 57 pixels** and the drawer reported `scrollHeight === clientHeight`, so there was genuinely nothing to scroll. Now `100dvh`, with `100vh` kept first as the fallback.
+- **`aside main` subtracted the header but not its own `margin: 1rem`**, making the content box 32px taller than the space left for it and pushing the bottom of the drawer past the screen. Now subtracts both.
+
+Verified by **pressing the button**, from the **home page**, at 360x640, against the real build: reaches `shop.streamwidgetshop.com/checkouts/cn/...`, payment renders, no shipping step, WELCOME10 applied, $92.51 to $83.26. Screenshot confirms everything sits inside a 360px screen.
+
+**What went wrong in the diagnosis, recorded because the pattern repeated four times in one session.**
+1. Every earlier test opened the drawer from a **PDP**. Todd said the home page. The page the user names is part of the repro.
+2. Every earlier test measured the **vertical** axis, because the first report said "half the button". Half can mean left-right.
+3. `getBoundingClientRect` on the aside repeatedly returned the **closed** position while the drawer was visibly open mid-transition, which produced two false readings ("entirely off screen", "not hittable") that were nearly reported as findings. **Poll until the element settles, or screenshot.**
+4. The 2px overflow at 375px was real evidence of this exact bug, seen and dismissed hours earlier.
+
+A screenshot found in one look what four rounds of measurement missed. When a user says something looks wrong, look at it first.
+
+Preview: https://01m2gh06p8m7r8cgw8cf7dse5k-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `36ad225`.
