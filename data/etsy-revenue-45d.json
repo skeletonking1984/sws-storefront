@@ -1,0 +1,636 @@
+{
+  "window": {
+    "since": "2026-07-31",
+    "until": "2026-09-14"
+  },
+  "order_count": 504,
+  "total_revenue": 4414.98,
+  "total_units": 524,
+  "basis": {
+    "definition": "sum of receipt subtotal, net of discount, excluding tax and shipping",
+    "list_value_before_discount": 6588.37,
+    "discount_total": 2173.4,
+    "grandtotal_incl_tax_shipping": 4798.81,
+    "note": "Etsy Stats uses a rolling window to the current time; this uses whole days, so order_count can differ slightly."
+  },
+  "products": [
+    {
+      "listing_id": 4536576701,
+      "title": "Multistream Chat Widget • Twitch, YouTube, Kick Overlay (Digital Download)  Easy Setup - One Click Installation",
+      "units": 62,
+      "revenue": 902.71
+    },
+    {
+      "listing_id": 4551047317,
+      "title": "Animated Moon Jar Goal Widget • Twitch Sub Goal Overlay, Falling Stars Tracker (Instant Download)",
+      "units": 38,
+      "revenue": 512.3
+    },
+    {
+      "listing_id": 4543765531,
+      "title": "Y2K Sticker Chat Widget • Retro Alerts, Multistream OBS Ready (Digital Download)",
+      "units": 35,
+      "revenue": 470.62
+    },
+    {
+      "listing_id": 1790018033,
+      "title": "Animated Star Goal Widget for Twitch, Kick OBS, Celestial Stream Overlay (Digital Download)",
+      "units": 48,
+      "revenue": 266.43
+    },
+    {
+      "listing_id": 4333471272,
+      "title": "Neon Twitch Chat & Goal Widget | Multistream Glow Overlay (Digital Download)",
+      "units": 27,
+      "revenue": 252.14
+    },
+    {
+      "listing_id": 4539065835,
+      "title": "Neon Animated Multistream Chat Widget • Twitch, YouTube, Kick Overlay (Digital Download)",
+      "units": 16,
+      "revenue": 174.56
+    },
+    {
+      "listing_id": 4322617816,
+      "title": "Cosmic Galaxy Chat Widget | Twitch StreamElements Animated Chat Goal Stream Overlay | VTuber Streamer",
+      "units": 13,
+      "revenue": 110.87
+    },
+    {
+      "listing_id": 4336744223,
+      "title": "Cloudy Moon Overlay for Twitch | Dreamy Starry Night StreamElements Theme for VTubers",
+      "units": 8,
+      "revenue": 89.77
+    },
+    {
+      "listing_id": 4336740821,
+      "title": "Neon Moon Glow Chat Widget | Twitch StreamElements Animated Overlay (Digital Download)",
+      "units": 5,
+      "revenue": 60.75
+    },
+    {
+      "listing_id": 4361409311,
+      "title": "Moon Star Chat Widget | Twitch StreamElements Glassy Animated Overlay | Celestial VTuber Streamer",
+      "units": 5,
+      "revenue": 53.2
+    },
+    {
+      "listing_id": 4563220365,
+      "title": "Multistream Chat Widget • Twitch, YouTube, Kick, TikTok (Blueberry Overlay) (Digital Download)",
+      "units": 4,
+      "revenue": 52.71
+    },
+    {
+      "listing_id": 4563233208,
+      "title": "Spooky Jar Goal Widget | Animated Halloween Twitch Sub Tracker (StreamElements)",
+      "units": 4,
+      "revenue": 52.21
+    },
+    {
+      "listing_id": 1790033028,
+      "title": "Customizable Potion Bottle Twitch Goal Widget: Animated Stream Overlay (Digital Download)",
+      "units": 8,
+      "revenue": 49.03
+    },
+    {
+      "listing_id": 1797449100,
+      "title": "Love Skeleton Goal Widget | Twitch Streamlabs StreamElements Halloween Animated Sub Goal | VTuber Streamer",
+      "units": 12,
+      "revenue": 48.87
+    },
+    {
+      "listing_id": 4498126600,
+      "title": "Spooky Mushroom Twitch Bar Goal Widget for StreamElements and OBS | Streamlabs TikTok Studio Kick",
+      "units": 6,
+      "revenue": 47.85
+    },
+    {
+      "listing_id": 1758361648,
+      "title": "Pumpkin Goal Widget | Twitch Streamlabs StreamElements Halloween Animated Sub Goal Tracker | VTuber Streamer",
+      "units": 14,
+      "revenue": 45.8
+    },
+    {
+      "listing_id": 4322607453,
+      "title": "Butterfly Galaxy Chat Widget | Twitch StreamElements Animated Chat Goal Overlay | VTuber Streamer",
+      "units": 12,
+      "revenue": 45.3
+    },
+    {
+      "listing_id": 4358908164,
+      "title": "Spooky Neon Chat Widget | Twitch StreamElements Transparent Animated Halloween Overlay | VTuber Streamer",
+      "units": 4,
+      "revenue": 44.21
+    },
+    {
+      "listing_id": 1771365068,
+      "title": "Crystal Butterfly Goal Widget | Twitch Streamlabs StreamElements Animated Sub Goal Tracker | VTuber Streamer",
+      "units": 8,
+      "revenue": 38.43
+    },
+    {
+      "listing_id": 1707756402,
+      "title": "Moon Cloud Donation Goal Widget | Twitch Streamlabs, StreamElements (Digital Download)",
+      "units": 6,
+      "revenue": 38.37
+    },
+    {
+      "listing_id": 4469342769,
+      "title": "Animated Autumn Leaves Stream Overlay | Cozy Fall Twitch Decoration (Digital Download)",
+      "units": 9,
+      "revenue": 35.28
+    },
+    {
+      "listing_id": 1763385692,
+      "title": "Animated Froggy Sub Goal Widget, Liquid Filling Stream Overlay (Digital Download)",
+      "units": 9,
+      "revenue": 33.97
+    },
+    {
+      "listing_id": 4552410694,
+      "title": "Scrapbook Chat Widget: Kraft Notebook Overlay for Twitch, YouTube, Kick (OBS Ready)",
+      "units": 3,
+      "revenue": 33.72
+    },
+    {
+      "listing_id": 4378021918,
+      "title": "Cottagecore Stream Twitch Chat Widget - Customizable Stream Overlay (Digital Download)",
+      "units": 3,
+      "revenue": 33.72
+    },
+    {
+      "listing_id": 1730461418,
+      "title": "Rabbit Goal Widget | Customizable Streamer Goals (Digital Download)",
+      "units": 6,
+      "revenue": 30.3
+    },
+    {
+      "listing_id": 4565523072,
+      "title": "Astro Moon Chat Widget",
+      "units": 1,
+      "revenue": 30
+    },
+    {
+      "listing_id": 4310437865,
+      "title": "Lotus Butterfly Chat Widget | Twitch StreamElements Animated Glass Chat Goal Overlay | VTuber Streamer",
+      "units": 3,
+      "revenue": 29.22
+    },
+    {
+      "listing_id": 4369470796,
+      "title": "Sakura Glassy Chat Widget | Twitch StreamElements OBS Floral Animated Overlay | VTuber Streamer Gift",
+      "units": 3,
+      "revenue": 26.97
+    },
+    {
+      "listing_id": 4362041097,
+      "title": "Halloween Skull Ghost Twitch Chat Widget – Customizable Stream Overlay (Digital Download)",
+      "units": 3,
+      "revenue": 25.47
+    },
+    {
+      "listing_id": 4570446087,
+      "title": "Spooky Halloween Stream Kit | Animated Twitch, YouTube, Kick Widgets (Digital Download)",
+      "units": 1,
+      "revenue": 24.99
+    },
+    {
+      "listing_id": 4505167275,
+      "title": "Sakura Animated Twitch Chat Widget • Kawaii Cherry Blossom Stream Decor (Digital Download)",
+      "units": 3,
+      "revenue": 24.31
+    },
+    {
+      "listing_id": 1888424656,
+      "title": "Customizable Broken Star Bar Goal Widget for Twitch OBS Streamelements (Digital Download)",
+      "units": 6,
+      "revenue": 23.29
+    },
+    {
+      "listing_id": 4563217939,
+      "title": "Multistream Chat Widget • Rosa Chick Overlay, 3D Chat (Digital Download)",
+      "units": 2,
+      "revenue": 22.98
+    },
+    {
+      "listing_id": 1707804164,
+      "title": "Animated Potion Bottle Twitch Goal Widget | StreamElements, Streamlabs OBS Vtuber",
+      "units": 5,
+      "revenue": 22.9
+    },
+    {
+      "listing_id": 4455735192,
+      "title": "Love Heart Goal Widget | Twitch Streamlabs StreamElements Animated Sub Goal | Kawaii VTuber Streamer",
+      "units": 17,
+      "revenue": 22.29
+    },
+    {
+      "listing_id": 4548549876,
+      "title": "Multistream Froggy Chat Widget | Twitch YouTube Kick Widget | StreamElements (One Click Installation)",
+      "units": 2,
+      "revenue": 21.26
+    },
+    {
+      "listing_id": 1785478023,
+      "title": "Spooky Halloween Cauldron Goal Widget: Customizable Stream Overlay (Digital Download)",
+      "units": 3,
+      "revenue": 21.14
+    },
+    {
+      "listing_id": 4315451056,
+      "title": "Red Floral Chat Widget | StreamElements Goal Widget (Digital Download)",
+      "units": 2,
+      "revenue": 20.98
+    },
+    {
+      "listing_id": 1792249804,
+      "title": "Halloween Pumpkin Goal Widget: Customizable Twitch Stream Overlay (Digital Download)",
+      "units": 3,
+      "revenue": 20.18
+    },
+    {
+      "listing_id": 1881347726,
+      "title": "Charizard Animated Twitch Goal Widget for Streamlabs & Streamelements",
+      "units": 4,
+      "revenue": 19.45
+    },
+    {
+      "listing_id": 4548547541,
+      "title": "Multistream Anime Froggy Chat Widget | Twitch YouTube Kick Widget | StreamElements (One Click Installation)",
+      "units": 2,
+      "revenue": 19.33
+    },
+    {
+      "listing_id": 1780969806,
+      "title": "Halloween Devil & Angel Goal Widget",
+      "units": 4,
+      "revenue": 18.6
+    },
+    {
+      "listing_id": 4348440142,
+      "title": "Pastel Moon Chat Widget | Twitch StreamElements OBS Animated Cloud Overlay | Dreamy VTuber Streamer",
+      "units": 2,
+      "revenue": 17.98
+    },
+    {
+      "listing_id": 4348428360,
+      "title": "Moon Glow Chat Widget | Twitch StreamElements Animated Starry Night Overlay | Celestial VTuber Streamer",
+      "units": 2,
+      "revenue": 17.98
+    },
+    {
+      "listing_id": 1706402816,
+      "title": "Animated Celestial Butterfly Goal Bar | Twitch, Kick, OBS Streamlabs (Digital Download)",
+      "units": 4,
+      "revenue": 17.53
+    },
+    {
+      "listing_id": 4457717809,
+      "title": "Animated Sub Event Rain Widget for Twitch Streamers (Digital Download)",
+      "units": 2,
+      "revenue": 16.78
+    },
+    {
+      "listing_id": 4552412210,
+      "title": "Pastel Scrapbook Chat Widget: Cottagecore Twitch, YouTube, Kick Overlay",
+      "units": 2,
+      "revenue": 16.48
+    },
+    {
+      "listing_id": 1771354232,
+      "title": "Animated Goal Widget for Twitch Streamers | Followers, Donations (Digital Download)",
+      "units": 3,
+      "revenue": 15.12
+    },
+    {
+      "listing_id": 1728586845,
+      "title": "Panda Moon Goal Widget, Twitch Streamlabs Elements (Digital Download)",
+      "units": 3,
+      "revenue": 14.98
+    },
+    {
+      "listing_id": 4391776699,
+      "title": "Halloween Pumpkin Stream Decoration | Twitch OBS Animated Overlay | Spooky VTuber Streamer Asset",
+      "units": 7,
+      "revenue": 13.91
+    },
+    {
+      "listing_id": 1902602881,
+      "title": "Broken Heart Goal Widget | Twitch Streamlabs StreamElements Animated Sub Donation Goal | VTuber Streamer",
+      "units": 3,
+      "revenue": 13.07
+    },
+    {
+      "listing_id": 1712229820,
+      "title": "Boba Drink Stream Goal Widget | Customizable Streamlabs, Streamelements (Digital Download)",
+      "units": 2,
+      "revenue": 12.6
+    },
+    {
+      "listing_id": 4429274877,
+      "title": "Subathon Timer Widget | Twitch StreamElements Animated Donathon Megathon Countdown | Streamer Tool OBS",
+      "units": 1,
+      "revenue": 12.59
+    },
+    {
+      "listing_id": 1775661417,
+      "title": "Spooky Bat Liquid Filling Goal Widget | Twitch Streamlabs, TikTok Studio, and Streamelements",
+      "units": 2,
+      "revenue": 12.38
+    },
+    {
+      "listing_id": 1796020885,
+      "title": "Moon Ghost Animated Goal Widget: Twitch Stream Overlay (Digital Download)",
+      "units": 2,
+      "revenue": 11.64
+    },
+    {
+      "listing_id": 1881257942,
+      "title": "Gaming Liquid Filling Goal Widget | Twitch Streamlabs, TikTok Studio, and Streamelements",
+      "units": 2,
+      "revenue": 11.5
+    },
+    {
+      "listing_id": 1895254409,
+      "title": "Sea Horse Liquid Filling Goal Widget | Twitch Streamlabs, TikTok Studio, and Streamelements",
+      "units": 2,
+      "revenue": 10.61
+    },
+    {
+      "listing_id": 1904169495,
+      "title": "Cyberpunk Twitch Chat Widget for OBS and StreamElements Animated Neon Gamer Overlay for VTubers",
+      "units": 1,
+      "revenue": 10.49
+    },
+    {
+      "listing_id": 4362032900,
+      "title": "Froggy Pixel Chat Widget | Twitch StreamElements Animated Nature Stream Overlay | Cozy VTuber Streamer",
+      "units": 1,
+      "revenue": 10.49
+    },
+    {
+      "listing_id": 4366428133,
+      "title": "Pastel Neon Twitch Chat Widget | StreamElements OBS Animated Overlay (Instant Download)",
+      "units": 1,
+      "revenue": 10.49
+    },
+    {
+      "listing_id": 1849162325,
+      "title": "Cat Paw Liquid Goal Widget for Twitch, Streamlabs, StreamElements & TikTok Studio | Kick OBS VTuber",
+      "units": 2,
+      "revenue": 9.74
+    },
+    {
+      "listing_id": 4552396597,
+      "title": "Matcha Scrapbook Chat Widget: Cottagecore Twitch, YouTube, Kick Overlay",
+      "units": 1,
+      "revenue": 9.74
+    },
+    {
+      "listing_id": 1775809800,
+      "title": "Liquid Filling Combo Goal Widget | Streamlabs, Streamelements (Digital Download)",
+      "units": 3,
+      "revenue": 9.5
+    },
+    {
+      "listing_id": 1724770869,
+      "title": "Love Potion Goal Widget | Twitch Streamlabs StreamElements Animated Sub Follower Goal | Kawaii VTuber Streamer",
+      "units": 3,
+      "revenue": 9.39
+    },
+    {
+      "listing_id": 4348442791,
+      "title": "Rose Flower Chat Stream Widget - Minimal, Clean Vibe (Streamelements)",
+      "units": 1,
+      "revenue": 8.99
+    },
+    {
+      "listing_id": 4320003692,
+      "title": "Sakura Floral Chat Widget | Twitch StreamElements Transparent Animated Chat Goal | VTuber Streamer",
+      "units": 1,
+      "revenue": 8.99
+    },
+    {
+      "listing_id": 1742236253,
+      "title": "Owl Liquid Filling Goal Widget | Twitch Streamlabs, TikTok Studio, and Streamelements.",
+      "units": 2,
+      "revenue": 8.88
+    },
+    {
+      "listing_id": 1797937195,
+      "title": "Pastel Rainbow Cloud Goal Widget | Twitch Streamlabs StreamElements Donation Follower Tracker | Kawaii VTuber",
+      "units": 2,
+      "revenue": 8.57
+    },
+    {
+      "listing_id": 4511799721,
+      "title": "Cyber Bear Twitch Chat Widget | Neon Chat Overlay | Fully Customizable for StreamElements | OBS",
+      "units": 1,
+      "revenue": 8.49
+    },
+    {
+      "listing_id": 1747633766,
+      "title": "Goth Spell Book Goal Widget: Spooky Stream Overlay (Digital Download)",
+      "units": 2,
+      "revenue": 8.2
+    },
+    {
+      "listing_id": 1728594513,
+      "title": "Celestial Moon Goal Widget | Animated Stream Tracker (Digital Download)",
+      "units": 1,
+      "revenue": 7.83
+    },
+    {
+      "listing_id": 4328622333,
+      "title": "Lotus Glass Chat Widget | Twitch StreamElements Glassy Floral Animated Overlay | VTuber Streamer",
+      "units": 1,
+      "revenue": 7.5
+    },
+    {
+      "listing_id": 4333468758,
+      "title": "Lunar Cat Chat Widget | Twitch StreamElements Purple Animated Cosmic Overlay | Kawaii VTuber Streamer",
+      "units": 1,
+      "revenue": 7.49
+    },
+    {
+      "listing_id": 4498789564,
+      "title": "Sci-Fi Twitch Chat Widget for OBS, Kick and Streamlabs | Animated Galaxy Neon Stream Overlay",
+      "units": 1,
+      "revenue": 7.49
+    },
+    {
+      "listing_id": 4341725255,
+      "title": "Pastel Glow Chat Widget | Customizable StreamElements OBS Overlay (Digital Download)",
+      "units": 1,
+      "revenue": 7.49
+    },
+    {
+      "listing_id": 1721971396,
+      "title": "Heart Goal Widget, Customizable Stream Overlay, Twitch, Streamlabs (Digital Download)",
+      "units": 1,
+      "revenue": 7.29
+    },
+    {
+      "listing_id": 1810207793,
+      "title": "Spooky Skull Ghost Goal Widget: Custom Twitch Stream Overlay",
+      "units": 2,
+      "revenue": 7
+    },
+    {
+      "listing_id": 4548554250,
+      "title": "Multistream Deep Forest Froggy Chat Widget | Twitch YouTube Kick Widget | StreamElements (One Click Installation)",
+      "units": 1,
+      "revenue": 6.64
+    },
+    {
+      "listing_id": 1858698516,
+      "title": "Butterfly Vibe Goal Widget: Custom Stream Overlay (Digital Download)",
+      "units": 1,
+      "revenue": 6.62
+    },
+    {
+      "listing_id": 4524765702,
+      "title": "Lilypad Spin Wheel Widget | Event Reactive | Auto Spin | Manual Command | Streamelements | Twitch (Digital Download)",
+      "units": 1,
+      "revenue": 6.2
+    },
+    {
+      "listing_id": 1722104747,
+      "title": "Casino Card Slot Icon Goal Widget: Customizable Stream Overlay (Digital Download)",
+      "units": 1,
+      "revenue": 6.14
+    },
+    {
+      "listing_id": 1834815562,
+      "title": "Animated Chicken Goal Widget, Stream Overlay (Digital Download)",
+      "units": 1,
+      "revenue": 5.88
+    },
+    {
+      "listing_id": 1720725716,
+      "title": "Customizable Star Bottle Goal Widget for Twitch Streamlabs (Digital Download)",
+      "units": 1,
+      "revenue": 5.58
+    },
+    {
+      "listing_id": 1805179619,
+      "title": "Eye Potion Goal Widget | Twitch Streamlabs StreamElements Halloween Animated Sub Goal | VTuber Streamer",
+      "units": 2,
+      "revenue": 5.52
+    },
+    {
+      "listing_id": 1790037076,
+      "title": "Mushroom Goal Widget: Customizable Stream Overlay (Digital Download)",
+      "units": 1,
+      "revenue": 5.26
+    },
+    {
+      "listing_id": 1902597989,
+      "title": "Customizable Dog Liquid Goal Widget (Digital Download)",
+      "units": 1,
+      "revenue": 4.93
+    },
+    {
+      "listing_id": 1849134721,
+      "title": "Animated Squirrel Twitch Goal Widget | Liquid Filling Sub, Donation, Follower Goals (Digital Download)",
+      "units": 1,
+      "revenue": 4.55
+    },
+    {
+      "listing_id": 1881111390,
+      "title": "Diamond Liquid Filling Goal Widget: Twitch Stream Overlay (Digital Download)",
+      "units": 1,
+      "revenue": 4.42
+    },
+    {
+      "listing_id": 1763459664,
+      "title": "Sakura Dessert Loading Goal Widget is fully customisable for Twitch Streamelements",
+      "units": 1,
+      "revenue": 4.42
+    },
+    {
+      "listing_id": 1723478277,
+      "title": "Animated Peach Goal Widget | Twitch Streamlabs StreamElements Sub OBS Download",
+      "units": 1,
+      "revenue": 4.16
+    },
+    {
+      "listing_id": 1821312598,
+      "title": "Christmas Gift Box Filling Goal Widget, Custom Stream Overlay (Digital Download)",
+      "units": 1,
+      "revenue": 3.96
+    },
+    {
+      "listing_id": 1888414230,
+      "title": "Octopus Liquid Filling Goal Widget | Twitch Streamlabs, TikTok Studio, and StreamElements | Kick OBS VTuber",
+      "units": 1,
+      "revenue": 3.52
+    },
+    {
+      "listing_id": 1785508867,
+      "title": "Broken Heart Goal Widget: Customizable Stream Overlay (Digital Download)",
+      "units": 1,
+      "revenue": 3.48
+    },
+    {
+      "listing_id": 1834826106,
+      "title": "Gothic Bottle Goal Widget | Twitch Streamlabs StreamElements Sub Donation Bits Tracker | Dark VTuber Streamer",
+      "units": 1,
+      "revenue": 3.25
+    },
+    {
+      "listing_id": 4348455364,
+      "title": "Kawaii Butterfly Chat Widget | Twitch StreamElements Pastel Animated Overlay | Cute VTuber Streamer",
+      "units": 1,
+      "revenue": 3
+    },
+    {
+      "listing_id": 4358899434,
+      "title": "Halloween Neon Chat Widget | Twitch StreamElements Transparent Glow Stream Overlay | Spooky VTuber",
+      "units": 1,
+      "revenue": 3
+    },
+    {
+      "listing_id": 1816288503,
+      "title": "Spooky Pastel Skull Ghost Goal Widget: Twitch Stream Overlay (Digital Download)",
+      "units": 1,
+      "revenue": 3
+    },
+    {
+      "listing_id": 1904185485,
+      "title": "Full Moon Bar Goal Widget | Twitch StreamElements, OBS Goal Tracker (Digital Download)",
+      "units": 1,
+      "revenue": 2.86
+    },
+    {
+      "listing_id": 1785601401,
+      "title": "Customizable Liquid Goal Widget for Twitch Streamers (Digital Download)",
+      "units": 1,
+      "revenue": 2.82
+    },
+    {
+      "listing_id": 1806974501,
+      "title": "Halloween Spooky Tea Bag Goal Widget: Customisable twitch Stream Overlay",
+      "units": 1,
+      "revenue": 2.62
+    },
+    {
+      "listing_id": 1795999492,
+      "title": "Halloween Skull Berry Goal Widget: Customizable Stream Overlay (Digital Download)",
+      "units": 1,
+      "revenue": 2.55
+    },
+    {
+      "listing_id": 4342607027,
+      "title": "Halloween Spider Goal Widget: Animated Stream Overlay (Digital Download",
+      "units": 1,
+      "revenue": 2.5
+    },
+    {
+      "listing_id": 4459412123,
+      "title": "Neon Ring Goal Widget | Twitch RGB Animated Sub Goal OBS StreamElements | VTuber Streamer Gift",
+      "units": 1,
+      "revenue": 2.42
+    }
+  ]
+}

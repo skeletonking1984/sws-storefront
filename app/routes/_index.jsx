@@ -206,11 +206,24 @@ export default function Homepage() {
       />
       <Hero />
       <ShopByVibe />
-      <KitsAndOverlayPacks kits={data.kitsAndOverlayPacks} />
+      {/*
+        Top widgets sits ABOVE the kits band on purpose. Measured on the
+        live site at 375px on 2026-09-13: the kits band is 2372px tall and
+        pushed the best sellers to 3578px down the page, about 4.4 phone
+        screens of scrolling before a visitor reaches anything that has
+        actually sold. The kits are also the most expensive things in the
+        catalogue ($29.99 to $68.35), so the old order asked for the
+        biggest commitment first. Instagram is currently the only channel
+        that has converted a real customer, and that traffic is phone
+        traffic landing here, so lead with the proven sellers.
+        The hero's "See it live" link points at #top-widgets, which is now
+        much closer to it too.
+      */}
       <TopWidgets
         topWidgets={data.topWidgets}
         fallback={data.recommendedProducts}
       />
+      <KitsAndOverlayPacks kits={data.kitsAndOverlayPacks} />
       <WorksWithStrip />
       <ReviewsSection homeReviews={data.homeReviews} />
       <HappyClients />

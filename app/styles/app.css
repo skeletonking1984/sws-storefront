@@ -353,15 +353,18 @@ aside header h3 {
 }
 
 aside header .close {
+  align-items: center;
   border-radius: 999px;
   color: var(--sws-sub);
+  display: flex;
   font-size: 1.3rem;
   font-weight: bold;
-  height: 32px;
+  height: 44px;
+  justify-content: center;
   line-height: 1;
   text-decoration: none;
   transition: color 200ms, background 200ms;
-  width: 32px;
+  width: 44px;
 }
 
 aside header .close:hover {
@@ -893,6 +896,14 @@ button.reset:hover:not(:has(> *)) {
   text-align: center;
 }
 
+/*
+  44px is the minimum comfortable touch target on a phone (Apple HIG and
+  the WCAG 2.5.8 target-size minimum of 24px is a floor, not a goal).
+  These were 26px square, measured on the live site at 375px. The visual
+  button stays small so the cart does not look clumsy: the box is still
+  drawn at 26px and the extra area is transparent padding, added with a
+  pseudo-element so it does not push the cart layout around.
+*/
 .cart-qty-btn {
   background: var(--sws-card);
   border: 1px solid var(--sws-border);
@@ -900,7 +911,18 @@ button.reset:hover:not(:has(> *)) {
   color: var(--sws-text);
   cursor: pointer;
   height: 26px;
+  position: relative;
   width: 26px;
+}
+
+.cart-qty-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 44px;
+  width: 44px;
+  transform: translate(-50%, -50%);
 }
 
 .cart-qty-btn:disabled {
@@ -908,6 +930,7 @@ button.reset:hover:not(:has(> *)) {
   cursor: not-allowed;
 }
 
+/* Same reasoning as .cart-qty-btn above: this measured 47x19 at 375px. */
 .cart-remove-btn {
   background: none;
   border: none;
@@ -915,6 +938,8 @@ button.reset:hover:not(:has(> *)) {
   cursor: pointer;
   font-size: 0.8rem;
   margin-left: 0.5rem;
+  min-height: 44px;
+  padding: 0 0.25rem;
   text-decoration: underline;
 }
 
@@ -1305,6 +1330,16 @@ button.reset:hover:not(:has(> *)) {
 * --------------------------------------------------
 * routes/_index — Hero
 * --------------------------------------------------
+*/
+/*
+  Note for whoever tries to shrink this: on a phone the hero measures
+  807px against an 812px viewport, so nothing below it peeks and there is
+  no cue to scroll. Lowering `min-height` does NOT fix that, which was
+  tried and measured on 2026-09-13: the hero's own CONTENT is 807px tall,
+  so min-height is not what sets the height and changing it does nothing
+  at all. Shrinking this means shrinking the content, most likely
+  `.hero-stream-frame`, not this rule. Left at full height deliberately
+  rather than shipping a no-op.
 */
 .hero {
   align-items: center;

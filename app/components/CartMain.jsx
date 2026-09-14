@@ -83,8 +83,21 @@ export function CartMain({layout, cart: originalCart}) {
         what `data` carries (see app/lib/analytics/events.js, the
         cart_viewed handling that reads payload.cart), so this fires
         view_cart with the real cart already attached.
+
+        Gated to layout "page", the /cart route, on purpose. The "aside"
+        copy of this component is the cart drawer, which PageLayout mounts
+        on EVERY page, so an unguarded CartView fired view_cart on product
+        pages, the homepage and everywhere else the moment a visitor had
+        anything in their cart. Observed on a real PDP on 2026-09-13.
+        Nobody viewed a cart there, and GA4 counted it as if they had.
+
+        The drawer is not left untracked: opening it is a deliberate click
+        on the header cart button, and that handler publishes cart_viewed
+        itself (see CartBadge in app/components/Header.jsx). So the event
+        now follows intent, a visit to /cart or a click that opens the
+        drawer, instead of following the drawer merely existing.
       */}
-      {cartHasItems && <Analytics.CartView />}
+      {cartHasItems && layout === 'page' && <Analytics.CartView />}
     </section>
   );
 }
