@@ -3,6 +3,7 @@ import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
 import {createHydrogenRouterContext} from '~/lib/context';
 import {buildFirstTouchSetCookieHeaders} from '~/lib/clickIds.server';
 import {ensureFirstPartyClientId} from '~/lib/firstPartyId.server';
+import {previewGate} from '~/lib/previewGate.server';
 
 /**
  * Export a fetch handler in module format.
@@ -16,6 +17,12 @@ export default {
    */
   async fetch(request, env, executionContext) {
     try {
+      // Optional shared-password gate for non production builds. Returns null
+      // and costs one undefined env lookup when PRIVATE_PREVIEW_PASSWORD is
+      // unset, which is always the case in production.
+      const gated = await previewGate(request, env);
+      if (gated) return gated;
+
       const hydrogenContext = await createHydrogenRouterContext(
         request,
         env,
