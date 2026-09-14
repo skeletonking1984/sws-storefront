@@ -2,7 +2,7 @@ import {useRef, useState} from 'react';
 import {Link} from 'react-router';
 import {Image, Money, useAnalytics} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
-import {detectPlatforms, isMultistream} from '~/lib/platforms';
+import {parseWorksWith, isMultistream} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {findVideoMedia, pickBestMp4Source} from '~/lib/video';
 
@@ -97,7 +97,13 @@ export function ProductItem({product, loading, listId, listName, index}) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
   const kind = widgetKind(product.title, product.productType);
-  const platforms = detectPlatforms(product.title).slice(0, 4);
+  // Card chips come from the `custom.works_with` metafield, the same single
+  // source the PDP badge row uses, never from the title. Reading the title
+  // gave a card a Twitch chip for saying "for Twitch" and a YouTube chip for
+  // an SEO keyword the widget does not support, which is the error Todd found
+  // on the Potion Bottle PDP on 2026-09-14 (see ProductHighlights.jsx). A
+  // product with no metafield shows no chips, which is the honest default.
+  const platforms = (parseWorksWith(product.worksWith?.value ?? product.worksWith) || []).slice(0, 4);
   const multistream = isMultistream(product);
   const {publish} = useAnalytics();
 

@@ -143,12 +143,24 @@ function readableList(items) {
 export function buildFields(product) {
   const currentTitle = product.seo?.title || '';
   const currentDescription = product.seo?.description || '';
-  const needsTitle = !currentTitle || currentTitle.length > TITLE_MAX;
-  const needsDescription = !currentDescription || currentDescription.length > DESC_MAX;
+  const confirmed = worksWith(product);
+
+  // Rebuild existing copy that names a platform `works_with` does not
+  // confirm, not just copy that is missing or too long. On 2026-09-14 nine
+  // hand written seo descriptions and two seo titles claimed YouTube, Kick or
+  // TikTok on products whose own Etsy listing claims none of them, and the
+  // length-only test walked straight past every one of them. See
+  // scripts/audit-platform-claims.mjs.
+  const allowedNow = new Set((confirmed || []).map((p) => p.toLowerCase()));
+  const overclaims = (text) =>
+    PLATFORM_WORDS.some((w) => new RegExp(w, 'i').test(text) && !allowedNow.has(w.toLowerCase()));
+
+  const needsTitle = !currentTitle || currentTitle.length > TITLE_MAX || overclaims(currentTitle);
+  const needsDescription =
+    !currentDescription || currentDescription.length > DESC_MAX || overclaims(currentDescription);
   if (!needsTitle && !needsDescription) return null;
 
   const name = productName(product.title);
-  const confirmed = worksWith(product);
   const platforms = confirmed
     ? ORDER.filter((p) => confirmed.some((c) => c.toLowerCase() === p.toLowerCase()))
     : [];
@@ -199,7 +211,11 @@ export function buildFields(product) {
     handle: product.handle,
     productType: product.productType,
     catalogTitle: product.title,
-    reason: !currentTitle && !currentDescription ? 'missing' : 'too-long',
+    reason: !currentTitle && !currentDescription
+      ? 'missing'
+      : overclaims(currentTitle) || overclaims(currentDescription)
+        ? 'overclaim'
+        : 'too-long',
     worksWith: confirmed,
     previous: {title: currentTitle, description: currentDescription},
     seoTitle: title,
@@ -217,6 +233,7 @@ console.log(`${products.length} storefront products`);
 console.log(`${proposals.length} need seo fields written`);
 console.log(`  missing:  ${proposals.filter((p) => p.reason === 'missing').length}`);
 console.log(`  too long: ${proposals.filter((p) => p.reason === 'too-long').length}`);
+console.log(`  overclaim:${proposals.filter((p) => p.reason === 'overclaim').length}`);
 console.log(`platform claims not confirmed by works_with: ${violating.length}`);
 console.log(`em or en dashes: ${dashed.length}`);
 
