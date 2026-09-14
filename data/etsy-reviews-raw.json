@@ -1,15 +1,55 @@
 {
-  "fetched_at": "2026-09-10T23:13:59.245Z",
-  "source": "getReviewsByShop, fully paginated via getAll (all 992 reviews, not the most recent 100)",
+  "fetched_at": "2026-09-14T02:38:23.515Z",
+  "source": "getReviewsByShop, fully paginated via getAll (every review, not the most recent 100)",
   "shop": {
     "shop_id": 51879465,
     "shop_name": "StreamWidgetShop",
-    "review_count": 992,
+    "review_count": 997,
     "review_average": 4.76,
-    "transaction_sold_count": 7512,
-    "num_favorers": 1275
+    "transaction_sold_count": 7542,
+    "num_favorers": 1281
   },
   "reviews": [
+    {
+      "listing_id": 4336744223,
+      "transaction_id": 5215975688,
+      "rating": 5,
+      "review": "I absolutely love the customization I made the colors match my music widget and it is the perfect combo for streams!",
+      "language": "en",
+      "date": "2026-09-13"
+    },
+    {
+      "listing_id": 4322617816,
+      "transaction_id": 5216240791,
+      "rating": 5,
+      "review": "This is absolutely beautiful. I wasn&#39;t excited to see I had to &#39;build&quot; the widget with all the code pieces but it was very quick and it&#39;s such a beautiful well put together widget. I really love it for my theme.",
+      "language": "en",
+      "date": "2026-09-13"
+    },
+    {
+      "listing_id": 4362032900,
+      "transaction_id": 5203193277,
+      "rating": 5,
+      "review": "love it so much, easy to use and looks good with obs",
+      "language": "en",
+      "date": "2026-09-12"
+    },
+    {
+      "listing_id": 4322617816,
+      "transaction_id": 5212844104,
+      "rating": 5,
+      "review": "Easy to implement in stream elements and obs also love the design",
+      "language": "en",
+      "date": "2026-09-12"
+    },
+    {
+      "listing_id": 1707804164,
+      "transaction_id": 5173054696,
+      "rating": 5,
+      "review": "Easy to setup and download!",
+      "language": "en",
+      "date": "2026-09-11"
+    },
     {
       "listing_id": 1790018033,
       "transaction_id": 5174619068,
@@ -318,7 +358,7 @@
       "listing_id": 1790037076,
       "transaction_id": 5166970068,
       "rating": 5,
-      "review": "Extr\u00eamement ravie du produit ^^",
+      "review": "Extrêmement ravie du produit ^^",
       "language": "fr",
       "date": "2026-08-08"
     },
@@ -542,7 +582,7 @@
       "listing_id": 1790018033,
       "transaction_id": 5110842132,
       "rating": 5,
-      "review": "Die Erkl\u00e4rung, die Einrichtung und die Qualit\u00e4t sind super. \r\nIch bin sehr begeistert und sage: Dankesch\u00f6n!",
+      "review": "Die Erklärung, die Einrichtung und die Qualität sind super. \r\nIch bin sehr begeistert und sage: Dankeschön!",
       "language": "de",
       "date": "2026-06-28"
     },
@@ -678,7 +718,7 @@
       "listing_id": 1747633766,
       "transaction_id": 5102135173,
       "rating": 5,
-      "review": "Pour le cot\u00e9 Rp c&#39;est vraiment parfais",
+      "review": "Pour le coté Rp c&#39;est vraiment parfais",
       "language": "fr",
       "date": "2026-06-05"
     },
@@ -686,7 +726,7 @@
       "listing_id": 4358908164,
       "transaction_id": 5098874667,
       "rating": 5,
-      "review": "amazing product \ud83d\udc9c",
+      "review": "amazing product 💜",
       "language": "en",
       "date": "2026-06-03"
     },
@@ -750,7 +790,7 @@
       "listing_id": 1707756402,
       "transaction_id": 5052189662,
       "rating": 2,
-      "review": "It\u2019s cute, it functions well, but it doesn\u2019t allow for custom colors. I could only move a slider that chose between purple, yellow, or blue.",
+      "review": "It’s cute, it functions well, but it doesn’t allow for custom colors. I could only move a slider that chose between purple, yellow, or blue.",
       "language": "en",
       "date": "2026-05-20"
     },
@@ -838,7 +878,7 @@
       "listing_id": 1728594513,
       "transaction_id": 5054217577,
       "rating": 5,
-      "review": "I like them a lot. \ud83d\ude01",
+      "review": "I like them a lot. 😁",
       "language": "en",
       "date": "2026-05-06"
     },
@@ -910,7 +950,7 @@
       "listing_id": 4336744223,
       "transaction_id": 5016524848,
       "rating": 5,
-      "review": "Amazing chatbox, that&#39;s soo cute and perfect for my aesthetic. Couldn&#39;t have been more happy with this find \ud83d\udc9c",
+      "review": "Amazing chatbox, that&#39;s soo cute and perfect for my aesthetic. Couldn&#39;t have been more happy with this find 💜",
       "language": "en",
       "date": "2026-04-25"
     },
@@ -966,7 +1006,7 @@
       "listing_id": 4333471272,
       "transaction_id": 5028858202,
       "rating": 5,
-      "review": "Me encant\u00f3 pero me gustar\u00eda personalizar mas r\u00e1pido el nombre de los roles en el chat",
+      "review": "Me encantó pero me gustaría personalizar mas rápido el nombre de los roles en el chat",
       "language": "es",
       "date": "2026-04-16"
     },
@@ -998,7 +1038,7 @@
       "listing_id": 4348428360,
       "transaction_id": 5020314770,
       "rating": 5,
-      "review": "tr\u00e8s bien es tr\u00e8s jolie",
+      "review": "très bien es très jolie",
       "language": "fr",
       "date": "2026-04-12"
     },
@@ -1214,7 +1254,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4962301448,
       "rating": 4,
-      "review": "kind of hard to figure out with stream elements but it\u2019s more the sites fault. very cute",
+      "review": "kind of hard to figure out with stream elements but it’s more the sites fault. very cute",
       "language": "en",
       "date": "2026-03-20"
     },
@@ -1238,7 +1278,7 @@
       "listing_id": 4409793600,
       "transaction_id": 4956577287,
       "rating": 5,
-      "review": "super, simple \u00e0 mettre en place et tr\u00e9s joli",
+      "review": "super, simple à mettre en place et trés joli",
       "language": "fr",
       "date": "2026-03-18"
     },
@@ -1262,7 +1302,7 @@
       "listing_id": 1723478277,
       "transaction_id": 4950559468,
       "rating": 5,
-      "review": "C&#39;est magnifique! Le fonctionnement \u00e9tait clair et simple, j&#39;adore",
+      "review": "C&#39;est magnifique! Le fonctionnement était clair et simple, j&#39;adore",
       "language": "fr",
       "date": "2026-03-09"
     },
@@ -1270,7 +1310,7 @@
       "listing_id": 1771365068,
       "transaction_id": 4988646841,
       "rating": 5,
-      "review": "Absolutely beautiful i love them, got butterfly,rabbit,pumpkin so I&#39;m now set up for the seasons. Will order Christmas soon!!\ud83e\udd70",
+      "review": "Absolutely beautiful i love them, got butterfly,rabbit,pumpkin so I&#39;m now set up for the seasons. Will order Christmas soon!!🥰",
       "language": "en",
       "date": "2026-03-09"
     },
@@ -1302,7 +1342,7 @@
       "listing_id": 1758361648,
       "transaction_id": 4988646839,
       "rating": 5,
-      "review": "So excited to use this for Halloween \ud83c\udf83",
+      "review": "So excited to use this for Halloween 🎃",
       "language": "en",
       "date": "2026-03-05"
     },
@@ -1318,7 +1358,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4989068421,
       "rating": 5,
-      "review": "Leichte installation. Wundersch\u00f6n. Was soll man noch dazu sagen?",
+      "review": "Leichte installation. Wunderschön. Was soll man noch dazu sagen?",
       "language": "de",
       "date": "2026-03-04"
     },
@@ -1334,7 +1374,7 @@
       "listing_id": 1758361648,
       "transaction_id": 4965636251,
       "rating": 5,
-      "review": "Perfect, I love it! Exactly what I needed \ud83d\ude0c",
+      "review": "Perfect, I love it! Exactly what I needed 😌",
       "language": "en",
       "date": "2026-03-02"
     },
@@ -1454,7 +1494,7 @@
       "listing_id": 4378021918,
       "transaction_id": 4966678925,
       "rating": 5,
-      "review": "Widget vraiment superbe qui colle parfaitement \u00e0 mon th\u00e8me !",
+      "review": "Widget vraiment superbe qui colle parfaitement à mon thème !",
       "language": "fr",
       "date": "2026-02-14"
     },
@@ -1470,7 +1510,7 @@
       "listing_id": 1707756402,
       "transaction_id": 4945776016,
       "rating": 5,
-      "review": "I love this moon goal widget! It\u2019s so cute and fits so well with my stream. The instructions were so easy to follow! Thanks for your amazing work.",
+      "review": "I love this moon goal widget! It’s so cute and fits so well with my stream. The instructions were so easy to follow! Thanks for your amazing work.",
       "language": "en",
       "date": "2026-02-09"
     },
@@ -1558,7 +1598,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4921558547,
       "rating": 5,
-      "review": "I love it, thank you again ! My Twitch chat is colorful, like I always wanted \ud83e\udd70 and my viewers like it too !",
+      "review": "I love it, thank you again ! My Twitch chat is colorful, like I always wanted 🥰 and my viewers like it too !",
       "language": "en",
       "date": "2026-01-30"
     },
@@ -1646,7 +1686,7 @@
       "listing_id": 1881347726,
       "transaction_id": 4796433090,
       "rating": 5,
-      "review": "\u00c9tant fan de dracofeu, j&#39;ai essay\u00e9 et adopt\u00e9 direct.\r\nJe recommande !",
+      "review": "Étant fan de dracofeu, j&#39;ai essayé et adopté direct.\r\nJe recommande !",
       "language": "fr",
       "date": "2026-01-14"
     },
@@ -1662,7 +1702,7 @@
       "listing_id": 4403610047,
       "transaction_id": 4851731409,
       "rating": 5,
-      "review": "j&#39;ai adorer super facile \u00e0 mettre en place.",
+      "review": "j&#39;ai adorer super facile à mettre en place.",
       "language": "fr",
       "date": "2026-01-13"
     },
@@ -1694,7 +1734,7 @@
       "listing_id": 4362041097,
       "transaction_id": 4839437582,
       "rating": 5,
-      "review": "ESTA LINDO UN POCO TEDIOSO DE PERZONALIZAR P\u00c9RO QUEDA GENIAL",
+      "review": "ESTA LINDO UN POCO TEDIOSO DE PERZONALIZAR PÉRO QUEDA GENIAL",
       "language": "es",
       "date": "2026-01-12"
     },
@@ -1742,7 +1782,7 @@
       "listing_id": 4403587938,
       "transaction_id": 4884031877,
       "rating": 5,
-      "review": "TUTTO PERFETTO! ARTICOLO E VENDITORE TOP!!! \u2b50\ufe0f\u2b50\ufe0f\u2b50\ufe0f\u2b50\ufe0f\u2b50\ufe0f",
+      "review": "TUTTO PERFETTO! ARTICOLO E VENDITORE TOP!!! ⭐️⭐️⭐️⭐️⭐️",
       "language": "it",
       "date": "2026-01-08"
     },
@@ -1798,7 +1838,7 @@
       "listing_id": 4403587938,
       "transaction_id": 4827449699,
       "rating": 5,
-      "review": "Qualidade muito boa e f\u00e1cil de ser instalado.",
+      "review": "Qualidade muito boa e fácil de ser instalado.",
       "language": "pt",
       "date": "2026-01-03"
     },
@@ -2118,7 +2158,7 @@
       "listing_id": 1763459664,
       "transaction_id": 4820131811,
       "rating": 5,
-      "review": "En pleins ce que je cherchais pour mon changement de d\u00e9cor \u00e0 long terme !",
+      "review": "En pleins ce que je cherchais pour mon changement de décor à long terme !",
       "language": "fr",
       "date": "2025-12-09"
     },
@@ -2142,7 +2182,7 @@
       "listing_id": 4403595080,
       "transaction_id": 4861877342,
       "rating": 5,
-      "review": "Cute and easy to use stream asset. I\u2019m loving it for my Holiday streams. Thank you!",
+      "review": "Cute and easy to use stream asset. I’m loving it for my Holiday streams. Thank you!",
       "language": "en",
       "date": "2025-12-09"
     },
@@ -2182,7 +2222,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4852074241,
       "rating": 5,
-      "review": "Great job with creating something wonderful like this\u2026",
+      "review": "Great job with creating something wonderful like this…",
       "language": "en",
       "date": "2025-12-07"
     },
@@ -2190,7 +2230,7 @@
       "listing_id": 4322617816,
       "transaction_id": 4862103525,
       "rating": 5,
-      "review": "Absolutely amazing work and such fine details, can\u2019t wait to get it onto my chat",
+      "review": "Absolutely amazing work and such fine details, can’t wait to get it onto my chat",
       "language": "en",
       "date": "2025-12-07"
     },
@@ -2286,7 +2326,7 @@
       "listing_id": 4336744223,
       "transaction_id": 4857820621,
       "rating": 5,
-      "review": "Tr\u00e8s joli ChatBox. Parfait pour aller sur mon stream. L&#39;installation peut se faire directement en utilisant l&#39;extension Chrome ou de fa\u00e7on manuelle avec les fichiers inclus dans le dossier. Merci pour la vid\u00e9o Youtube pour l&#39;installation. Tout est parfait. \u2665 Je ne vais pas utiliser le Goal car je ne stream pas pour l&#39;argent. Mais je l&#39;ai aussi essay\u00e9 et il est vraiment parfait. Tr\u00e8s discret. \u2665",
+      "review": "Très joli ChatBox. Parfait pour aller sur mon stream. L&#39;installation peut se faire directement en utilisant l&#39;extension Chrome ou de façon manuelle avec les fichiers inclus dans le dossier. Merci pour la vidéo Youtube pour l&#39;installation. Tout est parfait. ♥ Je ne vais pas utiliser le Goal car je ne stream pas pour l&#39;argent. Mais je l&#39;ai aussi essayé et il est vraiment parfait. Très discret. ♥",
       "language": "fr",
       "date": "2025-12-01"
     },
@@ -2294,7 +2334,7 @@
       "listing_id": 4403587938,
       "transaction_id": 4829670336,
       "rating": 4,
-      "review": "\u00c0 \u00e9t\u00e9 un peut compliqu\u00e9 \u00e0 comprendre comment r\u00e9cup\u00e9rer les fichier mais une fois fait j\u2019aime beaucoup cet article si vous voulez les voir sur ma cha\u00eene Twitch n\u2019h\u00e9sitez surtout pas \u00ab\u00a0Mllelylie\u00a0\u00bb",
+      "review": "À été un peut compliqué à comprendre comment récupérer les fichier mais une fois fait j’aime beaucoup cet article si vous voulez les voir sur ma chaîne Twitch n’hésitez surtout pas « Mllelylie »",
       "language": "fr",
       "date": "2025-11-30"
     },
@@ -2342,7 +2382,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4843055229,
       "rating": 2,
-      "review": "aucune instruction pour installer le chat dans son application, je suis d\u00e9\u00e7ue car je ne sais pas comment faire...",
+      "review": "aucune instruction pour installer le chat dans son application, je suis déçue car je ne sais pas comment faire...",
       "language": "fr",
       "date": "2025-11-26"
     },
@@ -2350,7 +2390,7 @@
       "listing_id": 4336740821,
       "transaction_id": 4841043415,
       "rating": 5,
-      "review": "exactement comme d\u00e9crit tr\u00e8s facile d&#39;usage",
+      "review": "exactement comme décrit très facile d&#39;usage",
       "language": "fr",
       "date": "2025-11-26"
     },
@@ -2358,7 +2398,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4832428957,
       "rating": 5,
-      "review": "Exactly as promoted, the neon colors are so pretty! My stream looks amazing with this included and matches the king of bite I was exactly going for\ud83d\udc95",
+      "review": "Exactly as promoted, the neon colors are so pretty! My stream looks amazing with this included and matches the king of bite I was exactly going for💕",
       "language": "en",
       "date": "2025-11-26"
     },
@@ -2366,7 +2406,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4833333360,
       "rating": 1,
-      "review": "\u043a\u0430\u0447\u0435\u0441\u0442\u0432\u043e \u043e\u0442\u0432\u0440\u0430\u0442\u0438\u0442\u0435\u043b\u044c\u043d\u043e\u0435, \u0438\u043a\u043e\u043d\u043a\u0438 \u043b\u043e\u0436\u0430\u0442\u0441\u044f \u0434\u0440\u0443\u0433 \u043d\u0430 \u0434\u0440\u0443\u0433\u0430, \u043d\u0435 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u044e",
+      "review": "качество отвратительное, иконки ложатся друг на друга, не рекомендую",
       "language": "ru",
       "date": "2025-11-26"
     },
@@ -2510,7 +2550,7 @@
       "listing_id": 4322617816,
       "transaction_id": 4815954853,
       "rating": 5,
-      "review": "Tr\u00e8s joli rendu pour le chatbox vraiment de plus j&#39;ai eu des difficult\u00e9s d&#39;installation j&#39;ai eu une assistance au top m&#39;ont beaucoup aid\u00e9 et la traduction en autre langue pour les tutos sont possibles.",
+      "review": "Très joli rendu pour le chatbox vraiment de plus j&#39;ai eu des difficultés d&#39;installation j&#39;ai eu une assistance au top m&#39;ont beaucoup aidé et la traduction en autre langue pour les tutos sont possibles.",
       "language": "fr",
       "date": "2025-11-13"
     },
@@ -2542,7 +2582,7 @@
       "listing_id": 1721971396,
       "transaction_id": 4815970649,
       "rating": 5,
-      "review": "Das herz ist total s\u00fcss, danke f\u00fcr das video zum integrieren in obs!!",
+      "review": "Das herz ist total süss, danke für das video zum integrieren in obs!!",
       "language": "de",
       "date": "2025-11-11"
     },
@@ -2638,7 +2678,7 @@
       "listing_id": 4361409311,
       "transaction_id": 4798691924,
       "rating": 5,
-      "review": "One of the coolest chat bubbles I\u2019ve ever seen!",
+      "review": "One of the coolest chat bubbles I’ve ever seen!",
       "language": "en",
       "date": "2025-11-05"
     },
@@ -2646,7 +2686,7 @@
       "listing_id": 1892179450,
       "transaction_id": 4755182046,
       "rating": 5,
-      "review": "tr\u00e8s appr\u00e9cier de ma commu pendant halloween",
+      "review": "très apprécier de ma commu pendant halloween",
       "language": "fr",
       "date": "2025-11-05"
     },
@@ -2678,7 +2718,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4792649188,
       "rating": 3,
-      "review": "J&#39;ai vraiment aim\u00e9 le rendu, un grand merci",
+      "review": "J&#39;ai vraiment aimé le rendu, un grand merci",
       "language": "fr",
       "date": "2025-11-03"
     },
@@ -2742,7 +2782,7 @@
       "listing_id": 4348428360,
       "transaction_id": 4793367915,
       "rating": 5,
-      "review": "It\u2019s a beautiful widget to use",
+      "review": "It’s a beautiful widget to use",
       "language": "en",
       "date": "2025-10-27"
     },
@@ -2758,7 +2798,7 @@
       "listing_id": 1790037076,
       "transaction_id": 4785637203,
       "rating": 5,
-      "review": "Never had anything like this before, it\u2019s super cute, perfect for my streaming theme, I really love how the customization is.",
+      "review": "Never had anything like this before, it’s super cute, perfect for my streaming theme, I really love how the customization is.",
       "language": "en",
       "date": "2025-10-23"
     },
@@ -2774,7 +2814,7 @@
       "listing_id": 1771354232,
       "transaction_id": 4745476116,
       "rating": 5,
-      "review": "man kann alles selber einf\u00e4rben das ist sooo geil :D",
+      "review": "man kann alles selber einfärben das ist sooo geil :D",
       "language": "de",
       "date": "2025-10-19"
     },
@@ -2782,7 +2822,7 @@
       "listing_id": 4336744223,
       "transaction_id": 4761634314,
       "rating": 4,
-      "review": "Sehr sch\u00f6n und leicht einzuf\u00fcgen, bisschen tricky allerdings bei den ganzen feinheiten :D",
+      "review": "Sehr schön und leicht einzufügen, bisschen tricky allerdings bei den ganzen feinheiten :D",
       "language": "de",
       "date": "2025-10-18"
     },
@@ -2838,7 +2878,7 @@
       "listing_id": 4322607453,
       "transaction_id": 4752247753,
       "rating": 5,
-      "review": "Super cute !! Love it !! \u2661",
+      "review": "Super cute !! Love it !! ♡",
       "language": "en",
       "date": "2025-10-13"
     },
@@ -2846,7 +2886,7 @@
       "listing_id": 1858698516,
       "transaction_id": 4752971923,
       "rating": 5,
-      "review": "Super cute !! Love it !! \u2661",
+      "review": "Super cute !! Love it !! ♡",
       "language": "en",
       "date": "2025-10-13"
     },
@@ -2870,7 +2910,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4770308403,
       "rating": 5,
-      "review": "Parfait, j&#39;adore \ud83e\udd70 Je suis satisfaite \u00e0 1000% \ud83d\ude04",
+      "review": "Parfait, j&#39;adore 🥰 Je suis satisfaite à 1000% 😄",
       "language": "fr",
       "date": "2025-10-10"
     },
@@ -2934,7 +2974,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4746682482,
       "rating": 5,
-      "review": "Wundersch\u00f6n und gut erkl\u00e4rt &lt;3",
+      "review": "Wunderschön und gut erklärt &lt;3",
       "language": "de",
       "date": "2025-10-04"
     },
@@ -2942,7 +2982,7 @@
       "listing_id": 1792249804,
       "transaction_id": 4752171178,
       "rating": 5,
-      "review": "J&#39;adore, je suis dans on event Halloween en se moment et il fonctionne tr\u00e8s bien!",
+      "review": "J&#39;adore, je suis dans on event Halloween en se moment et il fonctionne très bien!",
       "language": "fr",
       "date": "2025-10-04"
     },
@@ -2958,7 +2998,7 @@
       "listing_id": 1728594513,
       "transaction_id": 4765984549,
       "rating": 5,
-      "review": "Beautiful widget, only issue I have is that it won\u2019t work with charity donations on stream BUT it does work with tip donations x",
+      "review": "Beautiful widget, only issue I have is that it won’t work with charity donations on stream BUT it does work with tip donations x",
       "language": "en",
       "date": "2025-10-04"
     },
@@ -3030,7 +3070,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4748402898,
       "rating": 5,
-      "review": "It looks amazing! Did struggle with it at first since it\u2019s my first time using anything like this but I love it so much!",
+      "review": "It looks amazing! Did struggle with it at first since it’s my first time using anything like this but I love it so much!",
       "language": "en",
       "date": "2025-09-29"
     },
@@ -3038,7 +3078,7 @@
       "listing_id": 1892179450,
       "transaction_id": 4746920376,
       "rating": 5,
-      "review": "Absolutely stunning, easy to use, easy to customize and runs extremely smoothly! \u2665 10/10",
+      "review": "Absolutely stunning, easy to use, easy to customize and runs extremely smoothly! ♥ 10/10",
       "language": "en",
       "date": "2025-09-28"
     },
@@ -3198,7 +3238,7 @@
       "listing_id": 1771365068,
       "transaction_id": 4654795176,
       "rating": 5,
-      "review": "Einfach nur weiterzuempfehlen, sehr sch\u00f6ne Artikel und bin total begeistert",
+      "review": "Einfach nur weiterzuempfehlen, sehr schöne Artikel und bin total begeistert",
       "language": "de",
       "date": "2025-09-09"
     },
@@ -3286,7 +3326,7 @@
       "listing_id": 1728594513,
       "transaction_id": 4659171280,
       "rating": 5,
-      "review": "Super sch\u00f6ner und inspirierender Artikel \u2728",
+      "review": "Super schöner und inspirierender Artikel ✨",
       "language": "de",
       "date": "2025-08-28"
     },
@@ -3294,7 +3334,7 @@
       "listing_id": 4322607453,
       "transaction_id": 4715633947,
       "rating": 5,
-      "review": "Super sch\u00f6ner und inspirierender Artikel \u2728",
+      "review": "Super schöner und inspirierender Artikel ✨",
       "language": "de",
       "date": "2025-08-28"
     },
@@ -3302,7 +3342,7 @@
       "listing_id": 1747633766,
       "transaction_id": 4631898275,
       "rating": 5,
-      "review": "Correspond tr\u00e8s bien \u00e0 ce que je cherchais",
+      "review": "Correspond très bien à ce que je cherchais",
       "language": "fr",
       "date": "2025-08-26"
     },
@@ -3366,7 +3406,7 @@
       "listing_id": 4333471272,
       "transaction_id": 4691756243,
       "rating": 5,
-      "review": "This chat looks amazing! But it can take awhile to tweak and get set up! Gorgeous chat though! \ud83d\ude01",
+      "review": "This chat looks amazing! But it can take awhile to tweak and get set up! Gorgeous chat though! 😁",
       "language": "en",
       "date": "2025-08-22"
     },
@@ -3422,7 +3462,7 @@
       "listing_id": 1834826106,
       "transaction_id": 4691992784,
       "rating": 5,
-      "review": "Preis Leitung einfach un\u00fcbertroffen, f\u00fcr jeden Anf\u00e4nger was dabei und leicht zu installieren :)",
+      "review": "Preis Leitung einfach unübertroffen, für jeden Anfänger was dabei und leicht zu installieren :)",
       "language": "de",
       "date": "2025-08-14"
     },
@@ -3486,7 +3526,7 @@
       "listing_id": 1780969806,
       "transaction_id": 4626405570,
       "rating": 5,
-      "review": "Tr\u00e8s bon widget trop cute ! Parfait !",
+      "review": "Très bon widget trop cute ! Parfait !",
       "language": "fr",
       "date": "2025-08-02"
     },
@@ -3566,7 +3606,7 @@
       "listing_id": 1712229820,
       "transaction_id": 4682557317,
       "rating": 5,
-      "review": "Sieht super Klasse aus, klappt alles wunderbar. Tutorial als Video ist auch verf\u00fcgbar.",
+      "review": "Sieht super Klasse aus, klappt alles wunderbar. Tutorial als Video ist auch verfügbar.",
       "language": "de",
       "date": "2025-07-27"
     },
@@ -3590,7 +3630,7 @@
       "listing_id": 4328622333,
       "transaction_id": 4676650975,
       "rating": 5,
-      "review": "Very pretty \ud83d\ude0d absolutely love it. \u2764\ufe0f",
+      "review": "Very pretty 😍 absolutely love it. ❤️",
       "language": "en",
       "date": "2025-07-25"
     },
@@ -3654,7 +3694,7 @@
       "listing_id": 1771354232,
       "transaction_id": 4640861887,
       "rating": 5,
-      "review": "Perfect for my future streams \ud83d\udc97",
+      "review": "Perfect for my future streams 💗",
       "language": "en",
       "date": "2025-07-18"
     },
@@ -3806,7 +3846,7 @@
       "listing_id": 1707756402,
       "transaction_id": 4618539019,
       "rating": 5,
-      "review": "Wundersch\u00f6n, einfach einzubinden und zu gestalten - bin absolut zufrieden!",
+      "review": "Wunderschön, einfach einzubinden und zu gestalten - bin absolut zufrieden!",
       "language": "de",
       "date": "2025-07-10"
     },
@@ -3822,7 +3862,7 @@
       "listing_id": 1730459480,
       "transaction_id": 4597616371,
       "rating": 5,
-      "review": "Simplemente precioso, lo voy a usar en mi stream, queda muy bien con mi estetica \u02da\u02d6\ud80c\udf62\ud83c\udf37\u2727\u02da.\ud83c\udf80\u22c6",
+      "review": "Simplemente precioso, lo voy a usar en mi stream, queda muy bien con mi estetica ˚˖𓍢🌷✧˚.🎀⋆",
       "language": "es",
       "date": "2025-07-04"
     },
@@ -3830,7 +3870,7 @@
       "listing_id": 1834953893,
       "transaction_id": 4611585999,
       "rating": 5,
-      "review": "Top et tr\u00e8s facile \u00e0 mettre en place",
+      "review": "Top et très facile à mettre en place",
       "language": "fr",
       "date": "2025-07-02"
     },
@@ -3838,7 +3878,7 @@
       "listing_id": 1881257942,
       "transaction_id": 4609731159,
       "rating": 5,
-      "review": "Vendeur super vif pour r\u00e9pondre, le evoli a fait son effet \ud83d\ude0d",
+      "review": "Vendeur super vif pour répondre, le evoli a fait son effet 😍",
       "language": "fr",
       "date": "2025-07-01"
     },
@@ -3998,7 +4038,7 @@
       "listing_id": 1785601401,
       "transaction_id": 4611506275,
       "rating": 5,
-      "review": "c&#39;est vraiment parfait pour mon th\u00e8me !",
+      "review": "c&#39;est vraiment parfait pour mon thème !",
       "language": "fr",
       "date": "2025-06-15"
     },
@@ -4030,7 +4070,7 @@
       "listing_id": 1806974501,
       "transaction_id": 4614058348,
       "rating": 4,
-      "review": "The lack of instructions almost made me request a refund because I don\u2019t understand code so I didn\u2019t know how to do anything. After 4 hours I finally got it. Cute once everything works.",
+      "review": "The lack of instructions almost made me request a refund because I don’t understand code so I didn’t know how to do anything. After 4 hours I finally got it. Cute once everything works.",
       "language": "en",
       "date": "2025-06-11"
     },
@@ -4038,7 +4078,7 @@
       "listing_id": 1713468354,
       "transaction_id": 4497201410,
       "rating": 5,
-      "review": "\ud83c\udf1f\ud83c\udf1f\ud83c\udf1f\ud83c\udf1f\ud83c\udf1f\nClean, stylish, and exactly what I needed!\nThe overlay looks amazing on stream \u2013 super polished and easy to set up. Everything was well organized and worked right away without any issues. It fits my vibe perfectly and really leveled up the look of my channel. Definitely recommend if you&#39;re looking for a professional upgrade without the hassle!",
+      "review": "🌟🌟🌟🌟🌟\nClean, stylish, and exactly what I needed!\nThe overlay looks amazing on stream – super polished and easy to set up. Everything was well organized and worked right away without any issues. It fits my vibe perfectly and really leveled up the look of my channel. Definitely recommend if you&#39;re looking for a professional upgrade without the hassle!",
       "language": "en",
       "date": "2025-06-11"
     },
@@ -4214,7 +4254,7 @@
       "listing_id": 1810190709,
       "transaction_id": 4593159350,
       "rating": 5,
-      "review": "Absolutely amazing! The aesthetic is so nice and I like how I can choose the colors of my liking. \u2764\ufe0f",
+      "review": "Absolutely amazing! The aesthetic is so nice and I like how I can choose the colors of my liking. ❤️",
       "language": "en",
       "date": "2025-05-29"
     },
@@ -4246,7 +4286,7 @@
       "listing_id": 1790033028,
       "transaction_id": 4588741312,
       "rating": 3,
-      "review": "honestly i thought these could be used for bits and stuff, but it doesn\u2019t seem to be the case.. and if it is the case, the youtube video sent along with them is confusing and really no help at all hence the lower rating. after putting it onto the stream the bottle was already full to the top. lovely bottles though if i could get them to work properly they\u2019d be a great addition to my stream.",
+      "review": "honestly i thought these could be used for bits and stuff, but it doesn’t seem to be the case.. and if it is the case, the youtube video sent along with them is confusing and really no help at all hence the lower rating. after putting it onto the stream the bottle was already full to the top. lovely bottles though if i could get them to work properly they’d be a great addition to my stream.",
       "language": "en",
       "date": "2025-05-27"
     },
@@ -4334,7 +4374,7 @@
       "listing_id": 1892198146,
       "transaction_id": 4582542010,
       "rating": 1,
-      "review": "je suis vraiment navr\u00e9, j&#39;aurais aimer que ce soit super, mais ne fonctionne pas, le codage est mal fait, ca detecte pas correctement les follows pour faire un goal.... bref je ne recommande pas du tout !",
+      "review": "je suis vraiment navré, j&#39;aurais aimer que ce soit super, mais ne fonctionne pas, le codage est mal fait, ca detecte pas correctement les follows pour faire un goal.... bref je ne recommande pas du tout !",
       "language": "fr",
       "date": "2025-05-16"
     },
@@ -4518,7 +4558,7 @@
       "listing_id": 1790033028,
       "transaction_id": 4551010350,
       "rating": 5,
-      "review": "Tr\u00e8s bien r\u00e9aliste ! je recommande.",
+      "review": "Très bien réaliste ! je recommande.",
       "language": "fr",
       "date": "2025-04-22"
     },
@@ -4526,7 +4566,7 @@
       "listing_id": 1707804164,
       "transaction_id": 4564899821,
       "rating": 5,
-      "review": "Tr\u00e8s bien r\u00e9aliste ! je recommande.",
+      "review": "Très bien réaliste ! je recommande.",
       "language": "fr",
       "date": "2025-04-22"
     },
@@ -4542,7 +4582,7 @@
       "listing_id": 1707756402,
       "transaction_id": 4518357612,
       "rating": 5,
-      "review": "Cutesy cutesy I\u2019m in love!!",
+      "review": "Cutesy cutesy I’m in love!!",
       "language": "en",
       "date": "2025-04-22"
     },
@@ -4662,7 +4702,7 @@
       "listing_id": 1707756402,
       "transaction_id": 4524133344,
       "rating": 4,
-      "review": "La lune est magnifique mais dommage que la brillance reste violette et qu&#39;on ne puisse pas modifier la couleur, donc j&#39;ai du l&#39;enlev\u00e9.\r\nLes lignes de code \u00e0 entr\u00e9 ne fonctionnent pas sur Streamlabs, il faut pass\u00e9 par Streamelements et la vid\u00e9o donn\u00e9 avec n&#39;est pas tr\u00e8s claire, le fichier n&#39;est pas une vid\u00e9o donc j&#39;ai eu du mal \u00e0 comprendre ou \u00e9tait le tutoriel, le lien est \u00e0 trouv\u00e9 dans le fichier texte, j&#39;ai contact\u00e9 le vendeur et il m&#39;a donn\u00e9 un lien youtube qui est mieux.",
+      "review": "La lune est magnifique mais dommage que la brillance reste violette et qu&#39;on ne puisse pas modifier la couleur, donc j&#39;ai du l&#39;enlevé.\r\nLes lignes de code à entré ne fonctionnent pas sur Streamlabs, il faut passé par Streamelements et la vidéo donné avec n&#39;est pas très claire, le fichier n&#39;est pas une vidéo donc j&#39;ai eu du mal à comprendre ou était le tutoriel, le lien est à trouvé dans le fichier texte, j&#39;ai contacté le vendeur et il m&#39;a donné un lien youtube qui est mieux.",
       "language": "fr",
       "date": "2025-04-08"
     },
@@ -4854,7 +4894,7 @@
       "listing_id": 1790033028,
       "transaction_id": 4514322836,
       "rating": 4,
-      "review": "I think these are so cute. I would\u2019ve liked for the different styles to be labeled differently so I\u2019d know which is which but it\u2019s still a nice addition to my stream!!",
+      "review": "I think these are so cute. I would’ve liked for the different styles to be labeled differently so I’d know which is which but it’s still a nice addition to my stream!!",
       "language": "en",
       "date": "2025-03-20"
     },
@@ -4942,7 +4982,7 @@
       "listing_id": 1797449100,
       "transaction_id": 4473595828,
       "rating": 5,
-      "review": "mag das man die individualisieren kann. sehr sch\u00f6ne herzen und meinen Zuschauern gef\u00e4llt es auch.",
+      "review": "mag das man die individualisieren kann. sehr schöne herzen und meinen Zuschauern gefällt es auch.",
       "language": "de",
       "date": "2025-03-10"
     },
@@ -4958,7 +4998,7 @@
       "listing_id": 1728586845,
       "transaction_id": 4513227709,
       "rating": 5,
-      "review": "Super tr\u00e8s beau widget !",
+      "review": "Super très beau widget !",
       "language": "fr",
       "date": "2025-03-09"
     },
@@ -5206,7 +5246,7 @@
       "listing_id": 1730461418,
       "transaction_id": 4488713929,
       "rating": 5,
-      "review": "Adorable ! Thank you so much \ud83d\ude0a",
+      "review": "Adorable ! Thank you so much 😊",
       "language": "en",
       "date": "2025-02-20"
     },
@@ -5262,7 +5302,7 @@
       "listing_id": 1758293960,
       "transaction_id": 4473734988,
       "rating": 5,
-      "review": "Love it, wasn\u2019t hard to set up. So far seem to be working",
+      "review": "Love it, wasn’t hard to set up. So far seem to be working",
       "language": "en",
       "date": "2025-02-15"
     },
@@ -5334,7 +5374,7 @@
       "listing_id": 1763900071,
       "transaction_id": 4465099452,
       "rating": 4,
-      "review": "Exactly what I needed. \ud83c\udf38",
+      "review": "Exactly what I needed. 🌸",
       "language": "en",
       "date": "2025-02-10"
     },
@@ -5342,7 +5382,7 @@
       "listing_id": 1790018033,
       "transaction_id": 4401484584,
       "rating": 5,
-      "review": "Super S\u00fc\u00df. Mein Chat liebt diese Deko",
+      "review": "Super Süß. Mein Chat liebt diese Deko",
       "language": "de",
       "date": "2025-02-10"
     },
@@ -5366,7 +5406,7 @@
       "listing_id": 1780969806,
       "transaction_id": 4386779093,
       "rating": 5,
-      "review": "Couldn\u2019t work it out as first time trying obs/stream labs but the seller sent me some tutorials. Would recommend absolutely love. Thank you",
+      "review": "Couldn’t work it out as first time trying obs/stream labs but the seller sent me some tutorials. Would recommend absolutely love. Thank you",
       "language": "en",
       "date": "2025-02-09"
     },
@@ -5446,7 +5486,7 @@
       "listing_id": 1707756402,
       "transaction_id": 4374108714,
       "rating": 5,
-      "review": "Es muy lindo y f\u00e1cil de usar",
+      "review": "Es muy lindo y fácil de usar",
       "language": "es",
       "date": "2025-02-05"
     },
@@ -5478,7 +5518,7 @@
       "listing_id": 1723688245,
       "transaction_id": 4444572170,
       "rating": 4,
-      "review": "Super cute widget, I will state that it was a little bit harder to set up than originally suspected! \nOnce it\u2019s up and running it looks really spectacular! Community love it and I\u2019m really happy! Thank you",
+      "review": "Super cute widget, I will state that it was a little bit harder to set up than originally suspected! \nOnce it’s up and running it looks really spectacular! Community love it and I’m really happy! Thank you",
       "language": "en",
       "date": "2025-01-30"
     },
@@ -5486,7 +5526,7 @@
       "listing_id": 1797937195,
       "transaction_id": 4454099158,
       "rating": 5,
-      "review": "\u041e\u0447\u0435\u043d\u044c \u043c\u0438\u043b\u044b\u0439 \u0432\u0438\u0434\u0436\u0435\u0442, \u0441\u043f\u0430\u0441\u0438\u0431\u043e \u0431\u043e\u043b\u044c\u0448\u043e\u0435",
+      "review": "Очень милый виджет, спасибо большое",
       "language": "ru",
       "date": "2025-01-30"
     },
@@ -5494,7 +5534,7 @@
       "listing_id": 1712229820,
       "transaction_id": 4421619567,
       "rating": 5,
-      "review": "It\u2019s literally the cutest little widget on my stream and I\u2019m enjoying watching it rise with each follow on twitch \ud83e\udd79",
+      "review": "It’s literally the cutest little widget on my stream and I’m enjoying watching it rise with each follow on twitch 🥹",
       "language": "en",
       "date": "2025-01-30"
     },
@@ -5582,7 +5622,7 @@
       "listing_id": 1790018033,
       "transaction_id": 4459878389,
       "rating": 5,
-      "review": "Tr\u00e8s facile \u00e0 comprendre avec l&#39;explication et super mignon !",
+      "review": "Très facile à comprendre avec l&#39;explication et super mignon !",
       "language": "fr",
       "date": "2025-01-25"
     },
@@ -5598,7 +5638,7 @@
       "listing_id": 1790018033,
       "transaction_id": 4443409858,
       "rating": 5,
-      "review": "very simple, cute and easy to use \u2661",
+      "review": "very simple, cute and easy to use ♡",
       "language": "en",
       "date": "2025-01-24"
     },
@@ -5710,7 +5750,7 @@
       "listing_id": 1790033028,
       "transaction_id": 4428186644,
       "rating": 5,
-      "review": "Super cute for my stream! It did take me a bit to understand how to upload it but I got it! I recommend if you\u2019re using this for streamlabs to actually create it in stream elements like in the video and then just copying the URL and making it a browser source on streamlabs. Streamelemts customization tools are so much easier to use and it\u2019ll be easier to upload. Just make sure you\u2019re extracting the files!",
+      "review": "Super cute for my stream! It did take me a bit to understand how to upload it but I got it! I recommend if you’re using this for streamlabs to actually create it in stream elements like in the video and then just copying the URL and making it a browser source on streamlabs. Streamelemts customization tools are so much easier to use and it’ll be easier to upload. Just make sure you’re extracting the files!",
       "language": "en",
       "date": "2025-01-12"
     },
@@ -5822,7 +5862,7 @@
       "listing_id": 1742236253,
       "transaction_id": 4413667850,
       "rating": 5,
-      "review": "Perfektes Widget, alles super und wundersch\u00f6n",
+      "review": "Perfektes Widget, alles super und wunderschön",
       "language": "de",
       "date": "2024-12-30"
     },
@@ -5982,7 +6022,7 @@
       "listing_id": 1763385692,
       "transaction_id": 4342526196,
       "rating": 5,
-      "review": "Overall the art is amazing. And the widget isn\u2019t bad to set up. There is a problem with the follower portion of the widget. And could use a video of how to change certain things. But it\u2019s a beautiful widget.",
+      "review": "Overall the art is amazing. And the widget isn’t bad to set up. There is a problem with the follower portion of the widget. And could use a video of how to change certain things. But it’s a beautiful widget.",
       "language": "en",
       "date": "2024-12-15"
     },
@@ -6142,7 +6182,7 @@
       "listing_id": 1775809800,
       "transaction_id": 4358616850,
       "rating": 5,
-      "review": "Adorei, ainda n\u00e3o sei se d\u00e1 pra usar com o YouTube e como usar, mas est\u00e1 lindo, super pr\u00e1tico",
+      "review": "Adorei, ainda não sei se dá pra usar com o YouTube e como usar, mas está lindo, super prático",
       "language": "pt",
       "date": "2024-12-01"
     },
@@ -6182,7 +6222,7 @@
       "listing_id": 1805179619,
       "transaction_id": 4351701556,
       "rating": 5,
-      "review": "amazing goal widgets 10/10 \u2665\ufe0f",
+      "review": "amazing goal widgets 10/10 ♥️",
       "language": "en",
       "date": "2024-11-28"
     },
@@ -6310,7 +6350,7 @@
       "listing_id": 1730461418,
       "transaction_id": 4290553712,
       "rating": 4,
-      "review": "The product looks great and has amazing color customization. My only issue is that there isn&#39;t any customization for the goal symbols. I would have liked to change the symbol in between the numbers from a \u2022 to / for better visibility, but there is no option.",
+      "review": "The product looks great and has amazing color customization. My only issue is that there isn&#39;t any customization for the goal symbols. I would have liked to change the symbol in between the numbers from a • to / for better visibility, but there is no option.",
       "language": "en",
       "date": "2024-11-21"
     },
@@ -6526,7 +6566,7 @@
       "listing_id": 1792249804,
       "transaction_id": 4293380063,
       "rating": 5,
-      "review": "Thank you so much! Its amazing \u2728\ufe0f\ud83d\ude4f\ud83c\udffb",
+      "review": "Thank you so much! Its amazing ✨️🙏🏻",
       "language": "en",
       "date": "2024-11-11"
     },
@@ -6630,7 +6670,7 @@
       "listing_id": 1707804164,
       "transaction_id": 4312017697,
       "rating": 5,
-      "review": "Super f\u00e1cil de configurar e ficou lindo no layout",
+      "review": "Super fácil de configurar e ficou lindo no layout",
       "language": "pt",
       "date": "2024-10-31"
     },
@@ -6638,7 +6678,7 @@
       "listing_id": 1810207793,
       "transaction_id": 4311491757,
       "rating": 5,
-      "review": "Perfect \ud83d\udc4c good nice  job",
+      "review": "Perfect 👌 good nice  job",
       "language": "en",
       "date": "2024-10-30"
     },
@@ -6646,7 +6686,7 @@
       "listing_id": 1806945777,
       "transaction_id": 4278112016,
       "rating": 5,
-      "review": "Very happy with my order!! Made my widget personalized and it fully fits my channel &lt;3 thankyou! \u029a\u2661\u025e",
+      "review": "Very happy with my order!! Made my widget personalized and it fully fits my channel &lt;3 thankyou! ʚ♡ɞ",
       "language": "en",
       "date": "2024-10-29"
     },
@@ -6814,7 +6854,7 @@
       "listing_id": 1792249804,
       "transaction_id": 4285996496,
       "rating": 4,
-      "review": "entrega r\u00e1pida y buena atenci\u00f3n a las dudas y sugerencias",
+      "review": "entrega rápida y buena atención a las dudas y sugerencias",
       "language": "es",
       "date": "2024-10-16"
     },
@@ -6958,7 +6998,7 @@
       "listing_id": 1771365068,
       "transaction_id": 4279968983,
       "rating": 4,
-      "review": "difficult\u00e9 a install\u00e9 une fois t\u00e9l\u00e9charg\u00e9",
+      "review": "difficulté a installé une fois téléchargé",
       "language": "fr",
       "date": "2024-10-06"
     },
@@ -6974,7 +7014,7 @@
       "listing_id": 1785478023,
       "transaction_id": 4279762087,
       "rating": 5,
-      "review": "Para instalarlo en mi OBS necesit\u00e9 un tutorial de Youtube. Una vez instalado han quedado perfectos!",
+      "review": "Para instalarlo en mi OBS necesité un tutorial de Youtube. Una vez instalado han quedado perfectos!",
       "language": "es",
       "date": "2024-10-05"
     },
@@ -6982,7 +7022,7 @@
       "listing_id": 1707804164,
       "transaction_id": 4273658082,
       "rating": 5,
-      "review": "J&#39;avais besoin d&#39;information suppl\u00e9mentaire sur le fonctionnement du widget et le vendeur m&#39;a r\u00e9pondu tr\u00e8s vite. Le widget fonctionne tr\u00e8s bien et est tr\u00e8s joli, je recommande !",
+      "review": "J&#39;avais besoin d&#39;information supplémentaire sur le fonctionnement du widget et le vendeur m&#39;a répondu très vite. Le widget fonctionne très bien et est très joli, je recommande !",
       "language": "fr",
       "date": "2024-10-05"
     },
@@ -7174,7 +7214,7 @@
       "listing_id": 1771354232,
       "transaction_id": 4263997591,
       "rating": 4,
-      "review": "It\u2019s great! I do feel like the glow, even though I prefer it on, doesn\u2019t work exactly as desired, but everything else about it is amazing. When I reached out for help, they were really quick to reply as well! Thank you for the great product ^-^",
+      "review": "It’s great! I do feel like the glow, even though I prefer it on, doesn’t work exactly as desired, but everything else about it is amazing. When I reached out for help, they were really quick to reply as well! Thank you for the great product ^-^",
       "language": "en",
       "date": "2024-09-23"
     },
@@ -7222,7 +7262,7 @@
       "listing_id": 1707804164,
       "transaction_id": 4252440622,
       "rating": 5,
-      "review": "Tr\u00e8s bon vendeur, je recommande",
+      "review": "Très bon vendeur, je recommande",
       "language": "fr",
       "date": "2024-09-20"
     },
@@ -7246,7 +7286,7 @@
       "listing_id": 1735046293,
       "transaction_id": 4256707527,
       "rating": 5,
-      "review": "j&#39;adore, cet item est trop beau et super simple a install\u00e9 !",
+      "review": "j&#39;adore, cet item est trop beau et super simple a installé !",
       "language": "fr",
       "date": "2024-09-19"
     },
@@ -7270,7 +7310,7 @@
       "listing_id": 1771354232,
       "transaction_id": 4256736251,
       "rating": 5,
-      "review": "It\u2019s so cute I just can\u2019t stand it.",
+      "review": "It’s so cute I just can’t stand it.",
       "language": "en",
       "date": "2024-09-18"
     },
@@ -7342,7 +7382,7 @@
       "listing_id": 1771354232,
       "transaction_id": 4245493377,
       "rating": 5,
-      "review": "Es muy bonito. Siempre que cojo los goals me parecen preciosos. F\u00e1cil de usar y se puede cambiar el texto. Estar\u00eda muy bien adem\u00e1s poder cambiar la posici\u00f3n del texto en la imagen.\nPero est\u00e1 muy bien!",
+      "review": "Es muy bonito. Siempre que cojo los goals me parecen preciosos. Fácil de usar y se puede cambiar el texto. Estaría muy bien además poder cambiar la posición del texto en la imagen.\nPero está muy bien!",
       "language": "es",
       "date": "2024-09-12"
     },
@@ -7430,7 +7470,7 @@
       "listing_id": 1726399702,
       "transaction_id": 4230635784,
       "rating": 1,
-      "review": "Bought this just for the files to not even be there, contacted the selling for help to install it and only then found out I don\u2019t even have the whole thing, I would recommend purchasing from someone else..",
+      "review": "Bought this just for the files to not even be there, contacted the selling for help to install it and only then found out I don’t even have the whole thing, I would recommend purchasing from someone else..",
       "language": "en",
       "date": "2024-09-02"
     },
@@ -7438,7 +7478,7 @@
       "listing_id": 1707804164,
       "transaction_id": 4234530071,
       "rating": 5,
-      "review": "This magical bottle overlay is fantastic! Changing the colors was incredibly easy, and integrating it into StreamElements was a breeze. I\u2019ll definitely be recommending this to my friends!",
+      "review": "This magical bottle overlay is fantastic! Changing the colors was incredibly easy, and integrating it into StreamElements was a breeze. I’ll definitely be recommending this to my friends!",
       "language": "en",
       "date": "2024-09-01"
     },
@@ -7454,7 +7494,7 @@
       "listing_id": 1728594513,
       "transaction_id": 4188713822,
       "rating": 5,
-      "review": "It\u2019s so cute and easy super easy to set up!",
+      "review": "It’s so cute and easy super easy to set up!",
       "language": "en",
       "date": "2024-08-30"
     },
@@ -7486,7 +7526,7 @@
       "listing_id": 1707756402,
       "transaction_id": 4218842538,
       "rating": 5,
-      "review": "Me encant\u00f3 muy bonito el dise\u00f1o y la explicaci\u00f3n para el uso es muy buena",
+      "review": "Me encantó muy bonito el diseño y la explicación para el uso es muy buena",
       "language": "es",
       "date": "2024-08-25"
     },
@@ -7550,7 +7590,7 @@
       "listing_id": 1706402816,
       "transaction_id": 4194829234,
       "rating": 5,
-      "review": "un articles fournis avec un tuto complet ! Et qui se met \u00e0 jour automatiquement si on le param\u00e8tre comme il faut ! Exactement ce que je voulais : papillon, anim\u00e9, custom \u00e0 100% et automatique !",
+      "review": "un articles fournis avec un tuto complet ! Et qui se met à jour automatiquement si on le paramètre comme il faut ! Exactement ce que je voulais : papillon, animé, custom à 100% et automatique !",
       "language": "fr",
       "date": "2024-08-07"
     },
@@ -7702,7 +7742,7 @@
       "listing_id": 1713468354,
       "transaction_id": 4167793885,
       "rating": 5,
-      "review": "Instructions aren\u2019t clear for the streamlabs but other than that, it\u2019s really good! I highly recommend it",
+      "review": "Instructions aren’t clear for the streamlabs but other than that, it’s really good! I highly recommend it",
       "language": "en",
       "date": "2024-07-13"
     },
@@ -7718,7 +7758,7 @@
       "listing_id": 1707756402,
       "transaction_id": 4164636132,
       "rating": 5,
-      "review": "Great and easy to use! I\u2019m not good with technology but this was so easy to use! &lt;3",
+      "review": "Great and easy to use! I’m not good with technology but this was so easy to use! &lt;3",
       "language": "en",
       "date": "2024-07-11"
     },
@@ -7758,7 +7798,7 @@
       "listing_id": 1706402816,
       "transaction_id": 4150296141,
       "rating": 5,
-      "review": "Looks great and love love love this but the setup isn\u2019t for me.",
+      "review": "Looks great and love love love this but the setup isn’t for me.",
       "language": "en",
       "date": "2024-06-28"
     },
@@ -7798,7 +7838,7 @@
       "listing_id": 1707804164,
       "transaction_id": 4133747281,
       "rating": 4,
-      "review": "Was good but the video had different jars so I didn\u2019t realize it would be just the potion one",
+      "review": "Was good but the video had different jars so I didn’t realize it would be just the potion one",
       "language": "en",
       "date": "2024-06-15"
     },

@@ -1,14 +1,194 @@
 {
   "shop": {
     "average": 4.76,
-    "count": 992,
-    "soldCount": 7512,
-    "favoriteCount": 1275,
+    "count": 997,
+    "soldCount": 7542,
+    "favoriteCount": 1281,
     "url": "https://www.etsy.com/shop/StreamWidgetShop/reviews"
   },
-  "generatedAt": "2026-09-11T01:27:11.117Z",
+  "generatedAt": "2026-09-14T02:38:26.148Z",
   "sourceNote": "Real StreamWidgetShop Etsy reviews, joined to Shopify products by etsy listing id via data/etsy-video-map.json. Only trusted-confidence matches are kept, see scripts/build-etsy-reviews.mjs. SERVER USE ONLY, contains every product review verbatim: import this from a route loader, never from a component body or module scope, or the bundler ships it to the client. Client code wanting just the shop stats should import etsy-shop-stats.json instead.",
   "products": {
+    "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only": {
+      "handle": "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4336744223,
+      "count": 10,
+      "average": 4.9,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 9
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-09-13",
+          "text": "I absolutely love the customization I made the colors match my music widget and it is the perfect combo for streams!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-08-19",
+          "text": "Very nice addition to my stream, thanks!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-07-05",
+          "text": "I love my new chat overlay. As a new streamer, it did take some trial and error to get it set up how I wanted, but the video included did help a bit.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-25",
+          "text": "Amazing chatbox, that's soo cute and perfect for my aesthetic. Couldn't have been more happy with this find 💜",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-01",
+          "text": "Thank you so much for making this!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-19",
+          "text": "I love this chat layout <3",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-26",
+          "text": "Works beautifully, was easy to setup",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-01",
+          "text": "Très joli ChatBox. Parfait pour aller sur mon stream. L'installation peut se faire directement en utilisant l'extension Chrome ou de façon manuelle avec les fichiers inclus dans le dossier. Merci pour la vidéo Youtube pour l'installation. Tout est parfait. ♥ Je ne vais pas utiliser le Goal car je ne stream pas pour l'argent. Mais je l'ai aussi essayé et il est vraiment parfait. Très discret. ♥",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-20",
+          "text": "Its a great product overall but there was no explanation on how to get Widget.io extension for the browser to be able to add this into stream elelments i had to figure it out myself but there is a discord for help.",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-10-18",
+          "text": "Sehr schön und leicht einzufügen, bisschen tricky allerdings bei den ganzen feinheiten :D",
+          "language": "de"
+        }
+      ]
+    },
+    "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only": {
+      "handle": "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4322617816,
+      "count": 15,
+      "average": 4.7,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 14
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-09-13",
+          "text": "This is absolutely beautiful. I wasn't excited to see I had to 'build\" the widget with all the code pieces but it was very quick and it's such a beautiful well put together widget. I really love it for my theme.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-09-12",
+          "text": "Easy to implement in stream elements and obs also love the design",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-08-31",
+          "text": "I love everything about it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-08-27",
+          "text": "Tellement un beau tchat j'adore !",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2026-08-20",
+          "text": "This works great and is so cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-06-20",
+          "text": "amazing product love it !",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-04-24",
+          "text": "Very easy to set up and gorgeous!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-03-31",
+          "text": "Great, helpful seller. It was a little confusing but they helped with a tutorial video that solved my issues",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-12",
+          "text": "This is so pretty! I love having it on my stream and so does chat! instructions were easy to follow and had no issues with making it all work together",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-02-01",
+          "text": "Really pretty and gorgeous chat widgets",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-12-07",
+          "text": "Absolutely amazing work and such fine details, can’t wait to get it onto my chat",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-13",
+          "text": "Très joli rendu pour le chatbox vraiment de plus j'ai eu des difficultés d'installation j'ai eu une assistance au top m'ont beaucoup aidé et la traduction en autre langue pour les tutos sont possibles.",
+          "language": "fr"
+        },
+        {
+          "rating": 5,
+          "date": "2025-10-15",
+          "text": "Looks awesome, very cute and easy to set up!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-08-18",
+          "text": "Was waiting for a day to ship and then few days to have an answer otherwise would be 5/5",
+          "language": "en"
+        },
+        {
+          "rating": 1,
+          "date": "2025-07-24",
+          "text": "Chat widget not included and the goal widget is not as shown.",
+          "language": "en"
+        }
+      ]
+    },
     "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download": {
       "handle": "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
       "etsyListingId": 1790018033,
@@ -623,99 +803,6 @@
           "rating": 5,
           "date": "2026-09-02",
           "text": "easy to setup and happy customer",
-          "language": "en"
-        }
-      ]
-    },
-    "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only": {
-      "handle": "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only",
-      "etsyListingId": 4322617816,
-      "count": 13,
-      "average": 4.7,
-      "distribution": {
-        "1": 1,
-        "2": 0,
-        "3": 0,
-        "4": 0,
-        "5": 12
-      },
-      "reviews": [
-        {
-          "rating": 5,
-          "date": "2026-08-31",
-          "text": "I love everything about it",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-08-27",
-          "text": "Tellement un beau tchat j'adore !",
-          "language": "fr"
-        },
-        {
-          "rating": 5,
-          "date": "2026-08-20",
-          "text": "This works great and is so cute",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-06-20",
-          "text": "amazing product love it !",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-04-24",
-          "text": "Very easy to set up and gorgeous!",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-03-31",
-          "text": "Great, helpful seller. It was a little confusing but they helped with a tutorial video that solved my issues",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-02-12",
-          "text": "This is so pretty! I love having it on my stream and so does chat! instructions were easy to follow and had no issues with making it all work together",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-02-01",
-          "text": "Really pretty and gorgeous chat widgets",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2025-12-07",
-          "text": "Absolutely amazing work and such fine details, can’t wait to get it onto my chat",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2025-11-13",
-          "text": "Très joli rendu pour le chatbox vraiment de plus j'ai eu des difficultés d'installation j'ai eu une assistance au top m'ont beaucoup aidé et la traduction en autre langue pour les tutos sont possibles.",
-          "language": "fr"
-        },
-        {
-          "rating": 5,
-          "date": "2025-10-15",
-          "text": "Looks awesome, very cute and easy to set up!",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2025-08-18",
-          "text": "Was waiting for a day to ship and then few days to have an answer otherwise would be 5/5",
-          "language": "en"
-        },
-        {
-          "rating": 1,
-          "date": "2025-07-24",
-          "text": "Chat widget not included and the goal widget is not as shown.",
           "language": "en"
         }
       ]
@@ -1530,75 +1617,6 @@
           "date": "2026-08-19",
           "text": "Can't wait to see how this looks during my stream. It is the perfect touch for my stream and fits nicely with my stream theme! xo  Thank You!",
           "language": "en"
-        }
-      ]
-    },
-    "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only": {
-      "handle": "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only",
-      "etsyListingId": 4336744223,
-      "count": 9,
-      "average": 4.9,
-      "distribution": {
-        "1": 0,
-        "2": 0,
-        "3": 0,
-        "4": 1,
-        "5": 8
-      },
-      "reviews": [
-        {
-          "rating": 5,
-          "date": "2026-08-19",
-          "text": "Very nice addition to my stream, thanks!",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-07-05",
-          "text": "I love my new chat overlay. As a new streamer, it did take some trial and error to get it set up how I wanted, but the video included did help a bit.",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-04-25",
-          "text": "Amazing chatbox, that's soo cute and perfect for my aesthetic. Couldn't have been more happy with this find 💜",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-04-01",
-          "text": "Thank you so much for making this!",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-03-19",
-          "text": "I love this chat layout <3",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2026-02-26",
-          "text": "Works beautifully, was easy to setup",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2025-12-01",
-          "text": "Très joli ChatBox. Parfait pour aller sur mon stream. L'installation peut se faire directement en utilisant l'extension Chrome ou de façon manuelle avec les fichiers inclus dans le dossier. Merci pour la vidéo Youtube pour l'installation. Tout est parfait. ♥ Je ne vais pas utiliser le Goal car je ne stream pas pour l'argent. Mais je l'ai aussi essayé et il est vraiment parfait. Très discret. ♥",
-          "language": "fr"
-        },
-        {
-          "rating": 5,
-          "date": "2025-11-20",
-          "text": "Its a great product overall but there was no explanation on how to get Widget.io extension for the browser to be able to add this into stream elelments i had to figure it out myself but there is a discord for help.",
-          "language": "en"
-        },
-        {
-          "rating": 4,
-          "date": "2025-10-18",
-          "text": "Sehr schön und leicht einzufügen, bisschen tricky allerdings bei den ganzen feinheiten :D",
-          "language": "de"
         }
       ]
     },
