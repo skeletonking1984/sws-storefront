@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-09-11T01:27:07.032Z",
+  "generated_at": "2026-09-14T00:00:53.711Z",
   "counts": {
-    "confirmed": 108,
-    "stale_photos": 13
+    "confirmed": 102,
+    "stale_photos": 13,
+    "product_not_on_storefront": 6
   },
   "results": [
     {
@@ -612,8 +613,7 @@
     {
       "lid": "1881347726",
       "handle": "pokemon-charizard-character-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
-      "verdict": "confirmed",
-      "overlap": 4
+      "verdict": "product_not_on_storefront"
     },
     {
       "lid": "1888422838",
@@ -750,8 +750,7 @@
     {
       "lid": "4498789564",
       "handle": "sci-fi-neon-chat-widget-kick-twitch-obs",
-      "verdict": "confirmed",
-      "overlap": 5
+      "verdict": "product_not_on_storefront"
     },
     {
       "lid": "4570446087",
@@ -834,8 +833,7 @@
     {
       "lid": "1754930853",
       "handle": "genshin-theme-square-loading-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
-      "verdict": "confirmed",
-      "overlap": 5
+      "verdict": "product_not_on_storefront"
     },
     {
       "lid": "1763385692",
@@ -864,14 +862,12 @@
     {
       "lid": "1771354232",
       "handle": "cute-bulbasaur-pok-e-mon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements",
-      "verdict": "confirmed",
-      "overlap": 5
+      "verdict": "product_not_on_storefront"
     },
     {
       "lid": "1785601401",
       "handle": "pikachu-goal-pokemon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements",
-      "verdict": "confirmed",
-      "overlap": 4
+      "verdict": "product_not_on_storefront"
     },
     {
       "lid": "1809138683",
@@ -894,8 +890,7 @@
     {
       "lid": "1881257942",
       "handle": "pokemon-eevee-character-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
-      "verdict": "confirmed",
-      "overlap": 4
+      "verdict": "product_not_on_storefront"
     },
     {
       "lid": "1888414230",

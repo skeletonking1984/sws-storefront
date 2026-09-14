@@ -882,3 +882,43 @@ Also worth keeping: the webhook should usually win over Shopify's app pixel, bec
 If GA4 still reads 2 per order after this, **Google & YouTube is the next suspect**, since it is Server + Web and could be posting into the same property. GA4 showed exactly 2 and not 3, so it probably points elsewhere, but that is the thing to check.
 
 `X Conversion` being deleted costs nothing, it was never connected. It is re-addable from Explore pixel apps and may be a simpler route for X than Auny's manual pixel IDs on BAT-145.
+
+#### Shopify repriced to match Etsy, 2026-09-13 (Todd present)
+Todd flagged pricing as a likely blocker. He was right, and it was the largest single problem on the site.
+
+**Shopify was priced roughly 2x Etsy, catalogue wide.** Median Shopify $17.99 against median Etsy list $10.93, a median ratio of **1.61x**. 94 of 115 mapped products were above Etsy list, 33 were above **2x**. Of the 62 products that actually sold on Etsy in the last 45 days, 47 were more expensive on Shopify. The site links to Etsy in its own footer, so any cross shopper was being sent to the cheaper channel. Running ads into that would have been paying to deliver people to the worse offer.
+
+Cause: Shopify prices were copied from `data/etsy-shopify-map.json` on 2026-09-07 and that file was already stale. It recorded the number one seller at $18.99 when Etsy was $13.99.
+
+**A wrong turn worth recording, because it nearly shipped.** The first read of Etsy's Sales and discounts screen showed "Listings sale, 25%, Active" and concluded a permanent shop wide sale was running, so the proposal pegged Shopify at Etsy list **x 0.75**. The Details and Stats view showed those are `EVENTJAR` and `GOALWIDGET`, **five day sales on subsets of listings**, one of which has zero uses. There is no standing shop wide sale. Most shoppers most of the time pay Etsy list. Pegging to a fluctuating promo would have underpriced the whole catalogue on a misread. **Todd stopping to ask for a better explanation is what caught it.**
+
+What the discount stack actually is, from the shop's own numbers:
+| Offer | Off | Granted | Uses | Revenue |
+|---|---|---|---|---|
+| Abandoned basket | 50% | 295 | **39** | $266.08 |
+| Favourite LOVEYOU | 20% | 380 | 1 | $27.18 |
+| Thank you THANKS | 20% | 108 | **0** | $0 |
+| ~15 Mix and Match | various | N/A | **0 each** | $0 |
+
+So the blended 33.1% discount measured across the last 45 days is mostly **abandoned basket recovery**, which fires only at buyers already leaving. That is healthy discounting and must not set the everyday price. Everything else is noise: roughly 17 active offers producing one sale between them.
+
+**Decision, Todd's: Shopify price = Etsy list price.** Same product, same price, both channels, nothing to maintain. Shopify still nets about $1 more per sale than Etsy on the same number, and about $2.75 more against an Offsite Ads order, because Etsy's stack is 6.5% plus $0.20 plus 3% and $0.25, with a mandatory 12% Offsite Ads cut above $10k, against Shopify's 2.9% plus $0.30.
+
+Checks run BEFORE writing anything, because a bad map row would put the wrong price on a product:
+- `node scripts/audit-etsy-mapping.mjs`: 102 image confirmed, 13 stale photos, **0 mispaired**.
+- All 115 `etsy_list` values re-verified against a fresh `listActiveListings` pull: **115/115 matched**.
+- **0 Etsy listings mapped to more than one Shopify product**, so no listing could set two prices.
+- Every product has exactly one variant, confirmed, so no variant was missed.
+- The two outliers were checked by hand against the live listing rather than trusted: Spooky Stream Kit is genuinely **$68.35** on Etsy (so it RISES from $36.99), and the Frog Emotes pack is genuinely **$1.00** (down from $3.41).
+
+Applied: **101 price changes, 94 down and 7 up**, 14 already correct. Five aliased `productVariantsBulkUpdate` batches, every alias checked individually, **zero userErrors across all 101**. Full prior state backed up to `data/price-backup-2026-09-13.json` (all 125 products with variant id and old price), so this is one script away from a full revert.
+
+Verified after: **115/115 products now match their Etsy list price** on a fresh Storefront API sweep. Catalogue median price moved $17.99 to **$11.18**. No deploy needed, prices are catalogue data served live.
+
+**Abandoned cart recovery wired, half of it.** `COMEBACK50` created: 50% off, all products, all customers, no end date, id `gid://shopify/DiscountCodeNode/2365596958910`. 50% deliberately matches Etsy's abandoned basket offer, the one mechanic in that whole stack that converts (13.22%), and now that Shopify equals Etsy list the two land on the same absolute price. **The automation that SENDS it is not API creatable** and is Todd's: Shopify Admin > Marketing > Automations > Abandoned checkout, activate it and put `COMEBACK50` in the template.
+
+**The dead Etsy offers cannot be turned off from here.** Etsy's API exposes no shop promotion endpoints at all, and the `sws-etsy` MCP has no sale or discount tools. Shop Manager > Marketing > Sales and discounts, turn off `LOVEYOU` and `THANKS`, and the roughly 15 zero use Mix and Match offers.
+
+**New IP exposure found while pulling variant ids: two live Valorant products**, `valorant-brimstone-character-chat-and-goal-widget` and `valorant-waylay-chat-widget`. Riot IP, same class as the Star Wars and Pokemon products already set to DRAFT on 2026-09-11, and these are still ACTIVE and about to carry ad spend. Not touched, since unpublishing is Todd's call.
+
+Next: the `view_cart` over fire, then `docs/COPY-STANDARD.md` across the remaining catalogue.
