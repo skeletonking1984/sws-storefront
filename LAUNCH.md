@@ -1147,3 +1147,44 @@ Check 3 as written spot-checks 5 products and asks whether `works_with` matches 
 Added to the task file: check 3 now also compares each product's title, `seo.title` and `seo.description` against `works_with` across the whole catalogue, not just the 5 in rotation, since it is a data scan and costs nothing to run wide. Also corrected a stale line in the task file claiming the IP layer 2 list is currently empty; it returns 4 names today, all derived from products layer 1 already flags, and that is the shape to expect rather than a genuinely new name.
 
 Commit: LAUNCH.md only. No deploy from this pass. The commit `203d5dc` noted this morning as waiting on Todd is still waiting.
+
+#### Platform claims corrected catalogue wide 2026-09-14 (Todd found it)
+Todd opened the Potion Bottle goal widget and said "I don't think this is multi-stream". He was right, and it was not one product.
+
+**The page claimed Twitch, YouTube and Kick in five places**: the title, the H1, the SEO title, the badge row, and an FAQ that asked "Does this work on Kick and YouTube, or only Twitch?" and answered yes. Etsy listing 1790033028 says "THIS ITEM IS FOR OBS/OBS STUDIO, STREAMLABS, AND STREAMELEMENTS", names only Twitch, lists **bits** as a goal type (Twitch only), and ships `PotionBottleGoalWidgetupdateCodeAll.zip` plus a setup PDF. Nothing multistream.
+
+**The leak was structural, not a typo.** `ProductHighlights.jsx` read `parseWorksWith(metafield) || worksWithPlatforms(description)`, and **26 products had no metafield**, so their badge row was parsed out of their own description prose. When the prose is wrong the page confirms its own error. `ProductItem.jsx` was worse: card chips came from `detectPlatforms(product.title)`, and titles in this catalogue are Etsy keyword titles.
+
+New `scripts/audit-platform-claims.mjs` checks all 125 products against their own Etsy listing, which `docs/COPY-STANDARD.md` already names as authoritative.
+
+| | Before | After |
+|---|---|---|
+| Products claiming a platform their listing does not | **80** | **0** |
+| In the title | 78 | 0 |
+| In SEO fields | 12 | 0 |
+| Products with no `works_with` metafield | 26 | 0 |
+
+By platform before the fix: TikTok 72, Kick 22, YouTube 18.
+
+Rules the script encodes:
+- **Twitch is the baseline.** All 186 active listings name Twitch or a Twitch-only concept, verified, so Twitch is never an overclaim. Four listings use an older boilerplate that never says "Twitch" but does say "TYPES OF GOALS: DONATION FOLLOWER BITS SUPPORT".
+- **YouTube, Kick and TikTok must be named** in that product's own listing. Only 29 of 186 name YouTube and 27 name Kick, so the Etsy side is honest and the inflation was Shopify side only.
+- **A goal widget never claims TikTok even when its own listing does.** Todd asked for this to be verified rather than guessed, and it was, at three levels. The shipped code is a StreamElements custom widget on `onWidgetLoad` / `onEventReceived` counting `tip`, `cheer`, `subscriber` and `follower`, with zero references to tiktok, youtube, kick, superchat or membership (unzipped 1728594513 and 1747633766). 30 of 30 listing manifests pulled through `etsy_list_listing_files` ship only StreamElements/Streamlabs code zips plus a goal setup PDF, no TikTok artifact anywhere. And StreamElements has no TikTok integration, so no TikTok event can ever reach the widget. It would render in TikTok Studio as a browser source and then never fill. `cheer` is Twitch only, which is the same reason Twitch is the safe baseline.
+
+Written, zero `userErrors` throughout: **`works_with` on all 125 products**, **78 titles**, **10 SEO rebuilds**, and the Potion Bottle body copy. Prior state for every product in `data/platform-backup-2026-09-14.json`.
+
+**The metafield is now the single source.** The description fallback is deleted and card chips read the metafield too, so prose can no longer feed a claim anywhere. `build-seo-fields.mjs` now also rebuilds copy that overclaims, not just copy that is missing or over length, which is exactly what walked past 9 of these yesterday.
+
+Verified: `audit-platform-claims.mjs --check` exits 0 (0 overclaims, 0 products without a metafield), `build-seo-fields.mjs --check`, `audit-catalog.mjs` and `audit-shipping.mjs` all exit 0, `npm run build` exits 0, lint 0 errors. Rendered against a real dev server, the Potion Bottle PDP now reads `<title>Potion Bottle Goal Widget for Twitch</title>`, H1 "Potion Bottle Goal Widget for Twitch, Liquid Fill Progress", and a badge row of **Twitch, StreamElements, Streamlabs, OBS**.
+
+**None of this came from the 2026-09-14 SEO pass.** All 12 SEO-field overclaims were older hand-written copy; the `works_with` guard written that morning held on every product it touched.
+
+Needs Todd, Etsy side (this routine does not edit live Etsy listings):
+- **11 Etsy goal widget listings carry the same "TikTok Studio" claim** that was just proved wrong. Shopify is corrected, Etsy is not, and Etsy is 99% of revenue: `4342607027`, `1775661417`, `1888414230`, `1742236253`, `1849162325`, `1849166777`, `1895254409`, `1827920187`, `1714418210`, `1810190709`, `1841849955`.
+
+Open, and deliberately not changed: a handful of **goal widgets legitimately claim Kick or YouTube** (Moon Jar, Celestial Star Goal and similar) because their own listings describe it in detail, down to "Kick needs only your channel name". Those are a newer generation of widget and the claim was left standing, but it rests on listing text rather than on code evidence, since those zips are not on this machine. Same verification as the TikTok one would settle it.
+
+Also noticed, not fixed, out of scope: two product titles carry a pre-existing "Stream-elements" typo (Diamond Butterfly, Envelope, Cute Seal).
+
+Preview: https://01m2gbc98k8mwev9phv03tvq81-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `5d14ac6`.
