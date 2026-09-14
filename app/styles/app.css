@@ -2595,6 +2595,28 @@ button.reset:hover:not(:has(> *)) {
    touch devices. preload="none" and the JS play/pause live in
    ProductItem.jsx; this is presentation only. */
 .product-item-video {
+  /*
+   * Opaque, and matching the still's own backdrop, so the image underneath
+   * cannot show through.
+   *
+   * The card box is square and this is `object-fit: contain`, but the demo
+   * clips are not square: this catalog's are 900x720, a 5:4. So the video
+   * letterboxes inside the square and, with a transparent background, the
+   * still image stayed visible in the bands above and below it. Both show
+   * the same artwork, so the card rendered the picture inside its own
+   * picture. Todd, 2026-09-14: "it looks like a pic in the same pic, stuff
+   * is duped".
+   *
+   * `contain` stays. These are widget demos with text and UI at the edges;
+   * `cover` would crop a square out of a 5:4 clip and cut that off, which is
+   * the same reason the images never get `crop=center` (see CLAUDE.md).
+   */
+  background: radial-gradient(
+      circle at 50% 45%,
+      rgba(183, 157, 242, 0.22),
+      transparent 65%
+    ),
+    var(--sws-bg);
   border-radius: 12px;
   height: 100%;
   inset: 0;

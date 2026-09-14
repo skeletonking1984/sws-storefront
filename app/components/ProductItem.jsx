@@ -110,21 +110,53 @@ export function ProductItem({product, loading, listId, listName, index}) {
   const videoMedia = findVideoMedia(product.media?.nodes);
   const videoSource = videoMedia && pickBestMp4Source(videoMedia.sources);
   const videoRef = useRef(null);
+  // True between mouseenter/focus and the matching leave/blur. A preview can
+  // only start once the file has data, which arrives after the pointer may
+  // already have gone, so the late start has to check this before playing.
+  const wantsPreviewRef = useRef(false);
   const [videoActive, setVideoActive] = useState(false);
 
   function playPreview() {
     if (!videoSource || prefersReducedMotion()) return;
+    wantsPreviewRef.current = true;
     setVideoActive(true);
     const el = videoRef.current;
     if (!el) return;
-    el.currentTime = 0;
-    // .play() rejects for several ordinary reasons (interrupted by a fast
-    // leave, tab backgrounded, etc.) -- swallow it, a grid of tiles is not
-    // the place for an unhandled rejection.
-    el.play()?.catch(() => {});
+
+    // The preview never actually played before this. These elements carry
+    // `preload="none"`, so on the first hover there is no data at all: the
+    // seek is a no-op, `.play()` rejects, and the old `.catch(() => {})`
+    // swallowed it with nothing to retry. The card sat on a frozen first
+    // frame, which on a letterboxed clip reads as a broken image rather than
+    // a still. Measured 2026-09-14: `is-active` set, opacity 1,
+    // readyState 4, and `paused: true`; calling `.play()` by hand from the
+    // console started it immediately.
+    const start = () => {
+      // The pointer may have left while the file was loading.
+      if (!wantsPreviewRef.current || !el.isConnected) return;
+      try {
+        el.currentTime = 0;
+      } catch {
+        // Seeking before metadata exists throws in some browsers. Harmless:
+        // a fresh element is already at 0.
+      }
+      // Still rejects for ordinary reasons (a fast leave, a backgrounded
+      // tab). A grid of tiles is not the place for an unhandled rejection.
+      el.play()?.catch(() => {});
+    };
+
+    // HAVE_CURRENT_DATA or better means it can start now.
+    if (el.readyState >= 2) {
+      start();
+      return;
+    }
+    el.addEventListener('loadeddata', start, {once: true});
+    // `preload="none"` means nothing has been requested yet, so ask.
+    el.load();
   }
 
   function stopPreview() {
+    wantsPreviewRef.current = false;
     setVideoActive(false);
     const el = videoRef.current;
     if (!el) return;
