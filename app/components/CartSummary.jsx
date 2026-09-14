@@ -98,7 +98,41 @@ function CartCheckoutActions({checkoutUrl, cart}) {
         href={checkoutUrl}
         target="_self"
         className="cart-checkout-button"
-        onClick={() => publish('custom_begin_checkout', {cart})}
+        onClick={(event) => {
+          // Hold the navigation until GA4 confirms begin_checkout was
+          // actually delivered, then go. Checkout is on
+          // shop.streamwidgetshop.com, a different origin, so leaving this
+          // page cancels any request that has not gone out yet, and
+          // begin_checkout is the most valuable step in the funnel to
+          // lose. GA4 signals delivery through `event_callback`, which
+          // app/lib/analytics/pixels/ga4.js attaches when the event
+          // carries `onSent`.
+          //
+          // Two independent guarantees that a buyer is never trapped here:
+          // gtag's own `event_timeout` fires the callback anyway if the
+          // hit stalls, and the timer below runs even when gtag.js was
+          // blocked outright and none of that code exists. `navigate` is
+          // latched so whichever fires first wins and the second is a
+          // no-op.
+          //
+          // If gtag never loaded there is nothing to wait for, so the link
+          // is left completely alone and behaves like a normal link.
+          if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
+            publish('custom_begin_checkout', {cart});
+            return;
+          }
+
+          event.preventDefault();
+          let navigated = false;
+          const navigate = () => {
+            if (navigated) return;
+            navigated = true;
+            window.location.href = checkoutUrl;
+          };
+
+          publish('custom_begin_checkout', {cart, onSent: navigate});
+          window.setTimeout(navigate, 800);
+        }}
       >
         Continue to Checkout &rarr;
       </a>

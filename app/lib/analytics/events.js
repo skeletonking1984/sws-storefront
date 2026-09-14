@@ -280,6 +280,13 @@ function normalizeBeginCheckout(payload, shop) {
     currency: cartCurrency(cart, shop),
     value: Number(cart?.cost?.totalAmount?.amount) || 0,
     items,
+    // Carried straight through to the GA4 adapter as `event_callback`, see
+    // app/lib/analytics/pixels/ga4.js. This is the one event fired on a
+    // click that immediately navigates cross origin to Shopify hosted
+    // checkout, so the publisher needs to know when the hit has actually
+    // been delivered before it leaves the page. Not a GA4 parameter and
+    // never sent as one.
+    onSent: typeof payload?.onSent === 'function' ? payload.onSent : undefined,
   };
 }
 

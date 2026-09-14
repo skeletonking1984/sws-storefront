@@ -166,11 +166,27 @@ export function send(event, config) {
 
   if (!event.items?.length) return;
 
+  // `event_callback` is GA4's own "this hit has been delivered" signal and
+  // is the ONLY reliable way to hold a navigation until the event is out.
+  // `transport_type: 'beacon'` does NOT work here: it is a Universal
+  // Analytics field, and GA4 ignores it. Verified on 2026-09-13, the
+  // /g/collect request still went out with initiatorType `fetch`, not
+  // `beacon`, so do not reach for it again.
+  //
+  // `event_timeout` is the guarantee that a blocked or slow GA4 can never
+  // trap a buyer on the cart page: gtag calls the callback anyway once it
+  // expires. The caller also keeps its own fallback timer, because if
+  // gtag.js was blocked outright this code never runs at all.
+  const deliveryParams = event.onSent
+    ? {event_callback: event.onSent, event_timeout: 600}
+    : null;
+
   window.gtag('event', event.name, {
     currency: event.currency,
     value: event.value,
     items: event.items.map(toGa4Item),
     ...trafficTypeParams,
+    ...deliveryParams,
   });
 }
 
