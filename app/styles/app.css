@@ -732,6 +732,51 @@ button.reset:hover:not(:has(> *)) {
  * and not caught by the 2026-09-08 mega menu pass, which measured the panel
  * rather than the header row itself.
  */
+/*
+ * Phone sized tap targets in the header.
+ *
+ * Measured at 360px: the menu button was 22x22, and the account, search and
+ * cart icons were 36 to 38px. Apple asks for 44x44 and WCAG 2.5.8 for 24x24;
+ * the primary way into navigation on a phone was half the smaller of those.
+ *
+ * There was no room to simply grow them: the header content box is 320px at
+ * 360px wide and the brand lockup alone took 182 of it, so the row was
+ * already 7px over. Capping the wordmark at 96px frees what the four
+ * controls need. Measured after: brand 134, controls 4 x 44, right edge 350
+ * inside 360, no document overflow.
+ */
+/*
+ * Everything a thumb has to hit gets 44x44 on a phone. Apple's minimum, and
+ * WCAG 2.5.8 asks 24x24 as a floor. Measured at 360px before this: gallery
+ * arrows 36, share buttons 38, social links 38. Inline text links inside a
+ * paragraph are exempt under WCAG and are deliberately left alone.
+ */
+@media (max-width: 44.99em) {
+  .product-gallery-arrow,
+  .share-btn,
+  .social-link {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (max-width: 44.99em) {
+  .header-brand img:not(.brand-pfp) {
+    height: auto;
+    max-width: 96px;
+  }
+
+  .header-ctas > * {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .header-menu-mobile-toggle {
+    height: 44px;
+    width: 44px;
+  }
+}
+
 @media (max-width: 1500px) {
   .header {
     gap: 8px;
@@ -1115,6 +1160,31 @@ button.reset:hover:not(:has(> *)) {
    * the content column exactly: 327px at a 360px viewport, measured.
    */
   width: auto;
+}
+
+/*
+ * On a phone, pay first, fiddle with codes after.
+ *
+ * DOM order is totals, discount form, gift card form, then the checkout
+ * button. That puts two wrapping code forms between the shopper and the only
+ * control that takes their money: measured at 360px the summary is 559px
+ * tall, taller than the drawer itself, so Continue to Checkout sat at the end
+ * of a scroll. Sticky positioning does not help, the block is taller than the
+ * viewport it would stick inside.
+ *
+ * Flex `order` moves only the checkout button up, leaving the DOM (and so the
+ * tab and screen reader order) telling the same story it always did, with the
+ * code forms still available underneath for anyone who wants them.
+ */
+@media (max-width: 44.99em) {
+  .cart-summary-aside {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cart-summary-aside > section {
+    order: 1;
+  }
 }
 
 .cart-code-form {
@@ -2668,10 +2738,16 @@ button.reset:hover:not(:has(> *)) {
 .collections-grid {
   display: grid;
   grid-gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-item-width), 1fr));
+  /* min() so the track can shrink below 320px on a phone, see .products-grid */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(var(--grid-item-width), 100%), 1fr)
+  );
   margin-bottom: 2rem;
   padding: 0 2rem;
 }
+
+
 
 .collection-item {
   background: var(--sws-card);
@@ -2801,7 +2877,20 @@ button.reset:hover:not(:has(> *)) {
 .products-grid {
   display: grid;
   grid-gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-item-width), 1fr));
+  /*
+   * `min()` is load bearing. `minmax(var(--grid-item-width), 1fr)` alone
+   * makes every track at least 320px even when the container is narrower, so
+   * on a 360px phone the grid resolved to a single 320px column inside a
+   * 296px box and every product card was clipped 24px off the right edge.
+   * Measured at 360px before this: cards 320px wide starting at x=64, right
+   * edge 384, document scrollWidth 385 against a 360 viewport.
+   * `min(var(--grid-item-width), 100%)` lets the track shrink to the
+   * container on small screens and behaves identically above 320px.
+   */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(var(--grid-item-width), 100%), 1fr)
+  );
   margin-bottom: 2rem;
   padding: 0 2rem;
 }
@@ -3572,7 +3661,11 @@ button.reset:hover:not(:has(> *)) {
 .blog-grid {
   display: grid;
   grid-gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-item-width), 1fr));
+  /* min() so the track can shrink below 320px on a phone, see .products-grid */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(var(--grid-item-width), 100%), 1fr)
+  );
   margin-bottom: 2rem;
 }
 
@@ -5044,4 +5137,22 @@ button.reset:hover:not(:has(> *)) {
   color: var(--sws-holo-4);
   font-size: 0.8rem;
   min-height: 1em;
+}
+
+/*
+ * Do not stack gutters on a phone. `main` contributes 16px, the page wrapper
+ * another 16px, and the grid was adding 32px more, so at 360px wide 128 of
+ * the 360 pixels (36% of the screen) were empty margin and each product card
+ * got 232px. The outer 32px is plenty; dropping the grid's own padding takes
+ * cards to 296px, a 28% larger tap and read target, with no clipping.
+ *
+ * Must stay AFTER both grid rules: they set `padding: 0 2rem` as a shorthand,
+ * same specificity, so an earlier longhand override silently loses.
+ */
+@media (max-width: 44.99em) {
+  .products-grid,
+  .collections-grid {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
