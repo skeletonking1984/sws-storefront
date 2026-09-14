@@ -1,6 +1,12 @@
 /**
- * Scans every LIVE storefront product for intellectual property risk in its
- * title or handle.
+ * Scans every LIVE product on BOTH channels for intellectual property risk.
+ *
+ * Shopify is scanned by title and handle, Etsy by listing title. Etsy is
+ * about 99% of revenue, so a check that covered only Shopify was checking
+ * the small half: on 2026-09-14 Shopify was clean at 0 of 123 while Etsy
+ * had 4 live listings carrying Charizard, Among Us, Valorant Brimstone and
+ * a Star Wars zip. Two of those were the same products already hidden on
+ * Shopify, hidden on one channel only.
  *
  *   node scripts/audit-ip-risk.mjs
  *
@@ -33,6 +39,7 @@
  */
 
 import fs from 'node:fs';
+import {listActiveListings} from '../../sws-etsy-mcp/dist/api.js';
 
 const DENY_TERMS = {
   Games: [
@@ -158,29 +165,61 @@ async function allLiveProducts() {
 }
 
 const products = await allLiveProducts();
-console.log(`Scanned ${products.length} live storefront products.\n`);
+
+/**
+ * Etsy listings. Requires ETSY_PACKAGE_ROOT, or the shared client resolves
+ * its token file from process.cwd() and fails with a misleading
+ * "Not authorized yet. Run `npm run authorize` first."
+ */
+let etsyListings = [];
+let etsyError = null;
+try {
+  etsyListings = await listActiveListings(undefined);
+} catch (error) {
+  etsyError = error.message;
+}
+
+console.log(
+  `Scanned ${products.length} live Shopify products` +
+    (etsyError
+      ? ' (Etsy scan FAILED, see below).\n'
+      : ` and ${etsyListings.length} active Etsy listings.\n`),
+);
 
 // ---- layer 1: deny list --------------------------------------------------
+const rows = [
+  ...products.map((p) => ({
+    channel: 'Shopify',
+    label: p.title,
+    ref: p.handle,
+    haystack: `${p.title} ${p.handle}`,
+  })),
+  ...etsyListings.map((l) => ({
+    channel: 'Etsy',
+    label: l.title,
+    ref: String(l.listing_id),
+    haystack: l.title || '',
+  })),
+];
+
 const denied = [];
-for (const product of products) {
-  const haystack = `${product.title} ${product.handle}`.toLowerCase();
+for (const row of rows) {
+  const haystack = row.haystack.toLowerCase();
   for (const [category, terms] of Object.entries(DENY_TERMS)) {
     const matched = terms.filter((term) => haystack.includes(term));
-    if (matched.length) {
-      denied.push({product, category, matched});
-    }
+    if (matched.length) denied.push({row, category, matched});
   }
 }
 
 if (denied.length) {
   console.log('IP TERM MATCHES, these are live right now:');
   for (const hit of denied) {
-    console.log(`  [${hit.category}] ${hit.matched.join(', ')}`);
-    console.log(`      ${hit.product.title}`);
-    console.log(`      ${hit.product.handle}`);
+    console.log(`  [${hit.row.channel}] [${hit.category}] ${hit.matched.join(', ')}`);
+    console.log(`      ${hit.row.label}`);
+    console.log(`      ${hit.row.ref}`);
   }
 } else {
-  console.log('Deny list: no live product matches a known IP term.');
+  console.log('Deny list: no live product on either channel matches a known IP term.');
 }
 
 // ---- layer 2: unrecognised proper nouns ----------------------------------
@@ -212,9 +251,25 @@ if (sorted.length) {
   console.log('\nNo unrecognised capitalised names in any live title.');
 }
 
-console.log(
-  denied.length
-    ? `\nFAIL: ${denied.length} live product(s) carry a known IP term.`
-    : '\nOK: no live product carries a known IP term.',
-);
-process.exit(denied.length ? 1 : 0);
+if (etsyError) {
+  console.log(`\nFAIL: the Etsy half of this scan did not run: ${etsyError}`);
+  console.log(
+    '  Run it with ETSY_PACKAGE_ROOT=/Users/todd/Documents/orgs/SWS/repos/sws-etsy-mcp',
+  );
+  console.log(
+    '  A green Shopify result alone is NOT a pass. Etsy is about 99% of revenue.',
+  );
+}
+
+// Never print an OK line next to a failure. A partial scan that says "OK"
+// anywhere is worse than one that says nothing, because OK is the word
+// people read and act on.
+if (denied.length) {
+  console.log(`\nFAIL: ${denied.length} live listing(s) carry a known IP term.`);
+} else if (etsyError) {
+  console.log('\nFAIL: incomplete scan. Shopify is clean, Etsy was NOT checked.');
+} else {
+  console.log('\nOK: no live listing on either channel carries a known IP term.');
+}
+
+process.exit(denied.length || etsyError ? 1 : 0);
