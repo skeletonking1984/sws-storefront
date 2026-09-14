@@ -40,7 +40,8 @@ export function isConfigured(env) {
  * @param {object} args.order Raw Shopify order payload from the webhook body.
  * @param {Record<string, string>} args.clickIds Click ids captured for this
  *   order, keyed by the cart attribute key (see app/lib/clickIds.server.js).
- *   GA4 only uses `_ga_client_id`; every other key is ignored here.
+ *   GA4 uses `_ga_client_id`, plus `_ga_session_id`/`_ga_session_number`
+ *   when present; every other key is ignored here.
  * @param {string} args.eventId Shared dedup id, same for every destination
  *   on this order. Not sent to GA4 today -- gtag's own `transaction_id`
  *   field is GA4's real dedup key -- but threaded through the interface so
@@ -91,6 +92,17 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
     .filter(Boolean)
     .join(', ');
 
+  // Present only when the buyer's browsing session actually made it onto
+  // the cart (see app/lib/clickIds.server.js, and
+  // app/lib/gaCookie.server.js's parseGaSession). Without these, GA4 still
+  // counts the purchase, but opens a brand new session for it, which
+  // silently reassigns landing page, source, medium and campaign -- see
+  // docs/conversion-tracking.md, "Why session_id matters". Omitted
+  // entirely rather than sent as undefined when missing, same pattern as
+  // `coupon` above.
+  const sessionId = clickIds?._ga_session_id;
+  const sessionNumber = clickIds?._ga_session_number;
+
   const payload = {
     client_id: clientId,
     events: [
@@ -115,6 +127,16 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
               : 0,
           coupon: coupon || undefined,
           items,
+          session_id: sessionId || undefined,
+          session_number: sessionNumber || undefined,
+          // GA4's Measurement Protocol requires a non-zero engagement_time_msec
+          // on server-sent events for them to count toward engagement and to
+          // reliably attach to a session rather than being treated as a
+          // bounce-like, disengaged hit. This webhook has no real elapsed
+          // time to report (the purchase already happened by the time
+          // Shopify calls us), so 1 is a nominal non-zero value, not a
+          // measured duration.
+          engagement_time_msec: 1,
         },
       },
     ],
@@ -154,8 +176,9 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
  *   app/routes/api.e.jsx to be exactly that literal or absent -- this file
  *   trusts the caller's validation rather than re-checking it.
  * @param {Record<string, string>} args.clickIds Click ids for this
- *   request (see app/lib/clickIds.server.js). Only `_ga_client_id` is
- *   used here, same as `sendPurchase`.
+ *   request (see app/lib/clickIds.server.js). Uses `_ga_client_id`, plus
+ *   `_ga_session_id`/`_ga_session_number` when present, same as
+ *   `sendPurchase`.
  * @returns {Promise<{ok: boolean, reason?: string}>}
  */
 export async function sendEvent({env, name, params, clickIds}) {
@@ -174,7 +197,23 @@ export async function sendEvent({env, name, params, clickIds}) {
 
   const payload = {
     client_id: clientId,
-    events: [{name, params: buildEventParams(name, params)}],
+    events: [
+      {
+        name,
+        params: {
+          ...buildEventParams(name, params),
+          session_id: clickIds?._ga_session_id || undefined,
+          session_number: clickIds?._ga_session_number || undefined,
+          // Same requirement as sendPurchase above: GA4's Measurement
+          // Protocol needs a non-zero engagement_time_msec to count a
+          // server-sent event toward engagement and attach it to a
+          // session. This relay only fires when the browser's own gtag.js
+          // did not load (see api.e.jsx), so there is no real measured
+          // duration to report; 1 is nominal, not a measurement.
+          engagement_time_msec: 1,
+        },
+      },
+    ],
   };
 
   try {

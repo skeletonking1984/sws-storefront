@@ -222,6 +222,42 @@ popular enough to justify writing a bespoke rule for one storefront's own
 same-origin path could still add one. This narrows the gap, it does not
 close it.
 
+## Why session_id matters
+
+A Measurement Protocol event that carries `client_id` but no `session_id`
+still counts: GA4 records the purchase, the revenue total is right, the
+transaction shows up. What breaks is invisible in a purchase count and
+only shows up when someone looks at a landing page or attribution report:
+with no `session_id` to join to, GA4 cannot attach the event to the
+buyer's actual browsing session, so it silently opens a NEW session for
+it. That new session has its own landing page (whatever page the
+Measurement Protocol request itself looks like it came from), its own
+source/medium, and its own campaign -- none of which are the real ones the
+buyer arrived on. Source, medium and campaign break by the same
+mechanism, which is the part that matters once ads are running and
+someone is trying to tell which campaign paid for itself.
+
+**Observed symptom:** order #1041's $19.10 purchase landed in GA4
+attributed to landing page `/checkouts/cn/<token>/en-us` -- the checkout
+URL, not the page the buyer actually landed on -- because the `orders/create`
+webhook's Measurement Protocol send carried `_ga_client_id` but nothing
+for session. Fixed by carrying `_ga_session_id`/`_ga_session_number`
+alongside the client id (see `app/lib/gaCookie.server.js`'s
+`parseGaSession`, `app/lib/clickIds.server.js`, and `sendPurchase`/
+`sendEvent` in `app/lib/conversions/ga4.server.js`). If a future report
+shows revenue piling up under a `/checkouts/...` or otherwise nonsensical
+landing page, this is the mechanism to suspect first.
+
+### Known gap: cross domain measurement (not code, a GA4 Admin setting)
+
+The storefront is `streamwidgetshop.com`, checkout is
+`shop.streamwidgetshop.com`. If any GA4 tag ever runs on the checkout
+host, GA4 treats it as a separate site and starts a new session there
+too, unless both domains are listed under GA4 Admin > Data Streams >
+Configure tag settings > Configure your domains. This is not something
+this change touched -- it is a setting to go check, not a thing that was
+fixed here.
+
 ## Internal and QA traffic
 
 Automated browser QA and Todd's own manual testing fire real events into

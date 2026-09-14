@@ -96,7 +96,11 @@ export async function action({request, context}) {
   // which is exactly why Part 1 (the app-owned `sws_cid` fallback) has to
   // exist before this route is worth building: without it, a blocked
   // visitor's relayed events would carry no client id at all.
-  const clickIds = readClickIds(request);
+  // Second arg resolves the GA4 session cookie name so session_id/number
+  // ride along too (see app/lib/clickIds.server.js). This route already
+  // reads cookies fresh on every request, so the session id handed to
+  // sendEvent below is always the live one, never a stale cart attribute.
+  const clickIds = readClickIds(request, context.env);
 
   // Fan out to every destination that implements the optional `sendEvent`
   // (see app/lib/conversions/index.server.js). A destination without it is

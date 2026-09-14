@@ -28,7 +28,7 @@
  * `_ga` parser and app/lib/firstPartyId.server.js for the fallback.
  */
 
-import {parseGaClientId, readCookieValue} from '~/lib/gaCookie.server';
+import {parseGaClientId, parseGaSession, readCookieValue} from '~/lib/gaCookie.server';
 import {readFirstPartyClientId} from '~/lib/firstPartyId.server';
 
 // SameSite=Lax (not None) because these cookies only ever need to be read
@@ -126,10 +126,22 @@ export const CLICK_ID_REGISTRY = [
  * fills in when `_ga` is missing (blocked, or aged out under Safari's
  * 7-day cap on JS-written cookies) -- see app/lib/firstPartyId.server.js.
  *
+ * `_ga_session_id` and `_ga_session_number` (GA4's current session, see
+ * `parseGaSession` in app/lib/gaCookie.server.js) are read the same way,
+ * but are deliberately NOT a `CLICK_ID_REGISTRY` entry -- see that
+ * function's own comment below for why.
+ *
  * @param {Request} request
+ * @param {Record<string, string | undefined> | string} [measurementIdOrEnv]
+ *   Either the GA4 measurement id directly, or an env object carrying
+ *   `PUBLIC_GA4_MEASUREMENT_ID`. Optional, so the one existing caller
+ *   (app/routes/cart.jsx) keeps working with no change until it opts in.
+ *   Passed as an argument rather than importing env into this module
+ *   directly, so this file's only GA4-specific dependency stays the same
+ *   parser it already had.
  * @returns {Record<string, string>}
  */
-export function readClickIds(request) {
+export function readClickIds(request, measurementIdOrEnv) {
   const url = new URL(request.url);
   const cookieHeader = request.headers.get('Cookie');
   /** @type {Record<string, string>} */
@@ -146,6 +158,28 @@ export function readClickIds(request) {
     const fromCookie = readCookieValue(cookieHeader, entry.cookie);
     const value = fromParam || fromCookie;
     if (value) found[entry.attributeKey] = value;
+  }
+
+  // GA4 session id/number. Deliberately handled outside the registry loop
+  // above, not as a CLICK_ID_REGISTRY entry: that registry exists to drive
+  // `buildFirstTouchSetCookieHeaders`, whose whole point is first-touch-wins
+  // (never overwrite a captured value, so a later ad click cannot steal
+  // credit from the campaign that brought the visitor the first time). That
+  // is correct for an ad click id and wrong for a session id -- a purchase
+  // has to join the buyer's CURRENT session, not whichever session happened
+  // to be running the first time this app ever looked. Getting that wrong
+  // would pin every purchase from a returning visitor's cart to their very
+  // first-ever session. Reading it here, straight off GA4's own live
+  // session cookie on every call (this app never sets or owns this
+  // cookie), is what keeps it current.
+  const measurementId =
+    typeof measurementIdOrEnv === 'string'
+      ? measurementIdOrEnv
+      : measurementIdOrEnv?.PUBLIC_GA4_MEASUREMENT_ID;
+  const session = parseGaSession(cookieHeader, measurementId);
+  if (session) {
+    found._ga_session_id = session.sessionId;
+    found._ga_session_number = session.sessionNumber;
   }
 
   return found;

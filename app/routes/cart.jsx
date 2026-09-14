@@ -152,7 +152,9 @@ export async function action({request, context}) {
   // from an earlier request, or an unrelated attribute this cart carries
   // for some other reason) is passed straight through untouched.
   if (cartId && cartResult) {
-    const clickIds = readClickIds(request);
+    // Second arg lets readClickIds also resolve the GA4 session cookie
+    // name (_ga_<measurement id>) -- see app/lib/clickIds.server.js.
+    const clickIds = readClickIds(request, context.env);
     const existingAttributes = cartResult.attributes || [];
     const existingKeys = new Set(existingAttributes.map((attr) => attr.key));
     const missingAttributes = Object.entries(clickIds)
