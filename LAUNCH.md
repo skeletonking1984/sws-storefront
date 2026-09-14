@@ -36,7 +36,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 - [x] Digital download delivery verified end to end (order -> file). PROVEN by a real checkout that downloaded the Y2K Sticker zip. Mechanism proven: Butterfly Galaxy has 1 real sale and 1 real download. Coverage: the 14 empty products were staged at `~/Desktop/SWS-EMPTY-14/` and Todd reports all 14 uploaded on 2026-09-10. Not agent verifiable (cross origin iframe, no API). Closes on a real order that delivers a file
 ### Storefront (Hydrogen)
 - [x] Pending work committed + deployed
-- [ ] Homepage sells: hero, top 15, social proof, one clear CTA
+- [x] Homepage sells: hero, top 15, social proof, one clear CTA. Verified on the LIVE site 2026-09-14 in a real browser: one h1 ("Widgets that make chat pop.") with a primary CTA, a Top widgets grid, "What streamers say" (real Etsy quotes) and "Happy clients", a working email capture, 23 product links, and `scrollWidth == clientWidth` at desktop. Mobile is its own item below
 - [x] PDP: video where available (104 of 130 active), platform badges, "what you get", FAQ, real per-product Etsy reviews
 - [ ] Mobile QA
 - [ ] Performance (LCP < 2.5s)
@@ -959,3 +959,72 @@ Refreshed now. The data was built 2026-09-10 and had drifted: **997 reviews pull
 **The real reason Shopify reviews are worth having eventually, and it is not stars.** Etsy's API exposes no reviewer name and no channel, which is why the Happy Clients row is stuck and cannot grow without Todd naming people by hand. Shopify orders carry a name and an email. For a product whose strongest advert is a clip of the widget running on a real stream, one consenting streamer is worth more than fifty anonymous five star lines. So whenever the review request email is built, it gets one extra field: permission to feature their channel, with the handle. That unblocks Happy Clients at the cost of a checkbox.
 
 Not crossed, deliberately: populating the `reviews.rating` metafield from Etsy review data would light up stars in Google Shopping, but those reviews were left on Etsy and not on this store. The PDP already emits `aggregateRating` from them, labelled honestly as Etsy reviews of that widget, which is a different and defensible thing. Expanding that into a Shopify-store rating signal is a review integrity call for Todd, not a default.
+
+### 2026-09-14 (second pass, scheduled)
+Metrics (2026-09-13): 30 sessions, 11 add to cart, 4 reached checkout, 2 completed, 2 orders, $19.10 net. 2026-09-14 so far: 5 sessions, 0 of everything. Sep 12 was 19 / 3 / 3 / 0. The second Sep 13 "order" is a $0 test (#1042, 2026-09-14 02:08Z), so the one real sale that day is still #1041 at $19.10.
+
+Add to cart went 3 of 19 sessions on Sep 12 to **11 of 30 on Sep 13**, the day prices were matched to Etsy list. One day is not a trend, but it is the first day this site has looked like it converts.
+
+#### Conversion tracking health check (A2), 2026-09-14
+| # | Check | Result |
+|---|---|---|
+| 1 | Endpoint alive and locked | PASS. Production `/webhooks/orders`: GET 405, unsigned POST 401, bogus HMAC POST 401. `/api/e` also re-checked: GET 405, POST with no origin 403, `{"name":"purchase"}` 400 |
+| 2 | Storefront events fire | PASS, real browser on the live site. gtag loaded, `window.google_tag_manager` present, `_ga` set, 3 `/g/collect` hits all carrying `tid=G-X0978HDVTK`: `view_item`, `page_view`, and `add_to_cart` from a real Add to cart click. **0 calls to `/api/e`**, so the buffered blocker-detection window still does not double count |
+| 3 | Attribution attaching | PASS. Last order checked: **#1042** (2026-09-14, $0 test), carries `_ga_client_id=915638934.1789145575`. #1041 before it carried one too |
+| 4 | No double counting | **NOT AGENT VERIFIABLE**, unchanged: `webPixel` needs the `read_pixels` scope this connector does not have. Todd deleted the "GA4 Purchases" pixel on 2026-09-13, so the `orders/create` webhook should now be the only sender. The confirming test is still owed: one Shopify order should read as exactly one GA4 purchase at the real value |
+| 5 | Env vars still set | PASS by behaviour. `PUBLIC_GA4_MEASUREMENT_ID` is in the live bundle (gtag fired with the right `tid`). `PRIVATE_SHOPIFY_WEBHOOK_SECRET` is set, since the route 503s when it is missing and production returns 401. `PRIVATE_GA4_API_SECRET` is still inferred only from orders reaching GA4 |
+
+False alarms ruled out first, per `analytics-debugging-traps`: tested in the clean in-app browser rather than Brave, read real `/g/collect` requests rather than DebugView or an exploration, and clicked Add to cart through its element ref rather than a blind coordinate.
+
+**Also closed while checking: the `view_cart` over-fire is fixed and live.** It was logged as the next item on 2026-09-13 but had already been fixed in commit `5d9d861` the same day. Confirmed on production: the homepage loaded with **3 items in the cart** and `dataLayer` carried `page_view` only, no `view_cart`. The event now follows intent (a visit to `/cart`, or a click that opens the drawer), not the drawer merely existing.
+
+Shipped: **every product page now has its own title tag and its own meta description.**
+
+The PDP `<title>` was the raw catalog title, which on this catalog is the Etsy title, **median 122 characters** of stuffed platform names, plus `" | Stream Widget Shop"`. Google renders about 60, so the differentiator and the brand were both cut off on every product page. `seo.title` was read by **no route at all**, so even the 46 hand written ones did nothing. And **78 of 125 products had no `seo.description`**, falling through to one identical generic line, so 78 pages shared a meta description.
+
+That matters now rather than later for two measured reasons: **130 organic Google sessions produced $0 in the last 30 days** (logged this morning), and ads point at this site.
+
+**The rule that shaped the whole job: a platform is only ever named from the `custom.works_with` metafield, never from the title.** This catalog's titles name YouTube, Kick and TikTok constantly, and the metafield says **only 8 of 99 products actually support YouTube**. `app/lib/platforms.js` already carries this lesson for on-page badges (116 of 131 products once carried a badge their own copy contradicted). Deriving meta copy from titles would have published those same false claims straight into Google's snippet, where they are worse, because the snippet is what sets the buyer's expectation before they ever reach the page. `scripts/build-seo-fields.mjs` refuses to write a proposal containing a claim `works_with` does not confirm.
+
+Each description is assembled from whole clauses only, so a length clamp can never leave one ending on a dangling "or". Benefit clauses exist per product TYPE and only where the benefit IS the definition of the type ("Shows your goal progress live on stream", "Puts your live chat on stream"). Anything narrower, like what a specific goal counts, varies per product and is not knowable from catalog data, so it is left out.
+
+- **85 products written** (78 missing both fields, 7 over Google's rendered length), 5 aliased `productUpdate` batches of 17, every alias checked individually, **zero `userErrors` across all 85**.
+- **3 collections written** (Chat Widget, Goal Widget, Top Widgets), which had none. The other 3 already did.
+- Routes now prefer `seo.title`, used verbatim with no shop suffix appended since it is already written to the 60 character cap. `collections.$handle.jsx` never even queried `seo`; it does now.
+- Prior state for all 125 products is backed up to `data/seo-backup-2026-09-14.json`, and what was applied is in `data/seo-applied-2026-09-14.json`.
+
+Verified:
+- `node scripts/build-seo-fields.mjs --check` exits 0: **125 products, 0 still needing fields, 0 unconfirmed platform claims, 0 em or en dashes.**
+- Rendered against a real dev server, not just the data layer: a newly written PDP returns `<title>Mushroom Goal Widget for Twitch</title>` (was 129 characters) with its own meta description and matching `og:title`; an already-standardized PDP returns `Celestial Star Goal Widget for Twitch and Kick`; the Chat Widget and Goal Widget collections return their new titles and descriptions.
+- `top-widgets` still rendered the old fallback on that dev server. That is Hydrogen's cached collection query, not a miss: the Storefront API returns the new `seo` for that handle directly.
+- `audit-catalog.mjs` and `audit-shipping.mjs` both exit 0 on 125 products. `npm run build` exits 0. Lint unchanged (the 1 error is the pre-existing unused `context` in the collection route).
+
+#### IP risk, current and worse than the last log says 2026-09-14
+`scripts/audit-ip-risk.mjs` was run with `ETSY_PACKAGE_ROOT` set so **both halves ran** (186 Etsy listings as well as 125 Shopify products; without that env var the Etsy half fails closed and a green Shopify result alone means nothing, since Etsy is 99% of revenue).
+
+**5 live listings carry a known IP term right now.**
+
+| Channel | Product | Status |
+|---|---|---|
+| Shopify | Pokémon Charizard Character Liquid Filling Goal Widget | **ACTIVE** |
+| Shopify | Valorant Brimstone Character Chat and Goal Widget | **ACTIVE** |
+| Etsy | Charizard Animated Twitch Goal Widget (1881347726) | **live** |
+| Etsy | Among Us Goal Widget (1741695722) | **live** |
+| Etsy | Valorant Brimstone Twitch Stream Chat & Goal Widget (4306870352) | **live** |
+
+Genshin, Valorant Waylay and Sci-Fi Neon (Star Wars) are all DRAFT on Shopify, so that part of the 2026-09-11 cleanup held. Charizard and Brimstone did not, or were missed. **Among Us on Etsy is new to this log and was never flagged before.** Nothing was unpublished here; that is Todd's call on both channels.
+
+Needs Todd:
+- **A production deploy.** One commit is waiting (`203d5dc`). The catalog half of today's work, the 85 products and 3 collections, is live already because it is catalog data, but the route change that actually READS `seo.title` is not, so page titles on the live site are still the long ones until he deploys.
+- **The 5 IP listings above.** Two are one click each in Shopify Admin; the three Etsy ones are the ones that matter, because that is where the revenue is.
+- **Confirm one Shopify order equals one GA4 purchase.** Still the open test from the double count fix. Nothing to do until the next real order.
+- Auny's X pixel IDs and a CAPI token (BAT-145), and a Meta pixel ID plus CAPI token. Everything no-ops silently until set.
+- Abandoned checkout automation: Admin > Marketing > Automations, activate it and put `COMEBACK50` in the template. The code exists, the sender does not.
+- Turn off the dead Etsy offers (`LOVEYOU`, `THANKS`, ~15 zero use Mix and Match). No API exists for Etsy promotions.
+- Google Search Console and Merchant Center still need his account.
+- Soul Blade price still unconfirmed (Etsy live 15.99, notes said 29.99, Shopify 15.99).
+
+Next: **mobile QA at 375px**, which is the oldest unchecked item that is not blocked on Todd and has never been done with working browser tools, then LCP. After that, `docs/COPY-STANDARD.md` descriptions across the 100 products that still carry legacy Etsy copy (today covered their title and meta description only, not the on-page body).
+
+Preview: https://01m2fv3pcf0tdf2tyz5tt6ctv0-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `203d5dc`.
