@@ -51,8 +51,16 @@ export const meta = ({data, matches, location}) => {
   const title = data?.product.title ?? '';
   const origin = getOrigin(matches);
   const featuredImageUrl = data?.product.featuredImage?.url;
+  // Prefer the product's own `seo.title` over its display title. Catalog
+  // titles here are Etsy titles, median 122 characters of stuffed platform
+  // names, and appending the shop name pushed every one of them past 140.
+  // Google renders about 60, so the differentiator and the brand were both
+  // cut off on every product page. `seo.title` is written to the 60
+  // character cap in docs/COPY-STANDARD.md and already carries the product
+  // name, so it is used verbatim, with no shop suffix appended.
+  const seoTitle = data?.product.seo?.title;
   return buildMeta({
-    title: `${title} | Stream Widget Shop`,
+    title: seoTitle || `${title} | Stream Widget Shop`,
     description:
       data?.product.seo?.description ||
       `${title}: animated stream widget, instant digital download for Twitch, YouTube, and multistream.`,

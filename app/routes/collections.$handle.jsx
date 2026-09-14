@@ -14,8 +14,11 @@ import logo from '~/assets/logo.png';
 export const meta = ({data, matches, location}) => {
   const origin = getOrigin(matches);
   return buildMeta({
-    title: `${data?.collection.title ?? ''} | Stream Widget Shop`,
+    title:
+      data?.collection.seo?.title ||
+      `${data?.collection.title ?? ''} | Stream Widget Shop`,
     description:
+      data?.collection.seo?.description ||
       data?.collection.description ||
       `Animated ${data?.collection.title ?? ''} widgets for Twitch, YouTube, and multistream. Instant digital download.`,
     url: `${origin}${location.pathname}`,
@@ -214,6 +217,10 @@ const COLLECTION_QUERY = `#graphql
       handle
       title
       description
+      seo {
+        title
+        description
+      }
       products(
         first: $first,
         last: $last,
