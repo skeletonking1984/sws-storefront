@@ -1188,3 +1188,33 @@ Also noticed, not fixed, out of scope: two product titles carry a pre-existing "
 
 Preview: https://01m2gbc98k8mwev9phv03tvq81-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `5d14ac6`.
+
+#### Mobile menu fixed, plus two overflows, and checkout verified both widths 2026-09-14 (Todd reported)
+Todd, on his phone: "menu links on mobile are buggy, when clicking no redirect happens and gets buggy. Widgets, overlays&kits".
+
+**The navigation was never broken.** Tapping "Chat widgets" in the mobile accordion DID route: `location.pathname` became `/collections/frontpage` and `document.title` became "Chat Widget". But the mobile menu is a full screen overlay and **nothing closed it**, so the only thing left on screen was the same menu that had just been tapped. Verified on production before touching anything, which is why it reads exactly as "no redirect happened".
+
+`Aside` closed on Escape, on the X and on an outside click, which is the stock Hydrogen skeleton behaviour and fine for a desktop drawer. `Aside.Provider` now closes on every committed navigation, keyed on `location.key` so a link to the page you are already on closes it too. **The desktop mega menu already did this** (`Header.jsx:147`, keyed on pathname/search), which is exactly why the bug was mobile only.
+
+Safe for the cart drawer: `CartForm` submits through a fetcher and never changes location, confirmed by Add to cart still opening the drawer at both widths.
+
+**Two overflows found while verifying, both pre-existing, both measured rather than guessed.**
+
+| | Before | After |
+|---|---|---|
+| Mobile accordion tile right edge (375px viewport) | **397px** | 355px |
+| Desktop horizontal scroll at 1440 (`window.scrollX`) | **68px** | 0 |
+
+1. **Mobile tiles.** A grid child defaults to `min-width: auto`, which is its CONTENT width, not its track width, so the right hand tiles overflowed and "Goal widgets" and "All widgets" sat half off screen. `.mega-tile-body` already carried `min-width: 0` for this exact reason; the tile itself was missed. Same root cause as the 2026-09-08 mega menu fix.
+2. **Desktop header, roughly 1280px to 1500px.** Content box 1361px against `222 + 890 + 275` plus two 12px gaps = 1411, so `.header-ctas` ended at 1491. `.header-menu-desktop` is `flex: 0 1 auto` but inherits `min-width: auto` and refuses to shrink. **`body { overflow-x: hidden }` hid the scrollbar but not the scroll**: `window.scrollX` reached 68 on the live site. Fixed with a `max-width: 1500px` media query tightening gaps and nav item padding. Nothing hidden or clipped, all 7 top level nav items still render. Not caught on 2026-09-08 because that pass measured the mega PANEL, not the header row around it.
+
+**A wrong turn worth recording.** A first measurement read the mega panel at `left: 1030` in a 1024 viewport and looked like a desktop overflow. It was the MOBILE accordion's panel, parked off canvas and `visibility: hidden`, and at 1024 the site still shows the hamburger so the desktop panel was not even in play. Separately, three attempts to open the desktop panel reported `aria-expanded: false` and nearly got logged as "the desktop menu does not open"; sampling every 80ms after a real click showed it opening normally, `opacity` 0 to 1 over 240ms. The synthetic pointer was leaving the trigger and the 120ms close timer was firing. **Measure the right element, and sample rather than snapshot.**
+
+Verified at 375 and 1440, menu and purchase path both:
+- **Mobile**: Widgets and Overlays & kits both expand, both navigate, **the menu closes**, no clipped tiles, `scrollX` 0.
+- **Desktop**: mega panel opens, link hittable, **0 elements outside the viewport**, navigates, panel closes, `scrollX` 0.
+- **Checkout, both widths**: lands on `shop.streamwidgetshop.com`, renders Contact then Payment then Billing with **no shipping step**, express wallets present (Shop Pay, PayPal, G Pay, Venmo). WELCOME10 applies correctly: $34.97 subtotal, -$3.49, **$31.48 total**. The cart carries `_ga_client_id`, `_ga_session_id` and `_ga_session_number`, so purchase attribution still attaches.
+- No purchase was completed. Everything up to entering card details is verified; the charge itself is Todd's.
+
+Preview: https://01m2gegw81gxmwtpfjnntpdjm3-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `7508924`.
