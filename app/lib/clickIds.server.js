@@ -182,6 +182,23 @@ export function readClickIds(request, measurementIdOrEnv) {
     found._ga_session_number = session.sessionNumber;
   }
 
+  // Internal traffic, carried on the cart so the SERVER SIDE purchase can
+  // be tagged too. app/lib/analytics/internalTraffic.js tags browser
+  // events, but the orders/create webhook never runs in a browser, so a
+  // test order still reached GA4 as real revenue. That is how Todd's own
+  // $0 test orders were about to pollute the numbers right as ads start.
+  //
+  // Detected from the request, not from JavaScript: the `sws_qa` cookie
+  // set by visiting ?sws_qa=1, or an automated browser's own user agent.
+  // `navigator.webdriver` has no server side equivalent, so the cookie is
+  // the reliable switch for a human tester.
+  const userAgent = request.headers.get('User-Agent') || '';
+  const isInternal =
+    readCookieValue(cookieHeader, 'sws_qa') === '1' ||
+    userAgent.includes('Claude/') ||
+    /HeadlessChrome|Puppeteer|Playwright/i.test(userAgent);
+  if (isInternal) found._traffic_type = 'internal';
+
   return found;
 }
 

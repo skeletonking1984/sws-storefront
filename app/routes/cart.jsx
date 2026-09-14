@@ -11,6 +11,10 @@ import {readClickIds} from '~/lib/clickIds.server';
 const REFRESHED_ATTRIBUTE_KEYS = new Set([
   '_ga_session_id',
   '_ga_session_number',
+  // Also current-value, not first-touch: a cart started by a QA run and
+  // later finished by a real buyer must stop being flagged as internal,
+  // and the reverse must start being flagged.
+  '_traffic_type',
 ]);
 
 /**

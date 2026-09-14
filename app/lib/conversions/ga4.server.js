@@ -126,6 +126,11 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
               ? Number(order.total_discounts)
               : 0,
           coupon: coupon || undefined,
+          // Only the exact literal survives, so a forged or stray cart
+          // attribute cannot inject arbitrary values into the payload.
+          ...(clickIds?._traffic_type === 'internal'
+            ? {traffic_type: 'internal'}
+            : null),
           items,
           session_id: sessionId || undefined,
           session_number: sessionNumber || undefined,
