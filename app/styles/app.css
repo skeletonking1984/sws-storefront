@@ -326,7 +326,24 @@ aside {
   border-left: 1px solid var(--sws-border);
   color: var(--sws-text);
   box-shadow: -20px 0 60px rgba(0, 0, 0, 0.55);
+  /*
+   * `dvh`, not `vh`. On Chrome for Android `100vh` is the LARGE viewport,
+   * the height with the URL bar hidden, so a fixed drawer sized in vh is
+   * taller than the screen actually shows and its bottom sits behind the
+   * URL bar. Nothing can scroll it into view either, because the drawer is
+   * fixed and its own scroll container ends off screen.
+   *
+   * Todd on a Moto G5, 2026-09-14: "half the checkout button is visible and
+   * cannot scroll in the pop out". Modelled at a 568px visible height with
+   * 100vh resolving to 640: the Continue to Checkout button rendered 559 to
+   * 616, so 9 of its 57 pixels were on screen, 48 were cut off, and the
+   * drawer reported scrollHeight === clientHeight so there was nothing to
+   * scroll. With dvh it renders 487 to 544, all 57 pixels visible.
+   *
+   * The vh line stays first as the fallback for anything without dvh.
+   */
   height: 100vh;
+  height: 100dvh;
   width: min(var(--aside-width), 100vw);
   position: fixed;
   right: calc(-1 * var(--aside-width));
@@ -380,7 +397,15 @@ aside header h2 {
 aside main {
   display: flex;
   flex-direction: column;
-  height: calc(100% - var(--header-height));
+  /*
+   * Subtract this element's OWN margin as well as the header. `margin: 1rem`
+   * is 16px top and bottom, so `calc(100% - header)` made the content box
+   * 32px taller than the space left for it and pushed the bottom of the
+   * drawer, where Continue to Checkout lives, past the bottom of the screen.
+   * Measured before the fix at a 640px drawer: main ran 88 to 656 against a
+   * 640px viewport.
+   */
+  height: calc(100% - var(--header-height) - 2rem);
   margin: 1rem;
   overflow-y: auto;
 }
@@ -1010,7 +1035,27 @@ button.reset:hover:not(:has(> *)) {
   bottom: 0;
   padding-top: 0.75rem;
   position: absolute;
-  width: calc(var(--aside-width) - 40px);
+  /*
+   * Span the drawer, do not restate its width. This used to be
+   * `width: calc(var(--aside-width) - 40px)`, a flat 360px, while the drawer
+   * itself is `width: min(var(--aside-width), 100vw)`. So on any screen
+   * narrower than 400px the summary was wider than the column it sits in and
+   * ran off the right edge of the phone, taking the Continue to Checkout
+   * button and the Apply buttons with it.
+   *
+   * Todd on a Moto G5 (360px wide), 2026-09-14: the drawer's content was cut
+   * off on the right. Measured on production at 360px: `main` was 327px wide
+   * and this block was 360px, so checkout rendered 17px past the screen edge.
+   * At 375px it overflowed by 2px, which is why it was easy to wave past.
+   *
+   * 360px is the most common Android viewport width, so this hit most Android
+   * buyers. Its containing block is the `aside` itself (`main` is static), and
+   * `main` carries `margin: 1rem`, so left/right of 1rem lines this up with
+   * the content column exactly: 327px at a 360px viewport, measured.
+   */
+  left: 1rem;
+  right: 1rem;
+  width: auto;
 }
 
 .cart-code-form {
