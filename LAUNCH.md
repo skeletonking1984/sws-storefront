@@ -1028,3 +1028,56 @@ Next: **mobile QA at 375px**, which is the oldest unchecked item that is not blo
 
 Preview: https://01m2fv3pcf0tdf2tyz5tt6ctv0-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `203d5dc`.
+
+### 2026-09-14 (third pass, scheduled CTO code review)
+
+Reviewed `68d9ea8^..32fb854`, 26 commits over the last 24 hours (2026-09-13 08:43 to 2026-09-14 07:35), 60 files, +11443 / -882. The bulk of it is the analytics rebuild (browser pixel registry, ad blocker resilient relay, GA4 session carry, internal traffic tagging), the per product SEO fields, the IP risk scanner, and the blog image sharpening.
+
+**Not clean. Three confirmed findings, two of them on the cart attribute path that carries ad attribution onto every order.**
+
+#### Verified first, all green
+| Check | Result |
+|---|---|
+| `node scripts/audit-shipping.mjs` | exit 0, 125 storefront products, none require shipping |
+| `node scripts/audit-catalog.mjs` | exit 0, 125 products, 0 with an issue |
+| `npm run build` | exit 0 |
+| `npm run verify:tracking` (production) | exit 0, **25 passed, 0 failed** |
+| `npm run audit:ip` | exit 1, the same 5 known IP listings as this morning, unchanged, still Todd's call |
+| em or en dashes in newly authored copy | none. The 6 hits in the diff are all pulled Etsy source data, one customer review, and two regexes whose job is to reject dashes |
+| browser pixel sending `purchase` | none. The only `purchase` reference in `app/lib/analytics/` is PixelBus.jsx's belt and braces guard |
+| applied SEO fields (`data/seo-applied-2026-09-14.json`) | 85 records, 0 dashes, 0 titles over 60, 0 descriptions over 160, max 60 / 155, 0 violations, 0 empty |
+
+The diff touched `app/lib/analytics/`, `app/lib/conversions/`, `app/lib/gaCookie.server.js`, `app/lib/clickIds.server.js`, `app/routes/api.e.jsx` and `app/routes/cart.jsx`, so `verify:tracking` was run against production rather than fixtures, per the standing rule. It passes.
+
+#### Finding 1, HIGH. Every cart mutation wipes cart attributes it cannot re-derive. BAT-147
+`app/lib/context.js:49` passes only `queryFragment` to `createHydrogenContext`'s cart config, never `mutateFragment`. So every cart MUTATION resolves Hydrogen's own `CartApiMutation` = `MINIMAL_CART_FRAGMENT`, which is `{id totalQuantity checkoutUrl}` and has no `attributes` field. `app/routes/cart.jsx:178` therefore reads `existingAttributes` as `[]` on every single mutation, and `cartAttributesUpdate` is a full replace.
+
+Reproduced three times against production. Created a cart through the real `/cart` action, put `gift_note=happy birthday` and `_twclid=abc123twclid` on it through the Storefront API, waited 6 seconds to rule out read after write lag, then did one ordinary `LinesAdd` with the SAME cookies and the same GA4 session. Both `gift_note` and `_twclid` were gone. Only the three GA keys survived, because those are the only ones the request could re-derive.
+
+What it costs: any attribute this app did not write is destroyed on the next mutation, a captured click id whose 90 day `sws_*` cookie has expired is dropped off a long lived cart, the documented "never overwrite, first touch wins" guard at cart.jsx:180 is dead code, and the "only write when it actually moved" optimisation never engages so every mutation pays an extra `cartAttributesUpdate` round trip. The comment at cart.jsx:164 promises the exact opposite.
+
+Not fixed here. One line in `context.js` does it, but it changes the payload shape of every cart mutation and deserves a deliberate deploy.
+
+#### Finding 2, MEDIUM. `_traffic_type` can never be cleared from a cart. BAT-148
+`cart.jsx:182` short circuits on `if (!value) return false` BEFORE the `REFRESHED_ATTRIBUTE_KEYS` branch, and `readClickIds` omits `_traffic_type` entirely when the visitor is not internal. So the key is never in `clickIds` on a normal request, `Object.entries` never yields it, and the refresh branch is unreachable. The comment at cart.jsx:9 states the intent that cannot fire: "a cart started by a QA run and later finished by a real buyer must stop being flagged as internal."
+
+**Latent only because of Finding 1.** The wipe removes `_traffic_type`, so the intended behaviour appears to work for the wrong reason. Fixing BAT-147 turns this into a live bug where a real sale from a previously QA tagged cart gets `traffic_type: internal` stamped on its server side purchase and is excluded once the GA4 Data Filter goes Active. Fix them together.
+
+#### Finding 3, MEDIUM. IP audit layer 2 never scans Etsy. BAT-149
+`scripts/audit-ip-risk.mjs:227` loops `products`, Shopify only. `etsyListings` is used once at line 199 for layer 1 and never again. So Etsy, which the script's own header calls 99% of revenue, gets the deny list but not the heuristic net. Running the same layer 2 extraction over the 186 live Etsy titles surfaces 50 names the audit never prints. All 50 are false positives today, so there is no active miss, but an Etsy listing named after a game not yet in `DENY_TERMS` is invisible while the identical Shopify product would be surfaced. That is how Among Us (1741695722) stayed unflagged until the term was hand added.
+
+#### Ruled out, so it is not re-raised
+- **"Two SEO titles name Twitch when `works_with` does not confirm it"** (`twitch-liquid-goal-bar-widget-*`, `twitch-liquid-combo-goal-bar-widget-*`, both `worksWith: null`). Not a bug. `scripts/build-seo-fields.mjs:186` deliberately strips the product's own name before running the platform claim guard, because a platform word inside the product's name is its identity, not a new claim. The generated descriptions correctly say "animated goal widget." with no "for X" suffix.
+- **`/api/e` blocked by CSP.** `'self'` is present in `connectSrc` (`app/entry.server.jsx:66`), so the `sendBeacon` relay is allowed.
+- **Checkout trapped behind a blocked GA4.** `loadScript` defines a stub `window.gtag` before the real script loads, so `CartSummary.jsx`'s `typeof window.gtag === 'function'` check passes even when gtag.js is blocked and the event callback never fires. The 800ms fallback timer covers it, as its comment claims.
+- **`verify-tracking.mjs` polluting production GA4.** Its `/api/e` probe sends no cookies, so `sendEvent` returns `no_client_id` and nothing reaches GA4.
+
+#### Cleanup note
+The three reproduction runs created 3 real, empty, buyer-less carts on production. They carry no email or buyer identity, so they never become abandoned checkouts, and Shopify ages them out.
+
+#### What changed about the review process itself
+`verify:tracking` passed on a day two real cart bugs shipped, because every check in it asserts that the keys the code WRITES are present. Nothing asserted that what the code does not write SURVIVES. A deletion bug is invisible to a presence-only check. Two rules added to `~/.claude/scheduled-tasks/sws-daily-code-review/SKILL.md`:
+1. When the diff touches a read, modify, write against a Shopify mutation result, confirm the mutation's own response fragment actually contains the field being read back. Hydrogen mutations resolve `MINIMAL_CART_FRAGMENT` unless `mutateFragment` is set, and a missing field reads as `undefined`, not as an error.
+2. A check that only asserts the presence of what the code writes cannot catch deletion of what it does not. Drive a decoy value through the live path and assert it survives.
+
+Commit: `32fb854` reviewed. No production deploy from this pass.
