@@ -922,3 +922,25 @@ Verified after: **115/115 products now match their Etsy list price** on a fresh 
 **New IP exposure found while pulling variant ids: two live Valorant products**, `valorant-brimstone-character-chat-and-goal-widget` and `valorant-waylay-chat-widget`. Riot IP, same class as the Star Wars and Pokemon products already set to DRAFT on 2026-09-11, and these are still ACTIVE and about to carry ad spend. Not touched, since unpublishing is Todd's call.
 
 Next: the `view_cart` over fire, then `docs/COPY-STANDARD.md` across the remaining catalogue.
+
+#### Revenue attribution, and where promotion points 2026-09-14 (Todd present)
+Todd: "we need visibility into whats working/whats not". Pulled the real numbers across both channels before proposing anything, and they reframed the question.
+
+| Channel | Orders 30d | Net 30d |
+|---|---|---|
+| **Etsy** | 319 | **$3,106.66** |
+| Shopify | 2 real, plus 6 zero dollar tests | **$34.18** |
+
+**Etsy is 98.9% of revenue and is up 42% month over month** ($3,106.66 against $2,186.97 the prior 30 days). Shopify is $34.
+
+**The blind spot is the opposite of what it looked like.** Shopify attribution is already complete, every order names its source. **Etsy exposes no traffic-source data to sellers at all**: the API has receipts, listings and revenue, but no traffic endpoint, and Etsy's own Stats page shows sources only in aggregate in the UI. So almost all revenue arrives from an unknown place and no amount of building changes that. The only lever that attributes an Etsy sale is a per-channel Etsy promo code, where the redemption names the channel.
+
+Shopify traffic, 30 days: direct 370 (heavily internal QA), google organic 130, bing 12, facebook 9, **instagram 7**, etsy referral 6, X 2, chatgpt 2. **Instagram is the only channel that has ever converted a stranger**: 7 sessions, 1 order, 14.3%. One order is not a trend, but it is the only evidence of acquisition working.
+
+Two findings worth acting on: **3 X campaigns are ACTIVE** (p27oy, p4ygc, p64d5) and produced 2 Shopify sessions and $0 attributable in 30 days, and **130 organic Google sessions produced $0**, which is free intent traffic already arriving.
+
+**Decision, Todd's: promotion points at Shopify, because it is measurable.** Prices were matched to Etsy list on 2026-09-13 so a buyer sent to the site pays what they would have paid on Etsy, and Shopify keeps roughly 7 points more margin (Etsy 6.5% plus $0.20 plus processing, plus a mandatory 12% on Offsite Ads orders, against Shopify 2.9% plus $0.30).
+
+Shipped: the **Revenue Desk**, a published dashboard, because Todd said "I hate having to dig, easy to miss shit". High level only: one headline number, the channel split, an Etsy daily sparkline, top earners, Shopify by source, and a "Needs a decision" block that carries the things that are easy to miss (the Etsy blind spot, the idle X campaigns, the unconverted Google traffic, the 2 live Valorant products, the 26 products with no `works_with`). Not verified by eye: the in-app browser is not signed in to claude.ai, so the published page was never rendered for review.
+
+**COO now owns revenue visibility**, added to `Todd/ops/roles/coo.md` on Todd's instruction. The charter note names the specific failure mode to avoid: never print "unattributed" and "did not work" as the same thing, since Etsy is 99% of revenue and structurally unattributable.
