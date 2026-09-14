@@ -1282,3 +1282,42 @@ A screenshot found in one look what four rounds of measurement missed. When a us
 
 Preview: https://01m2gh06p8m7r8cgw8cf7dse5k-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `36ad225`.
+
+#### Mobile made usable, and a mobile purchase confirmed 2026-09-14
+Todd: "I just want the mobile stuff to be good." Then, after this pass: **"just tested a purchase on mobile and worked."**
+
+**Order #1043**, 2026-09-14 20:34Z, PAID, Moon Jar Goal Widget, carrying `_ga_client_id`, `_ga_session_id` and `_ga_session_number`. A $0.00 discounted test rather than a real sale, so it proves the path and not the revenue, but the path is what was broken.
+
+Everything below was found at **360px**, the most common Android viewport. The earlier passes tested 375, which is the one width where several of these measure 2px and look like nothing.
+
+| Defect | Before | After |
+|---|---|---|
+| Drawer close button | covered by the site header, tapping the X hit `a.header-cart-btn` | 44x44, visible, closes both pop-outs |
+| Cart drawer summary | 559px block over a 536px drawer, **all 6 lines hidden**, nothing to scroll | items visible and scrolling, summary below |
+| Product cards on grid pages | 320px track in a 296px box, **clipped 24px off screen** | fits, no overflow, 3 grids fixed |
+| Grid gutters | 128 of 360px (36%) empty, cards 232px | cards **296px**, 28% larger |
+| Menu button | **22x22** | 44x44 |
+| Account / search / cart icons | 36 to 38px | 44x44 |
+| Gallery arrows, share, social | 36 to 38px | 44x44 |
+| Checkout button in cart | after two code forms | directly after the totals |
+| Background behind an open drawer | scrolled, so drags felt like a frozen menu | locked, position restored, 0px layout shift |
+
+Root causes worth keeping, because three of them are the same mistake:
+
+- **`minmax(320px, 1fr)` forces a 320px track even when the container is narrower.** Use `minmax(min(320px, 100%), 1fr)`. Identical above 320px.
+- **`.cart-main` sized itself as `100vh` minus a hardcoded guess at the summary's height** (250px, or 300px with a discount) when the real summary is 559px at 360px wide. Replaced with a flex column. Both constants deleted.
+- **`.cart-summary-aside` restated the drawer's width** as `calc(var(--aside-width) - 40px)`, a flat 360px, inside a drawer that is `min(400px, 100vw)`.
+- **`.overlay` was z-index 10, below the sticky header at 20 and the sticky Add to cart bar at 15.** An `aria-modal` element must outrank all page chrome. It is now 40.
+- **`height: 100vh` on a fixed drawer is wrong on Android**, where `100vh` is the URL-bar-hidden height. Now `100dvh` with a `vh` fallback.
+
+Two process notes, both of which cost real time here:
+- A padding override placed **before** the rule it overrides loses silently when the original uses a shorthand at the same specificity. It has to come after.
+- The new local password gate intercepted the first audit run, so an initial "0 problems" reading was of the password page rather than the site. Check what page the measurement is actually on.
+
+Checked and deliberately not touched: the PDP thumbnail strip and the search palette chip row overflow their containers by design, both are `overflow-x: auto` scroll strips. Wide 22px tall text links are inline links, which WCAG 2.5.8 exempts.
+
+Still open, needs a component split rather than CSS: with a large cart the checkout button is reached by scrolling past the line items. Pinning it needs the summary rendered as a sibling of the scroll area, and at 559px it cannot simply be made sticky.
+
+Also shipped: an optional `PRIVATE_PREVIEW_PASSWORD` gate (`app/lib/previewGate.server.js`) so a non production build can be opened on a phone without a Shopify login. Inert unless the variable is set, verified both ways. Oxygen preview URLs cannot be opened any other way: the CLI's `--auth-bypass-token` works as a header (200) but not as any query parameter (302), and a phone browser cannot send headers.
+
+Commits: `2ff7345`, `7268c90`, `1746c31`, on top of `36ad225` and `42dcf30`.
