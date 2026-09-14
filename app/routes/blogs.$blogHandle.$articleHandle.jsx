@@ -172,7 +172,35 @@ export default function Article() {
         </div>
       </h1>
 
-      {image && <Image data={image} sizes="90vw" loading="eager" />}
+      {image && (
+        /*
+          Capped to the image's OWN width so a small hero is never scaled
+          up. Measured on the live site 2026-09-13: this article's hero is
+          475x472 and was being painted at 913 CSS px, a 2x upscale before
+          device pixel ratio is even considered, which is what made it look
+          blurry. 5 of the 43 articles have a hero under 900px wide, so
+          this is not a one-off.
+
+          `sizes` has to agree with the cap or the browser picks a
+          candidate for the uncapped slot and downloads more than it can
+          use. The real fix for those 5 is a bigger upload; this just stops
+          the page making a small image look worse than it is.
+        */
+        <Image
+          data={image}
+          sizes={
+            image.width
+              ? `min(90vw, ${image.width}px)`
+              : '90vw'
+          }
+          loading="eager"
+          style={
+            image.width
+              ? {maxWidth: `${image.width}px`, width: '100%'}
+              : undefined
+          }
+        />
+      )}
       <div
         dangerouslySetInnerHTML={{__html: bodyHtml}}
         className="article"
