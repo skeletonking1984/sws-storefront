@@ -1218,3 +1218,32 @@ Verified at 375 and 1440, menu and purchase path both:
 
 Preview: https://01m2gegw81gxmwtpfjnntpdjm3-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `7508924`.
+
+#### MOBILE CHECKOUT WAS BLOCKED, and the earlier verification was wrong 2026-09-14
+Todd: "I cannot check out on mobile." He was right, and no buyer could.
+
+**The sticky Add to cart bar covered the Checkout button.** On a phone the PDP pins Add to cart to the bottom of the viewport at `z-index: 15`. Every aside, the cart drawer included, is `.overlay` at `z-index: 10`. So the bar painted **on top of the cart drawer it had just opened**, pinned to the same bottom edge, covering the bottom ~60px of it, which is exactly where "Continue to Checkout" sits.
+
+Measured on production:
+
+| | |
+|---|---|
+| Checkout link | y **731 to 788** |
+| Sticky Add to cart bar | y **750 to 810**, `position: fixed`, `z-index: 15` |
+| `document.elementFromPoint` at the centre of the checkout link | **`button.add-to-cart-button`** |
+| After scrolling the drawer to its end | link still 731 to 788, still not hittable |
+
+Tapping Checkout on a phone **re-added the item to the cart**. The button was fully visible the whole time. It just was not clickable, and scrolling could not free it because both elements are fixed to the viewport.
+
+The z-index ladder was backwards for a modal: aside 10, sticky bar 15, header 20, mega panel 30. The bar now sits at **5**, above page content (which tops out at 2) and below every modal, and stays visible and pinned during normal browsing.
+
+**Why the verification earlier the same day said checkout worked, recorded because it is the real lesson.** That check asserted the checkout URL loads by **navigating to the link's href** rather than pressing the link. That passes happily while the control underneath is covered by something else. This repo already documents the exact trap, from 2026-09-11: "Clicking a covered element produces no event, correctly. Check `document.elementFromPoint` before believing a handler is broken." It was cited in the same session and still not applied to the checkout button.
+
+**Rule: press the control. Never navigate to its href and call the purchase path verified.** A path that is only ever exercised by URL is not a verified path.
+
+Verified after the fix, against the real build at 375px, by pressing the button: `elementFromPoint` returns `A.cart-checkout-button`, the tap lands on `shop.streamwidgetshop.com/checkouts/cn/...`, payment renders, no shipping step, bar still visible and pinned on the PDP. Mobile menu re-checked on a PDP, 0 of 7 links blocked.
+
+One false alarm caught before it was written up: a first sweep reported all 7 mobile menu links blocked by `.overlay expanded`, which is their own ancestor. That was the aside measured mid-animation. With a real click and a 1.8s settle, 0 of 7 are blocked.
+
+Preview: https://01m2gghrf2h88ngs3ztaj0f1p5-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `42dcf30`.
