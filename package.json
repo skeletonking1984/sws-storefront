@@ -10,7 +10,9 @@
     "preview": "shopify hydrogen preview --build",
     "lint": "eslint --no-error-on-unmatched-pattern .",
     "codegen": "shopify hydrogen codegen && react-router typegen",
-    "logo": "node og/make-logo.mjs"
+    "logo": "node og/make-logo.mjs",
+    "verify:tracking": "node scripts/verify-tracking.mjs",
+    "verify:all": "node scripts/audit-catalog.mjs && node scripts/audit-shipping.mjs && node scripts/verify-tracking.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
