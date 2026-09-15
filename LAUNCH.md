@@ -45,6 +45,12 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 - [x] Sitemap + robots verified
 - [ ] Google Search Console: verify `streamwidgetshop.com` as a Domain property (DNS TXT in Cloudflare), submit `/sitemap.xml`. Todd's Google account. X-in-Search-Console is already connected (@streamwidget), read-only, data lands ~2026-09-12.
 - [ ] Merchant Center feed via the Google & YouTube app. After DNS cutover (product URLs must resolve on the live domain).
+### Agentic
+- [ ] WebMCP live for real visitors. Code is shipped and verified: 3 imperative tools on `document.modelContext` (`search_widgets`, `get_widget_details`, `add_to_cart`, via `app/lib/agentTools.js` and `/api/agent`), 4 declarative forms carrying `toolname`/`tooldescription`, and `Layout` renders `<meta http-equiv="origin-trial">` when `PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKEN` is set. **Blocked on two things only Todd can do**, and Lighthouse reports all three WebMCP audits Not Applicable until the first one is done:
+  1. Local check: `chrome://flags/#enable-webmcp-testing` to Enabled, **relaunch Chrome**, re-run Lighthouse.
+  2. Real visitors: register `streamwidgetshop.com` at developer.chrome.com/origintrials, set `PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKEN` on both Oxygen environments. **The trial runs Chrome 149 to 156 and ends 2026-11-16**, so a token obtained now has a finite life and the API becomes generally available or not at that point.
+  - Todd 2026-09-15: "we can come back to this, but need to integrate it soon." Not urgent, not dropped.
+
 ### Branding
 - [x] Wordmark, palette, favicon, OG image consistent with Etsy/X
 ### Conversion
