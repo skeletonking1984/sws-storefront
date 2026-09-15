@@ -6,8 +6,8 @@ planned.
 
 ## The short version
 
-The site is instrumented and ready. Point ads at any page. Optimise for the
-**SWS Purchase** event. Make sure **click ID tracking is on** for the campaign.
+The site is instrumented and ready. Point ads at any page, optimise for the
+**SWS Purchase** event, and there is nothing else to configure.
 
 ## 1. Which conversion event to optimise for
 
@@ -21,19 +21,23 @@ splits across them, which looks fine in the UI and quietly wastes budget.
 
 The `SWS` prefixed events are ours. The `Shopify:` prefixed ones are not.
 
-## 2. Turn on click ID tracking
+## 2. Click ID, and what NOT to worry about
 
-X only appends `?twclid=...` to the destination URL when click ID tracking is
-enabled on the campaign. **Without it the ads land correctly and carry no
-attribution, which looks identical to working.**
+**There is nothing to enable.** X generates `twclid` at ad click time and
+appends it to the landing page URL automatically. An earlier draft of this
+document said it was a campaign setting Auny had to switch on. That was wrong.
 
-This matters because the storefront captures that click ID on the landing
-request, keeps it for 90 days, and attaches it to the order. Verified end to
-end on production: landing URL to cookie to cart to order to X.
+The one thing that CAN break it is a destination URL that passes through
+something which strips query parameters, for example a third party tracking
+link or a URL shortener. Point ads straight at a streamwidgetshop.com URL and
+the parameter arrives.
 
-If you are unsure whether it is on, the check is in Ads Manager under
-Conversion Diagnostics: **"Click ID tracking"** goes from "Not detected" to
-detected once a real ad click converts. It cannot be faked, which was tested.
+Our own redirects are safe, tested: `http` to `https`, `www` to apex, and 301s
+from older product URLs all preserve it.
+
+Once the click id arrives, the storefront captures it on the landing request,
+holds it in a first party cookie for 90 days, and attaches it to the order.
+That whole chain is verified end to end on production.
 
 ## 3. Destination URLs
 
@@ -60,12 +64,15 @@ order webhook, so an ad blocker cannot hide a sale. X confirms this is working:
 
 Two ways X can tie a sale back to an ad:
 
-- **Click ID** (`twclid`). Strongest. Needs step 2 above.
+- **Click ID** (`twclid`). Strongest, and automatic, provided the destination
+  URL is a direct link to this site.
 - **Hashed email.** Works, and is confirmed matching real users, but only when
   the buyer checks out with the same email as their X account. Many will not.
 
-So click ID tracking is the difference between most sales being attributed and
-only some. It is worth getting right before spending much.
+Click id attribution starts working on its own the first time someone clicks
+an ad pointed at this site and buys. Until then Ads Manager will keep showing
+"Click ID tracking: Not detected", which is accurate rather than a fault: no
+ad has sent anyone here yet. It cannot be faked either, which was tested.
 
 ## 6. The site is ready to receive paid traffic
 
