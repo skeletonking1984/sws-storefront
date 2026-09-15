@@ -16,7 +16,8 @@
     "audit:ip": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/audit-ip-risk.mjs",
     "optimize:assets": "node scripts/optimize-assets.mjs",
     "verify:oauth1": "node scripts/verify-oauth1.mjs",
-    "verify:x-capi": "node scripts/verify-x-capi.mjs"
+    "verify:x-capi": "node scripts/verify-x-capi.mjs",
+    "audit:config": "node scripts/audit-config-registry.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
