@@ -51,6 +51,7 @@ export const CONFIG_GROUPS = [
       {key: 'PUBLIC_X_EVENT_ID_PAGE_VIEW', impact: 'X records no page views.'},
       {key: 'PUBLIC_X_EVENT_ID_VIEW_CONTENT', impact: 'X records no product views.'},
       {key: 'PUBLIC_X_EVENT_ID_ADD_TO_CART', impact: 'X records no add to carts.'},
+      {key: 'PUBLIC_X_EVENT_ID_BEGIN_CHECKOUT', impact: 'X records no checkout starts, so Shopify\'s duplicate CHECKOUT_INITIATED cannot be switched off.'},
       {key: 'PRIVATE_X_PURCHASE_EVENT_ID', impact: 'Conversion API sends nothing. X sees traffic but never a sale, so ROAS reads zero.'},
       {key: 'PRIVATE_X_RELAY_URL', impact: 'Auth path R, preferred and in use. The sws-x-connector endpoint that signs for us, https://sws-x-connector.clarisai-consulting.workers.dev/x/conversions. Without it the app falls back to signing locally, which needs credentials copied here.'},
       {key: 'PRIVATE_X_RELAY_TOKEN', impact: 'Auth path R. The connector\'s MCP_AUTH_TOKEN. Same value the sws-x MCP sends.'},

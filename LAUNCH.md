@@ -2603,3 +2603,37 @@ fix, not toggling the event.
 
 **Historic data cannot be cleaned.** The events already sent to X are there. Give
 the optimiser a fresh run of real conversions before trusting any Purchase number.
+
+### 2026-09-15 — SWS Checkout added, so Shopify's last duplicate can go
+
+Todd caught a wrong claim: "we do, GA4 has begin checkout event that works". He
+was right. `CartSummary.jsx` publishes `custom_begin_checkout` and holds the
+navigation until GA4 confirms it, because it is the most valuable step in the
+funnel. What was true is narrower than what I said: the signal exists, it just
+had nowhere to land on X. The X adapter wired exactly three events
+(`page_view`, `view_item`, `add_to_cart`) and its own header said adding
+InitiateCheckout needed an event id first.
+
+Created in Events Manager: **`SWS Checkout`, `tw-q7mwb-rfbdk`**, type **Custom**
+(X's create dialog offers no "Checkout initiated" type; only the sales channel's
+own events get that type), 30 day post-engagement / 1 day post-view to match
+every other event on the pixel, and **Website activity audience ON** -- the only
+event where that is switched on, because people who started checkout and did not
+finish are the highest-intent retargeting pool available.
+
+Wired in `app/lib/analytics/pixels/x.js`. Two things worth keeping:
+
+- It is **cart level**, summing every line, not `items[0]` the way `view_item`
+  and `add_to_cart` read it. Sending only the first line would under-report the
+  value of every multi-item checkout, at exactly the step where value matters.
+- No plumbing was needed beyond `envKeys`. `app/lib/analytics/registry.js` builds
+  each adapter's client config generically from that map, so one entry carries it
+  end to end. `npm run audit:config` confirms 29 referenced / 29 registered.
+
+**Needs Todd: `PUBLIC_X_EVENT_ID_BEGIN_CHECKOUT=tw-q7mwb-rfbdk` on Oxygen, plus a
+deploy.** Oxygen env vars are write-only and do not take effect until a redeploy.
+Until both happen the adapter no-ops on that event, which is by design: every
+event id is guarded by its own `if (!config.xEventId) return;`.
+
+Once it records, `Shopify:72470e-33:CHECKOUT_INITIATED` can be deleted and every
+`Shopify:` row on the pixel is gone.

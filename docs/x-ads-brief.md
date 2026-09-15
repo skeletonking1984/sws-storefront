@@ -98,7 +98,16 @@ channel with different, and much weaker, measurement.
 | Page views | browser pixel, live |
 | Product views | browser pixel, live |
 | Add to cart | browser pixel, live |
+| Checkout started | browser pixel, `SWS Checkout` `tw-q7mwb-rfbdk`, added 2026-09-15 |
 | **Purchase** | **server side, via the Conversion API** |
+
+`SWS Checkout` is type Custom because X's create-event dialog offers no
+"Checkout initiated" type. It exists so Shopify's duplicate
+`Shopify:72470e-33:CHECKOUT_INITIATED` can be switched off: that one is
+browser-only and has no internal-test filter, so it counts Todd's own SWSTEST
+checkouts as real. Ours has a **Website activity audience** switched on, which
+is the highest-intent retargeting pool on the account: people who started
+checkout and did not finish.
 
 Purchase is deliberately never sent from the browser. It comes from Shopify's
 order webhook, so an ad blocker cannot hide a sale. X confirms this is working:

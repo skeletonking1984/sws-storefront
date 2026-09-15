@@ -23,11 +23,19 @@
  * subscription, nothing thrown. Once the real IDs land, setting the env
  * vars is the only change needed, no code edit here.
  *
- * Only three events are wired here (page_view, view_item, add_to_cart) --
- * the same three the pre-registry XPixel.jsx sent. X's Ads Events Manager
- * needs one configured Event ID per event type; adding more (Search,
- * InitiateCheckout, ...) needs a new event id from Auny first, see
- * meta.js for how a platform with a full standard-event set is wired.
+ * Four events are wired here: page_view, view_item, add_to_cart and
+ * begin_checkout. X's Ads Events Manager needs one configured Event ID per
+ * event type; adding more (Search, ...) needs a new event id created there
+ * first, see meta.js for how a platform with a full standard-event set is
+ * wired.
+ *
+ * begin_checkout was added 2026-09-15. X's create-event dialog offers no
+ * "Checkout initiated" type, so the event is type Custom, the same as
+ * ViewContent. Shopify's X sales channel publishes its own
+ * Shopify:<shop>:CHECKOUT_INITIATED on this same pixel; ours exists so that
+ * one can be switched off, because the sales channel's pixel is browser-only
+ * (no Server badge in Shopify's Customer events list), has no internal-test
+ * filter, and so counts Todd's own SWSTEST checkouts as real ones.
  *
  * Fires nothing until PixelBus.jsx has already checked Shopify's consent
  * API (canTrack()) -- this file does not check consent itself. There is
@@ -44,6 +52,7 @@ export const envKeys = {
   pageViewEventId: 'PUBLIC_X_EVENT_ID_PAGE_VIEW',
   viewContentEventId: 'PUBLIC_X_EVENT_ID_VIEW_CONTENT',
   addToCartEventId: 'PUBLIC_X_EVENT_ID_ADD_TO_CART',
+  beginCheckoutEventId: 'PUBLIC_X_EVENT_ID_BEGIN_CHECKOUT',
 };
 
 /**
@@ -132,6 +141,32 @@ export function send(event, config) {
           num_items: item.quantity || 1,
         },
       ],
+    });
+    return;
+  }
+
+  // Checkout is Shopify hosted, so this fires on the click that leaves for
+  // checkout, not on the checkout page itself. CartSummary.jsx publishes
+  // custom_begin_checkout and holds the navigation until the event is
+  // confirmed sent, so this is not a fire-and-hope on an unloading page.
+  //
+  // Cart-level, so it sums the whole cart rather than reading items[0] the
+  // way view_item and add_to_cart do. Sending only the first line would
+  // under-report the value of every multi-item checkout, which is exactly
+  // the step where value matters most.
+  if (event.name === 'begin_checkout') {
+    if (!config.beginCheckoutEventId) return;
+    const items = Array.isArray(event.items) ? event.items : [];
+    window.twq('event', config.beginCheckoutEventId, {
+      value: event.value,
+      currency: event.currency || 'USD',
+      num_items: items.reduce((sum, i) => sum + (Number(i.quantity) || 1), 0),
+      contents: items.map((i) => ({
+        content_id: i.id,
+        content_name: i.name,
+        content_type: 'product',
+        num_items: i.quantity || 1,
+      })),
     });
     return;
   }
