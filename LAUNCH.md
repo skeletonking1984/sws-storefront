@@ -2021,3 +2021,25 @@ X's Conversion Diagnostics flipped from **"Not set up"** to **"Partially set up"
 2. **Rotate `MCP_AUTH_TOKEN`.** It was pasted into a shared screenshot, so it exists in a transcript and in shell history. Three places to update: the worker secret, the `sws-x` MCP registration, and `PRIVATE_X_RELAY_TOKEN`.
 3. **Where do the X ads point**, Etsy or the storefront? It decides whether `twclid` can ever work.
 4. Two $10.52 test conversions are real data in the ad account.
+
+#### X CAPI: events arriving, matching is the open question 2026-09-15
+A test order (#1044) went through and X's diagnostics moved from "Partially set up" to **"Not working"**, which reads worse but is progress: the text changed to **"CAPI events received, but none of your key conversions could be matched to a user."** The webhook fired, the relay signed, X accepted. **That entire chain is confirmed on a real order.**
+
+**The hashing was not the problem.** X's suggested fix (lowercase, trim, SHA-256) was already implemented, and it was verified rather than assumed: `"  TechGazetteTeam@Gmail.com  "` and `"techgazetteteam@gmail.com"` produce an identical hash, matching an independent `shasum -a 256`.
+
+**The real cause is coverage.** `hashed_email` only matches when the buyer's checkout email is the one on their X account, which for most shoppers it is not, and which was guaranteed to fail for the invented test addresses used so far. So the order's `browser_ip` and `client_details.user_agent` are now sent too, both of which X accepts, letting it match on the device that saw the ad.
+
+**The shape matters more than the content, and getting it wrong is silent and total.** X validates each element of `identifiers` as a complete identifier on its own. Verified against the live API:
+
+| Sent | Result |
+|---|---|
+| `[{hashed_email, ip_address, user_agent}]` | accepted |
+| `[{hashed_email}]` | accepted |
+| `[{ip_address, user_agent}]` | accepted |
+| `[{hashed_email}, {ip_address}, {user_agent}]` | **REJECTED** |
+
+The rejected form returns "At least one user identifier must be provided" **even though three were supplied**. The first version of this change used exactly that shape: it would not have degraded matching, it would have stopped every conversion being recorded. It was caught only because the change was sent to the real API instead of reasoned about. Do not split those identifiers back out.
+
+Deployed and verified live 2026-09-15 (`app-DL5hzIcZ.css`, home/cart/admin all 200).
+
+**Still open, and it is a real limit rather than a bug:** email matching depends on the buyer using their X-account email at checkout. A conversion sent with `spacelabsdiy@gmail.com` is the first test with a plausibly real X user behind it; if X still reports no match, email is not a reliable identifier for this shop and **`twclid` is the only strong one**. Which returns to the question nobody has answered: **do the three active campaigns land on streamwidgetshop.com or on Etsy?** The capture chain is proven working end to end (landing `?twclid=` to `sws_twclid` cookie to `_twclid` cart attribute, demonstrated on production), so if no click id ever arrives, the ads are not pointing here.
