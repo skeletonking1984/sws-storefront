@@ -1,4 +1,5 @@
 import {CartForm, Money, useAnalytics} from '@shopify/hydrogen';
+import {AnnotatedCartForm} from '~/components/AnnotatedCartForm';
 import {useEffect, useId, useRef, useState} from 'react';
 import {useFetcher} from 'react-router';
 
@@ -266,12 +267,14 @@ function CartDiscounts({
  */
 function UpdateDiscountForm({discountCodes, children}) {
   return (
-    <CartForm
+    <AnnotatedCartForm
       route="/cart"
       action={CartForm.ACTIONS.DiscountCodesUpdate}
       inputs={{
         discountCodes: discountCodes || [],
       }}
+      toolname="apply_discount_code"
+      tooldescription="Apply a discount code to the shopping cart, or remove the one already applied."
     >
       {/* CartForm hands the fetcher to a function child. The cart action
           returns an errors array when a typed code did not apply, and
@@ -291,7 +294,7 @@ function UpdateDiscountForm({discountCodes, children}) {
           </>
         );
       }}
-    </CartForm>
+    </AnnotatedCartForm>
   );
 }
 
@@ -412,13 +415,15 @@ function CartGiftCard({giftCardCodes, giftCardHeadingId, giftCardInputId}) {
  */
 function AddGiftCardForm({fetcherKey, children}) {
   return (
-    <CartForm
+    <AnnotatedCartForm
       fetcherKey={fetcherKey}
       route="/cart"
       action={CartForm.ACTIONS.GiftCardCodesAdd}
+      toolname="apply_gift_card"
+      tooldescription="Apply a gift card code to the shopping cart."
     >
       {children}
-    </CartForm>
+    </AnnotatedCartForm>
   );
 }
 
@@ -439,12 +444,14 @@ function RemoveGiftCardForm({
   buttonRef,
 }) {
   return (
-    <CartForm
+    <AnnotatedCartForm
       route="/cart"
       action={CartForm.ACTIONS.GiftCardCodesRemove}
       inputs={{
         giftCardCodes: [giftCardId],
       }}
+      toolname="remove_gift_card"
+      tooldescription="Remove a gift card already applied to the shopping cart."
     >
       {children}
       &nbsp;
@@ -456,7 +463,7 @@ function RemoveGiftCardForm({
       >
         Remove
       </button>
-    </CartForm>
+    </AnnotatedCartForm>
   );
 }
 

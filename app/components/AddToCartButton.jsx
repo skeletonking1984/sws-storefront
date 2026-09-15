@@ -1,4 +1,5 @@
 import {CartForm} from '@shopify/hydrogen';
+import {AnnotatedCartForm} from '~/components/AnnotatedCartForm';
 
 /**
  * @param {{
@@ -17,7 +18,17 @@ export function AddToCartButton({
   onClick,
 }) {
   return (
-    <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS.LinesAdd}>
+    // Declarative WebMCP. This is the buy action on every product page, and
+    // it was the one form on a PDP that Lighthouse reported as missing
+    // annotations. AnnotatedCartForm exists because CartForm drops unknown
+    // props, see that file.
+    <AnnotatedCartForm
+      route="/cart"
+      inputs={{lines}}
+      action={CartForm.ACTIONS.LinesAdd}
+      toolname="add_widget_to_cart"
+      tooldescription="Add this widget to the shopping cart. Fills the cart only, the shopper still completes checkout themselves."
+    >
       {(fetcher) => (
         <>
           <input
@@ -35,7 +46,7 @@ export function AddToCartButton({
           </button>
         </>
       )}
-    </CartForm>
+    </AnnotatedCartForm>
   );
 }
 

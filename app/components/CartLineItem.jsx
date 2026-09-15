@@ -1,3 +1,4 @@
+import {AnnotatedCartForm} from '~/components/AnnotatedCartForm';
 import {CartForm, Image} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
@@ -141,16 +142,18 @@ function CartLineQuantity({line}) {
  */
 function CartLineRemoveButton({lineIds, disabled}) {
   return (
-    <CartForm
+    <AnnotatedCartForm
       fetcherKey={getUpdateKey(lineIds)}
       route="/cart"
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
+      toolname="remove_cart_item"
+      tooldescription="Remove this widget from the shopping cart."
     >
       <button className="cart-remove-btn" disabled={disabled} type="submit">
         Remove
       </button>
-    </CartForm>
+    </AnnotatedCartForm>
   );
 }
 
@@ -164,14 +167,16 @@ function CartLineUpdateButton({children, lines}) {
   const lineIds = lines.map((line) => line.id);
 
   return (
-    <CartForm
+    <AnnotatedCartForm
       fetcherKey={getUpdateKey(lineIds)}
       route="/cart"
       action={CartForm.ACTIONS.LinesUpdate}
       inputs={{lines}}
+      toolname="update_cart_quantity"
+      tooldescription="Change how many of this widget are in the shopping cart."
     >
       {children}
-    </CartForm>
+    </AnnotatedCartForm>
   );
 }
 
