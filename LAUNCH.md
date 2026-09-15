@@ -2692,3 +2692,26 @@ the game. A takedown risk on Etsy, unrelated to the storefront, open for a while
 **Deliberately not run: `verify:x-capi`.** It posts a real conversion to the live
 pixel, which is the exact pollution this day was spent removing. Proving the
 cleanup by undoing it is not a test.
+
+### 2026-09-15 — Celestial Shopify hero was the stale one too
+
+Todd: "we need the new hero here", on the Shopify product page.
+
+The page was serving `01_hero_v2.jpg`, the variant with **no kit-exclusive strip**,
+reading "9 widgets. One sky. 4 chat". The product TITLE directly beside it read
+"10 Moon and Star Twitch Overlays, 5 Chat Widgets, 4 Goal Bars, Scene Overlay".
+Both visible at once, contradicting each other in the buyer's eyeline.
+
+Replaced in place with `fileUpdate` + `originalSource`, the same swap used on the
+Spooky Kit, so the MediaImage id, gallery order and `featuredMedia` are all
+preserved. Verified on the CDN by opening the image, then on the storefront at
+`?v=1789504500`.
+
+**Second time today the same trap:** corrected art sitting on disk, never
+uploaded. Spooky's had waited two days, Celestial's eight. The art work is not
+the deliverable, the upload is. **Check the live CDN bytes, never the local
+file**, and remember Shopify re-encodes so a hash comparison proves nothing.
+
+Still open on this kit, and both are Todd's: the Etsy draft (4571003644) is
+priced at $59.99 against Shopify's $39.99, and its images and two zips still need
+uploading before it can be published.
