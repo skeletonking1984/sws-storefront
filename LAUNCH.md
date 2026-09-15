@@ -43,7 +43,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 ### SEO
 - [x] Title/meta per product + collection (plus canonical, OG, Twitter card, JSON-LD)
 - [x] Sitemap + robots verified
-- [ ] Google Search Console: verify `streamwidgetshop.com` as a Domain property (DNS TXT in Cloudflare), submit `/sitemap.xml`. Todd's Google account. X-in-Search-Console is already connected (@streamwidget), read-only, data lands ~2026-09-12.
+- [ ] Google Search Console. **Domain property `sc-domain:streamwidgetshop.com` EXISTS and is healthy, confirmed 2026-09-15: Merchant listings 49 valid, 0 invalid, no critical issues.** Remaining: confirm `/sitemap.xml` is submitted under that property. X-in-Search-Console is already connected (@streamwidget), read-only.
 - [ ] Merchant Center feed via the Google & YouTube app. After DNS cutover (product URLs must resolve on the live domain).
 ### Agentic
 - [ ] WebMCP live for real visitors. Code is shipped and verified: 3 imperative tools on `document.modelContext` (`search_widgets`, `get_widget_details`, `add_to_cart`, via `app/lib/agentTools.js` and `/api/agent`), 4 declarative forms carrying `toolname`/`tooldescription`, and `Layout` renders `<meta http-equiv="origin-trial">` when `PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKEN` is set. **Blocked on two things only Todd can do**, and Lighthouse reports all three WebMCP audits Not Applicable until the first one is done:
@@ -2060,3 +2060,14 @@ The full chain, end to end on production: Shopify `orders/create` webhook to the
 2. **Where do the three active campaigns land**, Etsy or the storefront? Decides whether `twclid` can ever work.
 3. **BAT-147**, the cart attribute wipe. One line in `context.js`. Masked today because attributes re-derive from cookies, but it drops a `twclid` whose 90 day cookie expired on a long lived cart, which matters more once click ids start arriving.
 4. Five test conversions are real data in the ad account.
+
+#### The Search Console "2 valid items" scare was the wrong property 2026-09-15
+Todd saw Merchant listings collapse from about 40 to **2 valid items**, with the cliff starting right after the DNS cutover. It looked like the new site had broken its structured data.
+
+**It had not.** He was looking at the **`https://www.streamwidgetshop.com/` URL-prefix property**. Every www URL now 301s to the apex, verified on the exact product in the report, so Google re-crawled, found redirects, and moved the content to the apex. The www property's valid items drain to zero as a consequence of the redirect working correctly.
+
+The **Domain property** `sc-domain:streamwidgetshop.com` tells the true story: **49 valid, 0 invalid, no critical issues**, with a healthy trend that peaked near 70 in late August.
+
+The apex markup is also richer than the old theme's. Served right now on a product page: `name`, `description`, `image`, `productID`, `brand`, `aggregateRating`, `review`, and an `offers` block carrying `price`, `priceCurrency`, `availability`, `itemCondition`, `url`, **`hasMerchantReturnPolicy`** and **`shippingDetails`**. The last two are fields Google now wants for Merchant listings and the old theme did not emit.
+
+**Keep the www property.** It is not noise, it is evidence the redirect is working. Just do not read site health from it.
