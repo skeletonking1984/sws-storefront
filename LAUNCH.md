@@ -2167,3 +2167,22 @@ straight after a write is not evidence.
    chat widget is the kit-exclusive Spooky Multistream Chat, the one component
    nobody can buy separately, so the art is omitting the strongest reason to buy
    the kit. Title and description are correct. Needs a re-render, not an edit.
+
+**Same day, revised: matched to Etsy at $29.99.** Auny's call, Todd's decision:
+"listen to auny, we should probably match to start". The $39.99 above stood for
+about twenty minutes.
+
+Matched DOWN rather than raising Etsy, because the Etsy listing (4570446087) is
+live with real views and favourites and Etsy is still the primary sales channel,
+so lowering the newer channel is both the cheaper edit and the safer one. Both
+are $29.99 now. Compare-at stays $100.50, so the discount simply reads deeper,
+70% instead of 63%. The MANIFEST's "save 63%" line was stale against the old
+$36.99 row and is recomputed; it needs recomputing on every price move.
+
+Verified live at 29.99 on the first poll this time. Closes the undercut flagged
+in the entry above, and `docs/x-ads-brief.md` now tells Auny it is safe to point
+ads at any kit.
+
+Multistream Chat Widget Pack is still mismatched the other way, $29.99 here and
+$48.38 on Etsy. Left alone on purpose: that direction costs the storefront
+nothing.
