@@ -13,3 +13,7 @@ screenshots/
 hero/*.png
 app/assets/hero-widgets.png
 .env.x
+
+# Blog hero pipeline: captures and renders are reproducible from the scripts.
+blog-hero/widgets-raw/
+blog-hero/out/

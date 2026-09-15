@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SWS blog hero</title>
+<style>
+  /*
+   * 1200x630 blog hero. Real widget stickers on a built background, brand type.
+   *
+   * 1200x630 because the same file does two jobs: the in-page hero and the
+   * Open Graph card. The old heroes ranged from 474x474 to 6000x3958, which is
+   * why some rendered as postage stamps in the article column.
+   *
+   * The article page already prints the title above the image, so the headline
+   * here is a SHORT hook, never the title again. On a share card it is the only
+   * text anyone sees; on the page it reads as art rather than a repeat.
+   */
+  @font-face {
+    font-family: 'Baloo 2';
+    font-style: normal;
+    font-weight: 400 800;
+    src: url('/fonts/baloo-2-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Space Grotesk';
+    font-style: normal;
+    font-weight: 400 700;
+    src: url('/fonts/space-grotesk-latin.woff2') format('woff2');
+  }
+
+  html, body { margin: 0; padding: 0; background: #06030d; }
+  * { box-sizing: border-box; }
+
+  #canvas {
+    width: 1200px;
+    height: 630px;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(760px 520px at var(--glow-x, 74%) var(--glow-y, 22%), var(--glow-1), transparent 62%),
+      radial-gradient(620px 520px at 8% 88%, var(--glow-2), transparent 60%),
+      linear-gradient(158deg, #0a0614 0%, #140c24 52%, #1b1030 100%);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+
+  /* Starfield. Hand placed, not a noise texture: a regular dot pattern reads as
+     a screen artefact at this size. */
+  .stars { position: absolute; inset: 0; opacity: .62; }
+
+  /* Scanlines tie the card to a stream capture rather than a poster. */
+  .scan {
+    position: absolute; inset: 0; opacity: .055;
+    background: repeating-linear-gradient(to bottom,
+      rgba(255,255,255,.9) 0, rgba(255,255,255,.9) 1px, transparent 1px, transparent 3px);
+  }
+
+  /* A single wide holographic sweep across the whole card, low opacity, to stop
+     the dark half going flat and dead. */
+  .sweep {
+    position: absolute; inset: -20%;
+    background: linear-gradient(112deg, transparent 32%, rgba(242,166,216,.16) 47%,
+      rgba(183,157,242,.14) 56%, rgba(127,230,255,.13) 65%, transparent 78%);
+    filter: blur(24px);
+  }
+
+  .copy {
+    position: absolute;
+    left: 66px; top: 0; bottom: 46px;
+    width: var(--copy-w, 600px);
+    display: flex; flex-direction: column; justify-content: center;
+    z-index: 4;
+  }
+
+  .kicker {
+    display: inline-flex; align-items: center; gap: 12px;
+    align-self: flex-start;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 700; font-size: 17px; letter-spacing: .20em;
+    text-transform: uppercase;
+    color: #ffe9fb;
+    padding: 10px 20px 10px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.26);
+    background: rgba(255,255,255,.07);
+    box-shadow: 0 0 26px var(--kicker-glow, rgba(240,80,154,.45));
+    margin-bottom: 26px;
+  }
+  .kicker i {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent); display: block;
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  h1 {
+    margin: 0;
+    font-family: 'Baloo 2', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: var(--title-size, 74px);
+    line-height: 1.04;
+    letter-spacing: -.005em;
+    color: #fff;
+    text-wrap: balance;
+    /* Holographic fill, the brand's own gradient, clipped to the glyphs. The
+       paint-order trick below keeps a dark rim under it so the light end of the
+       gradient still separates from the light end of the background glow. */
+    background: linear-gradient(96deg, #fff 6%, #ffd9f2 26%, #d9c4ff 52%, #a8e9ff 78%, #fff 96%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 22px rgba(0,0,0,.55)) drop-shadow(0 0 30px var(--title-glow, rgba(199,140,255,.42)));
+  }
+
+  .rule {
+    margin-top: 28px; width: 132px; height: 5px; border-radius: 3px;
+    background: linear-gradient(90deg, #f2a6d8, #b79df2 55%, #7fe6ff);
+    box-shadow: 0 0 18px rgba(183,157,242,.7);
+  }
+
+  .sub {
+    margin-top: 20px;
+    font-size: 21px; line-height: 1.45; font-weight: 400;
+    color: #ded5f0;
+    max-width: var(--sub-w, 440px);
+  }
+
+  /* Widget stickers. Each gets a themed glow so a transparent PNG does not read
+     as a flat cut-out pasted on. */
+  .sticker { position: absolute; z-index: 3; }
+  .sticker img { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+  /* Bottom LEFT, under the copy column. It sat bottom right in the first cut
+     and the widget sticker, which deliberately bleeds off that corner, landed
+     straight on top of it. */
+  .brand {
+    position: absolute; left: 68px; bottom: 34px; z-index: 6;
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Baloo 2', system-ui, sans-serif;
+    font-weight: 700; font-size: 21px; color: #efe6ff;
+    opacity: .92;
+    text-shadow: 0 2px 14px rgba(0,0,0,.8);
+  }
+  .brand img { height: 34px; width: auto; display: block; filter: drop-shadow(0 0 12px rgba(183,157,242,.55)); }
+
+  /* Vignette last, so nothing floats off the dark corners. */
+  .vig {
+    position: absolute; inset: 0; z-index: 5; pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 45%, transparent 52%, rgba(4,2,10,.62) 100%);
+  }
+</style>
+</head>
+<body>
+  <div id="canvas"></div>
+<script>
+/*
+ * URLSearchParams.get() ALREADY percent-decodes. Wrapping it in
+ * decodeURIComponent decodes twice, and the second pass throws "URI malformed"
+ * the moment a value contains a literal %, which any glow position does
+ * ("78%"). The page then renders nothing at all, with the only clue being a
+ * pageerror nobody reads.
+ */
+const cfg = JSON.parse(new URLSearchParams(location.search).get('c') || '{}');
+
+const canvas = document.getElementById('canvas');
+canvas.style.setProperty('--glow-1', cfg.glow1 || 'rgba(242,166,216,.34)');
+canvas.style.setProperty('--glow-2', cfg.glow2 || 'rgba(127,230,255,.20)');
+canvas.style.setProperty('--accent', cfg.accent || '#f2a6d8');
+canvas.style.setProperty('--kicker-glow', cfg.kickerGlow || 'rgba(240,80,154,.45)');
+canvas.style.setProperty('--title-glow', cfg.titleGlow || 'rgba(199,140,255,.42)');
+if (cfg.glowX) canvas.style.setProperty('--glow-x', cfg.glowX);
+if (cfg.glowY) canvas.style.setProperty('--glow-y', cfg.glowY);
+if (cfg.copyW) canvas.style.setProperty('--copy-w', cfg.copyW);
+if (cfg.subW) canvas.style.setProperty('--sub-w', cfg.subW);
+if (cfg.titleSize) canvas.style.setProperty('--title-size', cfg.titleSize);
+
+/* Deterministic starfield: a seeded PRNG, not Math.random, so re-rendering the
+   same hero produces byte-identical output and a diff means a real change. */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rnd = mulberry32(cfg.seed || 7);
+const stars = document.createElement('div');
+stars.className = 'stars';
+let sg = [];
+for (let i = 0; i < 90; i++) {
+  const x = (rnd() * 100).toFixed(2), y = (rnd() * 100).toFixed(2);
+  const r = (rnd() * 1.1 + 0.7).toFixed(2);
+  const c = rnd() > .78 ? '#ffe3fb' : '#ffffff';
+  sg.push(`radial-gradient(${r}px ${r}px at ${x}% ${y}%, ${c}, transparent 100%)`);
+}
+stars.style.backgroundImage = sg.join(',');
+canvas.appendChild(stars);
+
+const sweep = document.createElement('div'); sweep.className = 'sweep'; canvas.appendChild(sweep);
+
+/* Stickers BEFORE copy in the DOM but z-indexed under it, so a wide widget can
+   bleed behind the headline without covering a glyph. */
+for (const s of (cfg.stickers || [])) {
+  const d = document.createElement('div');
+  d.className = 'sticker';
+  d.style.cssText = `left:${s.x}px;top:${s.y}px;width:${s.w}px;height:${s.h}px;`
+    + (s.rotate ? `transform:rotate(${s.rotate}deg);` : '')
+    + (s.z ? `z-index:${s.z};` : '')
+    + `filter:${s.glow || 'drop-shadow(0 0 34px rgba(240,80,154,.5)) drop-shadow(0 0 72px rgba(127,230,255,.28))'};`;
+  const img = document.createElement('img');
+  img.src = '/widgets/' + s.id + '.png';
+  d.appendChild(img);
+  canvas.appendChild(d);
+}
+
+const copy = document.createElement('div');
+copy.className = 'copy';
+copy.innerHTML = `
+  <span class="kicker"><i></i>${cfg.kicker || ''}</span>
+  <h1>${cfg.title || ''}</h1>
+  <div class="rule"></div>
+  ${cfg.sub ? `<div class="sub">${cfg.sub}</div>` : ''}`;
+canvas.appendChild(copy);
+
+const scan = document.createElement('div'); scan.className = 'scan'; canvas.appendChild(scan);
+const vig = document.createElement('div'); vig.className = 'vig'; canvas.appendChild(vig);
+
+const brand = document.createElement('div');
+brand.className = 'brand';
+brand.innerHTML = `<img src="/brand/mark.png" alt="">streamwidgetshop.com`;
+canvas.appendChild(brand);
+
+/* Signal readiness only once every image has decoded. Screenshotting before the
+   stickers decode produces a background-only card, which is exactly the failure
+   the montage renderer hit on 2026-09-15. */
+Promise.all([...document.images].map((i) => i.decode().catch(() => {})))
+  .then(() => document.fonts.ready)
+  .then(() => { window.__HERO_READY__ = true; });
+</script>
+</body>
+</html>

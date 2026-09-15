@@ -1,0 +1,44 @@
+[
+  {
+    "slug": "vtuber-celestial",
+    "kicker": "VTuber overlays",
+    "title": "Your overlay is<br>the first thing<br>they judge",
+    "sub": "Kawaii and celestial widgets that read clean on stream.",
+    "seed": 11,
+    "accent": "#f2a6d8",
+    "glow1": "rgba(242,166,216,.42)",
+    "glow2": "rgba(146,120,255,.28)",
+    "glowX": "76%",
+    "glowY": "36%",
+    "titleGlow": "rgba(219,140,255,.5)",
+    "kickerGlow": "rgba(240,80,154,.5)",
+    "copyW": "600px",
+    "subW": "430px",
+    "titleSize": "64px",
+    "stickers": [
+      {"id": "celestial-multistream-chat", "x": 742, "y": 22, "w": 392, "h": 628, "rotate": -4, "z": 3,
+       "glow": "drop-shadow(0 0 30px rgba(240,80,154,.45)) drop-shadow(0 0 78px rgba(146,120,255,.42))"}
+    ]
+  },
+  {
+    "slug": "goal-widgets",
+    "kicker": "Goal widgets",
+    "title": "A goal bar<br>people actually<br>want to fill",
+    "sub": "Animated sub, tip and follower goals for Twitch and OBS.",
+    "seed": 23,
+    "accent": "#ffd66e",
+    "glow1": "rgba(255,196,110,.34)",
+    "glow2": "rgba(146,120,255,.30)",
+    "glowX": "74%",
+    "glowY": "44%",
+    "titleGlow": "rgba(255,206,130,.42)",
+    "kickerGlow": "rgba(255,190,90,.45)",
+    "copyW": "590px",
+    "subW": "420px",
+    "titleSize": "64px",
+    "stickers": [
+      {"id": "moon-jar-goal", "x": 742, "y": 26, "w": 424, "h": 517, "rotate": 3, "z": 3,
+       "glow": "drop-shadow(0 0 30px rgba(255,214,140,.45)) drop-shadow(0 0 74px rgba(146,120,255,.4))"}
+    ]
+  }
+]
