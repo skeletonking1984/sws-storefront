@@ -2507,3 +2507,49 @@ is trusted.
 - The Spooky Kit is the exception: it ends 31 Oct regardless, so judge it on the
   season and do not extend the deadline to rescue the number. That would make
   the limited-time claim false.
+
+### 2026-09-15 — Both Purchase events are live on the same pixel
+
+Todd, from Events Manager: "both purchase events are active it looks like, we
+need to be watch this." Confirmed from the screenshot, and it falsifies a claim
+this file and `docs/x-ads-brief.md` both made this morning.
+
+| Event | Type | Status | Last recorded |
+|---|---|---|---|
+| `SWS Purchase` | Purchase | **Active** | Sep 15, 12:32 PM |
+| `Shopify:72470e-33:PURCHASE` | Purchase | **Active** | Sep 15, 11:35 AM |
+| `Shopify:72470e-33:CHECKOUT_INITIATED` | Checkout initiated | Active | Sep 15, 10:19 AM |
+| `SWS PageView` / `AddToCart` / `ViewContent` | ours | Active | Sep 15 |
+| `Shopify:...:CONTENT_VIEW` / `ADD_TO_CART` / `SEARCH` | theirs | Inactive | never |
+
+**The brief said the Shopify Purchase event existed but "nothing feeds it".
+Wrong: it has a last-recorded timestamp, so it is being fed.** Corrected there
+with the real numbers.
+
+**The deeper mistake was the advice, not the fact.** The brief told Auny "do not
+switch it on", which assumes a human switches it on. Nobody did. Shopify's X
+sales channel activates its own events, which is exactly how CHECKOUT_INITIATED
+turned up active days ago without anyone touching it. An instruction not to flip
+a switch is useless against a switch that flips itself.
+
+**Why two live Purchase events is not cosmetic.** One order can now be counted
+twice, once by our Conversion API through the relay and once by the sales
+channel. X deduplicates on `conversion_id`, and the id our webhook sends is not
+the id the sales channel sends, so the two cannot collapse. On top of that the
+optimiser splits its learning across two events, which looks perfectly healthy
+in the UI.
+
+**Consequence to act on now: any Purchase number in Ads Manager is unreliable,
+and no campaign should be optimised for Purchase until one is off.** Auny's test
+campaign is Website traffic, so it is unaffected today.
+
+Todd's call, and only his, since it is an Events Manager setting: turn off
+`Shopify:72470e-33:PURCHASE` and keep `SWS Purchase`. Ours is server side, fires
+from the orders webhook so an ad blocker cannot hide it, and carries `twclid`
+plus hashed email, IP and user agent. The sales channel's carries whatever
+Shopify chooses to send.
+
+**Watch item:** re-check Events Manager after any Shopify sales-channel change or
+app update. This has now silently activated twice. If there is a way to stop the
+channel creating events at all, that is the durable fix; turning the event off
+one time is not.

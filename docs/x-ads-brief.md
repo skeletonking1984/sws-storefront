@@ -14,12 +14,29 @@ The site is instrumented and ready. Point ads at any page, optimise for the
 **`SWS Purchase`** — event ID **`tw-q7mwb-rf9yi`**, on pixel **`q7mwb`**.
 
 Events manager lists a second Purchase event, `Shopify:72470e-33:PURCHASE`
-(`tw-q7mwb-rfa3z`). **Do not use it and do not switch it on.** It was created
-automatically by Shopify's X sales channel and nothing feeds it. If both are
-live you get two competing purchase events on one pixel and the optimiser
-splits across them, which looks fine in the UI and quietly wastes budget.
+(`tw-q7mwb-rfa3z`). ~~It was created automatically by Shopify's X sales channel
+and nothing feeds it.~~
 
-The `SWS` prefixed events are ours. The `Shopify:` prefixed ones are not.
+**Correction, 2026-09-15. That was wrong, and it matters.** Both Purchase events
+are now **Active and recording** on the same pixel: `SWS Purchase` last recorded
+12:32, `Shopify:72470e-33:PURCHASE` last recorded 11:35 the same day. Shopify's
+X sales channel is feeding its event. `Shopify:72470e-33:CHECKOUT_INITIATED` is
+Active too. Nobody switched either on deliberately, which is the point: **the
+sales channel activates its own events, so "do not switch it on" was never
+enough.**
+
+Two live Purchase events on one pixel means the optimiser splits across them and
+a single order can be counted twice, once by our Conversion API and once by the
+sales channel. Neither knows about the other, and the `conversion_id` we send for
+deduplication is not the id the sales channel sends, so X cannot collapse them.
+
+**Until Todd turns one off, treat any purchase count in Ads Manager as
+unreliable, and do not optimise a campaign for Purchase.** Optimise for a
+link-click or landing-page objective in the meantime. The `SWS` prefixed events
+are ours and are the ones to keep; the `Shopify:` prefixed ones are the sales
+channel's.
+
+**Auny cannot fix this.** It is an Events Manager setting on Todd's ads account.
 
 ## 2. Click ID, and what NOT to worry about
 
