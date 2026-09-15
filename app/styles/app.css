@@ -3968,6 +3968,245 @@ button.reset:hover:not(:has(> *)) {
 }
 
 /*
+  ARTICLE TYPOGRAPHY, added 2026-09-15.
+
+  Todd: "the blog article pages look like shit ... we need better
+  headers/style/formatting and cooler fonts."
+
+  He was right and the cause was not the content. The markup Shopify returns is
+  well formed: this article alone carries 20 h2, 11 h3, 21 ul and 129 li. NOT
+  the flat-<p>-glued-with-<br> shape the product descriptions arrive in, so
+  nothing needed normalising. Every one of those elements was simply landing on
+  browser defaults, because `.article` only ever set page padding and an h1
+  size. A 20-heading article with no heading scale reads as one undifferentiated
+  wall, which is exactly how it looked.
+
+  Scoped to `.article-body` rather than `.article` so it only touches the
+  dangerouslySetInnerHTML block, never the page furniture around it.
+*/
+.article-body {
+  /*
+    65ch, not the 1200px the page allows. Long-form prose at 1200px runs to
+    ~160 characters a line and the eye loses its place on the return sweep;
+    the readability range is 45 to 75. The measure is the single biggest
+    change here, ahead of any font choice.
+  */
+  max-width: 68ch;
+  margin: 2.5rem auto 0;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--sws-sub);
+}
+
+/* Lead paragraph: sets the tone before the reader commits to the article. */
+.article-body > p:first-of-type {
+  font-size: 1.1875rem;
+  line-height: 1.7;
+  color: var(--sws-text, #ece7f7);
+}
+
+.article-body p {
+  margin: 0 0 1.15rem;
+}
+
+/*
+  Headings in the display face. Baloo 2 is already the brand's display font and
+  was going unused on this page entirely, which is most of why the articles read
+  as generic. Sizes are a real scale (2rem / 1.35rem) rather than the browser's
+  h2-h3 default, so a section break is visible at a glance while scrolling.
+*/
+.article-body :is(h2, h3, h4) {
+  font-family: var(--font-display);
+  color: var(--sws-text, #f3eefb);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.article-body h2 {
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.05rem);
+  font-weight: 800;
+  margin: 2.75rem 0 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--sws-border);
+}
+
+/*
+  The first h2 sits right under the lead, where a rule would read as a stray
+  divider rather than a section break.
+*/
+.article-body > h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.article-body h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 2rem 0 .65rem;
+}
+
+.article-body h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 1.5rem 0 .5rem;
+  color: var(--sws-sub);
+}
+
+/*
+  Lists were the worst of it. Shopify's editor emits plain ul/li and with no
+  styling the markers sat outside the measure and the items ran together, so
+  "clean / modern / cinematic" read as four orphan paragraphs instead of one
+  list. Custom marker keeps the text aligned and puts the brand colour on the
+  page where the eye already is.
+*/
+.article-body ul,
+.article-body ol {
+  margin: 0 0 1.35rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.article-body li {
+  position: relative;
+  padding-left: 1.6rem;
+  margin-bottom: .55rem;
+}
+
+.article-body ul > li::before {
+  content: '';
+  position: absolute;
+  left: .25rem;
+  top: .72em;
+  width: .45rem;
+  height: .45rem;
+  border-radius: 50%;
+  background: var(--sws-holo-2);
+}
+
+.article-body ol {
+  counter-reset: sws-ol;
+}
+
+.article-body ol > li {
+  counter-increment: sws-ol;
+}
+
+.article-body ol > li::before {
+  content: counter(sws-ol);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: .95em;
+  color: var(--sws-holo-2);
+}
+
+.article-body strong,
+.article-body b {
+  color: var(--sws-text, #f3eefb);
+  font-weight: 700;
+}
+
+.article-body a {
+  color: var(--sws-holo-1);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.article-body a:hover {
+  color: var(--sws-holo-3);
+}
+
+.article-body blockquote {
+  margin: 1.75rem 0;
+  padding: .25rem 0 .25rem 1.25rem;
+  border-left: 3px solid var(--sws-holo-2);
+  color: var(--sws-text, #ece7f7);
+  font-size: 1.1rem;
+}
+
+.article-body img {
+  border-radius: 14px;
+  margin: 1.75rem 0;
+}
+
+.article-body hr {
+  border: 0;
+  border-top: 1px solid var(--sws-border);
+  margin: 2.5rem 0;
+}
+
+/*
+  The article H1 and its byline. The shared `.article h1` rule set 1.8rem for
+  every page type at once; long article titles need more presence than a
+  policy page heading, and the byline was inheriting h1 weight and size
+  because the route nests it inside the h1 element.
+*/
+.article > h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 2.6vw, 3rem);
+  font-weight: 800;
+  line-height: 1.12;
+  text-wrap: balance;
+  max-width: 20ch;
+  margin: .5rem auto 1.25rem;
+  text-align: center;
+}
+
+.article > h1 div {
+  font-family: var(--font-body);
+  font-size: .9rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--sws-sub);
+  margin-top: .85rem;
+  letter-spacing: .02em;
+}
+
+.article > h1 address {
+  display: inline;
+  font-style: normal;
+}
+
+/*
+  Cross-sell row under an article. Deliberately styled as a distinct block
+  rather than more article body: it is an ad, and dressing an ad up as the
+  next paragraph is the pattern that teaches readers to distrust the page.
+  See app/lib/blogCrossSell.js for how the products are chosen, and why a row
+  is omitted entirely when nothing honest matches.
+*/
+.article-crosssell {
+  max-width: 68ch;
+  margin: 3.5rem auto 0;
+  padding-top: 2rem;
+  border-top: 1px solid var(--sws-border);
+}
+
+.article-crosssell h2 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--sws-text, #f3eefb);
+  margin: 0 0 1.25rem;
+}
+
+.article-crosssell-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 45em) {
+  .article-crosssell-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/*
 * --------------------------------------------------
 * routes/account
 * --------------------------------------------------

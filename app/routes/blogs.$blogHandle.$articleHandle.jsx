@@ -1,5 +1,12 @@
-import {useLoaderData} from 'react-router';
+import {Await, useLoaderData} from 'react-router';
+import {Suspense} from 'react';
 import {Image} from '@shopify/hydrogen';
+import {ProductItem} from '~/components/ProductItem';
+import {
+  crossSellQuery,
+  crossSellHeading,
+  filterCrossSell,
+} from '~/lib/blogCrossSell';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {buildMeta, getOrigin} from '~/lib/seo';
 
@@ -71,7 +78,32 @@ async function loadCriticalData({context, request, params}) {
 
   const article = blog.articleByHandle;
 
-  return {article};
+  /*
+    Cross-sell is derived from the article, so it cannot live in
+    loadDeferredData, which runs before the article exists. Started here and
+    returned UNAWAITED so it streams in behind the page instead of holding
+    time-to-first-byte for a row that sits below the whole article.
+
+    Resolves to null when the article gives nothing honest to match on; see
+    app/lib/blogCrossSell.js for why a themeless article gets no themed row.
+  */
+  const picked = crossSellQuery(article);
+  const crossSell = picked
+    ? context.storefront
+        .query(CROSS_SELL_QUERY, {variables: {query: picked.query}})
+        .then((data) => ({
+          heading: crossSellHeading(picked),
+          products: filterCrossSell(
+            data?.products?.nodes || [],
+            picked,
+            article.contentHtml || '',
+          ).slice(0, 4),
+        }))
+        // Never let a failed cross-sell take the article down with it.
+        .catch(() => null)
+    : null;
+
+  return {article, crossSell};
 }
 
 /**
@@ -152,7 +184,7 @@ function sharpenArticleImages(html) {
 
 export default function Article() {
   /** @type {LoaderReturnData} */
-  const {article} = useLoaderData();
+  const {article, crossSell} = useLoaderData();
   const {title, image, contentHtml, author} = article;
   const bodyHtml = sharpenArticleImages(contentHtml);
 
@@ -201,13 +233,85 @@ export default function Article() {
           }
         />
       )}
+      {/*
+        `article-body`, not `article`: the typography rules in app.css are
+        scoped to this inner block so they style the author's content without
+        also hitting the h1, byline and hero above it. The class was `article`
+        here, which meant the outer page padding rule applied twice, nested.
+      */}
       <div
         dangerouslySetInnerHTML={{__html: bodyHtml}}
-        className="article"
+        className="article-body"
       />
+
+      {crossSell && (
+        <Suspense fallback={null}>
+          <Await resolve={crossSell} errorElement={null}>
+            {(data) =>
+              data && data.products.length > 0 ? (
+                <aside className="article-crosssell">
+                  <h2>{data.heading}</h2>
+                  <div className="article-crosssell-grid">
+                    {data.products.map((product) => (
+                      <ProductItem
+                        key={product.id}
+                        product={product}
+                        headingLevel={3}
+                      />
+                    ))}
+                  </div>
+                </aside>
+              ) : null
+            }
+          </Await>
+        </Suspense>
+      )}
     </div>
   );
 }
+
+/*
+  Cross-sell row query. Same shape ProductItem expects everywhere else, kept
+  local rather than imported so this route owns what it asks for. `first: 12`
+  and not 4: filterCrossSell() throws away anything that shares no term with
+  the query, because Shopify full-text search will return a Christmas goal bar
+  for a Halloween query once the close matches run out, so the row needs
+  headroom to discard from before it trims to 4.
+*/
+const CROSS_SELL_QUERY = `#graphql
+  fragment MoneyCrossSell on MoneyV2 {
+    amount
+    currencyCode
+  }
+  fragment CrossSellItem on Product {
+    id
+    handle
+    title
+    productType
+    worksWith: metafield(namespace: "custom", key: "works_with") { value }
+    featuredImage {
+      id
+      altText
+      url
+    }
+    priceRange {
+      minVariantPrice {
+        ...MoneyCrossSell
+      }
+      maxVariantPrice {
+        ...MoneyCrossSell
+      }
+    }
+  }
+  query BlogCrossSell($query: String!, $country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    products(first: 12, query: $query, sortKey: RELEVANCE) {
+      nodes {
+        ...CrossSellItem
+      }
+    }
+  }
+`;
 
 // NOTE: https://shopify.dev/docs/api/storefront/latest/objects/blog#field-blog-articlebyhandle
 const ARTICLE_QUERY = `#graphql
@@ -222,6 +326,7 @@ const ARTICLE_QUERY = `#graphql
       articleByHandle(handle: $articleHandle) {
         handle
         title
+        tags
         contentHtml
         publishedAt
         author: authorV2 {
