@@ -39,20 +39,41 @@ const X_CAPI_VERSION = '12';
 export const id = 'x';
 
 /**
- * All five values must be present: four for the OAuth signature, one to
- * address the pixel. The purchase event id is checked separately inside
- * `sendPurchase`, so a missing one no-ops rather than sending a request X
- * would reject.
+ * TWO AUTH PATHS, because X appears to offer both and only one of them is
+ * confirmed in the docs.
+ *
+ *   A. Pixel token. A single static token generated in the Ads UI under
+ *      Events Manager, sent as an `X-Pixel-Token` header. Needs no developer
+ *      account and no Ads API approval. Referenced in X's developer forum
+ *      but NOT in the web-conversions docs page, so it is treated here as
+ *      likely-but-unconfirmed and simply preferred when the value exists.
+ *   B. OAuth 1.0a. Four credentials, signed per request. This is the path
+ *      the official docs describe, and it requires a developer account with
+ *      Ads API access.
+ *
+ * Whichever is configured is used, A first because it is far less work to
+ * obtain. Supporting both costs one branch and removes the need to guess
+ * right, which a previous version of this file did not do: it sent a plain
+ * bearer token, which is neither of these and would always have failed.
  * @param {Record<string, string | undefined>} env
  */
-export function isConfigured(env) {
-  return Boolean(
+export function authMode(env) {
+  if (!env?.PUBLIC_X_PIXEL_ID) return null;
+  if (env?.PRIVATE_X_PIXEL_TOKEN) return 'pixel_token';
+  if (
     env?.PRIVATE_X_CONSUMER_KEY &&
-      env?.PRIVATE_X_CONSUMER_SECRET &&
-      env?.PRIVATE_X_ACCESS_TOKEN &&
-      env?.PRIVATE_X_ACCESS_TOKEN_SECRET &&
-      env?.PUBLIC_X_PIXEL_ID,
-  );
+    env?.PRIVATE_X_CONSUMER_SECRET &&
+    env?.PRIVATE_X_ACCESS_TOKEN &&
+    env?.PRIVATE_X_ACCESS_TOKEN_SECRET
+  ) {
+    return 'oauth1';
+  }
+  return null;
+}
+
+/** @param {Record<string, string | undefined>} env */
+export function isConfigured(env) {
+  return authMode(env) !== null;
 }
 
 /** SHA256 hex, lowercased and trimmed first, unsalted. Per X's docs. */
@@ -137,20 +158,25 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
   )}`;
 
   try {
-    const authorization = await oauth1Header({
-      method: 'POST',
-      url,
-      credentials: {
-        consumerKey: env.PRIVATE_X_CONSUMER_KEY,
-        consumerSecret: env.PRIVATE_X_CONSUMER_SECRET,
-        token: env.PRIVATE_X_ACCESS_TOKEN,
-        tokenSecret: env.PRIVATE_X_ACCESS_TOKEN_SECRET,
-      },
-    });
+    const headers = {'Content-Type': 'application/json'};
+    if (authMode(env) === 'pixel_token') {
+      headers['X-Pixel-Token'] = env.PRIVATE_X_PIXEL_TOKEN;
+    } else {
+      headers.authorization = await oauth1Header({
+        method: 'POST',
+        url,
+        credentials: {
+          consumerKey: env.PRIVATE_X_CONSUMER_KEY,
+          consumerSecret: env.PRIVATE_X_CONSUMER_SECRET,
+          token: env.PRIVATE_X_ACCESS_TOKEN,
+          tokenSecret: env.PRIVATE_X_ACCESS_TOKEN_SECRET,
+        },
+      });
+    }
 
     const response = await fetch(url, {
       method: 'POST',
-      headers: {authorization, 'Content-Type': 'application/json'},
+      headers,
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(8000),
     });

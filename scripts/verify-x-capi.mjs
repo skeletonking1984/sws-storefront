@@ -11,15 +11,18 @@
  * is gitignored. Never print a secret: only presence and length are shown.
  */
 import fs from 'node:fs';
-import {sendPurchase, isConfigured} from '../app/lib/conversions/x.server.js';
+import {sendPurchase, isConfigured, authMode} from '../app/lib/conversions/x.server.js';
 
-const REQUIRED = [
+// Two ways to authenticate. The pixel token path needs 3 values in total,
+// the OAuth path needs 6. Either is fine; the script reports which one the
+// current environment satisfies.
+const ALWAYS = ['PUBLIC_X_PIXEL_ID', 'PRIVATE_X_PURCHASE_EVENT_ID'];
+const PATH_A = ['PRIVATE_X_PIXEL_TOKEN'];
+const PATH_B = [
   'PRIVATE_X_CONSUMER_KEY',
   'PRIVATE_X_CONSUMER_SECRET',
   'PRIVATE_X_ACCESS_TOKEN',
   'PRIVATE_X_ACCESS_TOKEN_SECRET',
-  'PUBLIC_X_PIXEL_ID',
-  'PRIVATE_X_PURCHASE_EVENT_ID',
 ];
 
 const env = {...process.env};
@@ -33,19 +36,33 @@ for (const file of ['.env.x', '.env']) {
   }
 }
 
-console.log('Credentials');
-let missing = 0;
-for (const key of REQUIRED) {
-  const v = env[key];
-  if (!v) missing++;
-  const shown = key.startsWith('PUBLIC_') ? v : v ? `set, ${v.length} chars` : '';
-  console.log(`  ${v ? 'OK     ' : 'MISSING'} ${key}${v ? '  ' + shown : ''}`);
-}
-console.log(`\n  isConfigured(): ${isConfigured(env)}`);
-if (missing) {
-  console.log(`\n${missing} value(s) missing. Nothing sent.`);
+const show = (keys, label) => {
+  console.log(`\n${label}`);
+  let have = 0;
+  for (const key of keys) {
+    const v = env[key];
+    if (v) have++;
+    const detail = key.startsWith('PUBLIC_') ? v : v ? `set, ${v.length} chars` : '';
+    console.log(`  ${v ? 'OK     ' : 'MISSING'} ${key}${v ? '  ' + detail : ''}`);
+  }
+  return have === keys.length;
+};
+
+const base = show(ALWAYS, 'Needed either way');
+const a = show(PATH_A, 'Path A: pixel token (Ads UI > Events Manager, no developer account)');
+const b = show(PATH_B, 'Path B: OAuth 1.0a (developer account with Ads API access)');
+
+const mode = authMode(env);
+console.log(`\n  auth path in use: ${mode || 'none'}`);
+console.log(`  isConfigured():   ${isConfigured(env)}`);
+
+if (!base || !mode) {
+  console.log('\nNot ready. Supply PUBLIC_X_PIXEL_ID and PRIVATE_X_PURCHASE_EVENT_ID,');
+  console.log('plus EITHER PRIVATE_X_PIXEL_TOKEN (path A) or all four path B values.');
+  console.log('Nothing sent.');
   process.exit(1);
 }
+void a; void b;
 
 // A realistic order, shaped exactly like Shopify's orders/create webhook body.
 const order = {
