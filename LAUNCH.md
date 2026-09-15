@@ -1546,3 +1546,27 @@ That is not theoretical: `platform=Kick` against the deployed build returns **tw
 
 Preview: https://01m2jmtfqm3hshxnhxahgvfv94-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `9fbbb99`.
+
+#### Correction to the srcset finding above, 2026-09-15
+**The claim "zero `srcset` attributes on the live homepage" was wrong, and it was wrong for the exact reason this file explains two sections later: React emits the attribute camelCase as `srcSet=`, and the grep that produced the number was case sensitive and lowercase.** The diagnosis was then built on that false negative. Production carries 27 of them.
+
+What is actually true, measured on production just now:
+
+- Hydrogen's `<Image>` **does** emit a srcset on product cards: **15 candidates, 200w through 3000w**.
+- **Every one of those candidates carries `crop=center`.** The `src` fallback is `width=100&crop=center`.
+- `sizes` is `(min-width: 45em) 400px, 100vw`, so on a 360px phone at DPR 2 or 3 the browser is told to find roughly 720 to 1080 CSS px and picks an 800w or 1200w candidate for a 296px box. That is the waste Lighthouse measured.
+
+So the real finding is **worse than the one that was reported**, not better: the 2026-09-07 fix of dropping `width`/`height` from the image fragments so Hydrogen could not derive an aspect ratio **did not stop the cropping**. `crop=center` is on every product card candidate served by production today. CLAUDE.md states that dropping those fragment fields is the fix for the cropping quirk; on this evidence that is either wrong or has regressed, and it should not be trusted as written.
+
+**The change shipped in `41ba223` is still the right change, for better reasons than were given:**
+
+| | Production today | After `41ba223` |
+|---|---|---|
+| `crop=center` on card images | **on all 15 candidates** | **absent** |
+| Candidate ceiling | 3000w | 800w |
+| `sizes` on mobile | `100vw` | `90vw` |
+| `src` fallback | `width=100` | `width=400` |
+
+The measured 2230 KiB to 446 KiB saving stands; it was taken by comparing the full size original against the candidate the new markup resolves to, and did not depend on the false premise.
+
+**Lesson, and it is the same one this file recorded this morning about `elementFromPoint`: a case sensitive grep for an HTML attribute is not evidence of its absence.** React renders `srcSet`, `fetchPriority`, `crossOrigin` and friends camelCase into the served HTML, and HTML attribute names are case insensitive so the browser does not care. Grep with `-i` when asserting an attribute is missing.
