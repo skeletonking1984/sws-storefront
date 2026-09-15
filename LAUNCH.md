@@ -2043,3 +2043,20 @@ The rejected form returns "At least one user identifier must be provided" **even
 Deployed and verified live 2026-09-15 (`app-DL5hzIcZ.css`, home/cart/admin all 200).
 
 **Still open, and it is a real limit rather than a bug:** email matching depends on the buyer using their X-account email at checkout. A conversion sent with `spacelabsdiy@gmail.com` is the first test with a plausibly real X user behind it; if X still reports no match, email is not a reliable identifier for this shop and **`twclid` is the only strong one**. Which returns to the question nobody has answered: **do the three active campaigns land on streamwidgetshop.com or on Etsy?** The capture chain is proven working end to end (landing `?twclid=` to `sws_twclid` cookie to `_twclid` cart attribute, demonstrated on production), so if no click id ever arrives, the ads are not pointing here.
+
+#### X Conversion API: WORKING 2026-09-15
+X's Conversion Diagnostics reads **"Conversion API (CAPI): Working — Matching users via hashed email — your CAPI setup is working."**
+
+The full chain, end to end on production: Shopify `orders/create` webhook to the storefront's X destination, to `sws-x-connector`'s `/x/conversions` relay, OAuth 1.0a signed there, to `ads-api.x.com`, matched to a real user.
+
+**The storefront holds no X credential.** The four OAuth secrets never left Cloudflare, where they already were. Oxygen carries two values plus the event id.
+
+**Correcting an earlier call in this file.** The entry above concluded that "email matching is weak for this shop" and that `twclid` was the only strong identifier. **Wrong.** A conversion sent with `spacelabsdiy@gmail.com` matched immediately. The three earlier failures were invented test addresses with no X account behind them, which is a property of the test data and not of the approach. Email is a working identifier here.
+
+**Still open**: "Click ID tracking: Not detected". `twclid` remains the strongest identifier when available, and the capture chain is proven working on production (landing `?twclid=` to `sws_twclid` cookie to `_twclid` cart attribute). No click id arrives, so the ads are not landing on streamwidgetshop.com. Worth fixing, no longer urgent now that matching works without it.
+
+#### What is left
+1. **Rotate `MCP_AUTH_TOKEN`.** It was pasted into a shared screenshot and is in shell history. Three places: the worker secret, the `sws-x` MCP registration, `PRIVATE_X_RELAY_TOKEN` on Oxygen.
+2. **Where do the three active campaigns land**, Etsy or the storefront? Decides whether `twclid` can ever work.
+3. **BAT-147**, the cart attribute wipe. One line in `context.js`. Masked today because attributes re-derive from cookies, but it drops a `twclid` whose 90 day cookie expired on a long lived cart, which matters more once click ids start arriving.
+4. Five test conversions are real data in the ad account.
