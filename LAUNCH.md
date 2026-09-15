@@ -1504,3 +1504,45 @@ The logo also gets `fetchpriority="high"` and a `rel=preload`, since it is the h
 
 Preview: https://01m2jmb98x3db6bvykah3cv2ah-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `41ba223`.
+
+#### WebMCP support shipped 2026-09-15 (Todd asked for it)
+The Lighthouse Agentic Browsing category surfaced WebMCP, Todd asked what it was, and after reading the recommendation to wait he said add it now. So this is the real thing, not a stub.
+
+**What it is.** `navigator.modelContext`, a W3C Community Group proposal co-authored by Google and Microsoft engineers. A page registers tools, each one `{name, description, inputSchema, execute}` where `execute` resolves to `{content: [{type: 'text', text}]}`, and an agent calls them instead of screenshotting the page and guessing which div is a product. **`provideContext()` and `clearContext()` were removed in the March 2026 revision**; `registerTool` / `unregisterTool` are the only entry points, so anything written against the older shape is already wrong.
+
+**Three tools**, in `app/lib/agentTools.js`, registered by `app/components/AgentTools.jsx`:
+
+| Tool | Does |
+|---|---|
+| `search_widgets` | query plus optional platform and product type, returns title, price, **the platforms it genuinely supports**, url and variantId |
+| `get_widget_details` | one widget by handle, adds the description |
+| `add_to_cart` | adds a variant and opens the cart drawer. Fills the cart, never checks out |
+
+**Why this shop in particular is worth exposing this way.** The one question a widget buyer has is "does this work with what I stream on", and this catalogue is the rare one that can answer it honestly, because `custom.works_with` was ground truthed per product against its own Etsy listing on 2026-09-14. Titles here are Etsy keyword titles, and 80 of 125 products once claimed a platform their own listing denied. So the search tool filters on the metafield and never on text, and the tool descriptions explicitly tell the agent not to read platform names out of a title either.
+
+That is not theoretical: `platform=Kick` against the deployed build returns **two widgets whose titles never mention Kick**. An agent reading titles misses both, and before the 2026-09-14 correction it would have confidently offered several that do not support it.
+
+**Design decisions worth keeping.**
+- `/api/agent` is read only. Search and details only, plain JSON, short cache.
+- **`add_to_cart` has no write path of its own.** It posts to the app's own `/cart` action, the same route the Add to cart button uses, so an agent gets exactly the validation a shopper gets and nothing bypasses the cart.
+- It **opens the cart drawer**. An agent silently altering someone's basket is the thing that makes this API feel like something being done to you.
+- It stops at the cart. Checkout stays the shopper's.
+- Tool definitions take `getJson`, `openCart` and `addToCart` as injected dependencies, so the contract is testable with no browser and no DOM.
+
+**Verified against the deployed preview** (through `--auth-bypass-token`, the trick that finally got past the OAuth gate):
+
+| Check | Result |
+|---|---|
+| `op=search&q=neon` | 10 real products, real prices, real variant ids |
+| `op=search&platform=Kick` | 2 results, both metafield matches, neither title mentions Kick |
+| titles claiming Kick without the metafield | **0** |
+| `op=search&type=Goal Widget` | 48 results, all correctly typed |
+| `op=details` with a real handle | 200 with description |
+| missing handle / unknown handle / unknown op | 400 / 404 / 400 |
+| `POST /cart` with the `cartFormInput` payload | **200, and the cart page then renders the line item** |
+| tool contract in node against a stub catalogue | 3 tools, valid object schemas, all 5 execute paths return the spec content shape, quantity 99 clamps to 10, cart opens after an add, both missing-argument paths guarded |
+
+**Not verified: an actual `registerTool` call against a real implementation.** The browser here is Chrome 152 and `navigator.modelContext` is not exposed on it, so the API is presumably still flag or origin trial gated. The component feature detects and returns early when the API is absent, which is every browser today, so **it cannot affect a normal visitor**. Todd can confirm it live by enabling the flag in Chrome and checking that three tools appear.
+
+Preview: https://01m2jmtfqm3hshxnhxahgvfv94-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `9fbbb99`.
