@@ -46,14 +46,27 @@ PageView, SWS AddToCart, SWS ViewContent) are ours. The
 **Todd, 2026-09-15: "SWS prepended ones until I hear differently."** Every
 event id in this file means the `SWS` one.
 
-**Watch for double counting.** `Shopify:72470e-33:CHECKOUT_INITIATED` is
-ACTIVE and recording, so Shopify's app is already firing into this same
-pixel. Its `Shopify:72470e-33:PURCHASE` is currently Inactive, which is the
-only reason our CAPI purchase will not collide with it. If that Shopify
-event is ever switched on while our CAPI is live, the same order is counted
-against two events and campaign optimisation splits across them. This is the
-same failure that hit GA4 on 2026-09-13, from the same cause: two systems
-claiming the same conversion.
+**Watch for double counting, but note the source is UNIDENTIFIED.**
+`Shopify:72470e-33:CHECKOUT_INITIATED` is ACTIVE and recorded as recently as
+2026-09-15 10:19, so something is firing into this pixel that is not this
+storefront: our browser adapter only sends page_view, view_item and
+add_to_cart, and never a checkout event.
+
+It is **not** a Shopify X sales channel app. `appInstallations` returns
+exactly five apps and none of them is an X or Twitter channel: Bill Pay
+(Melio), Store Migration, Shopify Claude Connector App, SWS Hydrogen
+Storefront, Digital Products. An earlier version of this note asserted the
+sales channel as the cause and was wrong.
+
+The remaining likely source is a **custom pixel under Settings > Customer
+events**, which is the one screen no agent here can read (`webPixel`
+requires the `read_pixels` scope this connector lacks). Todd needs to look.
+
+The risk itself stands regardless of source: `Shopify:72470e-33:PURCHASE`
+exists and is currently Inactive, and that is the only thing keeping it from
+colliding with our CAPI purchase on the same pixel. If it is ever switched
+on while CAPI is live, one order is counted against two events. Same shape
+as the GA4 double count on 2026-09-13.
 
 ### Values
 
@@ -81,6 +94,13 @@ schemes above and would always have failed.
 
 Signing is proved independently of any credential by
 `npm run verify:oauth1`, against the RFC 5849 worked example.
+
+**The browser pixel is confirmed LIVE on production**, verified in a real
+browser 2026-09-15: `uwt.js` loads, `window.twq` is a function, and two
+`adsct` beacons fire carrying `txn_id=tw-q7mwb-rf9ym`. So
+`PUBLIC_X_PIXEL_ID` and at least `PUBLIC_X_EVENT_ID_PAGE_VIEW` are already
+set on Oxygen, and the `SWS PageView` event recording in Events Manager is
+ours. Only the server side (CAPI) is missing.
 
 Browser adapter: `app/lib/analytics/pixels/x.js`, wired for page_view,
 view_item and add_to_cart only, the three X has a configured event id for
