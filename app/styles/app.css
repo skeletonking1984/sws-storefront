@@ -5563,8 +5563,24 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .admin-config-table code {
-  font-size: 0.8rem;
-  word-break: break-all;
+  font-size: 0.78rem;
+  /* Never break a variable name mid-token. `word-break: break-all` split
+     PUBLIC_X_PIXEL_ID across two lines as "PUBLIC_X_PIXEL_" / "ID", which is
+     unreadable for the one thing this table exists to show. */
+  white-space: nowrap;
+}
+
+/* Give the name column the room it needs and stop the impact prose from
+   squeezing it. */
+.admin-config-table th:first-child,
+.admin-config-table td:first-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.admin-config-table th:nth-child(2),
+.admin-config-table td:nth-child(2) {
+  white-space: nowrap;
 }
 
 .admin-config-unset td {
@@ -5573,7 +5589,9 @@ button.reset:hover:not(:has(> *)) {
 
 .admin-config-req {
   color: #ffd27f;
-  font-size: 0.72rem;
+  display: block;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
