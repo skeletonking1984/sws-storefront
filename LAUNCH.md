@@ -1729,3 +1729,142 @@ For the record, the full arc on production across today:
 With `chrome://flags/#enable-webmcp-testing` enabled, Lighthouse's "WebMCP tools registered" audit now lists the imperative tools with their descriptions, source location and input schemas. `search_widgets` renders with its full JSON Schema, including the platform parameter and the instruction not to read platform names out of a product title. The category is **4/4**.
 
 Still outstanding for real visitors, unchanged: the origin trial token, tracked as the Agentic checklist item above.
+
+### 2026-09-15 (second pass, scheduled QA)
+
+**Purchase path green and verified the hard way at three widths. Tracking green. Truth of claims failed again, same shape as yesterday, different platform word.**
+
+#### Verified green
+| Check | Result |
+|---|---|
+| `node scripts/audit-shipping.mjs` | exit 0, **124** storefront products, none require shipping |
+| `node scripts/audit-catalog.mjs` | exit 0, 124 products, 0 with an issue |
+| `ETSY_PACKAGE_ROOT=... node scripts/audit-platform-claims.mjs --check` | exit 0, but see finding 2, it cannot see the defect |
+| `node scripts/build-seo-fields.mjs --check` | exit 0, 0 missing, 0 too long, 0 overclaim, 0 em or en dashes |
+| `npm run verify:tracking` (production) | exit 0, **25 passed, 0 failed** |
+| Purchase path, pressed not navigated | PASS at 360, 390 and 430, from 4 entry points, detail below |
+| `works_with` metafield coverage | **0 of 124 missing**, was 26 on 2026-09-14 |
+| Reviews freshness | no drift, 997 local and 997 live |
+| `npm run audit:ip` | exit 1, same 5 as yesterday, nothing new |
+
+The catalogue went 125 to 124. The product that left is `cute-ghost-liquid-filling-goal-widget-...-1`, the `-1` suffixed duplicate, which is the "last duplicate" this file records being removed earlier today. Expected, not a finding.
+
+**Purchase path, driven end to end on the live site, narrowest first.** Every land below was reached by pressing the control after confirming `document.elementFromPoint` at its centre returns that control, never by navigating to an href.
+
+| Width | Entry point | Checkout button box | Result |
+|---|---|---|---|
+| 360x640 | home, cart drawer | x 17 to 344 in a 360 viewport, y 463 to 520 | `shop.streamwidgetshop.com/checkouts/cn/...`, $47.88 |
+| 360x640 | PDP, Add to cart then drawer | x 17 to 344, y 463 to 520 | reached checkout, $62.87 |
+| 360x640 | collection page, cart drawer | x 17 to 344, y 463 to 520 | reached checkout |
+| 360x640 | `/cart` page, a different component | x 48 to 312, y 291 to 348 after scroll | reached checkout |
+| 390x844 | home, cart drawer | x 17 to 374, y 667 to 724 | reached checkout |
+| 430x932 | home, cart drawer | x 47 to 414, y 755 to 812 | reached checkout |
+
+Every land rendered Express checkout, Contact, Payment and Billing address, with **no shipping step and no delivery step**, and `document.scrollWidth` equal to the viewport width. **Stopped at the payment form every time. No purchase completed.**
+
+The cart drawer was also measured from the inside, which is the check the 2026-09-14 failure was invisible to. At 360px the open drawer box is `0 to 360` and **0 of its descendants have a box outside it**. The `calc(var(--aside-width) - 40px)` class of bug is gone.
+
+Two measurements were nearly written up wrong and were caught by the rules already in `qa.md`. At 390 and again at 430 the first `getBoundingClientRect` on the checkout button returned the **parked, closed** drawer position (x 417 and x 447, off screen), because the poll began before React had committed the open state. A screenshot showed the drawer plainly open in both cases. Re-measured after settling: on screen and hittable both times. **The animating-element trap is still live, and a settle loop that starts too early reproduces it exactly.**
+
+**Mobile, 360px, home and PDP and collection:**
+
+| Check | Result |
+|---|---|
+| `document.scrollWidth` | 360 on all three, no horizontal scroll |
+| Collection cards clipped | 0 of 24, first card x 32 to 328 |
+| Icon controls under 24px | **0** on all three |
+| Menu button, cart, account, search | all **44x44**, so **BAT-152 is fixed in production** |
+| Images rendered past their own resolution | **0**, on 29 of 56 loaded on home, 23 of 51 on the PDP, 47 of 77 on the collection |
+
+#### Findings
+
+**1. HIGH. 8 live product titles claim Streamlabs that their own listing, file manifest and shipped code all deny. BAT-160**
+
+Read off the live Dreamy Lotus PDP at 360px: `h1` is "Dreamy Lotus Chat & Goal Widgets for Twitch | Glass Theme | StreamElements **Streamlabs** OBS", while `div.product-platforms`, the badge row that reads the metafield, renders **Twitch, StreamElements, OBS**. The page contradicts itself in its own headline, and the same title is what the cart line item shows. `seo.title` and the meta description are clean on all 8, so this is the catalog title only.
+
+Checked at tier 1 against the file Etsy actually delivers, not a guess at which local zip belongs to which product. Listing 4310437865 ships `lotuschat.zip` at **19798 bytes** and the local copy is 19798 bytes; listing 4328622333 ships `ChatandGoalCode.zip` at **63729 bytes** and the local copy is 63729 bytes. Both unzip to the StreamElements custom widget shape (`widget.ini`, `fields.txt`, `js.txt`). Hits: 23 and 39 for `streamelements`, 2 and 2 for `twitch`, **0 and 0 for `streamlabs`**.
+
+Checked at tier 1b across all 8 through `etsy_list_listing_files`: every one ships a StreamElements code zip plus a "manually set up" tutorial PDF, and **not one ships a Streamlabs artifact**. The contrast is sharp. Listing 1790018033, the Celestial Star Goal, whose `works_with` does claim Streamlabs, ships a file called `StarGoalWidgetStreamlabs.zip` next to `streamelements.zip`. That is what a real Streamlabs product looks like here.
+
+Checked at tier 2: **none of the 8 Etsy descriptions contains the word Streamlabs**, and all 8 name StreamElements and OBS. The shop already draws this distinction on purpose on Etsy.
+
+The 8: `lotus-butterfly-...`, `dreamy-lotus-...`, `butterfly-galaxy-theme-glassy-...`, `halloween-spooky-streaming-chat-widgets-...`, `sakura-butterfly-pastel-cozy-...`, `lunar-cat-aesthetic-dark-purple-...`, `p2u-glassy-chat-and-goal-widget-combo-...`, `classical-floral-red-chat-and-goal-widget-...`.
+
+**The direction of the fix is Todd's call, and QA is deliberately not picking it.** Either the 8 titles are wrong and Streamlabs comes out, the way Kick and YouTube came out of 78 titles yesterday, or the 8 metafields are short, because Streamlabs Desktop hosts a browser source exactly as OBS does and `works_with` already claims OBS on these products. Both cannot be true. The standard in this repo's CLAUDE.md says the metafield comes from the listing and the listing says OBS and not Streamlabs, which points at the titles, but the other reading is a real product question about what "works with" means for broadcast software and it would have to be applied catalogue wide rather than to these 8.
+
+**2. HIGH. The claims audit is structurally blind to three of the seven platform words. BAT-161**
+
+`scripts/audit-platform-claims.mjs:145` builds its overclaim test as `const testable = CHAT.filter((p) => p !== BASELINE)`, which is YouTube, Kick and TikTok and nothing else. `SOFTWARE`, declared on line 64 as StreamElements, Streamlabs and OBS, is used to build `truth` and is **never used to build the test**. So finding 1 is invisible to it, and `--check` exits 0 with `by surface: {}` while 8 titles overclaim.
+
+`build-seo-fields.mjs` does carry Streamlabs in its `PLATFORM_WORDS` and its `overclaims()` test would have caught this, but it only ever reads `seo.title` and `seo.description`. **Neither script audits the catalog `title`, which is the string that becomes the `h1` and the cart line.** The 78 titles rewritten on 2026-09-14 were a one-off write, and nothing has checked a title since.
+
+That is the next layer of this file's own 2026-09-14 lesson. A guard on what gets written proves nothing about what is already live, and a guard that tests three of seven words proves nothing about the other four.
+
+**3. Escalated, unchanged. 5 live listings carry someone else's IP. BAT-153**
+
+`npm run audit:ip` exits 1 with exactly the same five: Charizard and Valorant Brimstone ACTIVE on Shopify, and Charizard (1881347726), Among Us (1741695722) and Valorant Brimstone (4306870352) live on Etsy. The DRAFT set held: no Pokemon, Genshin, Waylay or Sci-Fi Neon product is ACTIVE again.
+
+Layer 2 returned the same 4 names as yesterday, `Character` 2x, `Charizard`, `Brimstone` and `Gaming`, all lifted out of the two products layer 1 already flags. **No genuinely new name, so nothing was added to `DENY_TERMS`.**
+
+#### Resolved since 2026-09-14, with evidence, for the CTO to close
+- **BAT-150**, Kick and YouTube overclaims. The live Storefront API scan across all 124 products returns **0** unconfirmed Kick, YouTube or TikTok claims on `title`, `seo.title` or `seo.description`. The only unconfirmed claims left are the 8 Streamlabs ones in finding 1.
+- **BAT-151**, missing `works_with`. **0 of 124** products lack the metafield, down from 26.
+- **BAT-152**, the 22x22 menu button. Measured on production at 360px: `.header-menu-mobile-toggle` is **44x44**, as are the cart, account and search controls.
+
+#### Truth of claims, spot check with the rotation moved on
+Rotated onto the 12 products whose `works_with` claims Kick, YouTube or TikTok, since the 2026-09-14 entry left those explicitly open as "resting on listing text rather than code evidence".
+
+| Product | Claim | Evidence |
+|---|---|---|
+| Neon Animated Multistream Chat (4539065835) | Twitch, YouTube, Kick, TikTok | **Tier 1 confirmed.** Ships `MultistreamChatWidget-Final.zip` at 40974 bytes, local copy byte identical. 112 `kick`, 65 `youtube`, 30 `twitch`, 19 `tiktok` hits |
+| Celestial Star Goal (1790018033) | Twitch, Kick, Streamlabs | **Tier 1 partial.** Ships an explicit `StarGoalWidgetStreamlabs.zip`, so Streamlabs is real. Kick rests on the listing body, tier 2 |
+| Cute Froggy Goal (1763385692) | Twitch, YouTube, Kick, Streamlabs | **Tier 1 partial.** Ships `Streamlabs.zip` and `Streamelements.zip`. YouTube and Kick rest on tier 2 |
+| Dreamy Lotus (4328622333) | Twitch, OBS, StreamElements | **Tier 1 confirmed correct.** The metafield is right, the title is not, see finding 1 |
+| Lotus Butterfly (4310437865) | Twitch, OBS, StreamElements | **Tier 1 confirmed correct.** Same, see finding 1 |
+
+**A wrong turn worth recording.** The first tier 1 attempt unzipped local files chosen by name similarity, and `etsy_list_listing_files` then showed that three of the five were **not the file that listing ships**. `MoonJarStreamElements.zip` is not what listing 4551047317 delivers (`MoontipjarFixedStreamelements.zip` is), and `CelestialMoonGoalStreamelements.zip` and `neonchatcode.zip` match no manifest entry on the listings they were being read against. Any conclusion drawn from them would have been about a different file. **Pull the manifest and match the byte count before treating a local zip as tier 1 evidence.** This is the same failure as the `etsy-video-map.json` title-similarity problem already recorded in CLAUDE.md, in a new place.
+
+#### Tracking, Shopify first
+| Day | Shopify | X Ads |
+|---|---|---|
+| 2026-09-14 | **1 order, $18.99 gross, -$18.99 discount, $0.00 net** | $7.66 spend, 55157 impressions, 794 clicks, **0 conversions, $0 revenue** |
+
+That one order is #1043, Todd's own $0.00 mobile test, so **no real revenue yesterday and the last real sale is still #1041 on 2026-09-13**. X reporting zero is the expected reading, not a discrepancy, because X CAPI has no token yet (BAT-145). Nothing over reported, so no double count is possible on this day's data.
+
+All 7 endpoint assertions the QA task names passed inside `verify:tracking` against the live deployment: `/api/e` GET 405, cross origin POST 403, forged `purchase` 400, valid same origin event 204; `/webhooks/orders` GET 405, unsigned POST 401, forged HMAC 401. Plus `sws_cid` minted HttpOnly and Secure with a GA4 client id shape and not re-minted, both GA cookie shapes parsed, `_traffic_type` absent for a normal visitor and `internal` when set, and `G-X0978HDVTK` served in the page.
+
+#### Standing signals
+**Conversion by device, last 30 days.**
+
+| Device | Sessions | Reached checkout | Completed | Completion rate |
+|---|---|---|---|---|
+| desktop | 528 | 28 | 5 | 0.95% |
+| mobile | 66 | 7 | 2 | **3.03%** |
+| other | 1 | 0 | 0 | 0 |
+
+**Mobile now completes at roughly three times desktop's rate**, which is the opposite of the broken-mobile signal this check exists to catch, and it is consistent with yesterday's mobile fixes landing. The sample is 2 completions and one of them is Todd's $0 test, so it is a direction and not yet a number.
+
+**Mobile share of traffic is 11.1%** (66 of 595), against yesterday's 10.6% (61 of 515). It barely moved, and it is still far under the 50 to 70% an ecommerce store normally runs. With the mobile blocker fixed and the mobile completion rate now the better of the two, the remaining explanation is more likely acquisition mix than layout, and much of the desktop traffic is this routine's own QA driving.
+
+#### Reviews: checked, no refresh needed
+`app/data/etsy-shop-stats.json` says `count: 997`. `etsy_get_shop` right now says `review_count: 997`. No drift, so `pull-etsy-reviews.mjs` and `build-etsy-reviews.mjs` were **not** run and **no deploy is owed for reviews**. `soldCount` has drifted 7542 to **7566** while the homepage renders "7,542+ widgets sold" at `_index.jsx:281`, which with the plus sign is still true. It picks up the new number on the next real review refresh.
+
+#### UNCONFIRMED, and why
+- **One Shopify order equals one GA4 purchase at the real value.** Fifth pass to say so, and the reason has not changed: no GA4 read path exists in this session, `webPixel` needs the `read_pixels` scope the Shopify connector does not hold, and `scripts/` contains no Data API script. What can be said is that nothing over reported yesterday, because the only real order was $0.00 and X reported 0 conversions. Closing it needs a GA4 Data API credential in the repo or Todd reading the GA4 purchase count for a day with a known order.
+- **LCP, CLS and anything that needs a real paint.** `document.visibilityState` read `hidden` for the entire browser pass at every width, so no paint timing and no `layout-shift` entry was recorded. Per `analytics-debugging-traps` and this file's own three failed CLS fixes, **no LCP or CLS number is reported from this pass**. The upscale check is still a real measurement, but it covers only the 29, 23 and 47 images that reported a real `naturalWidth`; roughly half the images on each page are lazy and never loaded in a hidden pane, so **"0 upscaled" is a statement about the loaded half only**.
+- **Whether the 8 Streamlabs titles or the 8 metafields are the thing that is wrong.** Stated as a question in BAT-160 rather than answered, because it is a product decision about browser-source hosting and it applies catalogue wide.
+
+#### Noted, not filed
+- **13 images on the homepage at 360px are below 2x density** (for example 190px served into a 134px box, and 324px into a 235px box). Not upscaling, so not a correctness finding by the check as written, but it is soft on a retina phone. Related to the srcset work already recorded today.
+- **7 images on the homepage still carry `crop=center`**, which this file already has open as "about 18 per page". Unchanged, no new information.
+- **9 sub-24px controls on the homepage are all inline text links** (footer nav, the Etsy rating link), 20 to 22px tall. WCAG 2.5.8 exempts inline links and yesterday's pass ruled the same way, so they are not filed. The footer ones sitting in a list rather than a sentence make that exemption arguable, and it is worth one deliberate decision rather than being re-litigated every pass.
+
+#### Cleanup note
+The checkout drives added **1** line item (Dreamy Lotus, $14.99) to the existing QA cart, taking it from 4 to 5. The cart carries no email and no buyer identity, so it never becomes an abandoned checkout. No purchase was completed, no product data was changed, and no Etsy listing was touched by this pass.
+
+#### What changed about the QA pass itself
+Yesterday's pass added the reverse check, title and seo fields against `works_with`, catalogue wide. It ran today and it found these 8. But it only found them because it was run as an independent scan; **the repo's own scripts, which the task tells QA to trust, both exit 0 on this defect.** So the checklist change is not another surface, it is a rule about the scripts:
+
+Added to the task file: a passing audit script is evidence only about what that script tests, and check 3 now says in as many words to compare title and seo against `works_with` for **all seven platform words including StreamElements, Streamlabs and OBS**, because `audit-platform-claims.mjs` tests only YouTube, Kick and TikTok, and to run that scan against the **live Storefront API** rather than accepting an Admin-side script's exit code. Also added the tier 1 rule this pass learned the hard way: **match a local zip to `etsy_list_listing_files` by filename and byte count before treating it as shipped code**, because three of five name-matched local zips turned out not to be the file the listing delivers.
+
+Commit: LAUNCH.md only. No deploy from this pass. Separately, `origin/main` is still at `6e13292` from **2026-09-11** and local `main` is **98 commits ahead of it**. That is a backup and history question rather than a deploy question, since Oxygen deploys run from the working tree, but four days of unpushed work exists in exactly one place right now.
