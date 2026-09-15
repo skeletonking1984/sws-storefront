@@ -3996,7 +3996,19 @@ button.reset:hover:not(:has(> *)) {
   font-family: var(--font-body);
   font-size: 1.0625rem;
   line-height: 1.75;
-  color: var(--sws-sub);
+  /*
+    Not --sws-sub (#a89ec4). Todd, 2026-09-15: "can you make the body/normal
+    text a little darker white". Measuring it agreed, and turned a taste note
+    into an accessibility one: against the purple starfield the article
+    actually sits on (~#5b4a72 sampled from the live page, NOT the #0b0713
+    page token) --sws-sub scores a 3.13 contrast ratio, under the 4.5 WCAG AA
+    needs for body text. #ddd6ec scores 5.59 and passes.
+
+    Deliberately not #fff or --sws-text: the lead paragraph below uses
+    --sws-text (#f3ecff) and needs to stay visibly brighter than the body, or
+    the hierarchy this whole block exists to create collapses again.
+  */
+  color: #ddd6ec;
 }
 
 /* Lead paragraph: sets the tone before the reader commits to the article. */
