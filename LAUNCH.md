@@ -1461,3 +1461,46 @@ Both families are **variable** fonts, so the entire site is four files (latin an
 
 Preview: https://01m2jj5yzkaqp1gspwqk4vftbr-fb73b5b73c40344d0d20.myshopify.dev
 Commits: `3c2a6e2` link names, `bc09bf1` fonts, heading order and logo sizing.
+
+#### Slow 4G run: 2 MB of oversized images, and a 155 KB logo as the LCP. 2026-09-15 (Todd ran it)
+Todd re-ran Lighthouse against the live site with **simulated slow 4G**: performance **70, FCP 2.8s, LCP 6.3s**. Accessibility **100** and Agentic Browsing **3/3**, both up from 95 and 2/3, which is this morning's `link-name` and `heading-order` fixes landing (he deployed them; production confirmed serving the preloaded self hosted fonts and `product-item-title`).
+
+Two separate causes, both measured rather than guessed.
+
+**1. The srcset was gone, site wide, and had been since 2026-09-07.**
+
+The live homepage carried **zero `srcset` attributes**. The cause is in this file's own history: on 2026-09-07 `width`/`height` were stripped from the image fragments so Hydrogen's `<Image>` could not derive an aspect ratio and append `crop=center` to non square product art. That fixed the cropping and silently took responsive images with it, because `<Image>` only builds a srcset when it knows the dimensions. Every product image downloaded at full size: 1280x1280 and 2000x2000 files painted into 404x404 and 242x242 boxes.
+
+Both properties are recoverable at once, because **`width` on the Shopify CDN scales and does not crop**. Verified against six real catalog images before any code was written, including a non square **1240x1208 that came back 400x390, the identical ratio**. `app/lib/shopifyImage.js` now builds the srcset by hand with `width` only, and carries a standing rule that nothing in it may ever add `crop`, `height` or `aspectRatio`. `ResponsiveImage` consumes it, swapped into the three components that account for every image Lighthouse flagged: the product card, the homepage kit card, and the PDP gallery.
+
+| Homepage product images (10 distinct) | |
+|---|---|
+| Before, full size originals | **2230 KiB** |
+| After, srcset candidate | **446 KiB** |
+| Saved | **1784 KiB, 80%** |
+
+**2. The LCP element was a 155 KB logo.**
+
+Lighthouse named `img.hero-logo` outright, and its one failing check was "fetchpriority=high should be applied". It was a 900x250 PNG painted into a 249x69 box. The hero collage was 3200x2000 for a 478x299 box. The pfp was 200x200 for 88x88.
+
+New `npm run optimize:assets` re-encodes all three as WebP at 2x the largest box each is painted in:
+
+| Asset | Before | After | |
+|---|---|---|---|
+| `logo.png` to `logo.webp` | 155354 B | **32404 B** | 79% smaller, 560px wide |
+| `hero-widgets.webp` | 156128 B | **41706 B** | 73% smaller, 1200px wide |
+| `pfp.png` to `pfp.webp` | 80489 B | **8804 B** | 89% smaller, 176px wide |
+| Total | 391971 B | **82914 B** | **309 KB off every first visit** |
+
+The logo also gets `fetchpriority="high"` and a `rel=preload`, since it is the homepage LCP and the brand mark on every other page. `npm run logo` still owns `logo.png` as the source, so **re-run `optimize:assets` after it** or the optimized variant goes stale.
+
+**Roughly 2.0 MB less on a homepage first visit**, which is the number that matters on the connection Todd tested.
+
+**Verified, and this time the rendered output was actually checked.** Deployed with `--auth-bypass-token` and fetched the real HTML through it, which is the way around the OAuth gate that blocked every previous pass. The hero logo renders as the 560x156 webp with `fetchPriority` high, all three preloads are present (logo as image, both latin fonts), and the card images carry a real srcset. React emits it camelCase as `srcSet=`, which is why a naive grep reads zero; HTML attribute names are case insensitive, and a browser given that exact markup resolved `currentSrc` to the `width=400` candidate and reported `naturalWidth` 400 rather than the 1589px original. `npm run build` exits 0, and eslint reports 11 errors both at HEAD and after, all pre-existing.
+
+**Still not verified:** nothing has been seen rendered as a picture. The auth bypass token works as a header for `curl` but a browser cannot send one, so this is verified markup and verified byte counts, not a visual check.
+
+**Left, and now the largest remaining item:** `unused-javascript`, 2 items, est. 94 KiB. Also still true that `inspector-issues` (96 on best practices) is a third party cookie from `analytics.twitter.com`, which is the X pixel and not ours to fix.
+
+Preview: https://01m2jmb98x3db6bvykah3cv2ah-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `41ba223`.
