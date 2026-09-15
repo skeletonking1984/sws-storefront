@@ -62,6 +62,72 @@
 * SWS brand tokens — edit these to restyle the whole site
 * --------------------------------------------------
 */
+/*
+ * Metric matched fallbacks. This is what actually fixes the layout shift.
+ *
+ * Self hosting and preloading the fonts (above) shortened the window before
+ * the real face arrives, but `font-display: swap` still swaps AFTER first
+ * paint, and the fallback was not the same width, so the hero still reflowed.
+ * Lighthouse reported CLS 0.132 on `div.hero-grid` with the cause "Web font
+ * loaded" both BEFORE and AFTER the self hosting change, which is how it was
+ * caught: the number did not move at all.
+ *
+ * `size-adjust` scales the fallback so it occupies the same space as the real
+ * face, and the swap then costs nothing. Used in preference to
+ * `font-display: optional`, which would also guarantee zero CLS but by
+ * sometimes never painting the brand font at all.
+ *
+ * ONE FACE PER WEIGHT, and the percentages are solved empirically rather than
+ * calculated. Two traps, both hit while doing it:
+ *
+ *   1. `local('Arial')` inside an @font-face does NOT render like
+ *      `font-family: Arial` at the same weight. Arial ships no 700 or 800
+ *      face, so the two paths synthesise bold differently. A value derived by
+ *      measuring Arial directly made Baloo 2 WORSE, from +3.49% to -6.29%.
+ *   2. One size-adjust cannot serve several weights. Averaging across
+ *      Nunito 400/700/800 left 400 out by 3.17%, and 400 is nearly all the
+ *      body copy on the site.
+ *
+ * Solved by binary converging each weight against the real face at 200px on a
+ * string of real page copy. All five land at 0.00% residual. Re-measure with
+ * the same method if either family or a used weight ever changes.
+ */
+
+@font-face {
+  font-family: 'Baloo 2 Fallback';
+  src: local('Arial');
+  font-weight: 700;
+  size-adjust: 99.83%;
+}
+
+@font-face {
+  font-family: 'Baloo 2 Fallback';
+  src: local('Arial');
+  font-weight: 800;
+  size-adjust: 101.4%;
+}
+
+@font-face {
+  font-family: 'Nunito Fallback';
+  src: local('Arial');
+  font-weight: 400;
+  size-adjust: 102.53%;
+}
+
+@font-face {
+  font-family: 'Nunito Fallback';
+  src: local('Arial');
+  font-weight: 700;
+  size-adjust: 106.3%;
+}
+
+@font-face {
+  font-family: 'Nunito Fallback';
+  src: local('Arial');
+  font-weight: 800;
+  size-adjust: 108.51%;
+}
+
 :root {
   --aside-width: 400px;
   --grid-item-width: 320px;
@@ -97,8 +163,10 @@
   --sws-ink: #1a1024;
   --sws-outline: #010101;
 
-  --font-display: 'Baloo 2', system-ui, -apple-system, sans-serif;
-  --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
+  --font-display: 'Baloo 2', 'Baloo 2 Fallback', system-ui, -apple-system,
+    sans-serif;
+  --font-body: 'Nunito', 'Nunito Fallback', system-ui, -apple-system,
+    sans-serif;
   --sws-font: var(--font-body);
 
   --radius-card: 18px;
