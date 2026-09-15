@@ -10,8 +10,15 @@ import {ALL_CONFIG_KEYS} from '../app/lib/configRegistry.js';
 
 // Every PUBLIC_*/PRIVATE_* identifier referenced anywhere in the app, whether
 // as a property (env.FOO) or as a string key in a mapping object ('FOO').
+/*
+ * Only source files. Scanning CSS produced a false positive from a comment
+ * in app.css that quotes the truncated string "PUBLIC_X_PIXEL_" as an
+ * example of the very wrapping bug that rule fixes. Environment variables
+ * are never read from a stylesheet, so there is nothing to find there.
+ */
 const grep = execSync(
-  `grep -rhoE "(PUBLIC|PRIVATE)_[A-Z0-9_]+" app/ server.js || true`,
+  `grep -rhoE --include='*.js' --include='*.jsx' --include='*.ts' --include='*.tsx' ` +
+    `"(PUBLIC|PRIVATE)_[A-Z0-9_]+" app/ server.js || true`,
   {encoding: 'utf8'},
 );
 
