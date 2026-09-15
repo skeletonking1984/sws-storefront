@@ -20,7 +20,8 @@
     "audit:config": "node scripts/audit-config-registry.mjs",
     "verify:cart-attributes": "node scripts/verify-cart-attributes.mjs",
     "audit:policy": "node scripts/audit-policy-claims.mjs",
-    "audit:policy:self-test": "node scripts/audit-policy-claims.mjs --self-test"
+    "audit:policy:self-test": "node scripts/audit-policy-claims.mjs --self-test",
+    "bundles:sales": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/bundle-sales.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

@@ -2455,3 +2455,55 @@ false, and every other number on that page gets read in the same light.
 structured-data home for this and Merchant Center reads it, but it needs a
 per-product date (a metafield) plus a change to `products.$handle.jsx`, which
 means a deploy. The visible copy was what was asked for and needs none.
+
+### 2026-09-15 — Bundle baseline, and the reason the kits are not selling is not the kits
+
+Todd: "we gotta watch sales on these, if low/no sales, we need to try different
+bundles or adjust." Measured before adjusting, because "low sales" needs
+something to be low against.
+
+**Baseline, Etsy, 30 days** (`npm run bundles:sales`, new):
+
+| Kit | Kit sold | Its own parts sold | Kit as % of parts |
+|---|---|---|---|
+| Spooky Stream Kit | 1 unit, $24.99 | 96 units, $766.19 | 1.0% |
+| Celestial Stream Kit | **no Etsy listing at all** | 520 units, $4,593.21 | 0% |
+| Multistream Chat Widget Pack | 1 unit, $24.19 | 91 units, $1,290.95 | 1.1% |
+
+Shopify over the same period: **zero bundle orders** out of 10 orders total.
+
+All three kits together are **2 units, 0.10% of the shop's 2,054**.
+
+**The finding that matters is the middle row.** The Celestial Kit's components
+are the best sellers in the entire shop, 520 units and $4,593 in 30 days, and the
+kit assembled from them **is not listed on Etsy**, which is where essentially all
+the volume is. It exists only on Shopify, which did 10 orders in 8 days. So the
+Celestial Kit has never actually been tested. Listing it on Etsy is the obvious
+first adjustment and it costs nothing but the listing.
+
+Read the other two against their parts rather than against zero. These widgets
+sell perfectly well individually, so a kit selling nothing is evidence about the
+OFFER, not about demand for the widgets. That distinction is what the new script
+prints, and it is the reason it prints components at all.
+
+Something that complicates the pessimistic read: in Etsy Ads the Spooky Kit is
+the **best ROAS in the account at 3.45** (1,568 views, 19 clicks, 1 order, $7.25
+spend). One order is not significance, but it is the opposite of a signal to
+kill it. The kits may be starved of traffic rather than unwanted.
+
+**Also worth a look, unrelated to bundles:** 8 of the last 10 Shopify orders are
+marked PAID with a total of **$0.00**. Either they are test orders or a 100%
+discount code is live. Worth knowing which before any Shopify conversion number
+is trusted.
+
+**Decision rule, so this is not re-litigated from feel:**
+
+- Re-run `npm run bundles:sales` on **2026-10-01**.
+- List the Celestial Kit on Etsy first. Until that happens its 0 is not a result.
+- A kit that stays under **2% of its own parts' unit volume** after a fair run
+  WITH traffic is a broken offer, not a broken product. Adjust in this order,
+  cheapest first: discoverability (tags, Etsy listing, front-page placement),
+  then the anchor and price, then the contents.
+- The Spooky Kit is the exception: it ends 31 Oct regardless, so judge it on the
+  season and do not extend the deadline to rescue the number. That would make
+  the limited-time claim false.
