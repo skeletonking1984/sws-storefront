@@ -45,13 +45,15 @@ export const CONFIG_GROUPS = [
   {
     id: 'x',
     title: 'X ads',
-    note: 'Pixel q7mwb, account 18ce55rea5b. Use the SWS prefixed events, not the Shopify: ones. See docs/analytics-setup.md.',
+    note: 'Pixel q7mwb, account 18ce55rea5b. Use the SWS prefixed events, not the Shopify: ones. Conversions are relayed through sws-x-connector so no X credential lives here. See docs/analytics-setup.md.',
     vars: [
       {key: 'PUBLIC_X_PIXEL_ID', impact: 'No X pixel on the page. No upper funnel events and no conversions.'},
       {key: 'PUBLIC_X_EVENT_ID_PAGE_VIEW', impact: 'X records no page views.'},
       {key: 'PUBLIC_X_EVENT_ID_VIEW_CONTENT', impact: 'X records no product views.'},
       {key: 'PUBLIC_X_EVENT_ID_ADD_TO_CART', impact: 'X records no add to carts.'},
       {key: 'PRIVATE_X_PURCHASE_EVENT_ID', impact: 'Conversion API sends nothing. X sees traffic but never a sale, so ROAS reads zero.'},
+      {key: 'PRIVATE_X_RELAY_URL', impact: 'Auth path R, preferred and in use. The sws-x-connector endpoint that signs for us, https://sws-x-connector.clarisai-consulting.workers.dev/x/conversions. Without it the app falls back to signing locally, which needs credentials copied here.'},
+      {key: 'PRIVATE_X_RELAY_TOKEN', impact: 'Auth path R. The connector\'s MCP_AUTH_TOKEN. Same value the sws-x MCP sends.'},
       {key: 'PRIVATE_X_PIXEL_TOKEN', impact: 'Auth path A. Easiest: one static token from Events manager, no developer account. Without it the app falls back to the four OAuth values.'},
       {key: 'PRIVATE_X_CONSUMER_KEY', impact: 'Auth path B, OAuth 1.0a. Only needed if path A is unavailable.'},
       {key: 'PRIVATE_X_CONSUMER_SECRET', impact: 'Auth path B, OAuth 1.0a.'},

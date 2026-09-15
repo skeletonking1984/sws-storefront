@@ -42,23 +42,29 @@ export const id = 'x';
  * TWO AUTH PATHS, because X appears to offer both and only one of them is
  * confirmed in the docs.
  *
+ *   R. RELAY, and this is the one in use. POST to sws-x-connector, which
+ *      already holds working Ads API credentials and already signs OAuth
+ *      1.0a for the campaign reads behind the sws-x MCP. The storefront
+ *      sends {pixel_id, conversions[]} with a bearer token and never sees an
+ *      X secret. Two env vars here instead of four copied secrets, one place
+ *      to rotate instead of two. Preferred whenever configured.
  *   A. Pixel token. A single static token generated in the Ads UI under
  *      Events Manager, sent as an `X-Pixel-Token` header. Needs no developer
  *      account and no Ads API approval. Referenced in X's developer forum
- *      but NOT in the web-conversions docs page, so it is treated here as
- *      likely-but-unconfirmed and simply preferred when the value exists.
- *   B. OAuth 1.0a. Four credentials, signed per request. This is the path
- *      the official docs describe, and it requires a developer account with
- *      Ads API access.
+ *      but NOT in the web-conversions docs page, so it is
+ *      likely-but-unconfirmed.
+ *   B. OAuth 1.0a locally. Four credentials, signed per request by
+ *      app/lib/oauth1.server.js. What the official docs describe. Kept as a
+ *      fallback for a deployment with no relay.
  *
- * Whichever is configured is used, A first because it is far less work to
- * obtain. Supporting both costs one branch and removes the need to guess
+ * Whichever is configured is used, R first. Supporting both costs one branch and removes the need to guess
  * right, which a previous version of this file did not do: it sent a plain
  * bearer token, which is neither of these and would always have failed.
  * @param {Record<string, string | undefined>} env
  */
 export function authMode(env) {
   if (!env?.PUBLIC_X_PIXEL_ID) return null;
+  if (env?.PRIVATE_X_RELAY_URL && env?.PRIVATE_X_RELAY_TOKEN) return 'relay';
   if (env?.PRIVATE_X_PIXEL_TOKEN) return 'pixel_token';
   if (
     env?.PRIVATE_X_CONSUMER_KEY &&
@@ -153,13 +159,44 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
     ],
   };
 
+  const mode = authMode(env);
+
+  // Relay: the connector signs, so this never builds an ads-api.x.com URL
+  // and never touches a credential.
+  if (mode === 'relay') {
+    try {
+      const res = await fetch(env.PRIVATE_X_RELAY_URL, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${env.PRIVATE_X_RELAY_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pixel_id: env.PUBLIC_X_PIXEL_ID,
+          conversions: body.conversions,
+        }),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) return {ok: false, reason: `relay_${res.status}`};
+      const out = await res.json().catch(() => null);
+      // The relay reports X's own status rather than its own, so a 200 from
+      // the worker carrying a 401 from X is still a failure here.
+      if (out && out.ok === false) {
+        return {ok: false, reason: `x_${out.status || 'error'}`};
+      }
+      return {ok: true};
+    } catch {
+      return {ok: false, reason: 'relay_unreachable'};
+    }
+  }
+
   const url = `https://ads-api.x.com/${X_CAPI_VERSION}/measurement/conversions/${encodeURIComponent(
     env.PUBLIC_X_PIXEL_ID,
   )}`;
 
   try {
     const headers = {'Content-Type': 'application/json'};
-    if (authMode(env) === 'pixel_token') {
+    if (mode === 'pixel_token') {
       headers['X-Pixel-Token'] = env.PRIVATE_X_PIXEL_TOKEN;
     } else {
       headers.authorization = await oauth1Header({

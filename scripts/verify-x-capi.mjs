@@ -17,6 +17,7 @@ import {sendPurchase, isConfigured, authMode} from '../app/lib/conversions/x.ser
 // the OAuth path needs 6. Either is fine; the script reports which one the
 // current environment satisfies.
 const ALWAYS = ['PUBLIC_X_PIXEL_ID', 'PRIVATE_X_PURCHASE_EVENT_ID'];
+const PATH_R = ['PRIVATE_X_RELAY_URL', 'PRIVATE_X_RELAY_TOKEN'];
 const PATH_A = ['PRIVATE_X_PIXEL_TOKEN'];
 const PATH_B = [
   'PRIVATE_X_CONSUMER_KEY',
@@ -49,6 +50,7 @@ const show = (keys, label) => {
 };
 
 const base = show(ALWAYS, 'Needed either way');
+const r = show(PATH_R, 'Path R, PREFERRED: relay through sws-x-connector (no X credential here)');
 const a = show(PATH_A, 'Path A: pixel token (Ads UI > Events Manager, no developer account)');
 const b = show(PATH_B, 'Path B: OAuth 1.0a (developer account with Ads API access)');
 
@@ -58,11 +60,12 @@ console.log(`  isConfigured():   ${isConfigured(env)}`);
 
 if (!base || !mode) {
   console.log('\nNot ready. Supply PUBLIC_X_PIXEL_ID and PRIVATE_X_PURCHASE_EVENT_ID,');
-  console.log('plus EITHER PRIVATE_X_PIXEL_TOKEN (path A) or all four path B values.');
+  console.log('plus ONE of: the two path R relay values (preferred),');
+  console.log('PRIVATE_X_PIXEL_TOKEN (path A), or all four path B values.');
   console.log('Nothing sent.');
   process.exit(1);
 }
-void a; void b;
+void r; void a; void b;
 
 // A realistic order, shaped exactly like Shopify's orders/create webhook body.
 const order = {
