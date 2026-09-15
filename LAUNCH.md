@@ -1908,3 +1908,23 @@ Verified on the deployed preview:
 | Lighthouse on the preview PDP (Todd) | **Agentic 4/4**, form coverage no longer reports a missing form, Performance 98 |
 
 **Not yet verified, and it gates the production deploy: a real browser CLICK on Add to cart, and reaching checkout from the cart.** The POST above exercises the route, not the control, and this file's own rule from 2026-09-14 is that a path only ever exercised by URL is not a verified path. Todd has the preview.
+
+#### Deployed, and a product page reads 100 across the board 2026-09-15
+Todd deployed and re-ran Lighthouse on a **production** PDP: **Performance 100, Accessibility 100, Best Practices 100, SEO 100, Agentic Browsing 4/4.**
+
+Confirmed on production independently of the score:
+
+| Check | Result |
+|---|---|
+| PDP forms | 2 of 2 annotated, **0 bare** (`search_widgets_quick`, `add_widget_to_cart`) |
+| Cart forms, populated | **13 of 13 annotated, 0 bare** |
+| `POST /cart` | 200, line items render, checkout link present |
+
+Still not confirmed by this session: a real browser **click** on Add to cart and a press of Checkout on production. The POST exercises the route, not the control. Everything points to it being fine, the form markup being byte identical apart from two attributes, but the distinction is the one that let a broken mobile checkout button ship on 2026-09-14 and it is worth one manual press.
+
+**The full day on production, for the record:**
+
+| | Perf | A11y | Best practices | SEO | Agentic |
+|---|---|---|---|---|---|
+| Start of day | 84 | 95 | 96 | 100 | 2/3 |
+| End of day, product page | **100** | **100** | **100** | **100** | **4/4** |
