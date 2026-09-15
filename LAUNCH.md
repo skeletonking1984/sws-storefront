@@ -1868,3 +1868,22 @@ Yesterday's pass added the reverse check, title and seo fields against `works_wi
 Added to the task file: a passing audit script is evidence only about what that script tests, and check 3 now says in as many words to compare title and seo against `works_with` for **all seven platform words including StreamElements, Streamlabs and OBS**, because `audit-platform-claims.mjs` tests only YouTube, Kick and TikTok, and to run that scan against the **live Storefront API** rather than accepting an Admin-side script's exit code. Also added the tier 1 rule this pass learned the hard way: **match a local zip to `etsy_list_listing_files` by filename and byte count before treating it as shipped code**, because three of five name-matched local zips turned out not to be the file the listing delivers.
 
 Commit: LAUNCH.md only. No deploy from this pass. Separately, `origin/main` is still at `6e13292` from **2026-09-11** and local `main` is **98 commits ahead of it**. That is a backup and history question rather than a deploy question, since Oxygen deploys run from the working tree, but four days of unpushed work exists in exactly one place right now.
+
+#### Declarative WebMCP misses the Add to cart form, and CartForm is why. 2026-09-15 (Todd spotted it)
+Todd noticed "WebMCP form coverage" still reported Not Applicable while the other WebMCP audits went green. On the homepage that is the desired outcome: the audit lists forms that LACK `toolname`/`tooldescription`, and the homepage has none missing (verified: `/`, `/pages/contact`, `/collections/all` and an empty `/cart` are all 100% annotated).
+
+**But run it on a product page and it has something to say.** A live PDP right now: **2 forms, 1 annotated, 1 bare, and the bare one is Add to cart.** That is the single most commercially important form on the site, on all 124 product pages, and it is the one an agent cannot see declaratively.
+
+Worse on a populated cart: every line item's quantity and remove control is its own form, plus the discount and gift card forms. Six `<CartForm>` call sites in total, none annotated:
+
+| Component | CartForms | What they do |
+|---|---|---|
+| `AddToCartButton.jsx` | 1 | **Add to cart, every PDP** |
+| `CartLineItem.jsx` | 2 | quantity update, remove line |
+| `CartSummary.jsx` | 3 | discount code, gift card add, gift card remove |
+
+**Why it is not a one line fix.** Hydrogen's `CartForm` destructures exactly `{children, action, inputs, route, fetcherKey}` and renders `<fetcher.Form action={route} method="post">`. It **does not spread extra props**, so a `toolname` passed to `<CartForm>` is silently dropped and would look like it worked. Verified in `node_modules/@shopify/hydrogen/dist/development/index.cjs:1918`.
+
+The clean fix is to render `useFetcher()`'s own `Form` directly in those call sites, with the hidden `cartFormInput` built from the public `CartForm.INPUT_NAME` and `CartForm.ACTIONS`, so the attributes are real HTML and need no JavaScript. About ten lines per site.
+
+**Not done, deliberately.** It touches `AddToCartButton`, which is the purchase path, and Todd has parked WebMCP for now. Setting the attributes from JavaScript after mount would satisfy the audit but defeats the point of the declarative API, so it was not done that way either. Queued under the Agentic checklist item.
