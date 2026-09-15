@@ -1887,3 +1887,24 @@ Worse on a populated cart: every line item's quantity and remove control is its 
 The clean fix is to render `useFetcher()`'s own `Form` directly in those call sites, with the hidden `cartFormInput` built from the public `CartForm.INPUT_NAME` and `CartForm.ACTIONS`, so the attributes are real HTML and need no JavaScript. About ten lines per site.
 
 **Not done, deliberately.** It touches `AddToCartButton`, which is the purchase path, and Todd has parked WebMCP for now. Setting the attributes from JavaScript after mount would satisfy the audit but defeats the point of the declarative API, so it was not done that way either. Queued under the Agentic checklist item.
+
+#### Declarative WebMCP completed on the cart forms 2026-09-15
+Todd ran Lighthouse on a production PDP and it reported **"1 form missing annotations"**. That form was Add to cart, on all 124 product pages.
+
+`CartForm` could not carry the attributes: it destructures exactly `{children, action, inputs, route, fetcherKey}` and renders `<fetcher.Form action={route} method="post">`, so a `toolname` handed to it is **silently dropped** and the markup looks unchanged. `AnnotatedCartForm` reproduces what `CartForm` does, using its own public `CartForm.INPUT_NAME` and `CartForm.ACTIONS` rather than re-deriving the payload shape, and puts the attributes on the real `<form>`. Setting them from JavaScript after mount would also have turned the audit green and was deliberately not done, because the point of the declarative API is that an agent reads a form's purpose with no script running.
+
+Six sites, no `<CartForm>` left in `app/`: `add_widget_to_cart`, `update_cart_quantity`, `remove_cart_item`, `apply_discount_code`, `apply_gift_card`, `remove_gift_card`.
+
+**The safety argument, and it is measurable rather than asserted:** the rendered Add to cart form on the preview is **byte identical to production's once the two new attributes are stripped**, whole form body, 1476 to 1632 characters with the attributes accounting for the difference. The only change to the buy form is two attributes a browser ignores.
+
+Verified on the deployed preview:
+
+| Check | Result |
+|---|---|
+| Add to cart form markup vs production | **byte identical** once the two attributes are removed |
+| PDP forms | 2 of 2 annotated, 0 bare |
+| Populated cart forms | **13 of 13 annotated, 0 bare** |
+| `POST /cart` add to cart | 200, line items render, checkout link present |
+| Lighthouse on the preview PDP (Todd) | **Agentic 4/4**, form coverage no longer reports a missing form, Performance 98 |
+
+**Not yet verified, and it gates the production deploy: a real browser CLICK on Add to cart, and reaching checkout from the cart.** The POST above exercises the route, not the control, and this file's own rule from 2026-09-14 is that a path only ever exercised by URL is not a verified path. Todd has the preview.
