@@ -1702,3 +1702,30 @@ A number that does not move at all across three changes to the thing it was attr
 
 #### Open, needs Todd's JSON
 Performance read **56** on this production run against **94** on a preview of the same commits, and 84 on production this morning. Same code, 38 points apart, so at least some of that is run to run variance under DevTools throttling. The production number also includes the X pixel and GA4, which a preview may not exercise the same way. **Not diagnosed, and deliberately not guessed at again.**
+
+#### Correction: the font fix DID work, and the 56 run was not measuring the shipped code. 2026-09-15
+The entry above titled "The CLS fix failed, three times, and the font was never the cause" is **wrong** and should not be trusted. Recording that here rather than editing it away, because the reasoning that produced it is the thing worth not repeating.
+
+Todd re-ran Lighthouse on production: **Performance 99, Accessibility 100, Best Practices 100, SEO 100, Agentic Browsing 4/4.** CLS no longer appears as a failing audit.
+
+**No code changed between the two runs.** Verified: the 56 run and the 99 run both reference the same stylesheet, `app-BugLmrGP.css`, and that file carries all five `size-adjust` faces. Git is unchanged since `af7bc12`, which touched only LAUNCH.md. The only thing that happened in between was Todd enabling the WebMCP flag and relaunching Chrome.
+
+So the metric matched fallbacks shipped in `753b3fb` **did** fix the layout shift. It was already live during the run that read 0.132, and that reading was an artefact of the run, almost certainly a first-load-after-deploy against cold caches at every layer, not a property of the code.
+
+**The error was declaring a fix dead on one adverse measurement.** Three data points said 0.132 and the fourth was taken seconds after a production deploy, which is the least representative moment there is. The right call was to re-run before concluding, and the conclusion that got written, "the font was never the cause", was a confident claim built on a single bad sample.
+
+**Rule: never judge a performance fix on the first Lighthouse run after a deploy, and never on one run at all.** Cold CDN, cold font cache and cold image cache all land on that first request. Re-run at least twice, a few minutes apart, before reading anything into the number.
+
+For the record, the full arc on production across today:
+
+| | Perf | A11y | Best practices | SEO | Agentic |
+|---|---|---|---|---|---|
+| Before today | 84 | 95 | 96 | 100 | 2/3 |
+| Slow 4G | 70 | 100 | 96 | 100 | 3/3 |
+| First run after the deploy | 56 | 100 | 96 | 100 | 2/3 |
+| Settled | **99** | **100** | **100** | **100** | **4/4** |
+
+#### WebMCP confirmed working end to end
+With `chrome://flags/#enable-webmcp-testing` enabled, Lighthouse's "WebMCP tools registered" audit now lists the imperative tools with their descriptions, source location and input schemas. `search_widgets` renders with its full JSON Schema, including the platform parameter and the instruction not to read platform names out of a product title. The category is **4/4**.
+
+Still outstanding for real visitors, unchanged: the origin trial token, tracked as the Agentic checklist item above.
