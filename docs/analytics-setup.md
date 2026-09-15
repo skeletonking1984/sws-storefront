@@ -35,17 +35,52 @@ Browser adapter: `app/lib/analytics/pixels/ga4.js`. Server adapter:
 
 ## X (Twitter)
 
-Pending from Auny, tracked on Linear BAT-145. Every value below is blank
-until she supplies it.
+Pixel is live: **`q7mwb`**, account `18ce55rea5b`.
+
+### Use the `SWS` prefixed events, not the `Shopify:` ones
+
+Events Manager lists two families. The `SWS ...` events (SWS Purchase, SWS
+PageView, SWS AddToCart, SWS ViewContent) are ours. The
+`Shopify:72470e-33:...` events come from Shopify's own X sales channel app.
+
+**Todd, 2026-09-15: "SWS prepended ones until I hear differently."** Every
+event id in this file means the `SWS` one.
+
+**Watch for double counting.** `Shopify:72470e-33:CHECKOUT_INITIATED` is
+ACTIVE and recording, so Shopify's app is already firing into this same
+pixel. Its `Shopify:72470e-33:PURCHASE` is currently Inactive, which is the
+only reason our CAPI purchase will not collide with it. If that Shopify
+event is ever switched on while our CAPI is live, the same order is counted
+against two events and campaign optimisation splits across them. This is the
+same failure that hit GA4 on 2026-09-13, from the same cause: two systems
+claiming the same conversion.
+
+### Values
 
 | Variable | Where to get it |
 |---|---|
-| `PUBLIC_X_PIXEL_ID` | X Ads Manager > Tools > Events Manager > (this pixel) > pixel id. |
-| `PUBLIC_X_EVENT_ID_PAGE_VIEW` | X Ads Events Manager > the pixel's configured PageView event > Event ID. |
-| `PUBLIC_X_EVENT_ID_VIEW_CONTENT` | X Ads Events Manager > the pixel's configured ViewContent event > Event ID. |
-| `PUBLIC_X_EVENT_ID_ADD_TO_CART` | X Ads Events Manager > the pixel's configured AddToCart event > Event ID. |
-| `PRIVATE_X_CAPI_TOKEN` | developer.x.com app credentials for the Ads API. Auth scheme is UNCONFIRMED, see the TODO comments in `app/lib/conversions/x.server.js` before relying on this. |
-| `PRIVATE_X_PURCHASE_EVENT_ID` | X Ads Events Manager > the pixel's configured Purchase event > Event ID (separate from the pixel id above). |
+| `PUBLIC_X_PIXEL_ID` | `q7mwb`. Ads Manager > Tools > Events manager, shown beside "Event source". |
+| `PRIVATE_X_PURCHASE_EVENT_ID` | Events manager > the **SWS Purchase** row > pencil (edit) > Event ID. Not the pixel id. |
+| `PUBLIC_X_EVENT_ID_PAGE_VIEW` | Same, the **SWS PageView** row. |
+| `PUBLIC_X_EVENT_ID_VIEW_CONTENT` | Same, the **SWS ViewContent** row. |
+| `PUBLIC_X_EVENT_ID_ADD_TO_CART` | Same, the **SWS AddToCart** row. |
+
+### Conversion API auth, two paths
+
+`app/lib/conversions/x.server.js` supports both and prefers A. Run
+`npm run verify:x-capi` to see which one the current environment satisfies.
+
+| Path | Variables | Cost |
+|---|---|---|
+| **A, preferred** | `PRIVATE_X_PIXEL_TOKEN` | A static token generated in the Ads UI, sent as an `X-Pixel-Token` header. No developer account, no approval. Referenced in X's developer forum but not on the web-conversions docs page, so treated as likely rather than confirmed. |
+| **B, fallback** | `PRIVATE_X_CONSUMER_KEY`, `PRIVATE_X_CONSUMER_SECRET`, `PRIVATE_X_ACCESS_TOKEN`, `PRIVATE_X_ACCESS_TOKEN_SECRET` | OAuth 1.0a request signing, which is what the official docs describe. Needs a developer account at developer.x.com **plus a separate Ads API access application**, which is an approval and not instant. |
+
+`PRIVATE_X_CAPI_TOKEN` is **dead** and no longer read by anything. The old
+adapter sent it as `Authorization: Bearer`, which is neither of the two
+schemes above and would always have failed.
+
+Signing is proved independently of any credential by
+`npm run verify:oauth1`, against the RFC 5849 worked example.
 
 Browser adapter: `app/lib/analytics/pixels/x.js`, wired for page_view,
 view_item and add_to_cart only, the three X has a configured event id for
