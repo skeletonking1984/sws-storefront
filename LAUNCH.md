@@ -2234,3 +2234,63 @@ now say 30 days for a download that never arrived, corrupt files, not as
 described, a double charge, or a platform the listing claimed. Etsy is a
 separate policy surface with its own rules, so this may be deliberate, but the
 two channels currently tell a buyer different things about refunds. Todd's call.
+
+### 2026-09-15 — "make sure it's accurate on both" turned up worse than the image
+
+Checking the Spooky Kit's copy rather than just its art found the product
+description contradicting the refund policy **on its own page**. The page's
+JSON-LD says `MerchantReturnFiniteReturnWindow`, 30 days, `FreeReturn`, deployed
+this morning; three paragraphs above it the description said "this item is
+non-refundable". Google reads the markup, the customer reads the prose, and they
+said opposite things.
+
+**A search trap that nearly produced a fabricated number.** The first attempt to
+size this used `products(query: "status:active AND body:'non-refundable'")` and
+returned **124 of 124**, which reads as a catalogue-wide disaster. It is not a
+filter. `body:` is not a supported field in the Shopify product search, and an
+unsupported field is SILENTLY IGNORED rather than erroring, so the query
+degrades to `status:active`. Proved it with a control: `body:zzqqxxnonsense`
+also returns 124. **Any time a `query:` count equals the unfiltered count, run a
+nonsense control before believing it.** The real numbers came from pulling all
+124 descriptions and grepping them locally.
+
+**The real scope, 12 of 124 products contradict the refund policy:**
+
+| Wording | Count | Which |
+|---|---|---|
+| "this item is non-refundable" | 3 | the three kits |
+| "No refunds" | 8 | Lotus Butterfly, Dreamy Lotus, Butterfly Galaxy, Spooky Halloween, Sakura Butterfly, Lunar Cat, Glassy, Classical Floral Red |
+| "all sales final" | 1 | Demon Samurai Overlay Pack |
+
+Only the Spooky Kit is fixed. **Eleven still contradict the policy page, the FAQ
+and their own structured data.** They are all chat-and-goal sets and packs, not
+single widgets.
+
+**Two further factual errors in the Spooky Kit description, both fixed:**
+
+1. "No software purchase required, everything runs through StreamElements" was
+   false. The kit-exclusive Spooky Multistream Chat Widget does NOT run through
+   StreamElements; it connects to each platform directly. Etsy's own copy had
+   this right and Shopify's did not.
+2. Requirements listed "YouTube: connection for live stream" and "Kick: Kick
+   channel connection", which describe a StreamElements connection rather than
+   what the multistream widget actually needs, and omitted TikTok entirely while
+   the `custom.works_with` metafield claims TikTok. Now: a free YouTube Data API
+   key, channel name plus chatroom ID for Kick, and the free TikFinity app for
+   TikTok, each marked as being for the multistream widget.
+
+Also added the "Multistream Chat" section and the two missing "Included Items"
+lines (Streamlabs versions, platform setup notes) that Etsy carried and Shopify
+did not.
+
+**Etsy's refund line was deliberately NOT changed.** Its description also says
+non-refundable, but Etsy sales are governed by the Etsy shop's own policies, not
+by streamwidgetshop.com/policies/refund-policy, and the Etsy API exposes no
+policy fields (`etsy_get_shop` returns counts and ratings only). Rewriting it to
+promise 30 days would be inventing a policy for a channel whose policy I cannot
+read. Todd's call, and it needs the Etsy shop policy checked first.
+
+Verified live after the cache turned: `non-refundable` 0 occurrences,
+`everything runs through StreamElements` 0, `Refunds within 30 days` present,
+TikFinity / YouTube Data API key / chatroom ID all present, hero serving
+`?v=1789496887`, price 29.99 against 100.50.
