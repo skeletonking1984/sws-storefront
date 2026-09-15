@@ -2071,3 +2071,51 @@ The **Domain property** `sc-domain:streamwidgetshop.com` tells the true story: *
 The apex markup is also richer than the old theme's. Served right now on a product page: `name`, `description`, `image`, `productID`, `brand`, `aggregateRating`, `review`, and an `offers` block carrying `price`, `priceCurrency`, `availability`, `itemCondition`, `url`, **`hasMerchantReturnPolicy`** and **`shippingDetails`**. The last two are fields Google now wants for Merchant listings and the old theme did not emit.
 
 **Keep the www property.** It is not noise, it is evidence the redirect is working. Just do not read site health from it.
+
+### 2026-09-15 — Merchant Center was fed 10 of 124 products, and the shipping warning was the wrong lead
+
+Merchant Center showed "Total products 10" and every one of the 10 flagged
+"Missing shipping information (10 products, 100%)". The 100% reads like the
+shipping warning is the whole problem. It is not, and chasing it first would
+have fixed nothing that matters.
+
+**Counted, rather than assumed:**
+
+| Publication | Active products |
+|---|---|
+| Online Store | 124 |
+| SWS Storefront (Hydrogen) | 124 |
+| Stream Widget Shop Headless | 124 |
+| **Google & YouTube** (`gid://shopify/Publication/134098878654`) | **10** |
+
+114 active products had never been published to the Google sales channel, so
+Shopify was only ever handing Google 10. That is the real reason Free Listings
+reported no recent offers, and it is invisible in the "Needs attention" view,
+which only ever shows you the items it already has.
+
+Published all 114 with `publishablePublish` in six batches, every alias
+returning `userErrors: []`. Verified 124 of 124 on channel afterwards.
+
+**The trap in verifying this.** The immediate recount said **109 on channel,
+15 still off**, with no error anywhere. Reading that as a partial failure
+would have been wrong: `resourcePublications` on each of those products showed
+`isPublished: true` for Google & YouTube already. `publication_ids:` in a
+`products(query:)` search is a SEARCH INDEX FIELD and lags the write by up to
+a minute or two; `resourcePublications` is the record itself. The count
+climbed 109, then 120, then 124 while nothing was being written. **Never read
+a publish result from a `query:` count alone, and never conclude a write
+failed from one.**
+
+Prices were checked against Shopify at the same time and match exactly,
+including the odd-looking ones: Spooky Cauldron $14.30 and Cute Bloodworm
+$10.56 are genuinely those prices, not a feed error.
+
+**Still Todd's, and the catalogue fix does not substitute for it:** the $0
+shipping service and the return policy in Merchant Center under Shipping and
+returns. The `shippingRate: 0` now in the product JSON-LD does NOT clear that
+warning; it is an account-level setting Google will not infer from markup.
+Until it is set, all 124 will sit at "Limited" instead of 10.
+
+Next Merchant Center check should show 124 rather than 10. Shopify's Google &
+YouTube app syncs on its own schedule, so the count moves on its sync, not
+immediately.
