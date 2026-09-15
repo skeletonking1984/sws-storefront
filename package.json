@@ -14,7 +14,9 @@
     "verify:tracking": "node scripts/verify-tracking.mjs",
     "verify:all": "node scripts/audit-catalog.mjs && node scripts/audit-shipping.mjs && npm run audit:ip && node scripts/verify-tracking.mjs",
     "audit:ip": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/audit-ip-risk.mjs",
-    "optimize:assets": "node scripts/optimize-assets.mjs"
+    "optimize:assets": "node scripts/optimize-assets.mjs",
+    "verify:oauth1": "node scripts/verify-oauth1.mjs",
+    "verify:x-capi": "node scripts/verify-x-capi.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

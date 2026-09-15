@@ -12,3 +12,4 @@ screenshots/
 # used on the site (app/assets/hero-widgets.webp) is committed.
 hero/*.png
 app/assets/hero-widgets.png
+.env.x
