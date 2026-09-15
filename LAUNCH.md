@@ -1570,3 +1570,29 @@ So the real finding is **worse than the one that was reported**, not better: the
 The measured 2230 KiB to 446 KiB saving stands; it was taken by comparing the full size original against the candidate the new markup resolves to, and did not depend on the false premise.
 
 **Lesson, and it is the same one this file recorded this morning about `elementFromPoint`: a case sensitive grep for an HTML attribute is not evidence of its absence.** React renders `srcSet`, `fetchPriority`, `crossOrigin` and friends camelCase into the served HTML, and HTML attribute names are case insensitive so the browser does not care. Grep with `-i` when asserting an attribute is missing.
+
+#### WebMCP was registering nothing, and the fix, 2026-09-15 (Todd ran Lighthouse on the preview)
+Todd ran Lighthouse against the WebMCP preview: **100 / 100 / 96 / 69, Agentic Browsing 3/3**, with all three WebMCP audits reported **Not Applicable**. They were right and the integration was wrong.
+
+**Two mistakes in the first pass.**
+
+**1. Wrong object.** The imperative API is `document.modelContext.registerTool`, which is what Chrome implements and what the Lighthouse audit reads ([Chrome docs](https://developer.chrome.com/docs/lighthouse/agentic-browsing/registered-webmcp-tools)). The W3C Community Group proposal document writes it as `window.navigator.modelContext`, which is the one the first version followed, so it registered nothing in a real browser. Both are now tried, `document` first because that is the one that exists today. **The spec and the shipping implementation disagree on this, so do not "simplify" it back to one.**
+
+**2. Missed half the spec.** There is a declarative API with no JavaScript at all: a `<form>` carrying `toolname` and `tooldescription`, with `toolparamdescription` on its inputs. That is what the "WebMCP form coverage" audit reads. Added to all four public forms. Verified on the deployed preview:
+
+| Page | forms | with `toolname` | `toolparamdescription` |
+|---|---|---|---|
+| `/` | 2 | **2** | 2 |
+| `/pages/contact` | 2 | **2** | 4 |
+| `/collections/all` | 2 | **2** | 1 |
+
+Tool names now exposed: `subscribe_to_newsletter`, `contact_shop`, `search_widgets_quick`, `filter_widgets_in_collection`, plus the three imperative ones. The newsletter honeypot is deliberately left undescribed so an agent has no reason to fill it.
+
+`eslint-plugin-react` does not know these attributes and flagged them as unknown properties. They are real lowercase HTML attributes React passes straight through, so the three names are listed explicitly in `eslint.config.js` rather than the rule being disabled, and any other typo'd attribute is still caught. Lint is back to the same 11 pre-existing errors.
+
+**Still not verified: an actual `registerTool` call.** No browser available here exposes `document.modelContext` (Chrome 152 does not), so the imperative half remains unconfirmed at runtime. The declarative half needs no JavaScript and is confirmed in the served HTML above.
+
+#### `crop=center` is still live on about 18 images per page
+Found while verifying the above, and it is the CLAUDE.md image quirk that this repo has documented since 2026-08-30. The product cards, kit cards and PDP gallery were moved to `ResponsiveImage` in `41ba223` and no longer crop, but every OTHER Hydrogen `<Image>` still does: **272 `crop=center` occurrences on the homepage**, which at 15 srcset candidates each is roughly 18 images. They are the search palette thumbnails, the mega menu tiles, the top seller card and the cart drawer line items.
+
+The fix is the same one-line swap to `ResponsiveImage` per call site. Not done here to keep this pass from sprawling, and logged so it is not rediscovered a third time.
