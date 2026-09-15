@@ -1,4 +1,5 @@
 import {Await, Link} from 'react-router';
+import {AgentTools} from '~/components/AgentTools';
 import {Suspense, useEffect, useId, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {Aside, useAside} from '~/components/Aside';
@@ -28,6 +29,11 @@ export function PageLayout({
 }) {
   return (
     <Aside.Provider>
+      {/* WebMCP tools. Inside Aside.Provider because add_to_cart opens the
+          cart drawer, so the shopper sees what an agent did to their basket.
+          Renders nothing and is inert unless the browser has
+          navigator.modelContext. */}
+      <AgentTools />
       <CartAside cart={cart} />
       <SearchAside navData={navData} />
       <MobileMenuAside

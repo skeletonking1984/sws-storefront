@@ -1103,6 +1103,68 @@ export type TopWidgetsCollectionQuery = {
   >;
 };
 
+export type AgentProductFragment = Pick<
+  StorefrontAPI.Product,
+  'id' | 'title' | 'handle' | 'productType'
+> & {
+  worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+  priceRange: {
+    minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+  };
+  selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+  >;
+};
+
+export type AgentSearchQueryVariables = StorefrontAPI.Exact<{
+  query: StorefrontAPI.Scalars['String']['input'];
+  first: StorefrontAPI.Scalars['Int']['input'];
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+}>;
+
+export type AgentSearchQuery = {
+  products: {
+    nodes: Array<
+      Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle' | 'productType'> & {
+        worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+        priceRange: {
+          minVariantPrice: Pick<
+            StorefrontAPI.MoneyV2,
+            'amount' | 'currencyCode'
+          >;
+        };
+        selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+        >;
+      }
+    >;
+  };
+};
+
+export type AgentProductByHandleQueryVariables = StorefrontAPI.Exact<{
+  handle: StorefrontAPI.Scalars['String']['input'];
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+}>;
+
+export type AgentProductByHandleQuery = {
+  product?: StorefrontAPI.Maybe<
+    Pick<
+      StorefrontAPI.Product,
+      'description' | 'id' | 'title' | 'handle' | 'productType'
+    > & {
+      worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+      priceRange: {
+        minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+      };
+      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+      >;
+    }
+  >;
+};
+
 export type ArticleQueryVariables = StorefrontAPI.Exact<{
   articleHandle: StorefrontAPI.Scalars['String']['input'];
   blogHandle: StorefrontAPI.Scalars['String']['input'];
@@ -2171,6 +2233,14 @@ interface GeneratedQueryTypes {
   '#graphql\n  query TopWidgetsCollection(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      products(first: 6) {\n        nodes {\n          id\n          title\n          handle\n          worksWith: metafield(namespace: "custom", key: "works_with") { value }\n          priceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n          featuredImage {\n            id\n            url\n            altText\n          }\n          media(first: 25) {\n            nodes {\n              __typename\n              ... on Video {\n                id\n                previewImage {\n                  url\n                }\n                sources {\n                  url\n                  mimeType\n                  format\n                  width\n                  height\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: TopWidgetsCollectionQuery;
     variables: TopWidgetsCollectionQueryVariables;
+  };
+  '#graphql\n  #graphql\n  fragment AgentProduct on Product {\n    id\n    title\n    handle\n    productType\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    priceRange { minVariantPrice { amount currencyCode } }\n    selectedOrFirstAvailableVariant(ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      id\n      availableForSale\n    }\n  }\n\n  query AgentSearch($query: String!, $first: Int!, $country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: $first, query: $query) {\n      nodes { ...AgentProduct }\n    }\n  }\n': {
+    return: AgentSearchQuery;
+    variables: AgentSearchQueryVariables;
+  };
+  '#graphql\n  #graphql\n  fragment AgentProduct on Product {\n    id\n    title\n    handle\n    productType\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    priceRange { minVariantPrice { amount currencyCode } }\n    selectedOrFirstAvailableVariant(ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      id\n      availableForSale\n    }\n  }\n\n  query AgentProductByHandle($handle: String!, $country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...AgentProduct\n      description\n    }\n  }\n': {
+    return: AgentProductByHandleQuery;
+    variables: AgentProductByHandleQueryVariables;
   };
   '#graphql\n  query Article(\n    $articleHandle: String!\n    $blogHandle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(language: $language, country: $country) {\n    blog(handle: $blogHandle) {\n      handle\n      articleByHandle(handle: $articleHandle) {\n        handle\n        title\n        contentHtml\n        publishedAt\n        author: authorV2 {\n          name\n        }\n        image {\n          id\n          altText\n          url\n          width\n          height\n        }\n        seo {\n          description\n          title\n        }\n      }\n    }\n  }\n': {
     return: ArticleQuery;
