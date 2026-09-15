@@ -4,7 +4,7 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
 import {CATEGORY_LINKS} from '~/components/CollectionFilterBar';
 import {buildMeta, getOrigin} from '~/lib/seo';
-import logo from '~/assets/logo.png';
+import logo from '~/assets/logo.webp';
 
 /**
  * @type {Route.MetaFunction}

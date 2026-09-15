@@ -1,8 +1,8 @@
 import {Suspense} from 'react';
 import {Await, NavLink} from 'react-router';
 import {SocialLinks} from '~/components/SocialLinks';
-import logo from '~/assets/logo.png';
-import pfp from '~/assets/pfp.png';
+import logo from '~/assets/logo.webp';
+import pfp from '~/assets/pfp.webp';
 
 /**
  * @param {FooterProps}
@@ -25,7 +25,7 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}) {
                   width="200"
                   height="200"
                 />
-                <img src={logo} alt="Stream Widget Shop" width="900" height="250" />
+                <img src={logo} alt="Stream Widget Shop" width="560" height="156" />
               </div>
               <p className="footer-tagline">
                 Animated chat and goal widgets for Twitch, YouTube, and

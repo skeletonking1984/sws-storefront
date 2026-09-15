@@ -1,6 +1,7 @@
 import {useRef, useState} from 'react';
+import {ResponsiveImage} from '~/components/ResponsiveImage';
 import {Link} from 'react-router';
-import {Image, Money, useAnalytics} from '@shopify/hydrogen';
+import {Money, useAnalytics} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
 import {parseWorksWith, isMultistream} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
@@ -230,11 +231,16 @@ export function ProductItem({
               Multistream
             </span>
           )}
-          <Image
+          <ResponsiveImage
             alt={image.altText || product.title}
             data={image}
             loading={loading}
-            sizes="(min-width: 45em) 400px, 100vw"
+            /* Cards render 404px wide on desktop and 296px on a 360px phone,
+               so asking for 100vw made the browser pick a 1280px candidate for
+               a 296px box. */
+            sizes="(min-width: 45em) 400px, 90vw"
+            widths={[300, 400, 600, 800]}
+            fallbackWidth={400}
           />
           {videoSource && (
             <video

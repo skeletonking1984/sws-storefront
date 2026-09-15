@@ -11,8 +11,8 @@ import {
   WIDGET_BROWSE_TILES,
   WORKS_WITH_PLATFORMS,
 } from '~/lib/nav';
-import logo from '~/assets/logo.png';
-import pfp from '~/assets/pfp.png';
+import logo from '~/assets/logo.webp';
+import pfp from '~/assets/pfp.webp';
 
 /**
  * @param {HeaderProps}
@@ -66,8 +66,8 @@ function BrandMark({shopName}) {
           /* Intrinsic size of logo.png. Lets the browser reserve the box from
              the aspect ratio before the file arrives; CSS still sets the
              rendered height and leaves width auto. */
-          width="900"
-          height="250"
+          width="560"
+          height="156"
           onError={() => setImgFailed(true)}
         />
       )}

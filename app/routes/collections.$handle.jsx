@@ -6,7 +6,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
 import {CollectionFilterBar} from '~/components/CollectionFilterBar';
 import {buildMeta, getOrigin} from '~/lib/seo';
-import logo from '~/assets/logo.png';
+import logo from '~/assets/logo.webp';
 
 /**
  * @type {Route.MetaFunction}

@@ -1,5 +1,6 @@
 import {useState} from 'react';
-import {Image} from '@shopify/hydrogen';
+import {ResponsiveImage} from '~/components/ResponsiveImage';
+
 
 /**
  * Etsy-style product gallery: thumbnail rail + large main viewer.
@@ -88,10 +89,16 @@ export function ProductGallery({media}) {
           // catalog's images are landscape, not 1:1) and chops off content.
           // The container below handles square framing via object-fit:
           // contain instead, so nothing gets cropped.
-          <Image
+          <ResponsiveImage
             data={active.image}
             alt={active.image.altText || ''}
             sizes="(min-width: 45em) 50vw, 100vw"
+            /* The PDP's largest above the fold image, so it is the likely LCP
+               on a product page: eager and high priority rather than lazy. */
+            loading="eager"
+            fetchPriority="high"
+            widths={[400, 600, 800, 1200]}
+            fallbackWidth={800}
           />
         ) : null}
 

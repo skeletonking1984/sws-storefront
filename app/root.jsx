@@ -11,6 +11,7 @@ import {
 } from 'react-router';
 import faviconPng from '~/assets/favicon.png';
 import appleTouchIcon from '~/assets/apple-touch-icon.png';
+import logoWebp from '~/assets/logo.webp';
 import baloo2Latin from '~/assets/fonts/baloo-2-latin.woff2?url';
 import nunitoLatin from '~/assets/fonts/nunito-latin.woff2?url';
 import {FOOTER_QUERY, HEADER_QUERY, NAV_QUERY} from '~/lib/fragments';
@@ -69,6 +70,12 @@ export function links() {
      * 0.1323 CLS to that single reflow. latin-ext is deliberately NOT
      * preloaded, its unicode-range keeps it off pages that do not need it.
      */
+    /*
+     * The logo is the homepage LCP element, and it is the header and footer
+     * brand mark on every other page, so it is worth the early request
+     * everywhere.
+     */
+    {rel: 'preload', as: 'image', href: logoWebp, fetchPriority: 'high'},
     {
       rel: 'preload',
       as: 'font',

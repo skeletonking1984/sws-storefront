@@ -1,6 +1,7 @@
 import {Await, useLoaderData, useRouteLoaderData, Link} from 'react-router';
+import {ResponsiveImage} from '~/components/ResponsiveImage';
 import {Suspense} from 'react';
-import {Image, Money} from '@shopify/hydrogen';
+import {Money} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge, SHOP_STATS} from '~/components/EtsyRating';
 import {SHOP_RATING} from '~/components/EtsyReviews';
@@ -22,10 +23,10 @@ import {
   VIBES,
   WORKS_WITH_PLATFORMS,
 } from '~/lib/nav';
-import logo from '~/assets/logo.png';
-import logoStacked from '~/assets/logo-stacked.png';
-import pfp from '~/assets/pfp.png';
-import heroWidgets from '~/assets/hero-widgets.webp';
+import logo from '~/assets/logo.webp';
+import logoStacked from '~/assets/logo.webp';
+import pfp from '~/assets/pfp.webp';
+import heroWidgets from '~/assets/hero-widgets-opt.webp';
 
 /**
  * @type {Route.MetaFunction}
@@ -236,8 +237,15 @@ function Hero() {
               src={logoStacked}
               alt="Stream Widget Shop"
               className="hero-logo"
-              width="900"
-              height="250"
+              width="560"
+              height="156"
+              /*
+               * Lighthouse named this exact element as the LCP on the live
+               * homepage and its one failing check was "fetchpriority=high
+               * should be applied". It was already eager and discoverable in
+               * the initial document, just queued behind everything else.
+               */
+              fetchPriority="high"
             />
           </div>
           <h1 className="sws-glow">
@@ -278,8 +286,8 @@ function Hero() {
             className="hero-stream-media"
             src={heroWidgets}
             alt="Real Stream Widget Shop widgets composited on a stream backdrop: neon animated chat and goal, a moon jar tip goal, a star goal bar, and a Y2K sticker chat"
-            width={1600}
-            height={1000}
+            width={1200}
+            height={750}
             loading="eager"
             fetchPriority="high"
           />
@@ -419,10 +427,10 @@ function KitCard({product}) {
       {product.featuredImage && (
         <div className="kit-card-image">
           {tagLabel && <span className="kit-card-tag">{tagLabel}</span>}
-          <Image
+          <ResponsiveImage
             alt={product.featuredImage.altText || product.title}
             data={product.featuredImage}
-            sizes="(min-width: 45em) 600px, 100vw"
+            sizes="(min-width: 45em) 600px, 90vw"
           />
         </div>
       )}
