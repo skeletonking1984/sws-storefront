@@ -110,7 +110,12 @@ export default function Collection() {
             </Link>
           ))}
         </div>
-        <Form method="get" className="collection-filter-search-form">
+        <Form
+          method="get"
+          className="collection-filter-search-form"
+          toolname="filter_widgets_in_collection"
+          tooldescription="Filter the widgets shown on this collection page by a search term."
+        >
           {activeType && <input type="hidden" name="type" value={activeType} />}
           <input
             type="search"

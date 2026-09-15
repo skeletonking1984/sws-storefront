@@ -31,7 +31,14 @@ export function SearchForm({children, ...props}) {
   }
 
   return (
-    <Form method="get" {...props}>
+    // Declarative WebMCP defaults, placed before {...props} on purpose so a
+    // caller rendering a more specific search can still override them.
+    <Form
+      method="get"
+      toolname="search_widgets_form"
+      tooldescription="Search the Stream Widget Shop catalogue of animated chat widgets, goal widgets and overlay packs."
+      {...props}
+    >
       {children({inputRef})}
     </Form>
   );

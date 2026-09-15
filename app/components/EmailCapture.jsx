@@ -59,7 +59,17 @@ export function EmailCapture() {
             </p>
           </div>
         ) : (
-          <Form className="email-capture-form" method="post">
+          // Declarative WebMCP: `toolname`/`tooldescription` on the form and
+          // `toolparamdescription` on each real input expose this to an agent
+          // with no JavaScript. Paired with the imperative tools in
+          // AgentTools.jsx. The honeypot below is deliberately left
+          // undescribed, so an agent has no reason to fill it.
+          <Form
+            className="email-capture-form"
+            method="post"
+            toolname="subscribe_to_newsletter"
+            tooldescription="Subscribe an email address to the Stream Widget Shop mailing list and receive a 10% welcome discount code."
+          >
             <input type="hidden" name="intent" value="newsletter" />
             <input
               type="email"
@@ -68,6 +78,7 @@ export function EmailCapture() {
               defaultValue={result?.values?.email}
               placeholder="you@example.com"
               aria-label="Email address"
+              toolparamdescription="The email address to subscribe."
             />
             <div className="contact-form-honeypot" aria-hidden="true">
               <label htmlFor="newsletter-company">Company</label>

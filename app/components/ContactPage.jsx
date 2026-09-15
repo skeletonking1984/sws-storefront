@@ -48,7 +48,12 @@ export function ContactPage() {
           </p>
         </div>
       ) : (
-        <Form className="contact-form" method="post">
+        <Form
+          className="contact-form"
+          method="post"
+          toolname="contact_shop"
+          tooldescription="Send a message to Stream Widget Shop, for support with a widget or to ask about a custom commission."
+        >
           <div className="contact-form-row">
             <label htmlFor="contact-name">Name</label>
             <input
@@ -57,6 +62,7 @@ export function ContactPage() {
               type="text"
               defaultValue={values.name}
               required
+              toolparamdescription="The sender's name."
             />
             {fieldErrors.name && (
               <p className="contact-form-field-error">{fieldErrors.name}</p>
@@ -70,6 +76,7 @@ export function ContactPage() {
               type="email"
               defaultValue={values.email}
               required
+              toolparamdescription="The sender's email address, used for the reply."
             />
             {fieldErrors.email && (
               <p className="contact-form-field-error">{fieldErrors.email}</p>
@@ -79,6 +86,7 @@ export function ContactPage() {
             <label htmlFor="contact-message">Message</label>
             <textarea
               id="contact-message"
+              toolparamdescription="The message to send to the shop."
               name="message"
               rows={5}
               defaultValue={values.message}

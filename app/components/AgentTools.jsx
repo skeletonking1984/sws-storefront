@@ -7,15 +7,24 @@ import {createAgentTools} from '~/lib/agentTools';
  * WebMCP tool registration: hands an AI agent real, typed functions instead of
  * making it infer the shop from screenshots and DOM guesses.
  *
- * Spec: the W3C Community Group WebMCP proposal, `navigator.modelContext`
- * (https://webmachinelearning.github.io/webmcp/docs/proposal.html). A tool is
- * {name, description, inputSchema, execute}; `execute(input, agent)` resolves
- * to {content: [{type: 'text', text}]}. `provideContext()` and `clearContext()`
- * were removed in the March 2026 revision, so registerTool / unregisterTool
- * are the only entry points and this file must not reintroduce the old shape.
+ * A tool is {name, description, inputSchema, execute}; `execute(input, agent)`
+ * resolves to {content: [{type: 'text', text}]}. `provideContext()` and
+ * `clearContext()` were removed in the March 2026 revision, so registerTool and
+ * unregisterTool are the only entry points.
  *
- * Feature detected and completely inert where the API does not exist, which is
- * every browser that has not enabled it. Nothing here runs during SSR.
+ * WHICH OBJECT IT HANGS OFF IS NOT SETTLED, so both are tried. Chrome's own
+ * implementation, and the Lighthouse audit that reports on it, use
+ * `document.modelContext.registerTool`
+ * (https://developer.chrome.com/docs/lighthouse/agentic-browsing/registered-webmcp-tools).
+ * The W3C Community Group proposal document writes it as
+ * `window.navigator.modelContext`
+ * (https://webmachinelearning.github.io/webmcp/docs/proposal.html). A first
+ * version of this file followed the proposal only, registered nothing in
+ * Chrome, and Lighthouse reported all three WebMCP audits as Not Applicable.
+ * `document` is preferred because that is what actually exists today.
+ *
+ * Feature detected and completely inert where neither exists, which is every
+ * browser that has not enabled it. Nothing here runs during SSR.
  *
  * The tool definitions themselves live in app/lib/agentTools.js so they can be
  * exercised without a browser; this component only supplies the three things
@@ -37,9 +46,12 @@ export function AgentTools() {
   openRef.current = open;
 
   useEffect(() => {
-    if (typeof navigator === 'undefined') return undefined;
-    const ctx = navigator.modelContext;
-    if (!ctx || typeof ctx.registerTool !== 'function') return undefined;
+    const host = [
+      typeof document !== 'undefined' ? document.modelContext : null,
+      typeof navigator !== 'undefined' ? navigator.modelContext : null,
+    ].find((c) => c && typeof c.registerTool === 'function');
+    if (!host) return undefined;
+    const ctx = host;
 
     const tools = createAgentTools({
       async getJson(params) {

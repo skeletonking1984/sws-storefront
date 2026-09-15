@@ -244,4 +244,26 @@ export default [
       'react-hooks/rules-of-hooks': 'off',
     },
   },
+  {
+    /*
+     * Declarative WebMCP attributes. `toolname` and `tooldescription` go on a
+     * <form> and `toolparamdescription` on its inputs, which is how Chrome and
+     * the Lighthouse Agentic Browsing audit read a form's purpose without any
+     * JavaScript:
+     * https://developer.chrome.com/docs/lighthouse/agentic-browsing/forms-missing-declarative-webmcp
+     *
+     * eslint-plugin-react does not know the spec yet and reports them as
+     * unknown properties. They are real lowercase HTML attributes and React
+     * passes them straight through to the DOM, so the rule is wrong here
+     * rather than the markup. Listed explicitly, so any OTHER typo'd attribute
+     * is still caught.
+     */
+    files: ['app/**/*.jsx'],
+    rules: {
+      'react/no-unknown-property': [
+        'error',
+        {ignore: ['toolname', 'tooldescription', 'toolparamdescription']},
+      ],
+    },
+  },
 ];
