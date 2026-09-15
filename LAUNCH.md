@@ -2186,3 +2186,51 @@ ads at any kit.
 Multistream Chat Widget Pack is still mismatched the other way, $29.99 here and
 $48.38 on Etsy. Left alone on purpose: that direction costs the storefront
 nothing.
+
+### 2026-09-15 — The corrected kit art had existed for two days and was never uploaded
+
+Todd: "fix the listing", on the Spooky Stream Kit's hero image claiming "7
+animated widgets · 2 chat · 5 goal bars" when the kit is 8 widgets, 3 chat, 5
+goal. The missing one is the kit-exclusive Spooky Multistream Chat Widget, the
+only component with no standalone listing, so the art was omitting the single
+strongest reason to buy the kit rather than the parts.
+
+**The fix already existed on disk.** `products/bundles/01-spooky-stream-kit/
+build/art-fix/` held `01_hero_v2.jpg`, `09_what-you-get_v5.jpg` and
+`12_whats-inside_v3.jpg`, all dated 2026-09-13, and `art/01_hero.jpg` was
+already the corrected v2. Only the upload never happened. Both storefronts
+served the Sep 7 batch for two days while the repo looked entirely correct.
+**A corrected file in the repo is not a corrected listing.** Compare live CDN
+bytes, never local ones.
+
+MD5 does not settle this either: Shopify re-encodes on upload, so the live
+423,290-byte local file arrives as 207,992 bytes with a different hash even
+when identical. The only reliable check was opening both images and reading the
+text.
+
+**Shopify, three images replaced** (01_hero, 09_what-you-get, 12_whats-inside):
+`fileUpdate` with `originalSource` set to a staged upload URL. This swaps the
+bytes behind the existing MediaImage ID, so the gallery keeps its order and
+`featuredMedia` keeps pointing at the hero. Verified after: hero still first,
+video still second, the nine untouched images still on their old `?v=`. The
+obvious alternative, `productCreateMedia` plus `productDeleteMedia`, appends to
+the end and would have needed a `productReorderMedia` to put the hero back.
+
+**Etsy, listing 4570446087, one image replaced.** All five images were checked
+first: only the rank-1 hero carries counts, ranks 2 to 5 are per-widget
+showcases. `uploadListingImage` with `overwrite=true` and `rank=1` replaced
+rather than inserted, confirmed by re-reading the listing (still five images,
+ranks 2 to 5 byte-identical URLs, og_image now the new id 8576357007). The
+sws-etsy-mcp client's `write()` helper is `application/x-www-form-urlencoded`
+only, so the multipart POST is hand-built in the bundle at
+`build/art-fix/etsy-replace-hero.mjs`, borrowing that package's OAuth refresh.
+
+Etsy's own description was already correct and needed no edit: it names eight
+widgets, three chat, five goal, and flags the multistream chat as kit-exclusive.
+
+**Noticed while in there, not changed:** the Etsy description says "this item is
+non-refundable", while the Shopify refund policy, FAQ and product JSON-LD all
+now say 30 days for a download that never arrived, corrupt files, not as
+described, a double charge, or a platform the listing claimed. Etsy is a
+separate policy surface with its own rules, so this may be deliberate, but the
+two channels currently tell a buyer different things about refunds. Todd's call.
