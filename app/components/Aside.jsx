@@ -45,7 +45,17 @@ export function Aside({children, heading, type}) {
       role="dialog"
       aria-labelledby={id}
     >
-      <button className="close-outside" onClick={close} />
+      {/* The backdrop. It is a real focusable button with no content, so
+          without a label it reaches the accessibility tree as an unnamed
+          control sitting in front of the dialog. `tabIndex={-1}` keeps it out
+          of the tab order as well: the header already carries a named Close
+          button, and Escape and an outside click both close the aside. */}
+      <button
+        className="close-outside"
+        onClick={close}
+        aria-label={typeof heading === 'string' ? `Close ${heading}` : 'Close'}
+        tabIndex={-1}
+      />
       <aside>
         <header>
           <h3 id={id}>{heading}</h3>

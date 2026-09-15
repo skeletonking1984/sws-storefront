@@ -824,11 +824,42 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .header-icon-label {
-  display: none;
-  /* Stays hidden through the 1100px nav-collapse point (icons alone are
-     enough room there) and only reappears once the desktop nav has
+  /*
+   * Hidden from the EYE, not from the accessibility tree.
+   *
+   * This used to be `display: none`, which removes the element outright, so
+   * below 82em the account and cart links were an <svg> and nothing else and
+   * had no accessible name at all. An audit of the live site flagged
+   * `a.header-icon-btn` as "Links must have discernible text". The Search
+   * control was the only one that passed, and only because it carries its own
+   * `aria-label`.
+   *
+   * Clipping instead of removing keeps one source for the label, which matters
+   * for the account link: its text is "Account" or "Sign in" depending on the
+   * session, so an `aria-label` here would be a second copy that can go stale
+   * against the first.
+   */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+
+  /* Stays visually hidden through the 1100px nav-collapse point (icons alone
+     are enough room there) and only reappears once the desktop nav has
      breathing room again. */
   @media (min-width: 82em) {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
     display: inline;
   }
 }
