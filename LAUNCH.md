@@ -2637,3 +2637,58 @@ event id is guarded by its own `if (!config.xEventId) return;`.
 
 Once it records, `Shopify:72470e-33:CHECKOUT_INITIATED` can be deleted and every
 `Shopify:` row on the pixel is gone.
+
+### 2026-09-15 — Verified live, and the duplication caught in the act
+
+`PUBLIC_X_EVENT_ID_BEGIN_CHECKOUT` set on Oxygen and deployed. Tested against
+production in a real browser, not a unit test.
+
+**`SWS Checkout` fires correctly.** Loaded a product page, added to cart, clicked
+Continue to Checkout, and captured the payload:
+
+```
+event  tw-q7mwb-rfbdk
+value  110.85   currency USD   num_items 7   contents 6 products
+```
+
+The cart happened to hold six line items with one at quantity 2, which is the
+exact case the cart-level summing was written for. The arithmetic checks out:
+29.99 + 14.99 + 16.37 + 6.50 + 7.02 + (17.99 x 2) = 110.85. **Had it read
+`items[0]` the way `view_item` and `add_to_cart` do, it would have reported
+$29.99 and 1 item.** That is a 4x under-report at the most valuable funnel step,
+and it would have looked perfectly healthy in Ads Manager.
+
+**How it was captured, since the handler navigates within 800ms:** patch
+`window.twq` to write each call into `sessionStorage`, click, let it navigate to
+the hosted checkout, then navigate BACK to the same origin and read the key.
+sessionStorage is per origin per tab, so it survives the round trip. Racing the
+800ms timer would have been flaky.
+
+Also confirmed from the queue on page load: `page_view` and `view_item` fire, and
+`view_item` carried **value 29.99** for the Spooky Kit, so this morning's price
+change reaches the pixel rather than only the page.
+
+**The duplication, caught in the act.** After the test, Events Manager showed
+`SWS Checkout` at 4:03 PM and `Shopify:72470e-33:CHECKOUT_INITIATED` at 4:03 PM.
+One click, two events, same minute. That is the whole argument made visible.
+
+**Todd deleted `Shopify:...:PURCHASE` and `Shopify:...:SITE_VISIT`.** Only
+CHECKOUT_INITIATED remains active and goes once ours was proven. The four
+remaining `Shopify:` rows have never fired.
+
+`SWS Purchase` still reads 12:32 PM and has not moved, which is the correct
+outcome: no real orders since, and the deployed filter now blocks the SWSTEST
+checkouts that used to inflate it.
+
+**Full suite, all green except one:** catalog 0 issues, shipping 124 clean,
+policy claims all three sources agree, test-order filter 13/13, tracking end to
+end, config registry 29/29, oauth1, cart attributes.
+
+**`audit:ip` still FAILS with 5 live Etsy listings** and predates today: Pokémon
+Charizard (2 terms) and Valorant Brimstone. Naming a game and a character Todd
+does not own, against the `soul-blade-pack` rule of naming the genre and never
+the game. A takedown risk on Etsy, unrelated to the storefront, open for a while.
+
+**Deliberately not run: `verify:x-capi`.** It posts a real conversion to the live
+pixel, which is the exact pollution this day was spent removing. Proving the
+cleanup by undoing it is not a test.
