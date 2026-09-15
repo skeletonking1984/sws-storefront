@@ -2,8 +2,8 @@ import {useEffect, useRef, useState} from 'react';
 import {useFetcher} from 'react-router';
 import {useAside} from '~/components/Aside';
 import {WELCOME_CODE} from '~/components/EmailCapture';
+import {hasSeenOffer, markOfferSeen} from '~/lib/offer';
 
-const STORAGE_KEY = 'sws_launch_offer';
 /** Long enough that it never interrupts the first look at the page. */
 const DELAY_MS = 20000;
 
@@ -35,28 +35,18 @@ export function LaunchOffer() {
   const closeRef = useRef(null);
   const seenRef = useRef(false);
 
-  // Remember across routes and visits. A failed read (private mode, storage
-  // disabled) is treated as "already seen" so the quiet default wins.
-  function remember() {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, 'seen');
-    } catch {
-      // Ignore: worst case it may appear again on a later visit.
-    }
-  }
-
   useEffect(() => {
-    let seen = true;
-    try {
-      seen = window.localStorage.getItem(STORAGE_KEY) !== null;
-    } catch {
-      seen = true;
-    }
-    if (seen) return undefined;
+    if (hasSeenOffer()) return undefined;
     seenRef.current = false;
 
     const show = () => {
       if (seenRef.current) return;
+      // Re-read, do not trust the mount-time check. The timer is scheduled
+      // when the page loads, so a visitor who signs up through the homepage
+      // capture at 10 seconds would still be interrupted by a popup firing at
+      // 20. That is exactly what happened on 2026-09-14: the offer appeared
+      // directly on top of a form that had just been submitted.
+      if (hasSeenOffer()) return;
       seenRef.current = true;
       setOpen(true);
     };
@@ -82,7 +72,7 @@ export function LaunchOffer() {
   useEffect(() => {
     if (asideType !== 'closed' && open) {
       setOpen(false);
-      remember();
+      markOfferSeen();
     }
   }, [asideType, open]);
 
@@ -100,13 +90,13 @@ export function LaunchOffer() {
   useEffect(() => {
     if (fetcher.state === 'idle' && fetcher.data?.ok) {
       setDone(true);
-      remember();
+      markOfferSeen();
     }
   }, [fetcher.state, fetcher.data]);
 
   function dismiss() {
     setOpen(false);
-    remember();
+    markOfferSeen();
   }
 
   if (!open) return null;

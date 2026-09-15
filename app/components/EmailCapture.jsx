@@ -1,4 +1,6 @@
+import {useEffect} from 'react';
 import {Form, useActionData, useNavigation} from 'react-router';
+import {markOfferSeen} from '~/lib/offer';
 
 export const WELCOME_CODE = 'WELCOME10';
 
@@ -27,6 +29,17 @@ export function EmailCapture() {
   const isSignup = result?.intent === 'newsletter';
   const sent = isSignup && result.ok === true;
   const failed = isSignup && result.ok === false;
+  const submittingSignup =
+    navigation.formData?.get('intent') === 'newsletter';
+
+  // Anyone who has used this form has already been offered the discount, so
+  // the first-visit popup must not then ask them again. Marked on SUBMIT as
+  // well as on a result, because the offer is spent either way: on
+  // 2026-09-14 the popup opened over a capture whose signup had just FAILED,
+  // and showing it there was the obnoxious case, not the success one.
+  useEffect(() => {
+    if (isSignup || submittingSignup) markOfferSeen();
+  }, [isSignup, submittingSignup]);
 
   return (
     <section className="email-capture" aria-labelledby="email-capture-heading">
