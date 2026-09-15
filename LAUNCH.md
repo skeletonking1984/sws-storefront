@@ -2366,3 +2366,38 @@ that is correct for that channel: Etsy sales run under the Etsy shop's own
 policies, and `etsy_get_shop` exposes no policy fields, so the storefront's
 policy has no authority there. This audit only reads Shopify and makes no claim
 about Etsy.
+
+### 2026-09-15 — One rule for the crossed-out price on all three kits
+
+Todd: "does the pricing on the kits makes sense? crossed out and live one?"
+Checked, and no: the field meant two different things, and one of them I had
+introduced that morning.
+
+| Kit | Live | Was crossed out | Copy said "worth" |
+|---|---|---|---|
+| Spooky | 29.99 | 100.50 (sum of parts) | 100.50 |
+| Celestial | 39.99 | 59.99 (internal list price) | 139.82 |
+| Multistream Pack | 29.99 | 74.99 (internal list price) | 192.02 |
+
+Two of the three showed a shopper two different "real values" on one page: a
+strikethrough saying one thing and the description saying a much bigger number.
+
+**The rule now, everywhere: the crossed-out price is the value bought
+separately, and it is the same figure the description already quotes.** Celestial
+moved to 139.82, Multistream Pack to 192.02, Spooky was already 100.50. Card and
+copy now agree on every kit. Verified live.
+
+**What this deliberately is NOT.** It is not a former price. Nothing here has
+ever sold at 100.50 or 192.02, because those are sums of seven and ten separate
+products. For a bundle "value if bought separately" is normal framing, but the
+card renders it as a bare strikethrough with no label, and a strikethrough is
+widely read as a was-price. Merchant Center, the FTC and the EU Omnibus rules
+all care about that difference. **Labelling the card is the clean fix and is not
+done**; `ProductPrice.jsx` is the one place to do it. Compare-at is not in the
+JSON-LD, only the visible card, so this is a trust question and not a structured
+data one.
+
+**Still open, and it is a price not a label:** the Multistream Chat Widget Pack
+is live at $29.99 while its own manifest records a $49.99 sale price. One is
+wrong. At 29.99 against a 192.02 strikethrough it reads as 84% off, which is the
+kind of number that reduces trust rather than building it.
