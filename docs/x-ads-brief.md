@@ -109,7 +109,7 @@ Performance 100, Accessibility 100, Best practices 100, SEO 100.
 - Prices match the Etsy listings, so there is no cheaper version of the same
   widget one click away
 - Checkout works on phones, including narrow Android widths
-- 794 real Etsy reviews render on the product pages
+- 788 real Etsy reviews render on the product pages, across 98 products
 - Every product page carries a demo video where one exists
 
 ## 7. Existing campaigns
