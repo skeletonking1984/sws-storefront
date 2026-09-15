@@ -1672,3 +1672,27 @@ Todd expanded the three audits. All three are labelled **Unscored**, which is Li
 **It is not reporting that, though, and here is the proof it is gated rather than satisfied:** the very first WebMCP preview (`01m2jmtfqm`) had **zero** declarative attributes and two bare `<form>` elements, and that audit still reported Not Applicable rather than listing the two forms it should have flagged. An audit that was actually running would have had something to say then.
 
 So all three are gated on the browser exposing the WebMCP API. Nothing on the page changes that. The two steps that do are in the entry above: the `chrome://flags/#enable-webmcp-testing` switch for a local run, and an origin trial token for real visitors.
+
+#### The CLS fix failed, three times, and the font was never the cause. 2026-09-15
+Production now serves everything: optimized assets, all five `size-adjust` faces, the declarative WebMCP attributes, the heading fix. Verified by fetching the live page and the live CSS.
+
+**CLS is still 0.132.** The same number, to three decimal places, across three different interventions:
+
+| State | CLS |
+|---|---|
+| Google Fonts, `display=swap` | 0.132 |
+| Self hosted + preloaded | 0.132 |
+| Self hosted + preloaded + metric matched fallbacks at 0.00% residual | **0.132** |
+
+A number that does not move at all across three changes to the thing it was attributed to is not a partially fixed number. **The font swap is not what shifts this page.** Lighthouse names `div.hero-grid` with the cause "Web font loaded", and that attribution is either wrong or is naming the event that happens to coincide with the shift rather than the thing that causes it.
+
+**What went wrong in the process, and it is the same mistake three times.** Every one of those fixes was aimed at what Lighthouse *labelled*, not at a shift this session could observe, because `document.visibilityState` reads `hidden` in this harness on every attempt and no `layout-shift` entry is ever recorded. Three times a plausible mechanism was found, fixed, verified at the level of the mechanism (font widths now match to 0.00%), and shipped without the outcome ever being measured. The mechanism checks were real. They were checks of the wrong thing.
+
+**Rule going forward: do not ship another CLS fix from this session without a `layout-shift` entry, with its `sources`, from a browser that actually painted.** That means Todd's Lighthouse JSON, which carries `layout-shifts` and `cls-culprits-insight` with the node and cause, or a run in a visible browser.
+
+#### Not the cause, ruled out with evidence
+- **The launch offer modal.** `position: fixed; inset: 0`, so out of flow and incapable of shifting page content, and `DELAY_MS` is 20000, far outside any Lighthouse trace.
+- **Asset weight.** A scare that the CDN was serving a 100 KB PNG for `logo-*.webp` was a curl artifact: with a browser `Accept` header Shopify serves **AVIF at 28223 bytes**, better than the 32404 byte WebP that was built. Hero collage 41768 WebP, pfp 8866 WebP. The image work is delivering.
+
+#### Open, needs Todd's JSON
+Performance read **56** on this production run against **94** on a preview of the same commits, and 84 on production this morning. Same code, 38 points apart, so at least some of that is run to run variance under DevTools throttling. The production number also includes the X pixel and GA4, which a preview may not exercise the same way. **Not diagnosed, and deliberately not guessed at again.**
