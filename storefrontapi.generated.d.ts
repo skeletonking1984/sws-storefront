@@ -514,6 +514,11 @@ export type NavQuery = {
   >;
 };
 
+export type CartApiMutationFragment = Pick<
+  StorefrontAPI.Cart,
+  'id' | 'totalQuantity' | 'checkoutUrl'
+> & {attributes: Array<Pick<StorefrontAPI.Attribute, 'key' | 'value'>>};
+
 export type SitemapCountsQueryVariables = StorefrontAPI.Exact<{
   [key: string]: never;
 }>;

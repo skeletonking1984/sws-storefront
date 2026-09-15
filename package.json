@@ -17,7 +17,8 @@
     "optimize:assets": "node scripts/optimize-assets.mjs",
     "verify:oauth1": "node scripts/verify-oauth1.mjs",
     "verify:x-capi": "node scripts/verify-x-capi.mjs",
-    "audit:config": "node scripts/audit-config-registry.mjs"
+    "audit:config": "node scripts/audit-config-registry.mjs",
+    "verify:cart-attributes": "node scripts/verify-cart-attributes.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

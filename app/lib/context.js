@@ -1,6 +1,6 @@
 import {createHydrogenContext} from '@shopify/hydrogen';
 import {AppSession} from '~/lib/session';
-import {CART_QUERY_FRAGMENT} from '~/lib/fragments';
+import {CART_MUTATE_FRAGMENT, CART_QUERY_FRAGMENT} from '~/lib/fragments';
 
 // Define the additional context object
 const additionalContext = {
@@ -47,6 +47,15 @@ export async function createHydrogenRouterContext(
       i18n: {language: 'EN', country: 'US'},
       cart: {
         queryFragment: CART_QUERY_FRAGMENT,
+        /*
+         * Without this, Hydrogen resolves its own CartApiMutation for every
+         * mutation, which carries no `attributes`, so cart.jsx read them as
+         * `[]` and cartAttributesUpdate became a full replace. BAT-147.
+         * Guarded by scripts/verify-cart-attributes.mjs, which drives a decoy
+         * value the app cannot re-derive through a real mutation and asserts
+         * it survives. A presence-only check cannot catch a deletion.
+         */
+        mutateFragment: CART_MUTATE_FRAGMENT,
       },
     },
     additionalContext,

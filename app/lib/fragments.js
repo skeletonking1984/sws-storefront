@@ -332,3 +332,29 @@ export const NAV_QUERY = `#graphql
     }
   }
 `;
+
+/**
+ * What a cart MUTATION returns. Hydrogen defaults this to its own
+ * `CartApiMutation` = {id, totalQuantity, checkoutUrl}, which has no
+ * `attributes` field, so `app/routes/cart.jsx` read `existingAttributes` as
+ * `[]` on every mutation and `cartAttributesUpdate` silently became a full
+ * REPLACE instead of a merge. Anything the app could not rebuild from a
+ * cookie was destroyed on the next add to cart. That is BAT-147, reproduced
+ * on production 2026-09-15 by `scripts/verify-cart-attributes.mjs`.
+ *
+ * Deliberately minimal plus `attributes`, not the full `CART_QUERY_FRAGMENT`:
+ * a mutation runs on every quantity change and does not need the whole cart
+ * back. This adds one small field to a payload that already existed rather
+ * than returning every line, image and price on each click.
+ */
+export const CART_MUTATE_FRAGMENT = `#graphql
+  fragment CartApiMutation on Cart {
+    id
+    totalQuantity
+    checkoutUrl
+    attributes {
+      key
+      value
+    }
+  }
+`;
