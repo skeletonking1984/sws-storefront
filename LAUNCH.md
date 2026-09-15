@@ -31,7 +31,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 ## Checklist
 ### Catalog
 - [x] Top 15 mapped to Shopify products, ACTIVE, price = Etsy price, images = Etsy images, description normalized, in Top Widgets collection (sorted by revenue). Verified 2026-09-13: Top Widgets is MANUAL sort, 32 products, and its first 16 are exactly the revenue order above plus Soul Blade, all ACTIVE. `audit-catalog.mjs` exit 0 on title/image/price/description/productType/tags
-- [ ] Duplicates archived (keep one active per Etsy listing)
+- [x] Duplicates archived (keep one active per Etsy listing). Verified 2026-09-15 by joining every storefront-visible product on the Etsy CDN image id it serves (`il_fullxfull.<ID>`), the same proof `audit-etsy-mapping.mjs` uses, plus a normalised-title pass. 125 products produced exactly ONE real duplicate pair, Cute Ghost (`...-streamelements` and `...-streamelements-1`, same price, same 5 image ids). Kept the canonical handle, moved the 3 images only the `-1` copy had onto it (5 to 8), archived the `-1`, and created a 301 so the old URL still resolves. Rescan: 124 products, **0 shared-image clusters, 0 title collisions**
 - [x] Every active product: title, image, price, product type, Chat/Goal tag correct (`node scripts/audit-catalog.mjs` exits 0: 131 storefront products, 0 issues, 2026-09-10)
 - [x] Digital download delivery verified end to end (order -> file). PROVEN by a real checkout that downloaded the Y2K Sticker zip. Mechanism proven: Butterfly Galaxy has 1 real sale and 1 real download. Coverage: the 14 empty products were staged at `~/Desktop/SWS-EMPTY-14/` and Todd reports all 14 uploaded on 2026-09-10. Not agent verifiable (cross origin iframe, no API). Closes on a real order that delivers a file
 ### Storefront (Hydrogen)
@@ -1349,3 +1349,78 @@ All 34 waiting commits are live. Verified on production by driving it, not by lo
 **And the one that matters**: Todd completed a purchase on his own phone. **Order #1043**, 20:34Z, PAID, Moon Jar Goal Widget, carrying `_ga_client_id`, `_ga_session_id` and `_ga_session_number`. A $0.00 discounted test, so it proves the path rather than the revenue, but the path is what was broken all day.
 
 Still open, unchanged: with a large cart the checkout button is reached by scrolling past the line items. Pinning it needs the summary rendered as a sibling of the scroll area, a component split rather than CSS, because the summary is 559px tall at 360px and cannot simply be made sticky.
+
+### 2026-09-15 (scheduled)
+Metrics (2026-09-14): **46 sessions, 8 add to cart, 9 reached checkout, 1 completed, 1 order, $0.00 net sales** (conversion 2.17%). That one order is #1043, Todd's own $0.00 mobile test, so **no real revenue yesterday**. 2026-09-13 was 30 sessions / 11 ATC / 4 checkout / 2 orders / $19.10 net, and one of those two was the $0 test #1042, so the last real sale is still #1041 on 2026-09-13.
+
+Traffic mix, last 3 days: 97 sessions, **75 direct**, 13 search, 8 social, 1 email. Much of the direct is this routine's own QA driving.
+
+#### A2 conversion tracking health check
+| Check | Result |
+|---|---|
+| `/webhooks/orders` GET | 405 |
+| `/webhooks/orders` unsigned POST | 401 |
+| `/webhooks/orders` bogus HMAC | 401 |
+| `/api/e` GET / cross origin POST / forged `purchase` | 405 / 403 / 400 |
+| `npm run verify:tracking` against production | **25 passed, 0 failed** |
+| gtag on a real PDP | loaded, `_ga` + `_ga_X0978HDVTK` set |
+| `/g/collect` | fired with `tid=G-X0978HDVTK`, `en=view_item` and `en=page_view` |
+| `add_to_cart` after a real click | reached `window.dataLayer` |
+| `/api/e` calls on that page load | **0**, so the blocker-detection window is not double counting |
+| Attribution on the most recent order | **#1043 carried `_ga_client_id`** (plus session id and number) |
+
+**Not verified, and it is the fourth pass to say so: the "GA4 Purchases" custom pixel being disconnected.** `webPixel` returns `Access denied ... Required access: read_pixels access scope`, which the Shopify connector does not hold. Closing this needs Todd to look at Settings > Customer events once, or a connector with `read_pixels`. Indirect evidence is good but is not the check: nothing over reported on 2026-09-13 (Shopify 1 real order at $19.10, X Ads 0 conversions), and a real PDP load produced one `/g/collect` per event and zero `/api/e` relays.
+
+Env vars are inferred from behaviour rather than read back: GA4 id is served in the page, the webhook answers 401 rather than 503, and `sws_cid` is minted HttpOnly and Secure.
+
+#### Shipped: the checkout button is now in front of the buyer at any cart size
+This was the one purchase-path defect left open in this file ("with a large cart the checkout button is reached by scrolling past the line items"). It was logged as needing a component split. It did.
+
+Reproduced first, on production, at 360x640 with 4 items in the cart:
+
+| | Before | After |
+|---|---|---|
+| Continue to Checkout | y **1172 to 1229** | y **471 to 528** |
+| On screen in a 640px viewport | **no** | yes |
+| `document.elementFromPoint` at its centre | **`null`, not on screen** | **`A.cart-checkout-button`** |
+| Scroll needed to reach it | **636px inside the drawer** | none |
+| Summary height | 365px | **230px** |
+| Line item scroll area | n/a, the whole thing scrolled | 274px, scrolls |
+
+Two causes, both fixed:
+
+1. **The summary was inside the scroll container.** `CartSummary` rendered inside `.cart-details`, which sat inside `.cart-main`, and `.cart-main` was the element with `overflow-y: auto`. So the only control that takes a buyer's money scrolled away with the line items. `.cart-details` is now the scroll area and the summary is its sibling, pinned underneath at its own height.
+2. **The summary was too tall to pin.** At 360px the discount and gift card forms wrap and the block is 365px inside a 536px drawer, which leaves 171px of cart visible. In the drawer those two forms now collapse into a `<details>`, so the pinned block is totals plus the button. It opens itself when a code is already applied, so a shopper can always see and remove what they entered. The `/cart` page keeps the full summary with both forms open.
+
+Also deleted the `max-width: 44.99em` flex `order` hack that used to lift the button above the forms. DOM order is now totals, checkout, disclosure, so the tab and screen reader order matches the screen without reordering anything.
+
+#### Shipped: the last duplicate in the catalogue
+The "Duplicates archived" box had never been evidenced. Joined all 125 storefront-visible products on the Etsy CDN image id each one serves (`il_fullxfull.<ID>`), which is the same proof `audit-etsy-mapping.mjs` trusts, and ran a normalised-title pass beside it.
+
+The catalogue was already almost clean: **exactly one true duplicate pair**, Cute Ghost, listed twice at $16.37 with the same 5 Etsy image ids and the same 12 tags, created 2 seconds apart in 2025.
+
+The `-1` copy had the better media (8 images to 5, a strict superset) and the canonical copy had the better handle and SEO title. So neither was simply discarded: the 3 images only the duplicate had were copied onto the canonical product first, then the `-1` was **archived, not deleted**, and a 301 was created so its URL still resolves.
+
+Verified: rescan returns **124 products, 0 shared-image clusters, 0 title collisions**. `audit-catalog`, `audit-shipping`, `audit-platform-claims --check` and `build-seo-fields --check` all exit 0 on the new 124. The redirect returns **301** to the canonical handle (the first probe read 200 off an Oxygen cache hit on the old page; cache-busted it is a clean 301).
+
+#### What was verified, and what was not
+Verified: `npm run build` exits 0, `npx eslint` on both changed components reports nothing, and the deployed preview bundle really carries the change (`cart-code-disclosure` and the new `.cart-main` / `.cart-details` rules are both in `dist/client/assets/app-*.css` and `dist/server/index.js`).
+
+**Not verified: the preview URL was never rendered in a browser.** Dev servers are blocked in an unattended scheduled run and Oxygen preview URLs are auth-gated behind Shopify OAuth, which the browser tools cannot pass. The before/after geometry above is a real measurement at 360x640 with a real 4 item cart, but it was taken by applying this exact restructure to the live production DOM, not by loading the built preview. The numbers are real; the render of the deployed build is unconfirmed. **Worth pressing the button once on the preview or after the next production deploy**, per this file's own rule that a path only ever exercised by URL is not a verified path.
+
+**No LCP number is reported.** `document.visibilityState` read `hidden` for the whole browser pass again, and `first-contentful-paint` came back as 19200ms, which is the hidden-pane artefact `analytics-debugging-traps` warns about, not a real paint. Real network timings on a production PDP were TTFB 98ms, DOMContentLoaded 143ms, load 288ms. The Performance box stays unchecked.
+
+#### Needs Todd
+- **Read `Settings > Customer events` once** and confirm the custom pixel "GA4 Purchases" is still disconnected. It is the one A2 check no agent here can run, and if it is ever reconnected while the order webhook is live every order counts twice. This is the fourth pass blocked on it.
+- **`npm run audit:ip` still exits 1 with 5 live listings** carrying someone else's IP (BAT-153): Charizard and Valorant Brimstone ACTIVE on Shopify, and Charizard 1881347726, Among Us 1741695722, Valorant Brimstone 4306870352 live on Etsy. Deliberately **not** actioned here: pulling products that sell is a revenue call, not a routine one. Ads run against this catalogue, so the exposure is the ad account, not just the listings. Say the word and the two Shopify ones go to DRAFT in one pass, the way Genshin, Valorant Waylay and Sci-Fi Neon did on 2026-09-11.
+- **11 Etsy goal widget listings still claim "TikTok Studio"** (unchanged, listed in the 2026-09-14 entry). Shopify was corrected, Etsy was not, and Etsy is 99% of revenue.
+- Google Search Console and Merchant Center still need his Google account.
+- Soul Blade price still unconfirmed (Etsy live 15.99, notes said 29.99, Shopify matched to 15.99).
+
+#### Cleanup note
+The reproduction put 4 line items in a QA cart on production. It carries no email or buyer identity, so it never becomes an abandoned checkout. No purchase was made.
+
+Preview: https://01m2jg9y9sr9dgt6c6p2fzyeb0-fb73b5b73c40344d0d20.myshopify.dev
+Commit: `68d0ba8`.
+
+Next: press the checkout button on a rendered build to close the verification gap above, then the Performance box (LCP) if a browser pass can ever report a real paint, otherwise homepage and PDP conversion.
