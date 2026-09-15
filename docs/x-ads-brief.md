@@ -13,30 +13,35 @@ The site is instrumented and ready. Point ads at any page, optimise for the
 
 **`SWS Purchase`** — event ID **`tw-q7mwb-rf9yi`**, on pixel **`q7mwb`**.
 
-Events manager lists a second Purchase event, `Shopify:72470e-33:PURCHASE`
-(`tw-q7mwb-rfa3z`). ~~It was created automatically by Shopify's X sales channel
-and nothing feeds it.~~
+Events manager listed a second Purchase event, `Shopify:72470e-33:PURCHASE`,
+plus a duplicate page view and a duplicate checkout, all published by Shopify's X
+sales channel onto the same pixel. **All three are now deleted, 2026-09-15.**
 
-**Correction, 2026-09-15. That was wrong, and it matters.** Both Purchase events
-are now **Active and recording** on the same pixel: `SWS Purchase` last recorded
-12:32, `Shopify:72470e-33:PURCHASE` last recorded 11:35 the same day. Shopify's
-X sales channel is feeding its event. `Shopify:72470e-33:CHECKOUT_INITIATED` is
-Active too. Nobody switched either on deliberately, which is the point: **the
-sales channel activates its own events, so "do not switch it on" was never
-enough.**
+They mattered: for a while both Purchase events were live and recording, so one
+order could be counted twice and the optimiser split its learning across the two.
+Nobody switched them on, which was the real lesson. The sales channel activates
+its own events, so an instruction not to enable something was never enough.
 
-Two live Purchase events on one pixel means the optimiser splits across them and
-a single order can be counted twice, once by our Conversion API and once by the
-sales channel. Neither knows about the other, and the `conversion_id` we send for
-deduplication is not the id the sales channel sends, so X cannot collapse them.
+**Every event on this pixel is now ours**, and there is nothing left to avoid:
 
-**Until Todd turns one off, treat any purchase count in Ads Manager as
-unreliable, and do not optimise a campaign for Purchase.** Optimise for a
-link-click or landing-page objective in the meantime. The `SWS` prefixed events
-are ours and are the ones to keep; the `Shopify:` prefixed ones are the sales
-channel's.
+| Event | ID | How it is sent |
+|---|---|---|
+| `SWS PageView` | `tw-q7mwb-rf9ym` | browser |
+| `SWS ViewContent` | `tw-q7mwb-rf9yv` | browser |
+| `SWS AddToCart` | `tw-q7mwb-rf9yt` | browser |
+| `SWS Checkout` | `tw-q7mwb-rfbdk` | browser |
+| **`SWS Purchase`** | **`tw-q7mwb-rf9yi`** | **server side, Conversion API** |
 
-**Auny cannot fix this.** It is an Events Manager setting on Todd's ads account.
+**Optimise for `SWS Purchase`.** It is safe to do so now; an earlier version of
+this brief told you not to, while the duplicate existed.
+
+Two reasons ours are better than the sales channel's, both verified: our browser
+events fall back to a same-origin relay when an ad blocker kills the pixel
+script, and Purchase never touches the browser at all. Theirs were browser-only,
+so Brave and uBlock silenced them entirely.
+
+`SWS Checkout` also builds a **retargeting audience** of people who started
+checkout and did not finish, which is the highest-intent pool on the account.
 
 ## 2. Click ID, and what NOT to worry about
 
@@ -98,16 +103,12 @@ channel with different, and much weaker, measurement.
 | Page views | browser pixel, live |
 | Product views | browser pixel, live |
 | Add to cart | browser pixel, live |
-| Checkout started | browser pixel, `SWS Checkout` `tw-q7mwb-rfbdk`, added 2026-09-15 |
+| Checkout started | browser pixel, `SWS Checkout` `tw-q7mwb-rfbdk` |
 | **Purchase** | **server side, via the Conversion API** |
 
-`SWS Checkout` is type Custom because X's create-event dialog offers no
-"Checkout initiated" type. It exists so Shopify's duplicate
-`Shopify:72470e-33:CHECKOUT_INITIATED` can be switched off: that one is
-browser-only and has no internal-test filter, so it counts Todd's own SWSTEST
-checkouts as real. Ours has a **Website activity audience** switched on, which
-is the highest-intent retargeting pool on the account: people who started
-checkout and did not finish.
+`SWS Checkout` replaced Shopify's `CHECKOUT_INITIATED`, which is now deleted.
+Verified live on 2026-09-15: a real checkout click sent value $110.85 across 7
+items, summing the whole cart rather than the first line.
 
 Purchase is deliberately never sent from the browser. It comes from Shopify's
 order webhook, so an ad blocker cannot hide a sale. X confirms this is working:
