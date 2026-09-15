@@ -121,6 +121,17 @@ export async function loader(args) {
     ...deferredData,
     ...criticalData,
     origin,
+    /*
+     * Chrome origin trial token for WebMCP. Without one served by the page,
+     * `document.modelContext` is undefined for every ordinary Chrome visitor
+     * and every registerTool call in AgentTools.jsx is a silent no-op: the
+     * chrome://flags switch only helps the person who flipped it.
+     *
+     * Optional. Unset, the meta tag is simply not rendered and nothing
+     * breaks. Register the origin at https://developer.chrome.com/origintrials
+     * and set PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKEN on both Oxygen environments.
+     */
+    webmcpOriginTrialToken: env.PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKEN || null,
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
       storefront,
@@ -222,12 +233,23 @@ function loadDeferredData({context}) {
  */
 export function Layout({children}) {
   const nonce = useNonce();
+  // Layout renders for error boundaries too, when the root loader may never
+  // have run, so this has to tolerate undefined data rather than destructure.
+  const rootData = useRouteLoaderData('root');
+  const originTrialToken = rootData?.webmcpOriginTrialToken;
 
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        {/* Opts real visitors into the WebMCP origin trial, which is what
+            makes document.modelContext exist for them at all. Must be in the
+            head and must be present on the first response, so it cannot be
+            injected later by script. */}
+        {originTrialToken ? (
+          <meta httpEquiv="origin-trial" content={originTrialToken} />
+        ) : null}
         <link rel="stylesheet" href={tailwindCss}></link>
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
