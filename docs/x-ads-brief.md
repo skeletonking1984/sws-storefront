@@ -47,6 +47,33 @@ All redirect paths preserve the click ID, tested: `http` to `https`, `www` to
 apex, and 301s from older product URLs. So you do not need to worry about
 which form of the URL you use.
 
+## 3b. The LINK CARD is the thing that matters
+
+This is the failure mode most likely to waste the budget, and it is invisible
+in Ads Manager because the campaign looks perfectly healthy.
+
+A campaign can be pointed at this site while its **creative's link card still
+points at Etsy**. The card is what people actually click. If it goes to Etsy,
+the click leaves for a place where none of our tracking runs and where Etsy
+reports no traffic source at all, so the sale is unattributable no matter how
+well the campaign is configured.
+
+**Worked example, a real post from 2026-08-20:**
+
+> "2003 called. It wants your chat box back." Y2K Sticker Chat.
+> 257,300 views, 207 likes.
+> Card reads **"From etsy.com"**, button reads **"See it on Etsy"**.
+
+A quarter of a million views and not one of them could ever be attributed to
+the storefront, because the card sends them to Etsy.
+
+So when building a campaign for this site, check the creative itself: the
+image card's destination, and any link in the post body, must be a
+`streamwidgetshop.com` URL. Not just the campaign's destination field.
+
+Existing Etsy-linked posts are fine as they are. They are simply a different
+channel with different, and much weaker, measurement.
+
 ## 4. What is already measured, with no work from you
 
 | Event | How |
