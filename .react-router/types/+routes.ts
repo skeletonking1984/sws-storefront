@@ -67,6 +67,9 @@ type Pages = {
   "/account/login": {
     params: {};
   };
+  "/api/newsletter": {
+    params: {};
+  };
   "/discount/:code": {
     params: {
       "code": string;
@@ -135,7 +138,7 @@ type Pages = {
 type RouteFiles = {
   "root.jsx": {
     id: "root";
-    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/account/logout" | "/collections/all" | "/policies" | "/webhooks/orders" | "/account/login" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/blogs" | "/llms.txt" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/api/e" | "/cart" | "/cart/:lines" | "/*";
+    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/account/logout" | "/collections/all" | "/policies" | "/webhooks/orders" | "/account/login" | "/api/newsletter" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/blogs" | "/llms.txt" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/api/e" | "/cart" | "/cart/:lines" | "/*";
   };
   "routes/blogs.$blogHandle.$articleHandle.jsx": {
     id: "routes/blogs.$blogHandle.$articleHandle";
@@ -188,6 +191,10 @@ type RouteFiles = {
   "routes/account_.login.jsx": {
     id: "routes/account_.login";
     page: "/account/login";
+  };
+  "routes/api.newsletter.jsx": {
+    id: "routes/api.newsletter";
+    page: "/api/newsletter";
   };
   "routes/discount.$code.jsx": {
     id: "routes/discount.$code";
@@ -282,6 +289,7 @@ type RouteModules = {
   "routes/policies._index": typeof import("./app/routes/policies._index.jsx");
   "routes/webhooks.orders": typeof import("./app/routes/webhooks.orders.jsx");
   "routes/account_.login": typeof import("./app/routes/account_.login.jsx");
+  "routes/api.newsletter": typeof import("./app/routes/api.newsletter.jsx");
   "routes/discount.$code": typeof import("./app/routes/discount.$code.jsx");
   "routes/[sitemap.xml]": typeof import("./app/routes/[sitemap.xml].jsx");
   "routes/pages.$handle": typeof import("./app/routes/pages.$handle.jsx");

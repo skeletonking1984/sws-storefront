@@ -2,6 +2,7 @@ import {Await, Link} from 'react-router';
 import {Suspense, useEffect, useId, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {Aside, useAside} from '~/components/Aside';
+import {LaunchOffer} from '~/components/LaunchOffer';
 import {Footer} from '~/components/Footer';
 import {Header, HeaderMenu} from '~/components/Header';
 import {CartMain} from '~/components/CartMain';
@@ -44,6 +45,9 @@ export function PageLayout({
         />
       )}
       <main>{children}</main>
+      {/* First-visit launch offer. Inside Aside.Provider so it can stand down
+          for the cart, search and menu drawers. */}
+      <LaunchOffer />
       <Footer
         footer={footer}
         header={header}

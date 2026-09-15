@@ -5178,3 +5178,137 @@ button.reset:hover:not(:has(> *)) {
     padding-right: 0;
   }
 }
+
+/*
+ * First-visit launch offer (app/components/LaunchOffer.jsx).
+ *
+ * A bottom sheet on a phone and a small centred card above that, never a full
+ * screen cover. `z-index: 35` puts it above the sticky header (20) and the
+ * sticky Add to cart bar (5) but deliberately BELOW the drawers (40), so that
+ * even if the two ever coincide the cart always wins. The component also
+ * closes itself when a drawer opens.
+ */
+.launch-offer-root {
+  inset: 0;
+  position: fixed;
+  z-index: 35;
+}
+
+.launch-offer-scrim {
+  background: rgba(4, 2, 10, 0.55);
+  border: 0;
+  cursor: pointer;
+  inset: 0;
+  padding: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.launch-offer {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 20px 20px 0 0;
+  bottom: 0;
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.55);
+  left: 0;
+  padding: 1.5rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  position: absolute;
+  right: 0;
+  text-align: center;
+}
+
+@media (min-width: 45em) {
+  .launch-offer {
+    border-radius: 20px;
+    bottom: auto;
+    left: 50%;
+    max-width: 420px;
+    padding: 2rem;
+    right: auto;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.launch-offer-close {
+  align-items: center;
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 999px;
+  color: var(--sws-text);
+  cursor: pointer;
+  display: flex;
+  font-size: 1.5rem;
+  height: 44px;
+  justify-content: center;
+  line-height: 1;
+  position: absolute;
+  right: 0.75rem;
+  top: 0.75rem;
+  width: 44px;
+}
+
+.launch-offer-kicker {
+  color: var(--sws-holo-1);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+}
+
+.launch-offer-title {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  margin: 0 0 0.5rem;
+}
+
+.launch-offer-copy {
+  color: var(--sws-sub);
+  font-size: 0.95rem;
+  margin: 0 0 1rem;
+}
+
+.launch-offer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.launch-offer-input {
+  background: var(--sws-bg);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 999px;
+  color: var(--sws-text);
+  /* 16px minimum, or iOS Safari zooms the page on focus. */
+  font-size: 16px;
+  min-height: 48px;
+  padding: 0 1.1rem;
+  width: 100%;
+}
+
+.launch-offer-cta {
+  min-height: 48px;
+  width: 100%;
+}
+
+.launch-offer-decline {
+  background: none;
+  border: 0;
+  color: var(--sws-sub);
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-top: 0.85rem;
+  min-height: 44px;
+  text-decoration: underline;
+}
+
+.launch-offer-code {
+  color: var(--sws-text);
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.08em;
+}
+
+.launch-offer-fallback {
+  margin-top: 0.85rem;
+}

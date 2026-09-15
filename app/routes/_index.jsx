@@ -15,7 +15,7 @@ import {HappyClients} from '~/components/HappyClients';
 import {SOCIALS} from '~/components/SocialLinks';
 import {useVariantUrl} from '~/lib/variants';
 import {absoluteAsset, buildMeta, getOrigin} from '~/lib/seo';
-import {sendNotificationEmail} from '~/lib/notify.server';
+import {handleNewsletterSignup} from '~/lib/newsletter.server';
 import {
   FAN_FAVORITE_HANDLES,
   OVERLAY_FEATURED_HANDLES,
@@ -150,33 +150,14 @@ const KITS_AND_OVERLAY_PACKS_HANDLES = OVERLAY_FEATURED_HANDLES;
  * @param {Route.ActionArgs} args
  */
 export async function action({request, context}) {
-  const form = await request.formData();
-  const email = (form.get('email') || '').toString().trim();
-  const company = (form.get('company') || '').toString().trim();
-  const base = {intent: 'newsletter'};
-
-  // Honeypot: bots fill every field. Absorb it without sending.
-  if (company) {
-    return {...base, ok: true};
-  }
-
-  if (!email || !email.includes('@')) {
-    return {...base, ok: false, reason: 'invalid', values: {email}};
-  }
-
-  const sent = await sendNotificationEmail({
+  const formData = await request.formData();
+  const result = await handleNewsletterSignup({
+    formData,
     env: context.env,
     origin: new URL(request.url).origin,
-    subject: `SWS newsletter signup: ${email}`,
-    text: `New newsletter signup from the homepage email capture.\n\n${email}`,
-    replyTo: email,
+    source: 'homepage capture',
   });
-
-  if (!sent.ok) {
-    return {...base, ok: false, reason: sent.reason, values: {email}};
-  }
-
-  return {...base, ok: true};
+  return {intent: 'newsletter', ...result};
 }
 
 export default function Homepage() {
