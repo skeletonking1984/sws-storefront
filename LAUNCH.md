@@ -1994,3 +1994,30 @@ Verified on the deployed preview and on production, with `PRIVATE_ADMIN_PASSWORD
 1. **`PRIVATE_ADMIN_PASSWORD`** on both Oxygen environments. Until then `/admin/config` 404s, which is the correct default but also means it does nothing.
 2. **Three values for X CAPI**, path A: `PUBLIC_X_PIXEL_ID` is `q7mwb` and already set; `PRIVATE_X_PURCHASE_EVENT_ID` from Events manager > the **SWS Purchase** row > pencil > Event ID; `PRIVATE_X_PIXEL_TOKEN` if that same screen offers a Conversion API token. Drop them in `.env.x` and run `npm run verify:x-capi` before setting them on Oxygen.
 3. **Settings > Customer events**, one look, answers two standing questions: is "GA4 Purchases" still disconnected, and what is firing `Shopify:72470e-33:CHECKOUT_INITIATED`.
+
+#### X Conversion API is LIVE 2026-09-15
+X's Conversion Diagnostics flipped from **"Not set up"** to **"Partially set up"**, events 6/18 to 8/18, last event "now". Two test conversions sent through the full chain were accepted with `200` and `conversions_processed: 1`.
+
+**Nothing was copied.** The storefront holds no X credential. It POSTs `{pixel_id, conversions[]}` to `sws-x-connector`, which already had four working OAuth 1.0a Ads API credentials and already signed the campaign reads behind the `sws-x` MCP. Two env vars on Oxygen instead of four secrets, one place to rotate.
+
+**The event to use is `tw-q7mwb-rf9yi` (SWS Purchase).** Both Purchase events accept conversions, so working is not the tiebreaker. The SWS one completes a funnel that already exists: the browser pixel is live and firing SWS PageView, SWS ViewContent and SWS AddToCart. The Shopify event is an orphan with an epoch in its own name showing it was auto-created on 2026-09-14, and it had never recorded anything.
+
+**"Partially set up" is the expected state, not a fault.** X compares CAPI volume against web pixel volume: 2 versus 191. It resolves as real orders flow.
+
+#### Two things X is flagging, and the nuance in each
+
+**1. "Send all your conversions through the Conversion API, not just a few."** Real advice, with a trap. Only `purchase` is server side today; the browser pixel sends the upper funnel. Sending those server side as well, without changing anything else, **double counts every one of them**, because X dedups on `conversion_id` and our browser pixel does not set one that the server side could match. Doing this properly means either moving the funnel events server side and turning the browser ones off, or emitting a shared `conversion_id` from both. Not attempted here. This is the same shape as the GA4 double count on 2026-09-13, and X's own copy does not mention it.
+
+**2. "Click ID tracking: Not detected", still.** `twclid` only exists if a buyer reaches THIS site from an X ad. Open question nobody has answered: **where do the three active campaigns actually land?** If they point at Etsy, no click id can ever reach the storefront and CAPI will only ever match on `hashed_email`, which is exactly why the adapter was changed to send it. The MCP exposes campaigns but not ad destination URLs, so this needs Todd.
+
+#### Verified along the way
+- `wrangler deploy` reported success twice while serving stale code. `rm -rf .wrangler` fixed it. If a Worker change seems not to land, clear that first.
+- X requires `conversion_time` as `yyyy-MM-ddTHH:mm:ss.SSSZ`, **with milliseconds**. `toISOString()` produces exactly that, so the adapter was already right, but a probe built with shell `date` was rejected until they were added.
+- The `sws-x-connector` worker was running with **no `MCP_AUTH_TOKEN` at all**, so every tool was reachable unauthenticated by anyone with the URL. Token set and 401 verified before any write endpoint was added.
+- A stale `.git/HEAD.lock` dated 2026-08-22 was blocking every commit in the connector repo. Removed after confirming no git process held it.
+
+#### Needs Todd
+1. **Set three vars on both Oxygen environments**: `PRIVATE_X_PURCHASE_EVENT_ID=tw-q7mwb-rf9yi`, `PRIVATE_X_RELAY_URL=https://sws-x-connector.clarisai-consulting.workers.dev/x/conversions`, `PRIVATE_X_RELAY_TOKEN=<the connector's MCP_AUTH_TOKEN>`. Then the next real order sends a purchase to X by itself.
+2. **Rotate `MCP_AUTH_TOKEN`.** It was pasted into a shared screenshot, so it exists in a transcript and in shell history. Three places to update: the worker secret, the `sws-x` MCP registration, and `PRIVATE_X_RELAY_TOKEN`.
+3. **Where do the X ads point**, Etsy or the storefront? It decides whether `twclid` can ever work.
+4. Two $10.52 test conversions are real data in the ad account.
