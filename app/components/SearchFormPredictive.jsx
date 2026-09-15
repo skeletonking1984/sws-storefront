@@ -53,7 +53,14 @@ export function SearchFormPredictive({
   }
 
   return (
-    <fetcher.Form {...props} className={className} onSubmit={resetInput}>
+    // Declarative WebMCP defaults, before {...props} so a caller can override.
+    <fetcher.Form
+      toolname="search_widgets_quick"
+      tooldescription="Search Stream Widget Shop and get matching chat widgets, goal widgets and overlay packs as you type."
+      {...props}
+      className={className}
+      onSubmit={resetInput}
+    >
       {children({inputRef, fetcher, fetchResults, goToSearch})}
     </fetcher.Form>
   );

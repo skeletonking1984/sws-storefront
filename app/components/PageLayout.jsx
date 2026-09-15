@@ -208,6 +208,7 @@ function SearchPaletteBody({
           type="search"
           autoComplete="off"
           aria-label="Search widgets, vibes, platforms"
+          toolparamdescription="What to search the widget catalogue for, for example a theme, a vibe or a streaming platform."
         />
         {hasValue && (
           <button
