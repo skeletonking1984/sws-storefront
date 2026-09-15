@@ -1643,3 +1643,32 @@ The code half is shipped: the root loader reads `PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKE
 Verified on the deployed preview with the token unset: no `origin-trial` meta, 2 forms still carrying `toolname`, 5 `size-adjust` fallback faces in the served CSS, page renders normally.
 
 **Worth saying plainly about the value of this whole WebMCP thread:** the trial ends 2026-11-16, no ordinary visitor has the API today, and nobody is buying widgets through an agent yet. The catalogue side of it is the part that keeps its value either way, because `search_widgets` filtering on the `works_with` metafield is the same honest platform data the PDP badges use.
+
+#### Correction: the 69 was SEO, not Performance, and it is a preview artifact. 2026-09-15
+I read the four Lighthouse gauges in the wrong order and told Todd Performance was 69 and that I could not explain it. **69 is the SEO score, and Performance has been 94 to 100 on every preview run.** Lighthouse orders them Performance, Accessibility, Best Practices, SEO.
+
+The SEO drop is the preview URL, not the site. Measured just now:
+
+| | `x-robots-tag` |
+|---|---|
+| Oxygen preview | **`none`** |
+| `streamwidgetshop.com` | no such header |
+
+Oxygen stamps `x-robots-tag: none` on preview deploys, which Lighthouse correctly reads as "blocked from indexing" and scores accordingly. Production has no robots meta and no robots header, and scored **SEO 100** on Todd's first run against the live site. **Never read the SEO score off a preview deploy.**
+
+So the real trend across today, with the numbers attached to the right categories:
+
+| Run | Perf | A11y | Best practices | SEO | Agentic |
+|---|---|---|---|---|---|
+| Production, before today's work | 84 | 95 | 96 | 100 | 2/3 |
+| Production, slow 4G | 70 | 100 | 96 | 100 | 3/3 |
+| Preview, after CLS + image work | **94** | **100** | 96 | 69 (preview noindex) | 3/3 |
+
+Accessibility 95 to **100** and Agentic 2/3 to **3/3** are the `link-name` and `heading-order` fixes. Performance on a like-for-like production run is the number still owed, once the waiting commits deploy.
+
+#### WebMCP audits: confirmed gated on the browser, not on the page
+Todd expanded the three audits. All three are labelled **Unscored**, which is Lighthouse's marker for an informational audit that tallies rather than passes or fails. "WebMCP form coverage" lists forms that are MISSING annotations, so on a fully annotated page an empty list would be the desired outcome.
+
+**It is not reporting that, though, and here is the proof it is gated rather than satisfied:** the very first WebMCP preview (`01m2jmtfqm`) had **zero** declarative attributes and two bare `<form>` elements, and that audit still reported Not Applicable rather than listing the two forms it should have flagged. An audit that was actually running would have had something to say then.
+
+So all three are gated on the browser exposing the WebMCP API. Nothing on the page changes that. The two steps that do are in the entry above: the `chrome://flags/#enable-webmcp-testing` switch for a local run, and an origin trial token for real visitors.
