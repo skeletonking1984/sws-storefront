@@ -2401,3 +2401,57 @@ data one.
 is live at $29.99 while its own manifest records a $49.99 sale price. One is
 wrong. At 29.99 against a 192.02 strikethrough it reads as 84% off, which is the
 kind of number that reduces trust rather than building it.
+
+### 2026-09-15 — The Multistream anchor was arithmetically true and behaviourally false
+
+Todd, on the card showing ~~$192.02~~ $29.99, Save $162.03: "seems odd to me,
+but admittedly I dont know." The instinct was right, and for a sharper reason
+than the size of the number.
+
+**All ten components of that pack are the SAME widget in different skins.** Ten
+Multistream Chat Widget listings, $16.35 to $24.99, mean $19.20, summing to a
+genuine $192.02. But nobody buys ten colourways of one chat box, so the anchor
+described a purchase no human would make. Arithmetically true, behaviourally
+false.
+
+The rule set an hour earlier (crossed-out = value bought separately) survives on
+the other two kits precisely because their parts are DIFFERENT products: Spooky
+is 3 chat widgets + 5 goal bars, Celestial is chat, goals and a scene overlay. A
+streamer plausibly assembles that basket. Ten skins of one widget, never.
+
+Multistream Pack is now **$29.99 against $49.99, save $20**, 40% off, which is
+its own recorded sale price rather than a sum. The $192.02 stays in the
+description where it is explained. Not split into smaller packs: ten skins in one
+download is the product, and splitting it would compete with the ten singles
+already on sale.
+
+**Lesson worth keeping: a sum-of-parts anchor is only honest when someone would
+plausibly have bought the parts.** Test that before using one, not the arithmetic.
+
+### 2026-09-15 — "Limited time" now means a date, and only where one exists
+
+Todd: "we say these bundles are available for a limited time. make sure thats
+clear."
+
+Only the Spooky Kit had a real end date, the 31 October window already recorded
+in its manifest and in `products/bundles/BUNDLE_KIT_2026-09-06.md`. It now says
+so twice on the page, in the opening and in Important, and states that the
+deadline is on the OFFER and not on access, because the same page promises
+lifetime access and a buyer of a seasonal digital product will otherwise wonder
+whether it stops working.
+
+**Celestial and Multistream Pack carry no limited-time wording at all**, verified
+live: 0 occurrences of any urgency phrasing on either. An urgency claim with no
+end date stops persuading the moment a repeat visitor notices it never expires,
+and it is the exact pattern the FTC and the EU Omnibus Directive treat as
+deceptive. It would also have undercut the compare-at work done an hour earlier
+on the same pages.
+
+⚠️ **This is now a promise on a live page.** Either the Spooky Kit comes down or
+its price returns to normal on 1 November 2026. If neither happens the claim is
+false, and every other number on that page gets read in the same light.
+
+`priceValidUntil` in the product JSON-LD is still NOT set. It is the correct
+structured-data home for this and Merchant Center reads it, but it needs a
+per-product date (a metafield) plus a change to `products.$handle.jsx`, which
+means a deploy. The visible copy was what was asked for and needs none.
