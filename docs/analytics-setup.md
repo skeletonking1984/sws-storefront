@@ -73,10 +73,34 @@ as the GA4 double count on 2026-09-13.
 | Variable | Where to get it |
 |---|---|
 | `PUBLIC_X_PIXEL_ID` | `q7mwb`. Ads Manager > Tools > Events manager, shown beside "Event source". |
-| `PRIVATE_X_PURCHASE_EVENT_ID` | Events manager > the **SWS Purchase** row > pencil (edit) > Event ID. Not the pixel id. |
+| `PRIVATE_X_PURCHASE_EVENT_ID` | **`tw-q7mwb-rf9yi`** (SWS Purchase). Read 2026-09-15 from Events manager > SWS Purchase > Install event > Conversion API. |
 | `PUBLIC_X_EVENT_ID_PAGE_VIEW` | Same, the **SWS PageView** row. |
 | `PUBLIC_X_EVENT_ID_VIEW_CONTENT` | Same, the **SWS ViewContent** row. |
 | `PUBLIC_X_EVENT_ID_ADD_TO_CART` | Same, the **SWS AddToCart** row. |
+
+### Which Purchase event, and why
+
+There are two, and **both accept conversions**, verified 2026-09-15 by
+sending one test conversion to each and getting `200` with
+`conversions_processed: 1`:
+
+| Event | Event ID |
+|---|---|
+| **SWS Purchase** (use this) | `tw-q7mwb-rf9yi` |
+| `Shopify:72470e-33:PURCHASE:1789421612` | `tw-q7mwb-rfa3z` |
+
+Working is not the deciding factor, since both do. **Use the SWS one because
+it completes a funnel that already exists.** The browser pixel is live and
+firing `SWS PageView`, `SWS ViewContent` and `SWS AddToCart`, all Active and
+recording. Putting Purchase in that same family gives X one coherent journey
+from landing to sale. The Shopify event is an orphan: nothing upstream feeds
+it, its own name carries an epoch timestamp (1789421612, 2026-09-14) which
+means something auto-created it a day ago, and it had never recorded
+anything before this test.
+
+If a campaign is ever set to optimise against the Shopify event, this
+decision has to be revisited, because the event a campaign bids on is the
+one that must receive the conversions.
 
 ### Conversion API auth, two paths
 
@@ -85,7 +109,8 @@ as the GA4 double count on 2026-09-13.
 
 | Path | Variables | Cost |
 |---|---|---|
-| **A, preferred** | `PRIVATE_X_PIXEL_TOKEN` | A static token generated in the Ads UI, sent as an `X-Pixel-Token` header. No developer account, no approval. Referenced in X's developer forum but not on the web-conversions docs page, so treated as likely rather than confirmed. |
+| **R, PREFERRED AND IN USE** | `PRIVATE_X_RELAY_URL`, `PRIVATE_X_RELAY_TOKEN` | Relay through `sws-x-connector`, which already holds four working Ads API credentials and already signs OAuth 1.0a for the campaign reads behind the `sws-x` MCP. The storefront never sees an X secret. Two env vars instead of four copied ones, one place to rotate. URL is `https://sws-x-connector.clarisai-consulting.workers.dev/x/conversions`, token is that worker's `MCP_AUTH_TOKEN`. |
+| **A, fallback** | `PRIVATE_X_PIXEL_TOKEN` | A static token generated in the Ads UI, sent as an `X-Pixel-Token` header. No developer account, no approval. Referenced in X's developer forum but not on the web-conversions docs page, so treated as likely rather than confirmed. |
 | **B, fallback** | `PRIVATE_X_CONSUMER_KEY`, `PRIVATE_X_CONSUMER_SECRET`, `PRIVATE_X_ACCESS_TOKEN`, `PRIVATE_X_ACCESS_TOKEN_SECRET` | OAuth 1.0a request signing, which is what the official docs describe. Needs a developer account at developer.x.com **plus a separate Ads API access application**, which is an approval and not instant. |
 
 `PRIVATE_X_CAPI_TOKEN` is **dead** and no longer read by anything. The old
