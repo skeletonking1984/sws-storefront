@@ -365,13 +365,32 @@ export default function Product() {
             // refurbished item.
             itemCondition: 'https://schema.org/NewCondition',
             url: productUrl,
-            // Real FAQ copy (checked live via the Storefront API, "ORDERS &
-            // REFUNDS" section): "we do not offer refunds once the file has
-            // been downloaded." That is MerchantReturnNotPermitted, not a
-            // generic no-returns default.
+            /*
+             * Mirrors /policies/refund-policy, which is the authoritative
+             * statement and is dated 2026-09-09: a refund is given within 30
+             * days when the download never arrived, the files are corrupt or
+             * incomplete, the widget is not what the listing described, the
+             * buyer was charged twice, or it cannot be made to run on a
+             * platform the listing claims to support. Change of mind on a
+             * working file is not refundable.
+             *
+             * This previously said MerchantReturnNotPermitted, quoting the
+             * FAQ's older "we do not offer refunds once the file has been
+             * downloaded". That FAQ line contradicted the refund policy page
+             * and was corrected in Shopify on 2026-09-15 so all three now
+             * agree. If the policy ever changes, change it in the policy page
+             * first and bring this and the FAQ to match, not the other way
+             * round.
+             *
+             * `returnMethod` is deliberately omitted: nothing is ever sent
+             * back, so every schema.org value for it would be a lie.
+             */
             hasMerchantReturnPolicy: {
               '@type': 'MerchantReturnPolicy',
-              returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+              returnPolicyCategory:
+                'https://schema.org/MerchantReturnFiniteReturnWindow',
+              merchantReturnDays: 30,
+              returnFees: 'https://schema.org/FreeReturn',
             },
             // Instant digital download: nothing ships, nothing costs to
             // ship. Variants on this catalog are set requiresShipping:
