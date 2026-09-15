@@ -114,21 +114,55 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
   const purchaseEventId = env?.PRIVATE_X_PURCHASE_EVENT_ID;
   if (!purchaseEventId) return {ok: false, reason: 'not_configured'};
 
-  // At least one identifier is required. Build every one available.
-  const identifiers = [];
+  /*
+   * ONE identifier object, not one per signal. X validates each element of
+   * `identifiers` as a complete identifier on its own, so
+   * [{hashed_email}, {ip_address}, {user_agent}] is rejected outright with
+   * "At least one user identifier must be provided" even though three were
+   * supplied. Verified against the live API on 2026-09-15:
+   *
+   *   [{hashed_email, ip_address, user_agent}]  accepted
+   *   [{hashed_email}]                          accepted
+   *   [{ip_address, user_agent}]                accepted
+   *   [{hashed_email}, {ip_address}, {user_agent}]  REJECTED
+   *
+   * Getting this wrong does not degrade matching, it stops every conversion
+   * from being recorded at all. Do not split these back out.
+   *
+   * Why more than email: `hashed_email` only matches when the buyer's
+   * checkout email is the one on their X account, which for most shoppers it
+   * is not. X reported "CAPI events received, but none of your key
+   * conversions could be matched to a user" on 2026-09-15 with email as the
+   * only identifier, and the hashing was verified correct at the time, so the
+   * gap was coverage rather than correctness. IP and user agent let X match
+   * on the device that saw the ad.
+   *
+   * Only email and phone are hashed. Hashing IP or user agent would make them
+   * unmatchable.
+   */
+  const identifier = {};
+
   const twclid = clickIds?._twclid;
-  if (twclid) identifiers.push({twclid});
+  if (twclid) identifier.twclid = twclid;
 
   const email = order?.email || order?.contact_email || order?.customer?.email;
   if (email) {
-    const hashed_email = await sha256Hex(email);
-    if (hashed_email) identifiers.push({hashed_email});
+    const hashed = await sha256Hex(email);
+    if (hashed) identifier.hashed_email = hashed;
   }
 
-  if (identifiers.length === 0) {
+  const ip = order?.browser_ip || order?.client_details?.browser_ip;
+  if (ip) identifier.ip_address = String(ip);
+
+  const userAgent = order?.client_details?.user_agent;
+  if (userAgent) identifier.user_agent = String(userAgent);
+
+  if (Object.keys(identifier).length === 0) {
     // Nothing to attribute on. Not an error, just an order X cannot match.
     return {ok: false, reason: 'no_identifier'};
   }
+
+  const identifiers = [identifier];
 
   const items = Array.isArray(order.line_items) ? order.line_items : [];
 
