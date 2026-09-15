@@ -24,6 +24,7 @@
  */
 
 import {destinations} from '~/lib/conversions/index.server';
+import {internalTestOrder} from '~/lib/conversions/testOrders';
 
 export function loader() {
   return new Response('Method Not Allowed', {status: 405});
@@ -69,6 +70,27 @@ export async function action({request, context}) {
   }
 
   const orderId = String(order.id);
+
+  // INTERNAL TEST ORDERS MUST NOT REACH AN AD PLATFORM.
+  //
+  // Found 2026-09-15: 8 of the last 10 orders were Todd checking out with the
+  // 100% discount code SWSTEST-JDSA7N from techgazetteteam@gmail.com. Shopify
+  // reports them with `test: false`, because a real checkout with a real
+  // discount IS a real order, so nothing here filtered them and every one
+  // dispatched a Purchase conversion. X's Events Manager showed 12 Purchase
+  // events in 12 hours against exactly ONE order, and the optimiser was
+  // learning from a pile of $0 sales that never happened.
+  //
+  // Skipped rather than sent-with-value-0: a zero value conversion is not a
+  // harmless one, it teaches the bidder that a click is worth nothing.
+  const testReason = internalTestOrder(order);
+  if (testReason) {
+    console.error(
+      `webhooks.orders: order ${orderId} skipped, internal test order (${testReason})`,
+    );
+    return new Response('OK', {status: 200});
+  }
+
   const noteAttributes = Array.isArray(order.note_attributes)
     ? order.note_attributes
     : [];

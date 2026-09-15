@@ -2553,3 +2553,53 @@ Shopify chooses to send.
 app update. This has now silently activated twice. If there is a way to stop the
 channel creating events at all, that is the durable fix; turning the event off
 one time is not.
+
+### 2026-09-15 — Todd's own test checkouts were the purchase data
+
+Todd: "fix this shit, tell me what you need." Traced it, and the duplicate
+Shopify event was the smaller half.
+
+**The 12 Purchase events in 12 hours were almost all ours.** Shopify had exactly
+ONE order on 2026-09-15: #1044, 11:50:59 ET. Pulling the last ten orders explains
+the rest:
+
+| | |
+|---|---|
+| Orders since Sep 7 | 10 |
+| Using `SWSTEST-JDSA7N` at 100% off | **8** |
+| From `techgazetteteam@gmail.com` | 8 |
+| Flagged `test: true` by Shopify | **0** |
+| Genuine paid sales | **2** (#1041 $19.10, #1035 $15.08) |
+
+**Why nothing caught it: a real checkout with a real discount code is not a test
+order.** Shopify reports `test: false`, the webhook fired normally, and every one
+dispatched a Purchase conversion to X and GA4 carrying $0.00. So the X optimiser
+has spent days learning from sales that never happened, and the Shopify $0 orders
+that looked like a billing curiosity were the cause rather than a side effect.
+
+**Fixed in code**, `app/lib/conversions/testOrders.js`, called before any
+destination in `webhooks.orders.jsx`. An order is skipped when Shopify marks it
+`test: true`, when any discount code starts with `SWSTEST`, or when the total is
+zero. Skipped, NOT sent with value 0: a zero-value conversion is not neutral, it
+teaches the bidder the click was worth nothing.
+
+**`npm run verify:test-orders`, 13 cases, in `verify:all`.** Six of them assert a
+real sale still gets through, including a genuine customer discount code
+(`LAUNCH20`), a code that merely contains the word "test" (`GREATESTHITS`), a
+$0.99 sale, and a malformed payload. That direction is the dangerous one: a guard
+that over-matches silently stops reporting all revenue and the shop looks dead.
+
+Also read the Events Manager detail correctly now: entries with referrer
+`www.ads-api.twitter.com` are our server-to-server Conversion API calls, "5
+parameters" is the good case (twclid, hashed email, IP, user agent, value), "1
+parameter" is a thin match.
+
+**The Shopify event mints a new name each time.** Its full id is
+`Shopify:72470e-33:PURCHASE:1789421612`, and that suffix is a Unix timestamp,
+2026-09-14 17:33:32 ET. So the sales channel names events with their creation
+time, which means switching off the one visible today probably will not stop a
+new one appearing. Removing the channel's ability to create events is the durable
+fix, not toggling the event.
+
+**Historic data cannot be cleaned.** The events already sent to X are there. Give
+the optimiser a fresh run of real conversions before trusting any Purchase number.
