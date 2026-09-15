@@ -29,9 +29,72 @@ export function CartSummary({cart, layout}) {
         }
       : null;
 
+  const appliedCodes =
+    cart?.discountCodes?.filter((discount) => discount.applicable) || [];
+  const appliedGiftCards = cart?.appliedGiftCards || [];
+
+  const codeForms = (
+    <>
+      <CartDiscounts
+        discountCodes={cart?.discountCodes}
+        discountsHeadingId={discountsHeadingId}
+        discountCodeInputId={discountCodeInputId}
+      />
+      <CartGiftCard
+        giftCardCodes={cart?.appliedGiftCards}
+        giftCardHeadingId={giftCardHeadingId}
+        giftCardInputId={giftCardInputId}
+      />
+    </>
+  );
+
+  const checkout = (
+    <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} cart={cart} />
+  );
+
+  // In the drawer the summary is pinned under the scrolling line items, so
+  // every pixel it spends is a pixel of cart the buyer cannot see. Measured
+  // at 360px wide it was 365px tall inside a 536px drawer, and two thirds of
+  // that was a discount form and a gift card form that almost nobody uses.
+  //
+  // Collapsed, the block is totals plus the checkout button, and the code
+  // forms are one tap away. Left open when a code is already applied, so a
+  // shopper can always see and remove what they entered.
+  if (layout !== 'page') {
+    return (
+      <div aria-labelledby={summaryId} className={className}>
+        <h4 id={summaryId}>Totals</h4>
+        <Totals cart={cart} savings={savings} />
+        {checkout}
+        <details
+          className="cart-code-disclosure"
+          open={appliedCodes.length > 0 || appliedGiftCards.length > 0}
+        >
+          <summary>Add a discount or gift card</summary>
+          {codeForms}
+        </details>
+      </div>
+    );
+  }
+
   return (
     <div aria-labelledby={summaryId} className={className}>
       <h4 id={summaryId}>Totals</h4>
+      <Totals cart={cart} savings={savings} />
+      {codeForms}
+      {checkout}
+    </div>
+  );
+}
+
+/**
+ * Subtotal, and the discount and total rows only when a code actually moved
+ * the number.
+ * @param {{cart: CartSummaryProps['cart']; savings: {amount: string; currencyCode: string} | null}}
+ */
+function Totals({cart, savings}) {
+  return (
+    <>
       <dl role="group" className="cart-subtotal">
         <dt>Subtotal</dt>
         <dd>
@@ -64,18 +127,7 @@ export function CartSummary({cart, layout}) {
           </dl>
         </>
       ) : null}
-      <CartDiscounts
-        discountCodes={cart?.discountCodes}
-        discountsHeadingId={discountsHeadingId}
-        discountCodeInputId={discountCodeInputId}
-      />
-      <CartGiftCard
-        giftCardCodes={cart?.appliedGiftCards}
-        giftCardHeadingId={giftCardHeadingId}
-        giftCardInputId={giftCardInputId}
-      />
-      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} cart={cart} />
-    </div>
+    </>
   );
 }
 

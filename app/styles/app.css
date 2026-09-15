@@ -965,14 +965,37 @@ button.reset:hover:not(:has(> *)) {
  * No constant here may restate a dimension the layout already knows.
  */
 .cart-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  /*
+   * NOT the scroll container any more. `.cart-details` below is. While this
+   * element scrolled, the summary scrolled with the line items because it was
+   * inside it, which put Continue to Checkout at the end of the scroll rather
+   * than in front of the buyer. Measured on production at 360x640 with 4
+   * items: this box was 536px, its scrollHeight 1372px, and the checkout
+   * button rendered at y 1172, 532px below the fold, with
+   * `document.elementFromPoint` at its centre returning null.
+   */
+  overflow: hidden;
+  width: auto;
+}
+
+/*
+ * Only the line items scroll. The summary is a sibling of this element, so it
+ * stays pinned under the scroll area whatever the cart holds.
+ */
+.cart-details {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  width: auto;
 }
 
-.cart .cart-main {
+.cart .cart-main,
+.cart .cart-details {
+  display: block;
   height: auto;
   max-height: none;
   overflow: visible;
@@ -1163,28 +1186,37 @@ button.reset:hover:not(:has(> *)) {
 }
 
 /*
- * On a phone, pay first, fiddle with codes after.
+ * Pay first, fiddle with codes after, at every width.
  *
- * DOM order is totals, discount form, gift card form, then the checkout
- * button. That puts two wrapping code forms between the shopper and the only
- * control that takes their money: measured at 360px the summary is 559px
- * tall, taller than the drawer itself, so Continue to Checkout sat at the end
- * of a scroll. Sticky positioning does not help, the block is taller than the
- * viewport it would stick inside.
+ * This used to be a `max-width: 44.99em` block that reordered the summary's
+ * children with flex `order` so the checkout button jumped above the two code
+ * forms. The forms are now inside a collapsed `<details>` and the DOM order is
+ * already totals, checkout, disclosure, so nothing needs reordering and the
+ * tab order matches what is on the screen.
  *
- * Flex `order` moves only the checkout button up, leaving the DOM (and so the
- * tab and screen reader order) telling the same story it always did, with the
- * code forms still available underneath for anyone who wants them.
+ * The disclosure is what makes pinning the summary possible at all. Expanded,
+ * the discount and gift card forms wrap on a 360px phone and the block is
+ * 365px tall inside a 536px drawer, leaving 171px of cart visible. Collapsed,
+ * it is totals plus the button.
  */
-@media (max-width: 44.99em) {
-  .cart-summary-aside {
-    display: flex;
-    flex-direction: column;
-  }
+.cart-code-disclosure {
+  border-top: 1px solid var(--sws-border);
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+}
 
-  .cart-summary-aside > section {
-    order: 1;
-  }
+.cart-code-disclosure > summary {
+  color: var(--sws-sub);
+  cursor: pointer;
+  font-size: 0.85rem;
+  /* 44px tall including padding, the same tap target as every other control
+     in the drawer. */
+  padding: 0.7rem 0.25rem;
+}
+
+.cart-code-disclosure > summary:hover,
+.cart-code-disclosure > summary:focus-visible {
+  color: var(--sws-text);
 }
 
 .cart-code-form {

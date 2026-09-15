@@ -50,33 +50,46 @@ export function CartMain({layout, cart: originalCart}) {
       aria-label={layout === 'page' ? 'Cart page' : 'Cart drawer'}
     >
       <CartEmpty hidden={linesCount} layout={layout} />
+      {/*
+        The summary is a SIBLING of the scrolling line items, not a child of
+        it. It used to sit inside `.cart-details` while `.cart-main` was the
+        scroll container, so the only control that takes a buyer's money was
+        parked at the end of the scroll, below every line item.
+
+        Measured on production at 360x640 with 4 items in the cart: the drawer
+        gives `.cart-main` 536px, its scrollHeight was 1372px, and Continue to
+        Checkout rendered at y 1172 to 1229. `document.elementFromPoint` at its
+        centre returned null because it was not on the screen at all. A buyer
+        had to scroll 636px inside the drawer, past four widgets, to find it.
+
+        Now `.cart-details` scrolls and the summary is pinned under it at its
+        own height, so checkout is on screen at any cart size.
+      */}
       <div className="cart-details">
         <p id="cart-lines" className="sr-only">
           Line items
         </p>
-        <div>
-          <ul aria-labelledby="cart-lines">
-            {(cart?.lines?.nodes ?? []).map((line) => {
-              // we do not render non-parent lines at the root of the cart
-              if (
-                'parentRelationship' in line &&
-                line.parentRelationship?.parent
-              ) {
-                return null;
-              }
-              return (
-                <CartLineItem
-                  key={line.id}
-                  line={line}
-                  layout={layout}
-                  childrenMap={childrenMap}
-                />
-              );
-            })}
-          </ul>
-        </div>
-        {cartHasItems && <CartSummary cart={cart} layout={layout} />}
+        <ul aria-labelledby="cart-lines">
+          {(cart?.lines?.nodes ?? []).map((line) => {
+            // we do not render non-parent lines at the root of the cart
+            if (
+              'parentRelationship' in line &&
+              line.parentRelationship?.parent
+            ) {
+              return null;
+            }
+            return (
+              <CartLineItem
+                key={line.id}
+                line={line}
+                layout={layout}
+                childrenMap={childrenMap}
+              />
+            );
+          })}
+        </ul>
       </div>
+      {cartHasItems && <CartSummary cart={cart} layout={layout} />}
       {/*
         No `data` prop needed: Hydrogen's generic view component always
         merges in the AnalyticsProvider's own current `cart` regardless of
