@@ -60,7 +60,16 @@ function BrandMark({shopName}) {
       {imgFailed ? (
         <strong className="sws-holo">{shopName}</strong>
       ) : (
-        <img src={logo} alt={shopName} onError={() => setImgFailed(true)} />
+        <img
+          src={logo}
+          alt={shopName}
+          /* Intrinsic size of logo.png. Lets the browser reserve the box from
+             the aspect ratio before the file arrives; CSS still sets the
+             rendered height and leaves width auto. */
+          width="900"
+          height="250"
+          onError={() => setImgFailed(true)}
+        />
       )}
     </>
   );

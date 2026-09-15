@@ -514,6 +514,8 @@ export default function Product() {
                       listId="related-products"
                       listName="Related products"
                       index={index}
+                      /* sits under the "More widgets" <h2> */
+                      headingLevel={3}
                     />
                   ))}
                 </div>

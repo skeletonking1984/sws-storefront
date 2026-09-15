@@ -93,7 +93,14 @@ function publishSelectItem({publish, product, listId, listName, index}) {
  *   index?: number;
  * }}
  */
-export function ProductItem({product, loading, listId, listName, index}) {
+export function ProductItem({
+  product,
+  loading,
+  listId,
+  listName,
+  index,
+  headingLevel = 2,
+}) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
   const kind = widgetKind(product.title, product.productType);
@@ -245,7 +252,20 @@ export function ProductItem({product, loading, listId, listName, index}) {
           )}
         </div>
       )}
-      <h4>{product.title}</h4>
+      {/*
+        The card's heading level depends on what encloses it, so it is a prop
+        rather than a fixed tag. A collection page puts these straight under
+        its <h1>, so 2 is right there; the homepage "Top widgets" grid and the
+        PDP "More widgets" row both sit under an <h2>, so they pass 3.
+
+        Lighthouse flagged this on the live homepage: a hardcoded <h4> under an
+        <h2> skips a level, which is how a screen reader user loses the outline.
+        Styling moved to `.product-item-title` so the level can vary without
+        the card changing size.
+      */}
+      <CardHeading level={headingLevel} className="product-item-title">
+        {product.title}
+      </CardHeading>
       <div className="product-item-footer">
         <span className="product-item-price-pill">
           <Money data={product.priceRange.minVariantPrice} />
@@ -260,6 +280,17 @@ export function ProductItem({product, loading, listId, listName, index}) {
       </div>
     </Link>
   );
+}
+
+/**
+ * Renders h2 to h6 so a product card can sit at the right depth in whatever
+ * section encloses it. Clamped, because a level outside that range would
+ * produce an invalid tag.
+ * @param {{level: number; className?: string; children: React.ReactNode}}
+ */
+function CardHeading({level, className, children}) {
+  const Tag = `h${Math.min(6, Math.max(2, level))}`;
+  return <Tag className={className}>{children}</Tag>;
 }
 
 /** @typedef {import('storefrontapi.generated').ProductItemFragment} ProductItemFragment */

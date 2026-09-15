@@ -11,6 +11,8 @@ import {
 } from 'react-router';
 import faviconPng from '~/assets/favicon.png';
 import appleTouchIcon from '~/assets/apple-touch-icon.png';
+import baloo2Latin from '~/assets/fonts/baloo-2-latin.woff2?url';
+import nunitoLatin from '~/assets/fonts/nunito-latin.woff2?url';
 import {FOOTER_QUERY, HEADER_QUERY, NAV_QUERY} from '~/lib/fragments';
 import {OVERLAY_FEATURED_HANDLES, WIDGETS_FEATURED_HANDLE} from '~/lib/nav';
 import resetStyles from '~/styles/reset.css?url';
@@ -59,18 +61,27 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
+    /*
+     * The two fonts the first screen actually paints in, preloaded from our
+     * own origin. They used to come from a render blocking Google Fonts
+     * stylesheet behind two preconnects, which meant the hero painted in the
+     * fallback and then jumped: Lighthouse attributed 0.1322 of the homepage's
+     * 0.1323 CLS to that single reflow. latin-ext is deliberately NOT
+     * preloaded, its unicode-range keeps it off pages that do not need it.
+     */
     {
-      rel: 'preconnect',
-      href: 'https://fonts.googleapis.com',
-    },
-    {
-      rel: 'preconnect',
-      href: 'https://fonts.gstatic.com',
+      rel: 'preload',
+      as: 'font',
+      type: 'font/woff2',
+      href: baloo2Latin,
       crossOrigin: 'anonymous',
     },
     {
-      rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;700;800&display=swap',
+      rel: 'preload',
+      as: 'font',
+      type: 'font/woff2',
+      href: nunitoLatin,
+      crossOrigin: 'anonymous',
     },
     {rel: 'icon', type: 'image/png', sizes: '32x32', href: faviconPng},
     {rel: 'apple-touch-icon', sizes: '180x180', href: appleTouchIcon},

@@ -56,8 +56,9 @@ export default async function handleRequest(
     ],
     // Brand fonts (Baloo 2 + Nunito) come from Google Fonts. Without these two
     // the stylesheet is blocked and the whole site silently falls back to system font.
-    styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.shopify.com', 'https://fonts.googleapis.com'],
-    fontSrc: ["'self'", 'https://cdn.shopify.com', 'https://fonts.gstatic.com'],
+    styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.shopify.com'],
+    // Fonts are self hosted as of 2026-09-15, so no third party font origin.
+    fontSrc: ["'self'", 'https://cdn.shopify.com'],
     // Beacon/collect requests gtag.js and uwt.js make via fetch or
     // sendBeacon, not a plain script or img load. connectSrc is an explicit
     // directive here (it already has a default), so these must be listed

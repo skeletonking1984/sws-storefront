@@ -25,7 +25,7 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}) {
                   width="200"
                   height="200"
                 />
-                <img src={logo} alt="Stream Widget Shop" />
+                <img src={logo} alt="Stream Widget Shop" width="900" height="250" />
               </div>
               <p className="footer-tagline">
                 Animated chat and goal widgets for Twitch, YouTube, and

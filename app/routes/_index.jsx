@@ -236,6 +236,8 @@ function Hero() {
               src={logoStacked}
               alt="Stream Widget Shop"
               className="hero-logo"
+              width="900"
+              height="250"
             />
           </div>
           <h1 className="sws-glow">
@@ -482,6 +484,8 @@ function TopWidgets({topWidgets, fallback}) {
                         listId="home-top-widgets"
                         listName="Top widgets"
                         index={index}
+                        /* sits under the section's own <h2> */
+                        headingLevel={3}
                       />
                     ))}
                   </div>
