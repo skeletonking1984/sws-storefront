@@ -1928,3 +1928,23 @@ Still not confirmed by this session: a real browser **click** on Add to cart and
 |---|---|---|---|---|---|
 | Start of day | 84 | 95 | 96 | 100 | 2/3 |
 | End of day, product page | **100** | **100** | **100** | **100** | **4/4** |
+
+#### "Auctopus" 2026-09-15 (Todd spotted it at checkout)
+The agent tool test put a widget in the cart and Todd read the name on the Shop Pay screen: **"Cute Auctopus Liquid Filling Goal Widget"**. It is a typo, and it was Shopify side only. Etsy listing **1888414230 says "Octopus Liquid Filling Goal Widget"**, so the misspelling was introduced during import, not inherited.
+
+Scanning the live catalogue for the same class of defect found six titles with an outright wrong word:
+
+| Wrong | Products |
+|---|---|
+| `Auctopus` | Cute Octopus |
+| `Stream-elements` | Diamond Butterfly, Envelope, Cute Seal |
+| `Streamelement` (singular) | Lunar Cat, Plants Vibe |
+
+All six titles corrected, zero `userErrors`. The Octopus product also carried the typo in its **description body and both SEO fields**, which is what a buyer and Google actually read, and all three were fixed. Prior state in `data/title-typo-backup-2026-09-15.json`.
+
+Verified after: **0 titles and 0 descriptions contain "Auctopus"**, 0 titles contain `Stream-elements` or singular `Streamelement`. `audit-catalog` 0 issues on 124, `audit-shipping` clean, `audit-platform-claims --check` exit 0.
+
+**Left, and deliberately not swept:**
+- **3 descriptions still say `Stream-elements`** and 2 say `Streamelement Only` (Diamond Butterfly, Envelope, Cute Seal, Lunar Cat, Plants Vibe). Brand casing inside inherited Etsy body copy that `docs/COPY-STANDARD.md` is going to rewrite wholesale anyway.
+- **67 titles spell it `Streamelements`, 28 spell it `StreamElements`.** The vendor's own spelling is StreamElements. That is a 67 title bulk rewrite of live product names, so it is Todd's call rather than a routine one.
+- The Octopus product still carries a `cute_auctopus` tag. Cosmetic and internal; tags drive the Chat/Goal collections and this one does not, so it was left alone rather than risk a tag write for a string nobody sees.
