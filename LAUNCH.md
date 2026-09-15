@@ -1596,3 +1596,32 @@ Tool names now exposed: `subscribe_to_newsletter`, `contact_shop`, `search_widge
 Found while verifying the above, and it is the CLAUDE.md image quirk that this repo has documented since 2026-08-30. The product cards, kit cards and PDP gallery were moved to `ResponsiveImage` in `41ba223` and no longer crop, but every OTHER Hydrogen `<Image>` still does: **272 `crop=center` occurrences on the homepage**, which at 15 srcset candidates each is roughly 18 images. They are the search palette thumbnails, the mega menu tiles, the top seller card and the cart drawer line items.
 
 The fix is the same one-line swap to `ResponsiveImage` per call site. Not done here to keep this pass from sprawling, and logged so it is not rediscovered a third time.
+
+#### The font fix did not fix CLS, and why, 2026-09-15
+Todd re-ran Lighthouse on the preview. **CLS was still exactly 0.132**, the same number as before the self hosting change, on the same element, with the same cause string: `div.hero-grid`, "Web font loaded". **The number not moving at all is what gave it away.** A real improvement that fell short would have moved it.
+
+Self hosting and preloading shortened the window before the real face arrives. **It never removed the swap.** `font-display: swap` swaps after first paint by definition, and the fallback was not the same width, so the hero reflowed exactly as it had before. Measured on the live site at 200px on a string of real page copy:
+
+| Face | Fallback vs real |
+|---|---|
+| Baloo 2 700 | **+2.40%** |
+| Baloo 2 800 | **+3.49%** |
+| Nunito 400 | **-8.37%** |
+| Nunito 700 | -3.84% |
+| Nunito 800 | -3.29% |
+
+A wrapping headline moving 3.5% moves everything under it. That is the whole of the 0.132.
+
+The fix is `size-adjust` on a metric matched fallback face, so the fallback occupies the same space and the swap costs nothing. Chosen over `font-display: optional`, which would also guarantee zero CLS but by sometimes never painting the brand font at all.
+
+**Five faces, one per weight, solved empirically rather than calculated.** Two traps, both hit:
+
+1. **`local('Arial')` inside an `@font-face` does not render like `font-family: Arial` at the same weight.** Arial ships no 700 or 800 face, so the two paths synthesise bold differently. The first attempt derived `95.02%` for Baloo 2 by measuring Arial directly and made it **worse, from +3.49% to -6.29%**. Caught only because the fix was verified instead of the arithmetic being trusted.
+2. **One `size-adjust` cannot serve several weights.** Averaging across Nunito 400/700/800 left 400 out by 3.17%, and 400 is nearly all the body copy on the site.
+
+Solved by converging each weight against its own real face. Verified against the rules the build actually ships: **all five now at 0.00% residual**, worst case 0.00%.
+
+**Still to confirm:** the CLS number itself, on Todd's next Lighthouse run. Everything above is a measurement of the cause, not of the score.
+
+#### WebMCP audits are still Not Applicable, and it is not the site
+Same run: all three WebMCP audits still N/A, **with the declarative attributes verified present in the served HTML** (2 of 2 forms carrying `toolname` and `tooldescription` on home, contact and collections/all). So the audits are gated on the browser exposing the WebMCP API, not on the page providing anything. Nothing further can be done from this side: **it needs a browser with WebMCP enabled**, which the flag in `chrome://flags` controls. The declarative half needs no JavaScript and is in the HTML; the imperative half registers on `document.modelContext` when it exists.
