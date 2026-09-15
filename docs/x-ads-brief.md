@@ -106,8 +106,13 @@ ad has sent anyone here yet. It cannot be faked either, which was tested.
 This was not true a week ago. As of 2026-09-15, on a product page:
 Performance 100, Accessibility 100, Best practices 100, SEO 100.
 
-- Prices match the Etsy listings, so there is no cheaper version of the same
-  widget one click away
+- Prices match the Etsy listings for the individual widgets, so there is no
+  cheaper version of the same widget one click away. **Correction, 2026-09-15:
+  this does not hold for the three KITS.** Spooky Stream Kit is $39.99 here and
+  $29.99 on Etsy, so for that one Etsy is the cheaper click. Multistream Chat
+  Widget Pack runs the other way, $29.99 here against $48.38 on Etsy. Celestial
+  Stream Kit has no Etsy listing at all. If you point an ad at a kit, know that
+  the Spooky one is undercut by our own Etsy shop until Todd reconciles them.
 - Checkout works on phones, including narrow Android widths
 - 788 real Etsy reviews render on the product pages, across 98 products
 - Every product page carries a demo video where one exists

@@ -2119,3 +2119,51 @@ Until it is set, all 124 will sit at "Limited" instead of 10.
 Next Merchant Center check should show 124 rather than 10. Shopify's Google &
 YouTube app syncs on its own schedule, so the count moves on its sync, not
 immediately.
+
+### 2026-09-15 — The Spooky Stream Kit card was drawing a strikethrough BELOW its own price
+
+Todd spotted it on a collection card: `$54.99` struck through, `$68.35` live.
+That is not a discount, it reads as a price rise, and it is what Shopify draws
+when `compareAtPrice` is LOWER than `price`. The two fields were inverted on
+the variant.
+
+Scanned all 124 active products for the same fault. **Only three products in
+the catalogue carry a compare-at price at all, and they are the three kits:**
+
+| Kit | price | compareAt | |
+|---|---|---|---|
+| Celestial Stream Kit | 39.99 | 59.99 | correct |
+| Multistream Chat Widget Pack | 29.99 | 74.99 | correct |
+| Spooky Stream Kit | **68.35** | **54.99** | **inverted** |
+
+The two siblings establish the intended pattern, so this was one bad row, not a
+systemic bug.
+
+**Five different prices existed for this one product**, which is why nobody
+caught it: Shopify `price` 68.35, Shopify `compareAtPrice` 54.99, the bundle
+MANIFEST's List 54.99 and Sale 36.99, and Etsy live at 29.99. The MANIFEST had
+already flagged a disagreement on 2026-09-13 (against a then-current Etsy price
+of 24.99) and correctly refused to silently rewrite it, so the flag was sitting
+there unread while the storefront served the worst of the five.
+
+Todd set it: **$39.99**. Compare-at is **$100.50**, chosen because it is not a
+marketing number, it is the exact sum of the seven component listings
+(14.99 + 14.99 + 18.99 + 17.26 + 14.30 + 10.40 + 9.57 = 100.50) and it is
+already printed on the listing art, so the card and the image now agree.
+
+Verified live after the Hydrogen cache turned over: JSON-LD `price` 39.99,
+`compareAtPrice` 100.50. **The cache took about 45 seconds and served the stale
+68.35 for three polls first.** Same lag as the FAQ earlier today. A price read
+straight after a write is not evidence.
+
+**Two things this surfaced that are NOT fixed:**
+
+1. **Etsy undercuts us on this kit**, $29.99 against $39.99. That directly
+   contradicts `docs/x-ads-brief.md`, which tells Auny prices match Etsy so
+   there is no cheaper version one click away. The brief is corrected with the
+   real numbers for all three kits. Whether Etsy moves is Todd's call.
+2. **The listing art undercounts the kit.** `01_hero.jpg` says "7 animated
+   widgets · 2 chat · 5 goal bars". It is 8 widgets, 3 chat, 5 goal. The third
+   chat widget is the kit-exclusive Spooky Multistream Chat, the one component
+   nobody can buy separately, so the art is omitting the strongest reason to buy
+   the kit. Title and description are correct. Needs a re-render, not an edit.
