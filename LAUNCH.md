@@ -39,7 +39,7 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 - [x] Homepage sells: hero, top 15, social proof, one clear CTA. Verified on the LIVE site 2026-09-14 in a real browser: one h1 ("Widgets that make chat pop.") with a primary CTA, a Top widgets grid, "What streamers say" (real Etsy quotes) and "Happy clients", a working email capture, 23 product links, and `scrollWidth == clientWidth` at desktop. Mobile is its own item below
 - [x] PDP: video where available (104 of 130 active), platform badges, "what you get", FAQ, real per-product Etsy reviews
 - [ ] Mobile QA
-- [ ] Performance (LCP < 2.5s)
+- [x] Performance (LCP < 2.5s). **LCP 1.0s** on a real Lighthouse 13.4.1 run of the live homepage, 2026-09-15 12:52Z, desktop: performance 92, FCP 1.0s, TBT 0ms, Speed Index 1.0s, TTI 1.0s. Two passes of this routine could not measure it because the browser pane reported `visibilityState: hidden`; Todd's own run settled it. **Mobile form factor has not been measured**, and CLS was 0.132 on that run (fixed in `bc09bf1`, unconfirmed until the next run)
 ### SEO
 - [x] Title/meta per product + collection (plus canonical, OG, Twitter card, JSON-LD)
 - [x] Sitemap + robots verified
@@ -1424,3 +1424,40 @@ Preview: https://01m2jg9y9sr9dgt6c6p2fzyeb0-fb73b5b73c40344d0d20.myshopify.dev
 Commit: `68d0ba8`.
 
 Next: press the checkout button on a rendered build to close the verification gap above, then the Performance box (LCP) if a browser pass can ever report a real paint, otherwise homepage and PDP conversion.
+
+#### Lighthouse audit worked, 2026-09-15 (Todd ran it)
+Todd ran Lighthouse 13.4.1 against the live homepage (desktop, 12:52Z) and sent the JSON. Scores: **performance 92, accessibility 95, best practices 96, SEO 100, agentic browsing 60.**
+
+This is the first real paint measurement the project has. Two scheduled passes in a row failed to produce one because the browser pane reports `visibilityState: hidden`, which makes FCP come back as nonsense (19200ms on this morning's pass). The Performance checklist box is now ticked on his numbers, not on an agent's.
+
+| Metric | Value | Verdict |
+|---|---|---|
+| Largest Contentful Paint | **1.0s** | passes the < 2.5s target |
+| First Contentful Paint | 1.0s | |
+| Total Blocking Time | **0 ms** | |
+| Speed Index | 1.0s | |
+| Time to Interactive | 1.0s | |
+| Cumulative Layout Shift | **0.132** | fails, target < 0.1 |
+
+**Fixed in this pass, all three from the audit.**
+
+**1. CLS, and it was one element.** Of the page's 0.1323 total, **0.1322 was `div.hero-grid`**, and Lighthouse named the cause outright: "Web font loaded", pointing at the Baloo 2 woff2 on `fonts.gstatic.com`. Google's stylesheet ships `display=swap`, which guarantees that reflow, and it sat behind a render-blocking third party stylesheet and two preconnects, so the gap between fallback paint and real paint was as wide as it gets.
+
+Both families are **variable** fonts, so the entire site is four files (latin and latin-ext per family) and only the two latin ones load for English. They are now served from our own origin and **preloaded**, so they arrive in the first wave instead of after a cross-origin round trip. Side effects worth having: one fewer render-blocking request, two fewer preconnects, one fewer third party dependency, and CSP drops to `'self'` plus `cdn.shopify.com` on both `styleSrc` and `fontSrc`. The `unicode-range` values are copied verbatim from Google's own stylesheet, so latin-ext still only downloads on a page that needs it.
+
+**2. `heading-order`.** The product card hardcoded `<h4>`. Under the homepage's `<h2 id="top-widgets-heading">` that skips a level, which is how a screen reader user loses the outline. It could not simply become `<h3>`: a collection page puts the same card straight under its `<h1>`. The level is now a prop, default 2, with the homepage grid and the PDP "More widgets" row passing 3. Styling moved from `.product-item h4` to `.product-item-title` so the tag can vary without the card resizing.
+
+**3. `unsized-images`.** All three hits were the logo, with no `width`/`height`, so nothing reserved its box. Intrinsic 900x250 added at all three usages. CSS still drives the rendered size, and both rules set one axis and leave the other `auto`, so the attributes only supply the aspect ratio.
+
+**4. `link-name`, 2 items**, was already fixed earlier in this pass (`3c2a6e2`): the `/account` and `/cart` header links. Confirmed the audit's two nodes are exactly the two an independent sweep of the live DOM had found.
+
+**Also found while fixing, not fixed: `app/assets/logo-stacked.png` is a byte-identical copy of `logo.png`** (sha256 `2c20d9a2...`, both 900x250). CLAUDE.md says `npm run logo` writes a distinct stacked lockup for the hero and a horizontal one for the header. It does not, or it did not last time it ran, so the hero is rendering the horizontal lockup. Cosmetic, needs a real asset regeneration, flagged rather than guessed at.
+
+**Left for tomorrow, both from the same run:** `image-delivery-insight` (13 images, est. 528 KiB) and `unused-javascript` (2 items, est. 94 KiB). Neither is a correctness problem and both are a real chunk of work.
+
+**Not fixable here:** `inspector-issues` is a third party cookie warning from `analytics.twitter.com/1/i/adsct`, which is the X pixel doing its job. It costs one point on best practices and there is nothing in this codebase to change.
+
+**Unverified, same limitation as the rest of today:** none of these four fixes has been seen rendered. The build artifacts carry all of them (zero references to `fonts.googleapis.com` or `fonts.gstatic.com` anywhere in `dist`, four hashed woff2 emitted with their `unicode-range` intact, both latin faces present as `rel=preload as=font crossorigin` in the server bundle, CSP tightened on both directives, and the card heading helper compiled). **The real close is Todd re-running Lighthouse after the next production deploy.** CLS should go to roughly 0 and accessibility to 100.
+
+Preview: https://01m2jj5yzkaqp1gspwqk4vftbr-fb73b5b73c40344d0d20.myshopify.dev
+Commits: `3c2a6e2` link names, `bc09bf1` fonts, heading order and logo sizing.
