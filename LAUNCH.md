@@ -1625,3 +1625,21 @@ Solved by converging each weight against its own real face. Verified against the
 
 #### WebMCP audits are still Not Applicable, and it is not the site
 Same run: all three WebMCP audits still N/A, **with the declarative attributes verified present in the served HTML** (2 of 2 forms carrying `toolname` and `tooldescription` on home, contact and collections/all). So the audits are gated on the browser exposing the WebMCP API, not on the page providing anything. Nothing further can be done from this side: **it needs a browser with WebMCP enabled**, which the flag in `chrome://flags` controls. The declarative half needs no JavaScript and is in the HTML; the imperative half registers on `document.modelContext` when it exists.
+
+#### Why the WebMCP audits stayed Not Applicable: it is an origin trial, 2026-09-15
+Three Lighthouse runs reported all three WebMCP audits N/A. The declarative attributes were verified present in the served HTML every time, so the page was never the problem, and "the browser needs the flag" was only half the answer.
+
+**WebMCP is an origin trial in Chrome 149 through 156, ending 2026-11-16.** Without a trial token served by the page, `document.modelContext` is **undefined for every ordinary Chrome visitor**, so every `registerTool` call is a silent no-op. `chrome://flags/#enable-webmcp-testing` only helps the machine that flipped it, which is why a local Lighthouse run still saw nothing even with the flag available.
+
+Two separate things are therefore needed, and only one of them is code:
+
+| | Who | What |
+|---|---|---|
+| Make a local Lighthouse run detect the tools | Todd | `chrome://flags/#enable-webmcp-testing` to Enabled, relaunch Chrome, re-run |
+| Make it work for real visitors | Todd, then done | Register `streamwidgetshop.com` at developer.chrome.com/origintrials, set `PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKEN` on both Oxygen environments |
+
+The code half is shipped: the root loader reads `PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKEN` and `Layout` renders `<meta http-equiv="origin-trial">` in the head when it is set. It has to be in the head and present on the first response, so it cannot be injected by a script afterwards. **Entirely optional**: unset, the tag is not rendered and nothing changes, which is the state now. `Layout` reads it defensively because it also renders for error boundaries, where the root loader may never have run.
+
+Verified on the deployed preview with the token unset: no `origin-trial` meta, 2 forms still carrying `toolname`, 5 `size-adjust` fallback faces in the served CSS, page renders normally.
+
+**Worth saying plainly about the value of this whole WebMCP thread:** the trial ends 2026-11-16, no ordinary visitor has the API today, and nobody is buying widgets through an agent yet. The catalogue side of it is the part that keeps its value either way, because `search_widgets` filtering on the `works_with` metafield is the same honest platform data the PDP badges use.
