@@ -2294,3 +2294,75 @@ Verified live after the cache turned: `non-refundable` 0 occurrences,
 `everything runs through StreamElements` 0, `Refunds within 30 days` present,
 TikFinity / YouTube Data API key / chatroom ID all present, hero serving
 `?v=1789496887`, price 29.99 against 100.50.
+
+### 2026-09-15 — All 12 refund contradictions fixed, and a QA check so they cannot come back
+
+Todd: "yeah, get it all as accurate as we can. get the new QA in here, make
+sure its right, and I agree keep etsy and shopify separate for now in terms of
+the policies."
+
+**The 11 remaining products are fixed** (the Spooky Kit was done earlier). Every
+one now carries the same sentence, derived from `/policies/refund-policy`:
+refund within 30 days for a download that never arrived, corrupt or incomplete
+files, not as described, a double charge, or a platform the listing claimed;
+change of mind on a working file is not covered.
+
+**How, because hand-editing 11 descriptions is how you lose a paragraph.**
+`scripts/one-off/2026-09-15-fix-refund-copy.py` does the substitution and
+refuses to emit a payload unless, for every product: the banned wording is gone,
+the new sentence is present, no `..` was spliced in, and **the plain text of the
+old description with the same rule applied equals the plain text of the new one,
+character for character**. Anything else moving is a hard stop.
+
+That assertion earned its keep three times:
+
+- **Celestial kit.** Its wording ends in a full stop where the Spooky one uses a
+  comma, so matching up to "non-refundable" stranded ". Please read the setup
+  guide before purchasing" behind the new sentence. Caught, rule widened.
+- **Demon Samurai.** "Digital download, all sales final." plus a replacement
+  that already ends in a full stop produced "Refund Policy page..". Caught by an
+  explicit double-full-stop check, which now runs on every product.
+- **Butterfly Galaxy.** Its Important list is bulleted with ❌, which put a red
+  cross in front of "Refunds within 30 days" and made it read as the opposite of
+  what it says. Changed to 🔄, and the swap had to be DECLARED in the expected
+  text or the equality check rejected it, which is the check working.
+
+One deliberate widening: the `data-start`/`data-end` attributes were stripped
+from the eight chat-and-goal descriptions. They are ChatGPT-export noise,
+`app/lib/productDescription.js` already strips them before rendering, and they
+were half the bytes. Text is unaffected, which is what the equality check
+verifies.
+
+**The new QA: `npm run audit:policy`** (`scripts/audit-policy-claims.mjs`), also
+in `npm run verify:all`. It compares the three sources that disagreed today:
+
+1. the live refund policy, read from `shop.refundPolicy` on the Storefront API
+2. the JSON-LD, parsed out of `app/routes/products.$handle.jsx`
+3. every product description
+
+It reads the policy instead of hardcoding "30 days", so editing the policy in
+Admin changes what the audit expects, and **a policy rewritten to refuse refunds
+inverts the check rather than failing all 124 products**.
+
+**`npm run audit:policy:self-test` is the part that matters.** Eleven cases feed
+it known-bad input and fail if any of them passes, including deleted structured
+data, because a check that only looks for good wording cannot see wording that
+was removed. Run it whenever that file changes.
+
+**The audit's own first live run was wrong, in the informative direction.** It
+reported all 12 corrected products as violations, because `/not refundable/`
+also matches the policy's legitimate carve-out, "a working file you downloaded
+and then changed your mind about is not refundable". A blanket denial attaches
+to the item; a carve-out attaches to a circumstance. The pattern now fires only
+on the blanket form, and both cases are pinned in the self test. Had the fix
+gone the other way, this audit would have been permanently green and useless.
+
+Live now: policy grants refunds within 30 days, JSON-LD
+`MerchantReturnFiniteReturnWindow` 30 days, 124 products checked, 0 issues,
+exit 0.
+
+**Etsy stays separate, per Todd.** Its listings still say non-refundable and
+that is correct for that channel: Etsy sales run under the Etsy shop's own
+policies, and `etsy_get_shop` exposes no policy fields, so the storefront's
+policy has no authority there. This audit only reads Shopify and makes no claim
+about Etsy.
