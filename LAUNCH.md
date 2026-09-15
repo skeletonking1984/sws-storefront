@@ -1948,3 +1948,49 @@ Verified after: **0 titles and 0 descriptions contain "Auctopus"**, 0 titles con
 - **3 descriptions still say `Stream-elements`** and 2 say `Streamelement Only` (Diamond Butterfly, Envelope, Cute Seal, Lunar Cat, Plants Vibe). Brand casing inside inherited Etsy body copy that `docs/COPY-STANDARD.md` is going to rewrite wholesale anyway.
 - **67 titles spell it `Streamelements`, 28 spell it `StreamElements`.** The vendor's own spelling is StreamElements. That is a 67 title bulk rewrite of live product names, so it is Todd's call rather than a routine one.
 - The Octopus product still carries a `cute_auctopus` tag. Cosmetic and internal; tags drive the Chat/Goal collections and this one does not, so it was left alone rather than risk a tag write for a string nobody sees.
+
+#### X Conversion API made real, and /admin/config 2026-09-15
+Todd opened X's Conversion Diagnostics: pixel `q7mwb` **Active**, 191 events, **all web pixel, zero server side**, "Conversion API: Not set up" and "Click ID tracking: Not detected".
+
+**The X destination existed but would never have worked.** Its own header flagged three TODOs and all three were right:
+
+| | Was | Is |
+|---|---|---|
+| Auth | `Authorization: Bearer` | **OAuth 1.0a request signing**, or a static pixel token. Bearer is neither. |
+| Endpoint | version guessed | `POST /12/measurement/conversions/{pixel_id}`, confirmed |
+| `event_id` | unclear | the conversion event's id from Ads Manager, required, not the pixel id |
+
+**The substantive change is the identifier.** X requires at least one and the old code sent only `twclid`, returning early when absent. `twclid` only exists if the buyer reached this site from an X ad, and X reports zero click ids across 191 events, so a twclid-only implementation would have kept sending nothing even once credentialled. Every Shopify order carries an email, so it now sends `hashed_email` (SHA256, lowercased, trimmed, unsalted) and adds twclid when present.
+
+**Two auth paths are supported**, because the docs describe OAuth 1.0a but X's developer forum references a much simpler static `X-Pixel-Token` from the Ads UI, and that is referenced rather than documented. Path A is preferred. Todd, 2026-09-15: "lets go with whats easiest to test", so **path A is the plan**: 3 values, no developer account, no Ads API approval.
+
+Two verifiers, because untested crypto is worthless: `npm run verify:oauth1` proves the signing against the RFC 5849 worked example (14 checks, all pass), and `npm run verify:x-capi` reports which path the environment satisfies, builds the exact payload, and with `--send` posts one test conversion. Neither ever prints a secret.
+
+#### Corrected: no X sales channel app is installed
+An earlier note here claimed Shopify's X sales channel was firing into `q7mwb`. **Wrong.** `appInstallations` returns five apps and none is an X or Twitter channel: Bill Pay, Store Migration, Shopify Claude Connector App, SWS Hydrogen Storefront, Digital Products. That was inference from the `Shopify:` naming convention, stated as fact.
+
+What IS verified, in a real browser on production: **our X browser pixel is live and working.** `uwt.js` loads, `window.twq` is a function, two `adsct` beacons fire carrying `txn_id=tw-q7mwb-rf9ym`. So `PUBLIC_X_PIXEL_ID` and at least `PUBLIC_X_EVENT_ID_PAGE_VIEW` are already set on Oxygen and the `SWS PageView` event recording is ours. Only the server side was ever missing.
+
+Still unexplained: something fired `Shopify:72470e-33:CHECKOUT_INITIATED` at 10:19 today and it is not this storefront, whose adapter only sends page_view, view_item and add_to_cart. Most likely a custom pixel under **Settings > Customer events**, the one screen `webPixel` cannot read without `read_pixels`. Same screen as the standing GA4 question.
+
+#### /admin/config
+Todd: "env vars are getting too much." There are 26, across two Oxygen environments, values that cannot be read back, and every consumer written to no-op rather than throw when one is absent. A missing credential therefore has no symptom except a number that never moves.
+
+`/admin/config` lists every variable, grouped by what it powers, set or not set, and **what breaks in plain words**. Read only on purpose: editing secrets from a web form means storing them where a request can reach, which is worse than an env var. The problem was never where they live, it was that nothing said which were set.
+
+Verified on the deployed preview and on production, with `PRIVATE_ADMIN_PASSWORD` unset:
+
+| Check | Result |
+|---|---|
+| `GET /admin/config` | **404** on both |
+| Variable names in the 404 body | **none** |
+| `POST` with a guessed password | **404**, not 401, so the route's existence is not confirmed either |
+
+`npm run audit:config` fails if the registry drifts from what the code reads, because a status page that omits a variable is worse than none: it would report "nothing required is missing" while something is. 26 referenced, 26 registered, 0 missing.
+
+**Not verified: the authenticated view.** Setting an Oxygen env var is Todd's action, so the password form and the table have never rendered. The dangerous path, fail closed, is the one that is proven.
+
+#### Needs Todd, in order
+1. **`PRIVATE_ADMIN_PASSWORD`** on both Oxygen environments. Until then `/admin/config` 404s, which is the correct default but also means it does nothing.
+2. **Three values for X CAPI**, path A: `PUBLIC_X_PIXEL_ID` is `q7mwb` and already set; `PRIVATE_X_PURCHASE_EVENT_ID` from Events manager > the **SWS Purchase** row > pencil > Event ID; `PRIVATE_X_PIXEL_TOKEN` if that same screen offers a Conversion API token. Drop them in `.env.x` and run `npm run verify:x-capi` before setting them on Oxygen.
+3. **Settings > Customer events**, one look, answers two standing questions: is "GA4 Purchases" still disconnected, and what is firing `Shopify:72470e-33:CHECKOUT_INITIATED`.
