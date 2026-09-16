@@ -9,7 +9,26 @@ import {ResponsiveImage} from '~/components/ResponsiveImage';
  */
 export function ProductGallery({media}) {
   const items = media?.length ? media : [];
-  const [activeIndex, setActiveIndex] = useState(0);
+
+  /*
+    Land on the VIDEO, not on media[0].
+
+    Todd, 2026-09-15: "video should show first, like its selected when landed
+    on and plays, but user can browse other media like now."
+
+    These are animated widgets. A still of one is a picture of a thing that
+    moves, and the motion IS the product, so the clip is the strongest asset on
+    the page and it was sitting behind a thumbnail click. The <video> below
+    already autoplays whenever it is the active item, so selecting it initially
+    is the whole change; browsing is untouched.
+
+    Lazy initialiser, so the search runs once on mount rather than on every
+    render. If a product has no video this is 0, exactly as before.
+  */
+  const [activeIndex, setActiveIndex] = useState(() => {
+    const firstVideo = items.findIndex((m) => m?.__typename === 'Video');
+    return firstVideo === -1 ? 0 : firstVideo;
+  });
   const active = items[activeIndex];
 
   if (!items.length) {
