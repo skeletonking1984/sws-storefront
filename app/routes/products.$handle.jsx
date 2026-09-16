@@ -13,6 +13,7 @@ import {ProductGallery} from '~/components/ProductGallery';
 import {ProductForm} from '~/components/ProductForm';
 import {ProductHighlights} from '~/components/ProductHighlights';
 import {ShareRow} from '~/components/ShareRow';
+import {articleFontPreload} from '~/lib/articleFont';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge} from '~/components/EtsyRating';
 import {EtsyReviews} from '~/components/EtsyReviews';
@@ -47,6 +48,16 @@ import etsyReviewsData from '~/data/etsy-reviews.json';
 /**
  * @type {Route.MetaFunction}
  */
+/*
+ * The product description now paints in Space Grotesk (--font-article), same as
+ * the blog. Todd: "we need the same font stuff on blogs with the product
+ * pages/descs ... same vibe." Without this preload the description would swap
+ * font mid-read on the page that has to close the sale.
+ *
+ * @type {Route.LinksFunction}
+ */
+export const links = () => [articleFontPreload];
+
 export const meta = ({data, matches, location}) => {
   const title = data?.product.title ?? '';
   const origin = getOrigin(matches);

@@ -9,28 +9,16 @@ import {
 import {ArticleCarousel} from '~/components/ArticleCarousel';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {buildMeta, getOrigin} from '~/lib/seo';
-import spaceGroteskLatin from '~/assets/fonts/space-grotesk-latin.woff2?url';
+import {articleFontPreload} from '~/lib/articleFont';
 
 /*
- * Preloaded HERE and not in root.jsx on purpose. Space Grotesk is the article
- * body face and nothing else on the site uses it, so preloading it globally
- * would cost every other page a 22KB request it never paints with. A route
- * level links export scopes the early fetch to the one page that needs it.
- *
- * latin-ext is not preloaded, same rule as the other families: its
- * unicode-range keeps it off pages with no extended-latin characters.
+ * Preloaded per route, not in root.jsx: only this page and the product
+ * description paint in Space Grotesk, so every other page would pay ~22KB for
+ * a face it never renders. See app/lib/articleFont.js.
  *
  * @type {Route.LinksFunction}
  */
-export const links = () => [
-  {
-    rel: 'preload',
-    as: 'font',
-    type: 'font/woff2',
-    href: spaceGroteskLatin,
-    crossOrigin: 'anonymous',
-  },
-];
+export const links = () => [articleFontPreload];
 
 /**
  * @type {Route.MetaFunction}
