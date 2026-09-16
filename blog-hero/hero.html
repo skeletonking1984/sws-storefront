@@ -31,16 +31,52 @@
   html, body { margin: 0; padding: 0; background: #06030d; }
   * { box-sizing: border-box; }
 
+  /*
+   * FOUR background treatments, not one.
+   *
+   * The first full set of 43 shipped on a single treatment and Todd's reaction
+   * to the blog index was immediate: "these all look too similar". They were.
+   * Same dark field, same glow in the same corner, same copy-left composition,
+   * 43 times in a grid. Palette alone does not separate them at card size.
+   */
   #canvas {
     width: 1200px;
     height: 630px;
     position: relative;
     overflow: hidden;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+
+  /* aurora: two soft corner glows. The original. */
+  #canvas.bg-aurora {
     background:
       radial-gradient(760px 520px at var(--glow-x, 74%) var(--glow-y, 22%), var(--glow-1), transparent 62%),
       radial-gradient(620px 520px at 8% 88%, var(--glow-2), transparent 60%),
       linear-gradient(158deg, #0a0614 0%, #140c24 52%, #1b1030 100%);
-    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+
+  /* bloom: one big lamp directly behind the widget, everything else falls away. */
+  #canvas.bg-bloom {
+    background:
+      radial-gradient(680px 640px at var(--glow-x, 74%) 50%, var(--glow-1), transparent 66%),
+      radial-gradient(1100px 700px at 50% 120%, var(--glow-2), transparent 60%),
+      linear-gradient(180deg, #08050f 0%, #130b21 60%, #1a1030 100%);
+  }
+
+  /* duo: the field splits, deep on the copy side, lit on the art side. */
+  #canvas.bg-duo {
+    background:
+      linear-gradient(100deg, #0a0614 0%, #0a0614 38%, transparent 78%),
+      radial-gradient(820px 700px at 82% 46%, var(--glow-1), transparent 68%),
+      linear-gradient(100deg, #120a20 0%, #241443 58%, #2d1550 100%);
+  }
+
+  /* beam: a hard diagonal shaft of light. The most graphic of the four. */
+  #canvas.bg-beam {
+    background:
+      linear-gradient(112deg, transparent 40%, var(--glow-1) 52%, transparent 64%),
+      radial-gradient(700px 600px at 88% 14%, var(--glow-2), transparent 62%),
+      linear-gradient(170deg, #09050f 0%, #160d28 55%, #1d1133 100%);
   }
 
   /* Starfield. Hand placed, not a noise texture: a regular dot pattern reads as
@@ -70,6 +106,14 @@
     display: flex; flex-direction: column; justify-content: center;
     z-index: 4;
   }
+
+  /* Mirrored composition. Half the set flips so a grid of cards does not read
+     as one template repeated. */
+  #canvas.side-right .copy { left: auto; right: 66px; align-items: flex-end; text-align: right; }
+  #canvas.side-right .kicker { align-self: flex-end; }
+  #canvas.side-right .rule { align-self: flex-end; }
+  #canvas.side-right .sub { margin-left: auto; }
+  #canvas.side-right .brand { left: auto; right: 68px; }
 
   .kicker {
     display: inline-flex; align-items: center; gap: 12px;
@@ -161,6 +205,8 @@
 const cfg = JSON.parse(new URLSearchParams(location.search).get('c') || '{}');
 
 const canvas = document.getElementById('canvas');
+canvas.classList.add('bg-' + (cfg.bg || 'aurora'));
+if (cfg.side === 'right') canvas.classList.add('side-right');
 canvas.style.setProperty('--glow-1', cfg.glow1 || 'rgba(242,166,216,.34)');
 canvas.style.setProperty('--glow-2', cfg.glow2 || 'rgba(127,230,255,.20)');
 canvas.style.setProperty('--accent', cfg.accent || '#f2a6d8');

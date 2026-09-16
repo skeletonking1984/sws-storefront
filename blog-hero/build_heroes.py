@@ -65,8 +65,13 @@ def glow_for(theme):
 heroes = []
 missing = []
 too_wide = []
-for handle, theme, kicker, title, wid in rows:
-    png = f"{HERE}/widgets/{wid}.png"
+SIDES = ["left", "right"]
+BGS = ["aurora", "bloom", "duo", "beam"]
+
+for idx, (handle, theme, kicker, title, wid) in enumerate(rows):
+    # Art is per ARTICLE now, not per widget: two articles using the same widget
+    # still get different chat content. See render_article_widgets.mjs.
+    png = f"{HERE}/widgets/{handle}.png"
     if not os.path.exists(png):
         missing.append((handle, wid))
         continue
@@ -75,6 +80,12 @@ for handle, theme, kicker, title, wid in rows:
     if ratio > MAX_RATIO:
         too_wide.append((handle, wid, f"{iw}x{ih} ratio {ratio:.1f}"))
         continue
+
+    # Alternate side and background so a grid of cards never shows the same
+    # composition twice in a row. Periods 2 and 4 mean the first row of a
+    # three-column grid is always three different treatments.
+    side = SIDES[idx % 2]
+    bg = BGS[idx % 4]
 
     zone_w = ZONE_RIGHT - ZONE_X
     zone_h = CANVAS_H - ZONE_TOP + BLEED_MAX
@@ -94,7 +105,11 @@ for handle, theme, kicker, title, wid in rows:
         w *= 0.98
         h = w / ratio
 
-    x = ZONE_X + (zone_w - w) / 2
+    if side == "right":
+        # Mirror the art zone: copy moves right, art moves left.
+        x = 32 + (zone_w - w) / 2
+    else:
+        x = ZONE_X + (zone_w - w) / 2
     # Prefer vertical centring; let tall art sit at the top and bleed instead.
     y = ZONE_TOP if h >= CANVAS_H - ZONE_TOP else (CANVAS_H - h) / 2
 
@@ -107,7 +122,11 @@ for handle, theme, kicker, title, wid in rows:
         "accent": t["accent"], "glow1": t["glow1"], "glow2": t["glow2"],
         "glowX": t["glowX"], "glowY": t["glowY"],
         "titleGlow": t["titleGlow"], "kickerGlow": t["kickerGlow"],
-        "copyW": "590px", "subW": "420px", "titleSize": "62px",
+        "side": side, "bg": bg,
+        "copyW": "590px", "subW": "420px",
+        # Nudge the headline size by article so the type block is not identical
+        # everywhere either.
+        "titleSize": f"{[58, 62, 66][idx % 3]}px",
         "stickers": [{
             "id": wid,
             "x": round(x), "y": round(y), "w": round(w), "h": round(h),

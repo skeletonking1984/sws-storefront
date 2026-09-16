@@ -144,9 +144,14 @@ function ArticleItem({article, category, loading}) {
       <Link to={`/blogs/${article.blog.handle}/${article.handle}`}>
         {article.image && (
           <div className="blog-article-image">
+            {/*
+              No `aspectRatio` prop on purpose. Hydrogen turns it into
+              `crop=center` on the CDN URL, which crops the source itself, and
+              this repo has been bitten by that before (see CLAUDE.md). The
+              wrapper's own aspect-ratio frames the card instead.
+            */}
             <Image
               alt={article.image.altText || article.title}
-              aspectRatio="3/2"
               data={article.image}
               loading={loading}
               sizes="(min-width: 768px) 50vw, 100vw"

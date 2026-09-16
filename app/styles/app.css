@@ -3959,8 +3959,16 @@ button.reset:hover:not(:has(> *)) {
   text-decoration: none;
 }
 
+/*
+  1.9/1, matching the heroes exactly (1600x840).
+
+  This was 3/2. Every hero is 1.905:1, so `object-fit: cover` center cropped
+  about 10% off EACH side and ate the first letter of every headline: the blog
+  index showed "our overlay is" and "stalled in under a minute". The card, not
+  the art, was wrong.
+*/
 .blog-article-image {
-  aspect-ratio: 3/2;
+  aspect-ratio: 1.9/1;
   display: block;
   margin: -1rem -1rem 0.85rem;
   overflow: hidden;
