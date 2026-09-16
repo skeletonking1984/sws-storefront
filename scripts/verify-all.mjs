@@ -28,6 +28,7 @@ const CHECKS = [
   ['channel prices', 'scripts/audit-channel-prices.mjs', {ETSY_PACKAGE_ROOT: '../sws-etsy-mcp'}],
   ['test order filter', 'scripts/verify-test-order-filter.mjs', {}],
   ['tracking', 'scripts/verify-tracking.mjs', {}],
+  ['first-party session', 'scripts/verify-first-party-session.mjs', {}],
   ['X funnel events', 'scripts/verify-x-events.mjs', {}],
   ['feed', 'scripts/verify-feed.mjs', {}],
   ['feed csv (X spec)', 'scripts/verify-feed-csv.mjs', {}],

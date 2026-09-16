@@ -26,7 +26,7 @@
  * third-party host, so nothing on any blocklist has a reason to touch it.
  */
 
-import {readCookieValue} from '~/lib/gaCookie.server';
+import {readCookieValue} from './gaCookie.server.js';
 
 export const FIRST_PARTY_ID_COOKIE = 'sws_cid';
 

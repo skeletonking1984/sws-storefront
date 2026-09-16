@@ -26,7 +26,8 @@
     "verify:test-orders": "node scripts/verify-test-order-filter.mjs",
     "verify:feed": "node scripts/verify-feed.mjs",
     "verify:x-events": "node scripts/verify-x-events.mjs",
-    "verify:feed:csv": "node scripts/verify-feed-csv.mjs"
+    "verify:feed:csv": "node scripts/verify-feed-csv.mjs",
+    "verify:session": "node scripts/verify-first-party-session.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

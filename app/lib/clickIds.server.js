@@ -28,8 +28,9 @@
  * `_ga` parser and app/lib/firstPartyId.server.js for the fallback.
  */
 
-import {parseGaClientId, parseGaSession, readCookieValue} from '~/lib/gaCookie.server';
-import {readFirstPartyClientId} from '~/lib/firstPartyId.server';
+import {parseGaClientId, parseGaSession, readCookieValue} from './gaCookie.server.js';
+import {readFirstPartySession} from './firstPartySession.server.js';
+import {readFirstPartyClientId} from './firstPartyId.server.js';
 
 // SameSite=Lax (not None) because these cookies only ever need to be read
 // on first-party requests to this storefront, never cross-site. ~90 days:
@@ -176,10 +177,31 @@ export function readClickIds(request, measurementIdOrEnv) {
     typeof measurementIdOrEnv === 'string'
       ? measurementIdOrEnv
       : measurementIdOrEnv?.PUBLIC_GA4_MEASUREMENT_ID;
+  /*
+   * GA4's OWN cookie wins whenever it exists. This app's `sws_ses` is a
+   * fallback, never a replacement: gtag is what drives GA4's own reports, so
+   * if it ran, its notion of the session is the correct one. Two systems both
+   * defining "the session" would disagree and the disagreement would be
+   * invisible.
+   *
+   * The fallback exists because a blocked gtag means `_ga_<measurement id>`
+   * never exists at all, so there is nothing to read and nothing to repair
+   * later. Four of the seven orders placed between 2026-09-13 and 2026-09-16
+   * carried a client id and no session id, and GA4 responded by attaching the
+   * purchase to whatever session was open for that client. One landed on
+   * /checkouts/cn/<token>/en-us, one on a blank landing page, and `/` showed
+   * $0 revenue against 92 sessions.
+   */
   const session = parseGaSession(cookieHeader, measurementId);
   if (session) {
     found._ga_session_id = session.sessionId;
     found._ga_session_number = session.sessionNumber;
+  } else {
+    const own = readFirstPartySession(cookieHeader);
+    if (own) {
+      found._ga_session_id = own.sessionId;
+      found._ga_session_number = own.sessionNumber;
+    }
   }
 
   // Internal traffic, carried on the cart so the SERVER SIDE purchase can

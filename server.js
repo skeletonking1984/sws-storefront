@@ -3,6 +3,7 @@ import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
 import {createHydrogenRouterContext} from '~/lib/context';
 import {buildFirstTouchSetCookieHeaders} from '~/lib/clickIds.server';
 import {ensureFirstPartyClientId} from '~/lib/firstPartyId.server';
+import {ensureFirstPartySession} from '~/lib/firstPartySession.server';
 import {previewGate} from '~/lib/previewGate.server';
 
 /**
@@ -69,6 +70,18 @@ export default {
       const {setCookie: firstPartyIdSetCookie} = ensureFirstPartyClientId(request);
       if (firstPartyIdSetCookie) {
         response.headers.append('Set-Cookie', firstPartyIdSetCookie);
+      }
+
+      // First-party SESSION, the companion to the client id above (see
+      // app/lib/firstPartySession.server.js). A client id with NO session id
+      // is why four of the last seven orders detached from their landing
+      // page: the Measurement Protocol attaches a purchase with no session_id
+      // to whatever session is open for that client, which was sometimes the
+      // one Shopify's checkout tag opened on shop.streamwidgetshop.com, and
+      // sometimes none at all. Same `.append()` discipline as above.
+      const {setCookie: firstPartySessionSetCookie} = ensureFirstPartySession(request);
+      if (firstPartySessionSetCookie) {
+        response.headers.append('Set-Cookie', firstPartySessionSetCookie);
       }
 
       if (response.status === 404) {
