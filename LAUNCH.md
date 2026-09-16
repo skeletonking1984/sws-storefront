@@ -2824,3 +2824,328 @@ state derived from props, since this run's first finding is a lazy initialiser
 that outlived the prop it was derived from; one on a guard that re-declares a
 list another module already owns, since the second finding is the drift
 `ipTerms.js` predicted in its own header.
+
+### 2026-09-16 (scheduled QA)
+
+**Purchase path green, pressed not navigated, at 360 / 390 / 430 from four entry
+points. Tracking green with no over-reporting, and the storefront took its first
+two REAL orders. Truth of claims failed again, third day running, third different
+mechanism. Two new findings filed.**
+
+#### Verified green
+| Check | Result |
+|---|---|
+| `node scripts/audit-shipping.mjs` | exit 0, **124** storefront products, none require shipping |
+| `node scripts/audit-catalog.mjs` | exit 0, 124 audited, 0 issues |
+| `npm run verify:tracking` (live `streamwidgetshop.com`) | exit 0, **25 passed, 0 failed** |
+| `ETSY_PACKAGE_ROOT=... node scripts/audit-platform-claims.mjs --check` | exit 0, and see finding 1: it cannot see the defect |
+| `npm run audit:policy` | exit 0, all three sources agree, 124 products |
+| Purchase path, control pressed after `elementFromPoint` confirmed | PASS at 360, 390 and 430, 4 entry points |
+| `works_with` metafield coverage | **0 of 124 missing** (BAT-151 still fixed) |
+| Live title / `seo.title` / `seo.description` scan, all 7 platform words | **0** unconfirmed Kick, YouTube or TikTok claims (BAT-150 still fixed). 8 Streamlabs title claims, unchanged, BAT-160 |
+| Mobile menu / cart / account / search controls | 44x44 at 360 (BAT-152 still fixed) |
+| Reviews freshness | no drift, 997 local and 997 live, nothing to refresh |
+| `npm run audit:ip` | exit 1, same 5 as the last two days, nothing new |
+
+#### Purchase path, driven end to end on the live site, narrowest first
+
+| Width | Entry point | Checkout control box | Result |
+|---|---|---|---|
+| 360x780 | home, cart drawer | x 17 to 344 in a 360 viewport, y 603 to 660 | reached checkout, $13.99 |
+| 360x780 | collection page, cart drawer | x 17 to 344, y 603 to 660 | reached checkout |
+| 360x780 | PDP, real Add to cart pressed, then drawer | x 17 to 344, y 603 to 660 | reached checkout, $24.14 |
+| 360x780 | `/cart` page, a different component | x 48 to 312, y 361 to 418 | reached checkout |
+| 390x844 | home, cart drawer | x 17 to 374, y 667 to 724 | reached checkout |
+| 430x932 | home, cart drawer | x 47 to 414, y 755 to 812 | reached checkout |
+
+Every land rendered the payment form with **no shipping step and no delivery
+step**. **Stopped at the payment form every time. No purchase completed.**
+
+**Measured from inside the drawer, which is the check the 2026-09-14 failure was
+invisible to.** At 360 the open drawer box is `0 to 360` and **0 of its 82
+descendants have a box outside it**. Same at 390 (`0 to 390`, 0 of 82) and at
+430 (`30 to 430`, 0 of 82).
+
+The PDP Add to cart bar was checked for the other half of that failure. It is
+`position: fixed; bottom: 0`, not a `100vh` or `calc()` height, so it anchors to
+the visual viewport rather than to the URL-bar-less height that hid it in
+September. Box at 360: x 0 to 360, y 719.8 to 780, `elementFromPoint` at its
+centre returns the button.
+
+**Landing domain, worth recording because it looks like a regression and is not.**
+Every press landed on `shop.app/checkout/66589720766/cn/...` with
+`redirect_source=checkout_automatic_redirect`, not on
+`shop.streamwidgetshop.com`. That is this browser profile's own Shop Pay session
+for `techgazetteteam@gmail.com`. Disproved before writing it up: the same
+permalink fetched with no cookies and an Android user agent returns
+`302 -> https://shop.streamwidgetshop.com/checkouts/cn/...&skip_shop_pay=true`.
+A stranger stays on the shop domain.
+
+**Two traps hit and worked around, both already in `qa.md`.** The browser pane
+renders a 360px page scaled into an 800x600 frame, so a click at page
+coordinates lands somewhere else entirely: one stray click opened a different
+drawer. Clicking by `ref`, or by a coordinate taken from a screenshot whose
+reported frame matches the viewport, is the only reliable press here. Second, a
+settle loop built on `requestAnimationFrame` never terminates in a hidden pane
+because rAF is throttled; it has to be a bounded `setTimeout` poll.
+
+#### Findings
+
+**1. HIGH, NEW, CONFIRMED. Two live goal widgets render a Kick badge that came
+from an Etsy keyword title. BAT-170**
+
+`cute-auctopus-...` (listing 1888414230) and `cute-cat-paw-alert-widget-...`
+(listing 1849162325) both carry `works_with` including Kick, and the live
+Cute Octopus PDP badge row reads `TwitchKickStreamElementsStreamlabsOBS`.
+
+Both Etsy descriptions say verbatim **"THIS ITEM IS FOR OBS/OBS STUDIO,
+STREAMLABS, AND STREAMELEMENTS! :)"** and list the goal types as
+**"DONATION FOLLOWER BITS SUPPORT"**, and bits is Twitch only. Neither
+description contains the word Kick. Tier 1b: 1888414230 ships
+`OctopusGoalWidgetforUpload.zip` (16338 bytes) plus a tutorial PDF, 1849162325
+ships `Streamlabscode.zip` (8173), `streamelementscode.zip` (9912) and
+`CatPaw-data.zip` (1055). **Neither ships a Kick artifact.** For contrast, the
+Moon Jar goal widget's shipped code really does carry `kickAll` and `kickHue`
+fields, verified tier 1 below.
+
+Where the claim came from: both **Etsy titles** end `| Kick OBS VTuber`, and
+`scripts/audit-platform-claims.mjs:125` builds its truth as
+`` `${listing.title} ${listing.description}` ``. So the script reads the keyword
+tail as evidence and **confirms** the bad claim rather than catching it, which
+is why `--check` exits 0 on both. This repo's own CLAUDE.md already states the
+rule the script breaks: "Titles here are Etsy keyword titles that name YouTube,
+Kick and TikTok on widgets that support none of them." The guard that refuses to
+WRITE the claim to a Shopify title reads it straight back in from the Etsy side.
+
+**Blast radius is exactly 2.** Scanned all 124 live products against all 115
+mapped listings, comparing `works_with` against the description alone versus
+title-plus-description. Two claims exist only because of a keyword title, and
+both are these. No Multistream ribbon is affected: `app/lib/platforms.js:109`
+requires BOTH YouTube and Kick and these claim Kick only, confirmed absent on
+the live PDP.
+
+**2. MEDIUM, NEW, CONFIRMED AT TIER 2. Saber Neon renders a TikTok badge that
+rests on one marketing bullet. BAT-171**
+
+`saber-neon-chat-widget-...` carries `works_with` = Twitch, **TikTok**,
+StreamElements, Streamlabs, OBS, and the live PDP badge row renders TikTok. The
+metafield is the only surface making that claim: `title`, `seo.title` and
+`seo.description` all say Twitch and nothing else.
+
+Listing 4473894910 has an explicit COMPATIBILITY section naming StreamElements,
+OBS Studio, "Streamlabs (via browser source)" and "Twitch chat supported".
+**TikTok is not in it.** The only TikTok mention in the whole listing is one
+bullet under PERFECT FOR: "TikTok Streamers (goal widget supported)". The
+listing also says "Works best with Twitch streaming setup" and lists Cheer as a
+goal type, which is Twitch only.
+
+It is the odd one out among the 6 TikTok claimers. The other five are real
+multistream products that name TikTok in their own titles and back it in code
+or in a detailed disclaimer, for instance the Y2K listing explaining TikTok
+connects through the TikFinity desktop app.
+
+**Tier 1 was not reachable and is not claimed.** 4473894910 ships
+`NeonChatandGoalCodefile.zip` (34472 bytes) and there is no local copy on disk,
+so per the tier-1 rule no name-similar zip was substituted.
+
+**3. Escalated, unchanged. BAT-160, BAT-161, BAT-153.**
+
+The 8 Streamlabs title claims are unchanged, 8 of 124, same handles. **New
+evidence for the open question in BAT-160, and it points the opposite way to
+what the metafield standard alone suggests.** 89 of 124 products already claim
+Streamlabs in `works_with`, and the shop's own shipped `SETUP.txt` inside the
+Moon Jar widget says, verbatim: **"A StreamElements account, and OBS (or
+Streamlabs) to show the overlay."** That is Streamlabs Desktop as a browser
+source host, treated as interchangeable with OBS by the shop's own setup text,
+and it is the only Streamlabs reference in that entire package. The Y2K listing
+says the same thing in different words: "Works in OBS Studio, OBS Classic &
+Streamlabs Desktop via browser/overlay source." So the 8 titles are consistent
+with how the other 89 products are labelled, and the likelier correction is that
+**the 8 metafields are short, not that the 8 titles are wrong.** Still Todd's
+call, and it is catalogue wide.
+
+`npm run audit:ip` exits 1 with the same five as the last two days: Charizard
+and Valorant Brimstone ACTIVE on Shopify, and Charizard (1881347726), Among Us
+(1741695722) and Valorant Brimstone (4306870352) live on Etsy. The DRAFT set
+held, nothing republished. Layer 2 returned the same 4 names, `Character` 2x,
+`Charizard`, `Brimstone` and `Gaming`, all lifted out of the two products layer
+1 already flags. **No genuinely new name, so nothing was added to `DENY_TERMS`.**
+
+#### Truth of claims, spot check, rotation moved on
+
+Five products not checked in earlier passes, chosen to test the Streamlabs and
+TikTok claims where they are hardest.
+
+| Product | Claim | Evidence |
+|---|---|---|
+| Cute Love Ghost (1791485718) | Twitch, StreamElements, Streamlabs, OBS | **Tier 1b confirmed.** Ships `LoveSpookyStreamElementscode.zip` (9728) AND `LoveSpookyStreamlab.zip` (7835). A real Streamlabs artifact |
+| Spooky Stream Kit (4570446087) | all 7 | **Tier 1 confirmed.** Local `Spooky-Stream-Kit.zip` is 10726192 bytes, byte identical to the manifest. Unzipped: dedicated `Streamlabs/` folders on 2 widgets, and 149 `kick`, 85 `youtube`, 54 `tiktok`, 125 `streamelements`, 43 `twitch` hits across the shipped text files |
+| Moon Jar Goal (4551047317) | Twitch, YouTube, Kick, StreamElements, Streamlabs, OBS | **Tier 1 confirmed for YouTube and Kick**, real `kickAll`, `kickHue`, `youtubeHue` fields and 4 each in `4-fields.txt`. Streamlabs is host-sense only, the single mention is `SETUP.txt` line 10 |
+| Y2K Sticker Chat (4543765531) | all 7 | **Tier 2 confirmed.** The listing names all seven, with a real TikTok mechanism (TikFinity) and a real YouTube one (Google API key). Ships only `Y2KMultiChatCode.zip`, so Streamlabs is host-sense |
+| Saber Neon (4473894910) | Twitch, TikTok, StreamElements, Streamlabs, OBS | **FAIL on TikTok**, see finding 2. The other four are confirmed by the listing's own COMPATIBILITY section |
+
+The tier-1 matching rule added yesterday earned its place again: of these five,
+only two had a local file whose byte count matched the manifest
+(`MoontipjarFixedStreamelements.zip` 5747956, `Spooky-Stream-Kit.zip` 10726192).
+The stale `MoonJarStreamElements.zip` (5741098) is still sitting next to the
+real one in `content/catalog/4551047317/files/` and is still not what that
+listing ships.
+
+#### Tracking, Shopify first, and the first two real storefront orders
+
+| Day | Shopify | X Ads |
+|---|---|---|
+| 2026-09-15 | **2 orders, $48.98 gross, -$18.99 discount, $29.99 net** | $7.81 spend, 69016 impressions, 846 clicks, **$0 conversion revenue** |
+| 2026-09-16 (to now) | **1 order, $39.99 gross, no discount, $39.99 net** | $6.46 spend, 37360 impressions, 448 clicks, **$0 conversion revenue** |
+
+**The storefront has made its first two real sales.** Both `test: false`, both
+with no discount code, neither one of Todd's.
+
+- **#1045**, Hailey Stanley, $29.99, 2026-09-16 01:31 UTC
+- **#1046**, Erik Baldwin, $39.99, 2026-09-16 11:59 UTC
+
+**No over-reporting is possible on this data.** X reports zero conversion revenue
+on both days against Shopify's real orders, so nothing is double counted. That
+is the direction this check exists to catch and it is clean.
+
+**#1045 is the first X-attributed sale, and it proves the click-id chain.** Its
+order attributes carry `_twclid` = `24cukciawnn1yvvr0edz9hqdav` alongside
+`_ga_client_id`. The twclid was captured on the click, survived the cart, and
+landed on the order. Everything upstream of the conversion send works, for a
+real stranger, on a real purchase.
+
+**What that leaves open, and it needs Todd.** X reports $0 conversion revenue
+while a real $29.99 order carries a real twclid. That is either correct (the ad
+click that set the twclid falls outside the days queried, or attribution has not
+surfaced yet) or it means the CAPI purchase never landed. **The Ads API cannot
+tell those apart.** One look at X Events Manager settles it: a `SWS Purchase`
+at roughly 2026-09-15 21:31 ET with value 29.99. This is the only real
+X-attributed order that exists, so it is the one chance to prove the chain end
+to end before more spend goes through.
+
+All 7 endpoint assertions passed inside `verify:tracking` against the live
+deployment: `/api/e` GET 405, cross origin POST 403, forged `purchase` 400,
+valid same origin event 204; `/webhooks/orders` GET 405, unsigned POST 401,
+forged HMAC 401.
+
+**GA4 session ids are missing on both real orders, and it is not a code defect.**
+#1045 and #1046 each carry `_ga_client_id` and no `_ga_session_id` or
+`_ga_session_number`, which is the precondition for the mis-attribution
+documented for order #1041 (purchase lands under a `/checkouts/cn/...` landing
+page with the wrong source, medium and campaign). Tried to disprove it and did:
+this pass's own QA cart, created today at 13:42 UTC, carries all three plus
+`_traffic_type: internal`, so the relay works. `readClickIds` reads the session
+off GA4's own `_ga_<measurement id>` cookie and cannot invent one that gtag
+never wrote, while `_ga_client_id` falls back to the server-minted `sws_cid`.
+So both buyers most likely had GA4 blocked. **Nothing to fix, but do not read
+GA4 landing page or campaign attribution for these two orders as real.**
+
+#### Mobile, 360px first, then 390 and 430
+
+| Check | Home | PDP | Collection |
+|---|---|---|---|
+| `document.scrollWidth` at 360 | 360 | 360 | 360 |
+| Elements outside the viewport | 0 | 0 outside a scroll container | 0 |
+| Images rendered past their own resolution | 0 of 22 loaded | 0 of 22 loaded | 0 of 46 loaded |
+| Controls under 24px | 9 | 8 | 8 |
+| Collection cards clipped | n/a | n/a | 0, first card x 32 to 328 |
+
+The PDP showed 4 boxes past the right edge, all inside
+`.product-gallery-thumbs`. Disproved before filing: that container is
+`overflow-x: auto` with `clientWidth` 296 and `scrollWidth` 424 holding 6
+thumbs, so it is an intended horizontal strip, not a clip.
+
+#### Standing signals
+
+**Conversion by device, last 30 days.**
+
+| Device | Sessions | Reached checkout | Completed | Completion rate |
+|---|---|---|---|---|
+| desktop | 579 | 34 | 7 | 1.21% |
+| mobile | 268 | 8 | 3 | 1.12% |
+| tablet | 2 | 0 | 0 | 0 |
+| other | 1 | 0 | 0 | 0 |
+
+**Mobile share of traffic jumped to 31.5%** (268 of 850), from 11.1% (66 of 595)
+yesterday. Mobile sessions went 66 to 268 in a day, which is the domain cutover
+and the ads now pointing at `streamwidgetshop.com` (BAT-163). Completion rates
+are now level between desktop and mobile, so **no device-class blocker signal**,
+and yesterday's "mobile completes at 3x desktop" reading is superseded: it rested
+on 2 completions, one of them a $0 test.
+
+**One thing to watch, not a finding.** Mobile reaches checkout at 3.0% (8 of 268)
+against desktop's 5.9% (34 of 579), roughly half. The purchase path was pressed
+end to end at 360, 390 and 430 from four entry points in this pass and works, so
+this is not a layout blocker that QA can find. It is worth one look at what
+mobile traffic is landing on.
+
+#### UNCONFIRMED, and why
+- **Whether the CAPI purchase for order #1045 reached X.** Needs X Events
+  Manager. See the tracking section.
+- **One Shopify order equals one GA4 purchase at the real value.** Sixth pass
+  saying it, and the reason has not changed: no GA4 read path exists in this
+  session, `webPixel` needs the `read_pixels` scope the Shopify connector does
+  not hold, and `scripts/` has no Data API script. There are now two real orders
+  to check it against, which there never were before, so this is worth closing.
+- **LCP, CLS and anything needing a real paint.** `document.visibilityState` read
+  `hidden` for the entire browser pass at every width, including after fronting
+  the tab. Per `analytics-debugging-traps`, **no LCP or CLS number is reported.**
+  The upscale check covers only the images that reported a real `naturalWidth`:
+  22 of 53 on home, 22 of 43 on the PDP, 46 of 74 on the collection. "0 upscaled"
+  is a statement about the loaded portion only.
+- **Tier 1 for Saber Neon's TikTok claim**, and for Cute Love Ghost and Y2K
+  Sticker Chat. Those three listings' shipped zips are not on disk and no
+  name-similar local file was substituted.
+- **9 of 124 products have no Etsy mapping**, so the title-versus-description
+  scan in finding 1 covered 115. Those 9 cannot be checked against a listing at
+  all.
+
+#### Noted, not filed
+- **The `Load more` control on `/collections/all` is a bare 88.5x22 text link**,
+  `display: inline`, zero padding, and it is the only way to reach products 25
+  through 124 on a phone. It works (pressed it, 24 cards became 48), and it is
+  legible, but it is the catalogue's pagination control styled as body text.
+- **Sub-24px controls are the same set as the last two passes**, 8 or 9 per page,
+  all text links (footer nav, the Etsy rating link, "See all FAQs", "Load more"),
+  20 to 22px tall. WCAG 2.5.8 exempts inline links in a sentence, and the footer
+  ones sit in a list rather than a sentence. **Third pass running that this gets
+  re-argued and ruled the same way. It deserves one deliberate decision from
+  Todd so it stops costing a paragraph a day.**
+- The cart drawer is `rgba(11, 7, 19, 0.94)` over a `rgba(0, 0, 0, 0.5)` scrim,
+  so roughly 3% of the page behind shows through. Checked because it looks like
+  bleed in a screenshot: every control is legible and `elementFromPoint` returns
+  the checkout button, so it is a design choice, not a defect.
+- `soldCount` in `app/data/etsy-shop-stats.json` is 7542 against a live 7571, and
+  the homepage renders "7,542+ widgets sold", which with the plus sign is still
+  true. It picks up the new number on the next review refresh.
+
+#### Cleanup note
+The drives added **1** line item (Cute Love Ghost, $10.15) to the existing QA
+cart, taking it from 1 to 2, and pressed `Load more` once. The cart carries no
+email and no buyer identity, so it never becomes an abandoned checkout. **No
+purchase was completed**, no product data was changed, and no Etsy listing was
+touched.
+
+#### What changed about the QA pass itself
+Finding 1 was invisible to every script in this repo, and it was found by asking
+a question none of them ask: **not "does the metafield match the listing" but
+"which HALF of the listing does it match".** The Etsy title is a keyword tail and
+the description is the real spec, and the audit script merges them into one
+string. Added to the task file: run the title-versus-description split scan every
+pass, because a claim backed only by an Etsy keyword title is a claim with no
+evidence behind it, and state how many products have no Etsy mapping so the
+scan's own coverage is on the record.
+
+Also added: the browser-pane coordinate trap (a scaled pane makes page
+coordinates land elsewhere, so press by `ref` or by a coordinate from a
+screenshot whose reported frame matches the viewport), and the rAF trap (a
+settle loop must be a bounded `setTimeout` poll, because `requestAnimationFrame`
+is throttled to a standstill in a hidden pane).
+
+One correction for the record so it is not re-raised: yesterday's pass read
+mobile as converting at 3x desktop. On a 30 day window that has now grown to 268
+mobile sessions, the two are level. That reading rested on 2 completions and
+should not have been stated as a direction.
+
+Commit: LAUNCH.md only. No deploy from this pass, and none is owed: reviews did
+not drift.
