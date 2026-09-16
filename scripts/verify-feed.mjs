@@ -16,7 +16,7 @@ const env = Object.fromEntries(
     .map((l) => {const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^["']|["']$/g, '')];}),
 );
 
-const {buildFeedXml, FEED_QUERY, PAGE_SIZE} = await import(`${R}/app/lib/productFeed.js`);
+const {buildFeedXml, FEED_QUERY, PAGE_SIZE, FEED_EXPIRY_DAYS} = await import(`${R}/app/lib/productFeed.js`);
 
 async function gql(query, variables) {
   const r = await fetch(`https://${env.PUBLIC_STORE_DOMAIN}/api/2025-01/graphql.json`, {
@@ -114,6 +114,22 @@ if (!process.env.SKIP_LIVE_CART_CHECK && ids.length) {
   }
 }
 
+// Every item must carry an expiry, and it must be inside Google's 30 day cap.
+// An item with no expiry lingers for 30 days after the feed stops listing it,
+// which is how one id change turned 122 products into 244 ghosts and lives.
+// An expiry PAST the cap is rejected outright, which would drop the catalogue.
+const expiries = [...xml.matchAll(/<g:expiration_date>([^<]*)<\/g:expiration_date>/g)].map((m) => m[1]);
+if (expiries.length < items) {
+  fail.push(`g:expiration_date on ${expiries.length} of ${items} items`);
+}
+const nowMs = Date.now();
+for (const value of new Set(expiries)) {
+  const days = (new Date(`${value}T00:00:00Z`).getTime() - nowMs) / 86400000;
+  if (!Number.isFinite(days)) fail.push(`unparseable g:expiration_date "${value}"`);
+  else if (days >= 30) fail.push(`g:expiration_date ${value} is ${days.toFixed(1)} days out, Google caps at 30`);
+  else if (days <= 0) fail.push(`g:expiration_date ${value} is in the past, every item would expire on ingest`);
+}
+
 // Prices must look like "12.34 USD".
 const badPrice = (xml.match(/<g:price>(?!0 USD)([^<]*)<\/g:price>/g) || [])
   .filter((p) => !/>\d+(\.\d+)? [A-Z]{3}</.test(p));
@@ -124,6 +140,7 @@ console.log(`feed items       : ${items}`);
 console.log(`excluded for IP  : ${skippedIp}`);
 console.log(`no variant       : ${skippedUnavailable}`);
 console.log(`feed size        : ${(xml.length / 1024).toFixed(0)} KB`);
+console.log(`expires          : ${expiries[0] || 'none'} (${FEED_EXPIRY_DAYS} day window)`);
 console.log(`longest g:id     : ${Math.max(...ids.map((v) => v.length))} chars (Google caps at 50)`);
 console.log();
 if (fail.length) {

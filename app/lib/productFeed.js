@@ -119,6 +119,31 @@ export function isIpRisky(product) {
 
 
 /**
+ * How long an item in this feed stays valid, in days.
+ *
+ * WHY EVERY ITEM CARRIES AN EXPIRY. Without one, Merchant Center holds an
+ * item for up to 30 days after it last saw it, so ANY item that stops
+ * appearing in the feed lingers as a ghost listing that nothing here can
+ * reach. That is not hypothetical: changing g:id from the product id to the
+ * variant id on 2026-09-16 stranded the entire old set, and the account went
+ * from 122 products to 244, one live and one dead copy of every product. The
+ * dead half could only be cleared by deleting and re-adding the whole data
+ * source.
+ *
+ * With an expiry, a live item is refreshed on every fetch and never expires,
+ * while an orphan simply dies on its own inside this window. Google requires
+ * a date under 30 days out; 25 leaves room for several missed fetches before
+ * a healthy item would wrongly drop.
+ */
+export const FEED_EXPIRY_DAYS = 25;
+
+/** ISO date, FEED_EXPIRY_DAYS from now. Google wants YYYY-MM-DD. */
+export function feedExpiry(now = new Date()) {
+  const d = new Date(now.getTime() + FEED_EXPIRY_DAYS * 86400000);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
  * Build the feed XML from already fetched product nodes.
  *
  * @param {Array} nodes  Storefront product nodes
@@ -126,6 +151,7 @@ export function isIpRisky(product) {
  * @returns {{xml: string, items: number, skippedIp: number, skippedUnavailable: number}}
  */
 export function buildFeedXml(nodes, origin) {
+  const expiry = feedExpiry();
   const items = [];
   let skippedIp = 0;
   let skippedUnavailable = 0;
@@ -167,6 +193,7 @@ ${sale}    <g:condition>new</g:condition>
     <g:brand>${esc(p.vendor || 'Stream Widget Shop')}</g:brand>
     <g:product_type>${esc(p.productType || 'Stream Widget')}</g:product_type>
     <g:identifier_exists>no</g:identifier_exists>
+    <g:expiration_date>${expiry}</g:expiration_date>
     <g:is_bundle>${/kit|pack|bundle/i.test(p.title) ? 'yes' : 'no'}</g:is_bundle>
     <g:shipping>
       <g:country>US</g:country>
