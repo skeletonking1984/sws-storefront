@@ -12,6 +12,7 @@
  */
 import fs from 'node:fs';
 import {sendPurchase, isConfigured, authMode} from '../app/lib/conversions/x.server.js';
+import {internalTestOrder} from '../app/lib/conversions/testOrders.js';
 
 // Two ways to authenticate. The pixel token path needs 3 values in total,
 // the OAuth path needs 6. Either is fine; the script reports which one the
@@ -67,20 +68,36 @@ if (!base || !mode) {
 }
 void r; void a; void b;
 
-// A realistic order, shaped exactly like Shopify's orders/create webhook body.
+/*
+ * A realistic order, shaped exactly like Shopify's orders/create webhook body.
+ *
+ * VALUE IS 0.01, NOT 10.52.
+ *
+ * It was 10.52, and on 2026-09-15 that put roughly $126 of revenue that never
+ * happened into X's Events Manager: eleven verification runs while the event was
+ * being wired up, each reporting a $10.52 purchase. Against two real orders that
+ * day. Exactly the pollution `internalTestOrder` exists to prevent, arriving
+ * through the one door that guard does not cover, because this script calls
+ * sendPurchase() DIRECTLY rather than going through the webhook.
+ *
+ * A verifier has to prove the live path works, so it cannot send nothing. It can
+ * send an amount that does not move a bid, under an id anyone can spot.
+ */
 const order = {
   id: 9999999999,
   email: process.argv.includes('--email')
     ? process.argv[process.argv.indexOf('--email') + 1]
     : 'capi-test@streamwidgetshop.com',
   processed_at: new Date().toISOString(),
-  total_price: '10.52',
+  total_price: '0.01',
   line_items: [
-    {product_id: 8537283920062, title: 'Cute Octopus Liquid Filling Goal Widget', price: '10.52', quantity: 1},
+    {product_id: 8537283920062, title: 'CAPI verification, not a real sale', price: '0.01', quantity: 1},
   ],
 };
 
-const eventId = `capi-test-${Date.now()}`;
+// SWSTEST prefix so it is greppable in Events Manager and matches the
+// convention internalTestOrder() already recognises for discount codes.
+const eventId = `SWSTEST-capi-${Date.now()}`;
 console.log('\nPayload the webhook would send');
 console.log(`  event_id       ${env.PRIVATE_X_PURCHASE_EVENT_ID}`);
 console.log(`  pixel          ${env.PUBLIC_X_PIXEL_ID}`);
@@ -93,7 +110,24 @@ if (!process.argv.includes('--send')) {
   process.exit(0);
 }
 
-console.log('\nSending...');
+/*
+ * Run the real guard over the real payload before sending.
+ *
+ * Not decoration: the whole reason this script polluted X is that it skipped
+ * the guard the webhook runs. If a future edit makes this fixture look like an
+ * order the guard would block, that is a bug in the FIXTURE and the send should
+ * stop, because it means the two paths disagree about what a test order is.
+ */
+const guardVerdict = internalTestOrder({...order, test: false, discount_codes: []});
+if (guardVerdict) {
+  console.log(`\nBlocked by internalTestOrder: ${guardVerdict}`);
+  console.log('The webhook would refuse this order, so sending it here would test');
+  console.log('a path production can never take. Fix the fixture, not the guard.');
+  process.exit(1);
+}
+
+console.log('\nSending a REAL conversion to X, value 0.01, id ' + eventId);
+console.log('This appears in Events Manager. It is tiny and labelled, but it is real.');
 const result = await sendPurchase({env, order, clickIds: {}, eventId});
 console.log('  result:', JSON.stringify(result));
 if (result.ok) {
