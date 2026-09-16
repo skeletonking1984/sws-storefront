@@ -77,6 +77,43 @@ const dupIds = ids.length !== new Set(ids).size;
 if (dupIds) fail.push('duplicate g:id values: a feed id must be unique');
 if (ids.some((v) => !v)) fail.push('empty g:id');
 
+// THE ID IS THE CHECKOUT KEY, not just a dedupe key.
+//
+// Merchant Center's checkout link template is configured as
+//   https://shop.streamwidgetshop.com/cart/{id}:1
+// and {id} substitutes g:id verbatim. Shopify's cart permalink takes a VARIANT
+// id. A PRODUCT id in that slot returns 410 Gone, which is a dead buy button on
+// every free listing and every Shopping ad, while the feed itself still looks
+// perfectly healthy: right length, unique, non empty. That is exactly the shape
+// of fault that got through last time, so it gets checked two ways.
+//
+// Offline: every g:id must be a variant id this catalogue actually has.
+const variantIds = new Set(
+  nodes.flatMap((p) => (p.variants?.nodes || []).map((v) => String(v.id).split('/').pop())),
+);
+const notVariant = ids.filter((v) => !variantIds.has(v));
+if (notVariant.length) {
+  fail.push(
+    `${notVariant.length} g:id value(s) are not variant ids (e.g. ${notVariant[0]}). ` +
+      'The cart permalink /cart/<id>:1 needs a variant id; a product id 410s.',
+  );
+}
+
+// Live: actually resolve one permalink. An offline set check cannot prove
+// Shopify still accepts the format.
+if (!process.env.SKIP_LIVE_CART_CHECK && ids.length) {
+  const probe = `https://shop.streamwidgetshop.com/cart/${ids[0]}:1`;
+  try {
+    const res = await fetch(probe, {redirect: 'manual'});
+    if (res.status >= 400) {
+      fail.push(`cart permalink is dead: ${probe} returned ${res.status}`);
+    }
+    console.log(`cart permalink   : ${res.status} for ${probe}`);
+  } catch (error) {
+    console.log(`cart permalink   : probe failed (${error.message}), not treated as a failure`);
+  }
+}
+
 // Prices must look like "12.34 USD".
 const badPrice = (xml.match(/<g:price>(?!0 USD)([^<]*)<\/g:price>/g) || [])
   .filter((p) => !/>\d+(\.\d+)? [A-Z]{3}</.test(p));

@@ -63,29 +63,47 @@ function plain(html, limit = 4800) {
 }
 
 /**
- * Stable feed id for a product.
+ * Stable feed id for a product: the numeric Shopify VARIANT id.
  *
- * The numeric Shopify product id, NOT the handle.
+ * Three constraints decide this, and only the variant id satisfies all three.
  *
- * Google caps the `id` attribute at 50 characters and this catalogue's handles
- * are Etsy keyword titles: "pokemon-charizard-character-liquid-filling-goal-
- * widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-
- * streamelements" is 130. Merchant Center accepted the feed and then reported
- * "Value too long in attribute: id" on 119 of 122 items, so almost the whole
- * catalogue would have been rejected while the feed itself looked healthy.
+ * 1. LENGTH. Google caps `id` at 50 characters and this catalogue's handles are
+ *    Etsy keyword titles: "pokemon-charizard-character-liquid-filling-goal-
+ *    widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-
+ *    streamelements" is 130. Merchant Center accepted a handle based feed and
+ *    then reported "Value too long in attribute: id" on 119 of 122 items, so
+ *    almost the whole catalogue was rejected while the feed itself looked
+ *    healthy. Every variant id here is 14 digits.
  *
- * A feed id must never change once a channel has ingested it: changing it
- * orphans the old entry and creates a duplicate. The numeric id is the only
- * thing here that is guaranteed short, unique and permanent. A handle can be
- * renamed, and a truncated handle can collide.
+ * 2. PERMANENCE. A feed id must never change once a channel has ingested it:
+ *    changing it orphans the old entry and creates a duplicate. A handle can be
+ *    renamed and a truncated handle can collide; a numeric id cannot.
+ *
+ * 3. IT IS ALSO THE CHECKOUT KEY. Merchant Center's checkout link template is
+ *    `https://shop.streamwidgetshop.com/cart/{id}:1`, and `{id}` substitutes
+ *    THIS value. Shopify's cart permalink is /cart/<VARIANT id>:<quantity>.
+ *    A product id in that slot returns 410 Gone, verified live:
+ *      /cart/8962515108030:1  (product id) -> 410
+ *      /cart/48854557589694:1 (variant id) -> 302 to checkout
+ *    So the product id satisfies 1 and 2 and silently breaks every buy link.
+ *    This id is load bearing for the sale, not just for dedupe.
+ *
+ * Safe here because all 124 storefront products are single variant (checked
+ * 2026-09-16: 0 multi-variant, 124 unique 14 digit ids). If a product ever
+ * gains a second variant it needs its own feed row plus a g:item_group_id,
+ * which is the normal Google shape for variants anyway.
  *
  * @param {{id?: string, handle?: string}} product
+ * @param {{id?: string}} [variant]  the variant this feed row represents
  */
-export function feedId(product) {
-  const numeric = String(product?.id || '').split('/').pop();
-  // Fall back to the handle only if the gid is unparseable, so a malformed id
-  // degrades to something usable rather than emitting an empty tag.
-  return numeric || product?.handle || '';
+export function feedId(product, variant) {
+  const variantNumeric = String(variant?.id || '').split('/').pop();
+  if (variantNumeric) return variantNumeric;
+  // Fall back only if the variant gid is missing or unparseable, so a malformed
+  // id degrades to something usable rather than emitting an empty tag. Note the
+  // fallback does NOT produce a working checkout link; verify:feed fails on it.
+  const productNumeric = String(product?.id || '').split('/').pop();
+  return productNumeric || product?.handle || '';
 }
 
 /**
@@ -138,7 +156,7 @@ export function buildFeedXml(nodes, origin) {
       : `${v.price.amount} ${v.price.currencyCode}`;
 
     return `  <item>
-    <g:id>${esc(feedId(p))}</g:id>
+    <g:id>${esc(feedId(p, v))}</g:id>
     <title>${esc(p.title)}</title>
     <description>${esc(plain(p.description))}</description>
     <link>${esc(link)}</link>
