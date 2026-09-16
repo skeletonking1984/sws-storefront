@@ -2715,3 +2715,112 @@ file**, and remember Shopify re-encodes so a hash comparison proves nothing.
 Still open on this kit, and both are Todd's: the Etsy draft (4571003644) is
 priced at $59.99 against Shopify's $39.99, and its images and two zips still need
 uploading before it can be published.
+
+### 2026-09-16 Daily code review (CTO): 75 commits, 2 confirmed findings
+
+Reviewed `080eebb2..c786afc`, every commit in the 24 hours to 2026-09-16 09:34.
+75 commits, 170 files, 11,835 insertions. Code surface: 50 files, 4,687
+insertions, the rest blog hero art.
+
+**Verified before reporting.** All green:
+
+| Check | Result |
+|---|---|
+| `npm run build` | exit 0 |
+| `node scripts/audit-shipping.mjs` | exit 0, 124 products, none require shipping |
+| `node scripts/audit-catalog.mjs` | exit 0, 124 audited, 0 issues |
+| `npm run verify:tracking` (production) | exit 0, 25/25 |
+| `npm run verify:cart-attributes` | exit 0, decoy survived a real LinesAdd |
+| `npm run verify:feed` | exit 0, 122 items, cart permalink 302 |
+| `npm run verify:test-orders` | exit 0, 13/13 including 6 that must still send |
+| `npm run verify:oauth1` | exit 0 |
+| `npm run audit:config` | exit 0, 29 of 29 in the registry |
+| `npm run audit:policy` | exit 0, all three sources agree |
+| `npm run audit:policy:self-test` | exit 0, 11/11, the check can go red |
+
+`verify:tracking` was mandatory this run: the diff touched
+`app/lib/analytics/pixels/x.js`, `app/lib/conversions/x.server.js`,
+`app/lib/conversions/testOrders.js` and `app/routes/webhooks.orders.jsx`.
+
+**Purchase path exercised at 360px, not inferred.** Real controls pressed on
+production, per `cto.md`. Add to cart at 360x780: rect x=0 w=360,
+`document.elementFromPoint` at its centre returns the button,
+`document.documentElement.scrollWidth` 360, so no overflow. Clicked it, cart
+drawer opened, Continue to Checkout measured at x=17 right=344 inside a 360
+viewport, `elementFromPoint` returns the link. Pressed it and landed on
+`shop.app/checkout/66589720766/cn/...` titled "Checkout - Stream Widget Shop".
+The new 800ms `begin_checkout` gate in `CartSummary.jsx` does release the
+navigation; `window.gtag` is a live function on production, so the gated branch
+is the one real buyers take. **Purchase path CONFIRMED green at 360.**
+
+**Finding 1, confirmed, filed.** `app/components/ProductGallery.jsx:28`. The new
+land-on-the-video `useState` lazy initialiser never re-runs when the `media`
+prop changes, so a client-side navigation between products carries the previous
+product's `activeIndex` across. Reproduced live: from the Neon Glow PDP (15
+media) click thumbnail 15, then the in-page link to the Celestial Star Goal
+widget (9 media). `activeIndex` stays 14, `items[14]` is undefined, and
+`.product-gallery-main` holds only the two arrow buttons: no image, no video.
+The PDP hero media area is blank until a thumbnail is clicked. Optional chaining
+at lines 85 and 104 turns the out-of-range read into a silent blank instead of a
+crash, which is why it looks fine.
+
+The blank-viewer class is older than this diff, but the diff is what made the
+initial index product-dependent rather than always 0, and it reasoned about
+initialisation without reasoning about the prop changing.
+
+Checked the zero-interaction variant and it is **not** reachable today: sampled
+40 live PDPs, the video sits at index 1 on every product that has one, and the
+smallest media count is 4, so the retained index always lands in range without a
+thumbnail click first. Recorded because it is the thing that would make this
+severe, and it is a fact about the data, not about the code.
+
+**Finding 2, confirmed, filed.** `scripts/verify-feed.mjs:62`. The feed's IP leak
+check hardcodes its own copy of the term list instead of importing `IP_TERMS`,
+and `app/lib/ipTerms.js` opens by warning that a second copy will drift. It has.
+`IP_TERMS` carries 19 terms, `IP_CHECK` carries 14. Demonstrated: "Disney Castle
+Goal Widget", "Hello Kitty Chat Widget", "Sanrio Pastel Overlay", "Overwatch
+Tracer Goal Bar" and "Brimstone Agent Widget" all return true from
+`IP_TERMS.some()` and false from `IP_CHECK`. Separately `isIpRisky`
+(`app/lib/productFeed.js:115`) builds its haystack from title and tags only
+while `buildFeedXml` emits `<description>`, and line 63 scans only `<title>`, so
+an IP name appearing solely in a description is examined by neither layer.
+
+Not a live exposure: scanned all 122 items of the production feed, 0 hits in
+title or description. This is a hole in the guard, reported as such.
+
+**Nothing else was found.** The rest of the diff held up under the checks this
+task exists to apply:
+
+- `AnnotatedCartForm.jsx` now wraps six cart forms including the buy button.
+  Its claim of markup identical to Hydrogen's `CartForm` was checked against
+  `node_modules/@shopify/hydrogen/dist/development/index.cjs:1918-1937` and is
+  accurate, prop for prop.
+- The BAT-147 `mutateFragment` fix is real and the decoy check has teeth. It
+  drives a `gift_note` the app cannot re-derive through a live `LinesAdd` and
+  asserts it survives, which is exactly the deletion-shaped hole a
+  presence-only check cannot see.
+- No browser pixel sends `purchase`. `begin_checkout` was added to
+  `pixels/x.js`, not `purchase`; `PixelBus.jsx:156` still hard-returns on it.
+- 680 new CSS lines carry no `calc(var(--width) - Npx)` restating a container
+  and no `100vh` on a fixed element, the two patterns that cost a checkout
+  button on 2026-09-14. The one new `min-width: 0` is the fix pattern.
+- `/admin/config` fails closed as designed: unauthenticated it returns only the
+  login form, no variable name or value in the body, and carries `noindex`.
+  Verified against production.
+- `blogCrossSell.js` `hasTerm` uses a leading `\b`, so "Twitch" no longer
+  matches "witch".
+
+**Noted, not filed.** `docs/conversion-tracking.md` still documents X as
+configured by `PRIVATE_X_CAPI_TOKEN`, which no longer exists; the destination
+now resolves relay, pixel-token or OAuth 1.0a through `authMode()`. Doc drift
+behind a rewritten module, not a code defect. Related: `isConfigured(env)` can
+return true while `PRIVATE_X_PURCHASE_EVENT_ID` is unset, so the webhook calls a
+destination that can only answer `not_configured`. Costs one log line, corrupts
+nothing.
+
+**Review process change made this run.** Two rules added to the task prompt at
+`~/.claude/scheduled-tasks/sws-daily-code-review/SKILL.md`: one on component
+state derived from props, since this run's first finding is a lazy initialiser
+that outlived the prop it was derived from; one on a guard that re-declares a
+list another module already owns, since the second finding is the drift
+`ipTerms.js` predicted in its own header.
