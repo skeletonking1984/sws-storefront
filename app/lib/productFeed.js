@@ -63,6 +63,32 @@ function plain(html, limit = 4800) {
 }
 
 /**
+ * Stable feed id for a product.
+ *
+ * The numeric Shopify product id, NOT the handle.
+ *
+ * Google caps the `id` attribute at 50 characters and this catalogue's handles
+ * are Etsy keyword titles: "pokemon-charizard-character-liquid-filling-goal-
+ * widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-
+ * streamelements" is 130. Merchant Center accepted the feed and then reported
+ * "Value too long in attribute: id" on 119 of 122 items, so almost the whole
+ * catalogue would have been rejected while the feed itself looked healthy.
+ *
+ * A feed id must never change once a channel has ingested it: changing it
+ * orphans the old entry and creates a duplicate. The numeric id is the only
+ * thing here that is guaranteed short, unique and permanent. A handle can be
+ * renamed, and a truncated handle can collide.
+ *
+ * @param {{id?: string, handle?: string}} product
+ */
+export function feedId(product) {
+  const numeric = String(product?.id || '').split('/').pop();
+  // Fall back to the handle only if the gid is unparseable, so a malformed id
+  // degrades to something usable rather than emitting an empty tag.
+  return numeric || product?.handle || '';
+}
+
+/**
  * Refuse anything naming someone else's property, by NAME and not by status.
  *
  * Deliberately checks title AND tags: several of these products carry a clean
@@ -112,7 +138,7 @@ export function buildFeedXml(nodes, origin) {
       : `${v.price.amount} ${v.price.currencyCode}`;
 
     return `  <item>
-    <g:id>${esc(p.handle)}</g:id>
+    <g:id>${esc(feedId(p))}</g:id>
     <title>${esc(p.title)}</title>
     <description>${esc(plain(p.description))}</description>
     <link>${esc(link)}</link>

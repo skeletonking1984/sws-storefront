@@ -67,6 +67,16 @@ if (leaked.length) fail.push(`IP LEAKED into feed: ${leaked.slice(0, 3).join(' |
 const rawAmp = xml.replace(/&(amp|lt|gt|quot|apos);/g, '').includes('&');
 if (rawAmp) fail.push('unescaped & in XML');
 
+// Google caps id at 50 characters. Merchant Center accepted a feed with 119
+// over-long ids and only reported it AFTER ingest, so the verifier has to catch
+// this rather than trusting a clean fetch.
+const ids = [...xml.matchAll(/<g:id>([^<]*)<\/g:id>/g)].map((m) => m[1]);
+const longIds = ids.filter((v) => v.length > 50);
+if (longIds.length) fail.push(`${longIds.length} id(s) over 50 chars, e.g. "${longIds[0].slice(0, 60)}"`);
+const dupIds = ids.length !== new Set(ids).size;
+if (dupIds) fail.push('duplicate g:id values: a feed id must be unique');
+if (ids.some((v) => !v)) fail.push('empty g:id');
+
 // Prices must look like "12.34 USD".
 const badPrice = (xml.match(/<g:price>(?!0 USD)([^<]*)<\/g:price>/g) || [])
   .filter((p) => !/>\d+(\.\d+)? [A-Z]{3}</.test(p));
@@ -77,6 +87,7 @@ console.log(`feed items       : ${items}`);
 console.log(`excluded for IP  : ${skippedIp}`);
 console.log(`no variant       : ${skippedUnavailable}`);
 console.log(`feed size        : ${(xml.length / 1024).toFixed(0)} KB`);
+console.log(`longest g:id     : ${Math.max(...ids.map((v) => v.length))} chars (Google caps at 50)`);
 console.log();
 if (fail.length) {
   console.error('FAIL');
