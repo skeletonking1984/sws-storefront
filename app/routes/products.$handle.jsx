@@ -398,6 +398,18 @@ export default function Product() {
              */
             hasMerchantReturnPolicy: {
               '@type': 'MerchantReturnPolicy',
+              // applicableCountry is REQUIRED by Google for a merchant
+              // listing. Search Console flagged it missing on 29 items on
+              // 2026-09-16. The refund policy applies wherever we sell, and
+              // the shop's two delivery zones are US plus 27 international
+              // countries, so the policy is not US-only. Listing the real set
+              // rather than defaulting to US, which would be untrue for most
+              // of the countries that can actually buy.
+              applicableCountry: [
+                'US', 'CA', 'GB', 'AU', 'NZ', 'IE', 'DE', 'FR', 'ES', 'IT',
+                'NL', 'BE', 'AT', 'CH', 'DK', 'FI', 'NO', 'SE', 'PL', 'PT',
+                'CZ', 'IL', 'AE', 'HK', 'JP', 'KR', 'MY', 'SG',
+              ],
               returnPolicyCategory:
                 'https://schema.org/MerchantReturnFiniteReturnWindow',
               merchantReturnDays: 30,
@@ -412,6 +424,39 @@ export default function Product() {
                 '@type': 'MonetaryAmount',
                 value: '0',
                 currency: 'USD',
+              },
+              /*
+               * shippingDestination and deliveryTime were both flagged
+               * missing on 29 items by Search Console on 2026-09-16.
+               *
+               * Every value here is literally true for an instant download
+               * rather than a shipping placeholder: it is delivered to every
+               * country we sell to, there is nothing to handle, and there is
+               * nothing in transit. Zero is the honest number, not a
+               * convenient one, which is why this can be stated at all.
+               */
+              shippingDestination: [
+                'US', 'CA', 'GB', 'AU', 'NZ', 'IE', 'DE', 'FR', 'ES', 'IT',
+                'NL', 'BE', 'AT', 'CH', 'DK', 'FI', 'NO', 'SE', 'PL', 'PT',
+                'CZ', 'IL', 'AE', 'HK', 'JP', 'KR', 'MY', 'SG',
+              ].map((code) => ({
+                '@type': 'DefinedRegion',
+                addressCountry: code,
+              })),
+              deliveryTime: {
+                '@type': 'ShippingDeliveryTime',
+                handlingTime: {
+                  '@type': 'QuantitativeValue',
+                  minValue: 0,
+                  maxValue: 0,
+                  unitCode: 'DAY',
+                },
+                transitTime: {
+                  '@type': 'QuantitativeValue',
+                  minValue: 0,
+                  maxValue: 0,
+                  unitCode: 'DAY',
+                },
               },
             },
             // No fixed sale window on these listings, so no priceValidUntil
