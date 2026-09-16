@@ -174,8 +174,23 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
           order.processed_at || order.created_at || Date.now(),
         ).toISOString(),
         identifiers,
+        /*
+         * value AND price_currency. Both, or X counts the conversion and
+         * reports no revenue against it.
+         *
+         * Caught on the first real attributed sale, 2026-09-15: Ads Manager
+         * showed Purchases 1 against the right ad, and "Purchases - sale
+         * amount" empty. The conversion arrived, the money did not, so cost per
+         * purchase was computable and ROAS was not. A bare `value` with nothing
+         * to denominate it in is not revenue.
+         *
+         * Shopify's orders/create body carries `currency`; `presentment_currency`
+         * is the fallback for a multi currency shop.
+         */
         value:
           order.total_price !== undefined ? String(order.total_price) : undefined,
+        price_currency:
+          order.currency || order.presentment_currency || 'USD',
         number_items: items.reduce(
           (sum, item) => sum + (Number(item.quantity) || 0),
           0,
