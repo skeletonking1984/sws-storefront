@@ -4392,6 +4392,53 @@ button.reset:hover:not(:has(> *)) {
 }
 
 /*
+  Equal height cards in the shelf.
+
+  Todd, 2026-09-15: "they need to be the same size like other pages, these
+  tiles dont line up."
+
+  On a collection page the cards sit in a real grid, and CSS grid equalises
+  every card in a row for free, so nothing ever looked wrong there. The shelf
+  is a single row of independent track cells, so each card was free to be as
+  tall as its own title. These titles are Etsy keyword titles running to 15
+  words, so "Lunar Cat Aesthetic Light Purple Chat & Goal Stream Widgets -
+  Animated, celestial Elegant Lunar Theme Clean Vibe StreamElements Only" made
+  its card twice the height of its neighbour and pushed the price far below
+  every other price.
+
+  Scoped to .article-shelf rather than fixing .product-item globally: the other
+  surfaces already line up, and a global change would be a regression risk on
+  pages nobody asked me to touch.
+*/
+.article-shelf-item .product-item {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/*
+  Clamp the title to three lines. Equal card height alone is not enough: the
+  price still floats wherever the title happens to end. Three lines is the most
+  these titles can use before the card becomes a wall of keywords, and the full
+  title is still on the product page.
+*/
+.article-shelf-item .product-item-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* Reserve the full three lines so a 1-line and a 3-line title still put their
+     price on the same baseline. */
+  min-height: calc(3 * 1.35em);
+}
+
+/* Price and platform row pinned to the bottom of every card, so they align
+   across the shelf no matter how long the title above them ran. */
+.article-shelf-item .product-item-footer {
+  margin-top: auto;
+}
+
+/*
 * --------------------------------------------------
 * routes/account
 * --------------------------------------------------
