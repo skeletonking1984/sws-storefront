@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-16T00:30:52.572Z",
+  "generatedAt": "2026-09-16T03:48:42.073Z",
   "articles": [
     {
       "handle": "best-vtuber-overlays-2026-kawaii-celestial-guide",
@@ -7,8 +7,8 @@
       "tags": [],
       "words": 707,
       "seo": {
-        "title": null,
-        "description": "Discover the best VTuber overlay styles for 2026 including kawaii, celestial, sakura, lofi, and cyberpunk aesthetics. Find the perfect VTuber overlay."
+        "title": "Best VTuber Overlays 2026: Kawaii and Celestial",
+        "description": "Kawaii, celestial, sakura and cyberpunk VTuber overlay styles for 2026, and how to pick one that still reads clearly on stream."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-vtuber-overlays-2026-kawaii-celestial-guide.jpg?v=1789518364",
@@ -27,8 +27,8 @@
       "tags": [],
       "words": 595,
       "seo": {
-        "title": null,
-        "description": "Learn the fastest StreamElements widget setup for Twitch, Kick, and YouTube streams. Add alerts, chat, and goal widgets to OBS in under 60 seconds."
+        "title": "Set Up StreamElements Widgets in 60 Seconds",
+        "description": "The fastest way to add a StreamElements chat, alert or goal widget to OBS. Create a custom widget, paste the files, drop in the link."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-to-set-up-streamelements-widgets-in-60-seconds.jpg?v=1789518493",
@@ -37,24 +37,6 @@
         "altText": "StreamElements: Installed in under a minute - Stream Widget Shop"
       },
       "publishedAt": "2026-03-12T02:24:22Z",
-      "productLinks": []
-    },
-    {
-      "handle": "best-vtuber-overlays-2026-kawaii-celestial-guide-1",
-      "title": "Best VTuber Overlays 2026: Kawaii & Celestial Guide",
-      "tags": [],
-      "words": 376,
-      "seo": {
-        "title": null,
-        "description": null
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-vtuber-overlays-2026-kawaii-celestial-guide-1.jpg?v=1789518494",
-        "width": 1600,
-        "height": 840,
-        "altText": "VTuber overlays: Kawaii, celestial, and actually readable - Stream Widget Shop"
-      },
-      "publishedAt": "2026-03-19T19:51:08Z",
       "productLinks": []
     },
     {
@@ -74,8 +56,8 @@
       ],
       "words": 500,
       "seo": {
-        "title": null,
-        "description": "Learn why WebM is the best format for stream widgets in 2026. Reduce lag, improve OBS performance, and create smooth overlays for Twitch, Kick, and YouTube streams."
+        "title": "What Is WebM, and Why It Matters for Streamers",
+        "description": "WebM keeps overlays smooth and CPU low. What the format does, why it beats GIF for stream widgets, and when to use each one."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/what-is-webm-and-why-it-matters-for-streamers.jpg?v=1789518495",
@@ -87,41 +69,13 @@
       "productLinks": []
     },
     {
-      "handle": "webm-vs-gif-for-twitch-the-secret-to-lag-free-stream-widgets",
-      "title": "WebM vs GIF for Twitch: The Secret to Lag-Free Stream Widgets",
-      "tags": [
-        "Lag-Free Streaming",
-        "OBS Optimization",
-        "OBS Tutorials",
-        "Stream Widgets",
-        "StreamElements",
-        "Streaming Guides",
-        "Twitch Tips",
-        "VTuber Tools",
-        "WebM vs GIF"
-      ],
-      "words": 150,
-      "seo": {
-        "title": null,
-        "description": "WebM vs GIF for Twitch: learn how to reduce lag, lower CPU usage, and improve OBS performance with the best file format for stream widgets in 2026.\n"
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/webm-vs-gif-for-twitch-the-secret-to-lag-free-stream-widgets.jpg?v=1789518496",
-        "width": 1600,
-        "height": 840,
-        "altText": "WebM vs GIF: One of these is eating your frames - Stream Widget Shop"
-      },
-      "publishedAt": "2026-03-25T18:55:32Z",
-      "productLinks": []
-    },
-    {
       "handle": "best-stream-overlays-for-spring-2026-anime-season",
       "title": "Best Stream Overlays for Spring 2026 Anime Season",
       "tags": [],
       "words": 584,
       "seo": {
-        "title": null,
-        "description": "Discover the best anime stream overlay 2026 styles inspired by Spring anime like Dr. Stone and Classroom of the Elite. Upgrade your stream aesthetic."
+        "title": "Best Stream Overlays for the Spring 2026 Anime Season",
+        "description": "Anime inspired stream overlays for the spring season. Soft palettes, animated chat and goal widgets that suit a seasonal rebrand."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-stream-overlays-for-spring-2026-anime-season.jpg?v=1789518497",
@@ -138,8 +92,8 @@
       "tags": [],
       "words": 679,
       "seo": {
-        "title": null,
-        "description": "Discover how stream aesthetics are evolving in 2026. Learn why minimalist overlays, calming palettes, and data-driven visuals are shaping modern streams."
+        "title": "The Evolution of Stream Aesthetics in 2026",
+        "description": "RGB is out, atmosphere is in. How stream design changed, why minimal overlays won, and what that means for your layout."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/the-evolution-of-stream-aesthetics-in-2026.jpg?v=1789518498",
@@ -157,7 +111,7 @@
       "words": 782,
       "seo": {
         "title": "NBA Playoff Stream Widgets: Kick Watch Party Setup",
-        "description": "Discover the best NBA playoff stream widgets and tools for hosting a sports watch party on Kick. Upgrade your stream with interactive overlays in 2026."
+        "description": "Widgets and overlays for hosting an NBA playoff watch party on Kick, including scoreboards and interactive chat for game nights."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/nba-playoff-stream-widgets-kick.jpg?v=1789518498",
@@ -174,8 +128,8 @@
       "tags": [],
       "words": 806,
       "seo": {
-        "title": null,
-        "description": "Discover the best aesthetic VTuber assets for Spring 2026 including kawaii alerts, sakura overlays, and cozy stream widgets for a relaxing stream setup."
+        "title": "Cozy and Aesthetic Spring Stream Overlays",
+        "description": "Kawaii alerts, sakura overlays and cozy widgets for a spring stream refresh. A calm setup that still reads clearly on camera."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/the-cozy-aesthetic-spring-collection.jpg?v=1789518499",
@@ -196,8 +150,8 @@
       ],
       "words": 746,
       "seo": {
-        "title": null,
-        "description": "Best Sci-Fi Twitch Overlay 2026 Setup Guide"
+        "title": "Best Sci-Fi Stream Overlays to Upgrade Your Setup",
+        "description": "Sci-fi overlays and HUD style widgets that make a stream look like the future, for Twitch, Kick and OBS. Genre, not franchise."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-sci-fi-stream-overlays-to-upgrade-your-setup-in-2026.jpg?v=1789518500",
@@ -209,100 +163,13 @@
       "productLinks": []
     },
     {
-      "handle": "star-wars-stream-setup-for-may-4th-guide",
-      "title": "Star Wars Stream Setup for May 4th Guide",
-      "tags": [],
-      "words": 815,
-      "seo": {
-        "title": null,
-        "description": "Transform your stream into a cinematic Star Wars experience. Learn how to set up overlays, chat widgets, and Light vs Dark Side interactions."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/star-wars-stream-setup-for-may-4th-guide.jpg?v=1789518501",
-        "width": 1600,
-        "height": 840,
-        "altText": "Sci-fi setup: Build the whole sci-fi stream, not just a theme - Stream Widget Shop"
-      },
-      "publishedAt": "2026-04-27T14:58:41Z",
-      "productLinks": []
-    },
-    {
-      "handle": "star-wars-stream-setup-may-4th-widgets",
-      "title": "May 4th: The Ultimate Star Wars Stream Setup Guide (With Widgets That Feel Alive)",
-      "tags": [],
-      "words": 727,
-      "seo": {
-        "title": null,
-        "description": "Build a cinematic Star Wars stream for May 4th with interactive widgets, sci-fi overlays, and HUD designs that boost engagement on Twitch, Kick, and YouTube."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/star-wars-stream-setup-may-4th-widgets.jpg?v=1789518502",
-        "width": 1600,
-        "height": 840,
-        "altText": "Sci-fi setup: Widgets that feel alive - Stream Widget Shop"
-      },
-      "publishedAt": "2026-04-29T18:59:14Z",
-      "productLinks": []
-    },
-    {
-      "handle": "may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget",
-      "title": "May the 4th Be With Your Stream: Introducing the Ultimate Sci-Fi Chat Widget",
-      "tags": [
-        "galactic stream overlay",
-        "OBS Optimization",
-        "star wars",
-        "Twitch Tips",
-        "VTuber Tools",
-        "YouTube Live"
-      ],
-      "words": 376,
-      "seo": {
-        "title": null,
-        "description": null
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget.jpg?v=1789518502",
-        "width": 1600,
-        "height": 840,
-        "altText": "Sci-fi chat: A chat box from a better century - Stream Widget Shop"
-      },
-      "publishedAt": "2026-05-03T20:16:42Z",
-      "productLinks": []
-    },
-    {
-      "handle": "upgrade-your-stream-the-sci-fi-neon-chat-widget-built-for-kick-twitch-obs",
-      "title": "Upgrade Your Stream: The Sci-Fi Neon Chat Widget Built for Kick, Twitch & OBS",
-      "tags": [
-        "galactic stream overlay",
-        "Kick Streaming",
-        "Lag-Free Streaming",
-        "OBS Optimization",
-        "OBS Tutorials"
-      ],
-      "words": 365,
-      "seo": {
-        "title": null,
-        "description": null
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/upgrade-your-stream-the-sci-fi-neon-chat-widget-built-for-kick-twitch-obs.jpg?v=1789518503",
-        "width": 1600,
-        "height": 840,
-        "altText": "Neon chat: Built for Kick, Twitch and OBS - Stream Widget Shop"
-      },
-      "publishedAt": "2026-05-03T20:27:36Z",
-      "productLinks": [
-        "/products/sci-fi-neon-chat-widget-kick-twitch-obs"
-      ]
-    },
-    {
       "handle": "hire-a-custom-stream-widget-developer-for-kick-twitch",
       "title": "Hire a Custom Stream Widget Developer for Kick & Twitch",
       "tags": [],
       "words": 634,
       "seo": {
-        "title": null,
-        "description": "Hire a custom stream widget developer to build interactive sports scoreboards, real-time overlays, and animated OBS widgets for Twitch and Kick streams."
+        "title": "Hire a Custom Stream Widget Developer for Twitch",
+        "description": "Commission a custom Twitch or Kick widget: scoreboards, animated goals and bespoke OBS overlays. What it costs and how it works."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/hire-a-custom-stream-widget-developer-for-kick-twitch.jpg?v=1789518504",
@@ -311,24 +178,6 @@
         "altText": "Custom work: Want one nobody else has? - Stream Widget Shop"
       },
       "publishedAt": "2026-05-14T20:42:14Z",
-      "productLinks": []
-    },
-    {
-      "handle": "streamelements-shutdown-alternatives",
-      "title": "StreamElements Might Be Shutting Down — And That Changes Everything for Streamers",
-      "tags": [],
-      "words": 739,
-      "seo": {
-        "title": null,
-        "description": "StreamElements may be preparing for shutdown or acquisition talks, pushing creators to search for alternatives. Discover the best OBS widgets, overlay tools"
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/streamelements-shutdown-alternatives.jpg?v=1789518505",
-        "width": 1600,
-        "height": 840,
-        "altText": "Platform news: If StreamElements goes, your overlays stay - Stream Widget Shop"
-      },
-      "publishedAt": "2026-05-15T22:24:59Z",
       "productLinks": []
     },
     {
@@ -343,8 +192,8 @@
       ],
       "words": 546,
       "seo": {
-        "title": null,
-        "description": "Upgrade your stream with the Celestial Butterfly Goal Widget for Twitch, Kick, OBS Studio, and Streamlabs. Perfect for VTubers and cozy streamers."
+        "title": "Celestial Butterfly Goal Widget for Twitch and OBS",
+        "description": "A goal bar with wings. The Celestial Butterfly goal widget for Twitch, Kick, OBS and Streamlabs, and how to customise it."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/celestial-butterfly-goal-widget-for-twitch-kick-obs.jpg?v=1789518506",
@@ -356,31 +205,13 @@
       "productLinks": []
     },
     {
-      "handle": "the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic",
-      "title": "The Mandalorian & Grogu: When to Watch and Why VTubers and Streamers Are Copying This Sci-Fi Aesthetic",
-      "tags": [],
-      "words": 648,
-      "seo": {
-        "title": null,
-        "description": "Learn when to watch The Mandalorian & Grogu, how it fits into the Star Wars timeline, and why VTubers and streamers are adopting its cinematic sci-fi aesthetic for Twitch, Kick, OBS Studio, and Streamlabs stream setups."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic.jpg?v=1789518506",
-        "width": 1600,
-        "height": 840,
-        "altText": "Sci-fi aesthetic: Why everyone wants the space western look - Stream Widget Shop"
-      },
-      "publishedAt": "2026-05-19T02:18:07Z",
-      "productLinks": []
-    },
-    {
       "handle": "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable",
       "title": "Why Your Twitch Chat Widget Matters More Than You Think (And Why Most Streams Feel Forgettable)",
       "tags": [],
       "words": 898,
       "seo": {
-        "title": null,
-        "description": "Your Twitch chat widget is the most active part of your stream UI, yet most streamers leave it default. Learn how upgrading to an animated neon or holographic chat overlay improves immersion, retention, and stream branding across Twitch, Kick, OBS Studio, and Streamlabs."
+        "title": "Why Your Twitch Chat Widget Matters More Than You Think",
+        "description": "Chat is the most active thing on your screen and most streamers leave it default. What upgrading it changes for immersion and branding."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable.jpg?v=1789518507",
@@ -392,31 +223,13 @@
       "productLinks": []
     },
     {
-      "handle": "streamelements-is-closing-best-alternatives-for-stream-overlays-chat-widgets-alerts-2026-guide",
-      "title": "StreamElements Is Closing? Best Alternatives for Stream Overlays, Chat Widgets & Alerts (2026 Guide)",
-      "tags": [],
-      "words": 765,
-      "seo": {
-        "title": null,
-        "description": "StreamElements shutdown rumors explained. Discover what it means for streamers and the best alternatives for OBS overlays, chat widgets, and alerts in 2026."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/streamelements-is-closing-best-alternatives-for-stream-overlays-chat-widgets-alerts-2026-guide.jpg?v=1789518508",
-        "width": 1600,
-        "height": 840,
-        "altText": "Platform news: Overlays that outlive the platform - Stream Widget Shop"
-      },
-      "publishedAt": "2026-05-16T17:33:00Z",
-      "productLinks": []
-    },
-    {
       "handle": "how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics",
       "title": "How to Create a Cozy Stream Setup With Cute Frog Widgets and Cottagecore Twitch Aesthetics",
       "tags": [],
       "words": 913,
       "seo": {
-        "title": null,
-        "description": "Learn how to build a cozy stream setup with kawaii frog overlays, animated Twitch goal widgets, and cottagecore gaming aesthetics. Perfect for VTubers, Twitch streamers, OBS Studio, Streamlabs, and cozy creator branding."
+        "title": "Cozy Stream Setup: Frog Widgets and Cottagecore",
+        "description": "Build a cozy Twitch setup with frog goal widgets and cottagecore overlays. Colours, layout and the widgets that hold the look together."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics.jpg?v=1789518509",
@@ -433,8 +246,8 @@
       "tags": [],
       "words": 623,
       "seo": {
-        "title": null,
-        "description": "Learn how to create a dreamy celestial stream setup for Twitch and Kick using aesthetic overlays, VTuber-friendly design principles, and cozy streamer branding ideas that improve immersion and viewer retention."
+        "title": "How to Build a Celestial Stream Setup for Twitch",
+        "description": "A stream that looks like a night sky. Overlay choices, palette and widget layout for a dreamy celestial setup on Twitch and Kick."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-to-create-a-dreamy-celestial-stream-setup-for-twitch-and-kick.jpg?v=1789518510",
@@ -451,8 +264,8 @@
       "tags": [],
       "words": 760,
       "seo": {
-        "title": null,
-        "description": "Discover the best cyberpunk Twitch overlays and futuristic chat widgets for neon-inspired stream setups. Learn how VTubers and streamers are transforming Twitch, Kick, OBS Studio, and Streamlabs layouts into cinematic sci-fi gaming interfaces inspired by cyberpunk culture."
+        "title": "Best Cyberpunk Twitch Overlays and Chat Widgets",
+        "description": "Neon chat widgets and futuristic overlays for Twitch, Kick and OBS. How to get the cyberpunk look without cluttering your screen."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups.jpg?v=1789518629",
@@ -464,49 +277,13 @@
       "productLinks": []
     },
     {
-      "handle": "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups",
-      "title": "Best Cyberpunk Twitch Overlays for Futuristic Stream Setups",
-      "tags": [],
-      "words": 901,
-      "seo": {
-        "title": null,
-        "description": "Discover the best Cyberpunk 2077 Twitch overlays, futuristic chat widgets, and neon OBS stream designs for immersive streamer setups inspired by Night City aesthetics and sci-fi gaming culture."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-cyberpunk-twitch-overlays-for-futuristic-stream-setups.jpg?v=1789518630",
-        "width": 1600,
-        "height": 840,
-        "altText": "Cyberpunk: Futuristic without looking cluttered - Stream Widget Shop"
-      },
-      "publishedAt": "2026-05-22T19:08:18Z",
-      "productLinks": []
-    },
-    {
-      "handle": "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1",
-      "title": "Best Cyberpunk Twitch Overlays for Futuristic Stream Setups",
-      "tags": [],
-      "words": 1261,
-      "seo": {
-        "title": null,
-        "description": "Discover the best cyberpunk Twitch overlays, neon chat widgets, and futuristic OBS stream designs inspired by Cyberpunk 2077 and Night City aesthetics for Twitch, Kick, and VTubers."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1.jpg?v=1789518631",
-        "width": 1600,
-        "height": 840,
-        "altText": "Cyberpunk: Glow that reads over gameplay - Stream Widget Shop"
-      },
-      "publishedAt": "2026-05-22T19:15:15Z",
-      "productLinks": []
-    },
-    {
       "handle": "best-vtuber-widgets-for-neon-and-cyberpunk-streamers",
       "title": "Best VTuber Widgets for Neon and Cyberpunk Streamers",
       "tags": [],
       "words": 943,
       "seo": {
-        "title": null,
-        "description": "Discover the best VTuber widgets for neon and cyberpunk streamers, including futuristic chat overlays, holographic OBS widgets, animated cyberpunk stream UI, and immersive VTuber aesthetics for Twitch and Kick."
+        "title": "Best VTuber Widgets for Neon and Cyberpunk Streams",
+        "description": "Neon and cyberpunk VTuber widgets that match your model: holographic chat, animated goals and glowing OBS overlays for Twitch and Kick."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-vtuber-widgets-for-neon-and-cyberpunk-streamers.jpg?v=1789518632",
@@ -527,8 +304,8 @@
       ],
       "words": 1698,
       "seo": {
-        "title": null,
-        "description": "Discover why neon Twitch chat widgets and transparent stream overlays are trending in 2026. Learn how futuristic OBS overlays, VTuber UI aesthetics, and glowing chat widgets help streamers create immersive and professional stream setups."
+        "title": "Best Twitch and Kick Chat Widgets for OBS (2026)",
+        "description": "The chat widgets and stream overlays worth installing in 2026, for Twitch, Kick and OBS. Animated, transparent, and readable over gameplay."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-twitch-and-kick-chat-widgets-and-stream-overlays-for-obs-in-2026.jpg?v=1789518633",
@@ -545,8 +322,8 @@
       "tags": [],
       "words": 1395,
       "seo": {
-        "title": null,
-        "description": "Discover the best desktop widgets for streamers, how to add widgets to OBS Studio and iPhone, and why aesthetic StreamElements overlays, neon chat widgets, and modern stream UI designs are transforming Twitch, Kick, and VTuber streaming culture."
+        "title": "Best Desktop Widgets for Streamers, and How to Add Them",
+        "description": "How to add widgets to OBS, what works on iPhone, and which desktop widgets are worth screen space on a modern stream setup."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-desktop-widgets-for-streamers-how-to-add-widgets-to-obs-iphone-and-modern-stream-setups.jpg?v=1789518634",
@@ -563,8 +340,8 @@
       "tags": [],
       "words": 1517,
       "seo": {
-        "title": null,
-        "description": "How to make your Twitch stream look professional in 2026 using clean overlays, transparent widgets, immersive stream aesthetics, and modern creator branding."
+        "title": "How to Make Your Twitch Stream Look Professional",
+        "description": "Clean overlays, transparent widgets and consistent branding. The changes that make a stream look professional, in the order worth doing them."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-to-make-your-twitch-stream-look-more-professional-in-2026.jpg?v=1789518634",
@@ -581,8 +358,8 @@
       "tags": [],
       "words": 1456,
       "seo": {
-        "title": null,
-        "description": "Learn how beginners make money on Twitch in 2026 through subscriptions, donations, sponsorships, affiliate marketing, and creator branding. "
+        "title": "How to Make Money on Twitch as a Beginner (2026)",
+        "description": "Subs, donations, sponsorships and affiliate income explained for new Twitch streamers, plus the one overlay change that lifts tips."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-to-make-money-on-twitch-as-a-beginner-in-2026.jpg?v=1789518635",
@@ -599,8 +376,8 @@
       "tags": [],
       "words": 1155,
       "seo": {
-        "title": null,
-        "description": "Learn how to create custom Twitch widgets for OBS Studio and StreamElements in 2026. Discover how professional overlays, chat widgets, and immersive stream UI systems can transform your stream branding."
+        "title": "How to Make Custom Twitch Widgets in 2026",
+        "description": "Build your own Twitch widgets for OBS and StreamElements, or commission them. What each route costs in time, money and maintenance."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-to-make-custom-twitch-widgets-in-2026-or-let-professionals-build-them-for-you.jpg?v=1789518636",
@@ -617,8 +394,8 @@
       "tags": [],
       "words": 1162,
       "seo": {
-        "title": null,
-        "description": "Discover why cozy and celestial stream setups are becoming one of the biggest streaming trends in 2026. Learn how moon-themed overlays, custom Twitch widgets, VTuber aesthetics, and immersive branding help creators stand out."
+        "title": "Why Cozy and Celestial Stream Setups Are Trending",
+        "description": "Streamers are moving past RGB. Why moon themed overlays and calm palettes are winning, and how to build the look without going twee."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/why-cozy-and-celestial-stream-setups-are-trending-in-2026-and-why-streamers-are-moving-beyond-rgb.jpg?v=1789518637",
@@ -630,31 +407,13 @@
       "productLinks": []
     },
     {
-      "handle": "is-streamelements-shutting-down-what-streamers-need-to-know-in-2026",
-      "title": "Is StreamElements Shutting Down? What Streamers Need to Know in 2026",
-      "tags": [],
-      "words": 1040,
-      "seo": {
-        "title": null,
-        "description": "Is StreamElements shutting down in 2026? Learn what’s happening with StreamElements, Twitch, OBS Studio, Nightbot, and the best alternatives for streamers looking to protect their overlays, widgets, and stream branding."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/is-streamelements-shutting-down-what-streamers-need-to-know-in-2026.jpg?v=1789518638",
-        "width": 1600,
-        "height": 840,
-        "altText": "Platform news: What happens to your overlays if it closes - Stream Widget Shop"
-      },
-      "publishedAt": "2026-06-01T18:05:46Z",
-      "productLinks": []
-    },
-    {
       "handle": "best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more",
       "title": "Best StreamElements Alternatives in 2026: Streamlabs, Streamer.bot, BotRix & More",
       "tags": [],
       "words": 1116,
       "seo": {
-        "title": null,
-        "description": "Explore the best StreamElements alternatives in 2026. Compare Streamlabs, Streamer.bot, BotRix, Sound Alerts, OBS Studio integrations, and custom widgets to build a more flexible streaming setup."
+        "title": "Best StreamElements Alternatives in 2026",
+        "description": "StreamElements alternatives compared: Streamlabs, Streamer.bot, BotRix and custom OBS widgets. What each does well, and what to move first."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more.jpg?v=1789518639",
@@ -671,8 +430,8 @@
       "tags": [],
       "words": 1177,
       "seo": {
-        "title": null,
-        "description": "Looking for a cute and customizable Twitch goal widget? Discover how the Star Bottle Goal Widget helps streamers boost engagement, celebrate milestones, and create a unique stream aesthetic with OBS, Streamlabs, and StreamElements support. (158 characters)"
+        "title": "Why Star Bottle Goal Widgets Are a Twitch Favourite",
+        "description": "A goal people can watch fill up. Why the star bottle goal widget works, and how to customise it for OBS, Streamlabs and StreamElements."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/why-star-bottle-goal-widgets-are-becoming-a-favorite-among-twitch-streamers-in-2026.jpg?v=1789518640",
@@ -691,8 +450,8 @@
       "tags": [],
       "words": 1421,
       "seo": {
-        "title": null,
-        "description": "Learn how Twitch goal widgets boost viewer engagement, increase follows, subscriptions, and donations, and create a more immersive stream experience. Discover why custom animated goal bars outperform basic Twitch goals in 2026."
+        "title": "How Twitch Goal Widgets Increase Viewer Engagement",
+        "description": "Why an animated goal bar outperforms Twitch's built in goals, and how follower, sub and donation goals turn viewers into participants."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-twitch-goal-widgets-increase-viewer-engagement-and-help-grow-your-community-faster.jpg?v=1789518641",
@@ -709,8 +468,8 @@
       "tags": [],
       "words": 1179,
       "seo": {
-        "title": null,
-        "description": "Learn how follower goals, subscriber goals, and donation trackers help build stronger communities and grow your stream faster."
+        "title": "Why Every Twitch Streamer Needs a Goal Widget",
+        "description": "Follower goals, sub goals and donation trackers give chat something to chase. Here is what they change, and how to set one up in OBS."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/why-every-twitch-streamer-should-have-a-goal-widget-in-2026.jpg?v=1789518642",
@@ -722,31 +481,13 @@
       "productLinks": []
     },
     {
-      "handle": "is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026",
-      "title": "Is StreamElements Shutting Down? Best StreamElements Alternatives for Twitch Streamers in 2026",
-      "tags": [],
-      "words": 1014,
-      "seo": {
-        "title": null,
-        "description": "Explore the best StreamElements alternatives for Twitch streamers in 2026. Compare Streamlabs, Streamer.bot, BotRix, Sound Alerts, and custom widgets to build a more flexible and professional stream."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026.jpg?v=1789518642",
-        "width": 1600,
-        "height": 840,
-        "altText": "Alternatives: Your overlays should not depend on one host - Stream Widget Shop"
-      },
-      "publishedAt": "2026-06-04T22:34:00Z",
-      "productLinks": []
-    },
-    {
       "handle": "moon-glow-content-sprint-why-celestial-stream-overlays-are-becoming-the-future-of-twitch-branding",
       "title": "Moon Glow Content Sprint: Why Celestial Stream Overlays Are Becoming the Future of Twitch Branding",
       "tags": [],
       "words": 1107,
       "seo": {
-        "title": null,
-        "description": "Moon Glow stream overlays help creators build immersive branding, celestial aesthetics, and engaging communities with elegant Twitch widgets."
+        "title": "Why Celestial Stream Overlays Are Taking Over Twitch",
+        "description": "Moon glow is a brand, not a colour. How celestial overlays build a recognisable channel identity, and the widgets that carry it."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/moon-glow-content-sprint-why-celestial-stream-overlays-are-becoming-the-future-of-twitch-branding.jpg?v=1789518643",
@@ -763,8 +504,8 @@
       "tags": [],
       "words": 1164,
       "seo": {
-        "title": null,
-        "description": "Learn how Twitch streamers can grow during FIFA World Cup 2026 with watch parties, prediction content, community events, and World Cup-themed stream branding."
+        "title": "Grow Your Stream During the FIFA World Cup 2026",
+        "description": "Watch party ideas, prediction content and community events that grow a Twitch channel during the World Cup, plus what you can legally stream."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-streamers-can-grow-during-the-fifa-world-cup-2026-content-ideas-watch-parties-twitch-growth-opportunities.jpg?v=1789518644",
@@ -781,8 +522,8 @@
       "tags": [],
       "words": 1154,
       "seo": {
-        "title": null,
-        "description": "Where to watch FIFA World Cup 2026, what streamers can legally stream, and how creators can grow their audience with World Cup content."
+        "title": "Where to Watch the FIFA World Cup 2026 as a Streamer",
+        "description": "Where to watch the World Cup, what streamers can legally show on Twitch and Kick, and how to build content around every match."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it.jpg?v=1789518645",
@@ -799,8 +540,8 @@
       "tags": [],
       "words": 912,
       "seo": {
-        "title": null,
-        "description": "Bring Twitch, YouTube, and Kick chat together with one beautiful multistream chat widget. Learn how to create a unified stream experience with animated alerts, OBS Studio support, and a dreamy pastel aesthetic."
+        "title": "Best Multistream Chat Widget for Twitch, YouTube, Kick",
+        "description": "One chat box for Twitch, YouTube and Kick. How multistream chat widgets work, what they need to connect, and how to set one up in OBS."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide.jpg?v=1789518646",
@@ -817,8 +558,8 @@
       "tags": [],
       "words": 863,
       "seo": {
-        "title": null,
-        "description": "Upgrade your Twitch, Kick, or VTuber channel with custom OBS widgets. Discover 5 unique stream widgets that boost engagement and branding. Custom designs from $65."
+        "title": "5 Custom OBS Widgets Every Streamer Needs in 2026",
+        "description": "Five OBS widgets that change how a stream feels: chat, goals, alerts, now playing and scene frames. What each one is actually for."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/5-custom-obs-widgets-every-streamer-needs-to-stand-out-in-2026.jpg?v=1789518647",
@@ -834,104 +575,10 @@
     {
       "sev": "HIGH",
       "kind": "cannibalisation",
-      "detail": "100% title overlap",
-      "handles": [
-        "best-vtuber-overlays-2026-kawaii-celestial-guide",
-        "best-vtuber-overlays-2026-kawaii-celestial-guide-1"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "cannibalisation",
-      "detail": "55% title overlap",
-      "handles": [
-        "star-wars-stream-setup-for-may-4th-guide",
-        "star-wars-stream-setup-may-4th-widgets"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "cannibalisation",
-      "detail": "75% title overlap",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups",
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "cannibalisation",
-      "detail": "75% title overlap",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups",
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "cannibalisation",
       "detail": "50% title overlap",
       "handles": [
         "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups",
         "best-twitch-and-kick-chat-widgets-and-stream-overlays-for-obs-in-2026"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "cannibalisation",
-      "detail": "100% title overlap",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups",
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "cannibalisation",
-      "detail": "50% title overlap",
-      "handles": [
-        "is-streamelements-shutting-down-what-streamers-need-to-know-in-2026",
-        "is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "ip-risk",
-      "detail": "names \"Star Wars\"",
-      "handles": [
-        "star-wars-stream-setup-for-may-4th-guide"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "ip-risk",
-      "detail": "names \"Star Wars\"",
-      "handles": [
-        "star-wars-stream-setup-may-4th-widgets"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "ip-risk",
-      "detail": "names \"Star Wars\"",
-      "handles": [
-        "may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "ip-risk",
-      "detail": "names \"Star Wars\"",
-      "handles": [
-        "upgrade-your-stream-the-sci-fi-neon-chat-widget-built-for-kick-twitch-obs"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "ip-risk",
-      "detail": "names \"Mandalorian\"",
-      "handles": [
-        "the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic"
       ]
     },
     {
@@ -951,51 +598,11 @@
       ]
     },
     {
-      "sev": "HIGH",
-      "kind": "thin-content",
-      "detail": "376 words",
-      "handles": [
-        "best-vtuber-overlays-2026-kawaii-celestial-guide-1"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "thin-content",
-      "detail": "150 words",
-      "handles": [
-        "webm-vs-gif-for-twitch-the-secret-to-lag-free-stream-widgets"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "thin-content",
-      "detail": "376 words",
-      "handles": [
-        "may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "thin-content",
-      "detail": "365 words",
-      "handles": [
-        "upgrade-your-stream-the-sci-fi-neon-chat-widget-built-for-kick-twitch-obs"
-      ]
-    },
-    {
       "sev": "MED",
       "kind": "no-h2-headings",
       "detail": "",
       "handles": [
         "why-every-twitch-streamer-should-have-a-goal-widget-in-2026"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-h2-headings",
-      "detail": "",
-      "handles": [
-        "is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026"
       ]
     },
     {
@@ -1011,23 +618,7 @@
       "kind": "no-inbody-product-links",
       "detail": "cross-sell row still renders",
       "handles": [
-        "best-vtuber-overlays-2026-kawaii-celestial-guide-1"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
         "what-is-webm-and-why-it-matters-for-streamers"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "webm-vs-gif-for-twitch-the-secret-to-lag-free-stream-widgets"
       ]
     },
     {
@@ -1075,39 +666,7 @@
       "kind": "no-inbody-product-links",
       "detail": "cross-sell row still renders",
       "handles": [
-        "star-wars-stream-setup-for-may-4th-guide"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "star-wars-stream-setup-may-4th-widgets"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
         "hire-a-custom-stream-widget-developer-for-kick-twitch"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "streamelements-shutdown-alternatives"
       ]
     },
     {
@@ -1123,23 +682,7 @@
       "kind": "no-inbody-product-links",
       "detail": "cross-sell row still renders",
       "handles": [
-        "the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
         "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "streamelements-is-closing-best-alternatives-for-stream-overlays-chat-widgets-alerts-2026-guide"
       ]
     },
     {
@@ -1164,22 +707,6 @@
       "detail": "cross-sell row still renders",
       "handles": [
         "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1"
       ]
     },
     {
@@ -1243,14 +770,6 @@
       "kind": "no-inbody-product-links",
       "detail": "cross-sell row still renders",
       "handles": [
-        "is-streamelements-shutting-down-what-streamers-need-to-know-in-2026"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
         "best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more"
       ]
     },
@@ -1268,14 +787,6 @@
       "detail": "cross-sell row still renders",
       "handles": [
         "why-every-twitch-streamer-should-have-a-goal-widget-in-2026"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026"
       ]
     },
     {
@@ -1316,30 +827,6 @@
       "detail": "cross-sell row still renders",
       "handles": [
         "5-custom-obs-widgets-every-streamer-needs-to-stand-out-in-2026"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-meta-description",
-      "detail": "",
-      "handles": [
-        "best-vtuber-overlays-2026-kawaii-celestial-guide-1"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-meta-description",
-      "detail": "",
-      "handles": [
-        "may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-meta-description",
-      "detail": "",
-      "handles": [
-        "upgrade-your-stream-the-sci-fi-neon-chat-widget-built-for-kick-twitch-obs"
       ]
     },
     {
@@ -1376,486 +863,6 @@
     },
     {
       "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "219 chars",
-      "handles": [
-        "the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "271 chars",
-      "handles": [
-        "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "220 chars",
-      "handles": [
-        "how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "210 chars",
-      "handles": [
-        "how-to-create-a-dreamy-celestial-stream-setup-for-twitch-and-kick"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "273 chars",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "193 chars",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "181 chars",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "210 chars",
-      "handles": [
-        "best-vtuber-widgets-for-neon-and-cyberpunk-streamers"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "237 chars",
-      "handles": [
-        "best-twitch-and-kick-chat-widgets-and-stream-overlays-for-obs-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "245 chars",
-      "handles": [
-        "best-desktop-widgets-for-streamers-how-to-add-widgets-to-obs-iphone-and-modern-stream-setups"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "202 chars",
-      "handles": [
-        "how-to-make-custom-twitch-widgets-in-2026-or-let-professionals-build-them-for-you"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "225 chars",
-      "handles": [
-        "why-cozy-and-celestial-stream-setups-are-trending-in-2026-and-why-streamers-are-moving-beyond-rgb"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "219 chars",
-      "handles": [
-        "is-streamelements-shutting-down-what-streamers-need-to-know-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "195 chars",
-      "handles": [
-        "best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "256 chars",
-      "handles": [
-        "why-star-bottle-goal-widgets-are-becoming-a-favorite-among-twitch-streamers-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "227 chars",
-      "handles": [
-        "how-twitch-goal-widgets-increase-viewer-engagement-and-help-grow-your-community-faster"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "199 chars",
-      "handles": [
-        "is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "meta-description-too-long",
-      "detail": "210 chars",
-      "handles": [
-        "best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-vtuber-overlays-2026-kawaii-celestial-guide"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "how-to-set-up-streamelements-widgets-in-60-seconds"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-vtuber-overlays-2026-kawaii-celestial-guide-1"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "what-is-webm-and-why-it-matters-for-streamers"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "webm-vs-gif-for-twitch-the-secret-to-lag-free-stream-widgets"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-stream-overlays-for-spring-2026-anime-season"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "the-evolution-of-stream-aesthetics-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "the-cozy-aesthetic-spring-collection"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-sci-fi-stream-overlays-to-upgrade-your-setup-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "star-wars-stream-setup-for-may-4th-guide"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "star-wars-stream-setup-may-4th-widgets"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "upgrade-your-stream-the-sci-fi-neon-chat-widget-built-for-kick-twitch-obs"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "hire-a-custom-stream-widget-developer-for-kick-twitch"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "streamelements-shutdown-alternatives"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "celestial-butterfly-goal-widget-for-twitch-kick-obs"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "streamelements-is-closing-best-alternatives-for-stream-overlays-chat-widgets-alerts-2026-guide"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "how-to-create-a-dreamy-celestial-stream-setup-for-twitch-and-kick"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-vtuber-widgets-for-neon-and-cyberpunk-streamers"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-twitch-and-kick-chat-widgets-and-stream-overlays-for-obs-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-desktop-widgets-for-streamers-how-to-add-widgets-to-obs-iphone-and-modern-stream-setups"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "how-to-make-your-twitch-stream-look-more-professional-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "how-to-make-money-on-twitch-as-a-beginner-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "how-to-make-custom-twitch-widgets-in-2026-or-let-professionals-build-them-for-you"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "why-cozy-and-celestial-stream-setups-are-trending-in-2026-and-why-streamers-are-moving-beyond-rgb"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "is-streamelements-shutting-down-what-streamers-need-to-know-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "why-star-bottle-goal-widgets-are-becoming-a-favorite-among-twitch-streamers-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "how-twitch-goal-widgets-increase-viewer-engagement-and-help-grow-your-community-faster"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "why-every-twitch-streamer-should-have-a-goal-widget-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "moon-glow-content-sprint-why-celestial-stream-overlays-are-becoming-the-future-of-twitch-branding"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "how-streamers-can-grow-during-the-fifa-world-cup-2026-content-ideas-watch-parties-twitch-growth-opportunities"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-seo-title",
-      "detail": "",
-      "handles": [
-        "5-custom-obs-widgets-every-streamer-needs-to-stand-out-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
       "kind": "no-tags",
       "detail": "",
       "handles": [
@@ -1868,14 +875,6 @@
       "detail": "",
       "handles": [
         "how-to-set-up-streamelements-widgets-in-60-seconds"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "best-vtuber-overlays-2026-kawaii-celestial-guide-1"
       ]
     },
     {
@@ -1915,22 +914,6 @@
       "kind": "no-tags",
       "detail": "",
       "handles": [
-        "star-wars-stream-setup-for-may-4th-guide"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "star-wars-stream-setup-may-4th-widgets"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
         "hire-a-custom-stream-widget-developer-for-kick-twitch"
       ]
     },
@@ -1939,31 +922,7 @@
       "kind": "no-tags",
       "detail": "",
       "handles": [
-        "streamelements-shutdown-alternatives"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
         "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "streamelements-is-closing-best-alternatives-for-stream-overlays-chat-widgets-alerts-2026-guide"
       ]
     },
     {
@@ -1988,22 +947,6 @@
       "detail": "",
       "handles": [
         "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1"
       ]
     },
     {
@@ -2059,14 +1002,6 @@
       "kind": "no-tags",
       "detail": "",
       "handles": [
-        "is-streamelements-shutting-down-what-streamers-need-to-know-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
         "best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more"
       ]
     },
@@ -2092,14 +1027,6 @@
       "detail": "",
       "handles": [
         "why-every-twitch-streamer-should-have-a-goal-widget-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026"
       ]
     },
     {
@@ -2145,65 +1072,9 @@
     {
       "sev": "LOW",
       "kind": "title-too-long",
-      "detail": "61 chars",
-      "handles": [
-        "webm-vs-gif-for-twitch-the-secret-to-lag-free-stream-widgets"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
-      "detail": "81 chars",
-      "handles": [
-        "star-wars-stream-setup-may-4th-widgets"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
-      "detail": "76 chars",
-      "handles": [
-        "may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
-      "detail": "77 chars",
-      "handles": [
-        "upgrade-your-stream-the-sci-fi-neon-chat-widget-built-for-kick-twitch-obs"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
-      "detail": "81 chars",
-      "handles": [
-        "streamelements-shutdown-alternatives"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
-      "detail": "102 chars",
-      "handles": [
-        "the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
       "detail": "95 chars",
       "handles": [
         "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
-      "detail": "100 chars",
-      "handles": [
-        "streamelements-is-closing-best-alternatives-for-stream-overlays-chat-widgets-alerts-2026-guide"
       ]
     },
     {
@@ -2273,14 +1144,6 @@
     {
       "sev": "LOW",
       "kind": "title-too-long",
-      "detail": "68 chars",
-      "handles": [
-        "is-streamelements-shutting-down-what-streamers-need-to-know-in-2026"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
       "detail": "81 chars",
       "handles": [
         "best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more"
@@ -2300,14 +1163,6 @@
       "detail": "88 chars",
       "handles": [
         "how-twitch-goal-widgets-increase-viewer-engagement-and-help-grow-your-community-faster"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
-      "detail": "94 chars",
-      "handles": [
-        "is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026"
       ]
     },
     {
