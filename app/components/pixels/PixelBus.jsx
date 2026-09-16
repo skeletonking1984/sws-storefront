@@ -117,7 +117,7 @@ export function PixelBus({config}) {
       detectionTimer = setTimeout(() => {
         ga4Loaded = ga4Pixel.didLoad(config.ga4);
         if (!ga4Loaded) {
-          for (const buffered of pendingRelay) relayEvent(buffered);
+          for (const buffered of pendingRelay) relayEvent(buffered, ['ga4']);
         }
         pendingRelay = [];
       }, RELAY_DETECTION_DELAY_MS);
@@ -149,18 +149,31 @@ export function PixelBus({config}) {
         for (const pixel of configuredPixels) {
           pixel.send(event, config[pixel.id]);
         }
-        // Relay only when GA4's own pixel did not load, so nothing ever
-        // double counts, and never for purchase, though normalizeEvent
-        // never produces one (see app/lib/analytics/events.js) -- this is
-        // a belt-and-suspenders assertion, not a real branch.
-        if (ga4Loaded === true || event.name === 'purchase') return;
+        // Never relay a purchase. normalizeEvent cannot produce one (see
+        // app/lib/analytics/events.js) and api.e.jsx rejects it outright,
+        // because a purchase accepted on a route any page's JS can reach
+        // would let anyone forge revenue. Belt and suspenders, not a real
+        // branch.
+        if (event.name === 'purchase') return;
+
+        // X: ALWAYS relay, immediately, for every visitor. X's browser
+        // pixel no longer sends these events at all (see
+        // app/lib/analytics/pixels/x.js), so there is no second copy to
+        // double count against and nothing to wait for. Waiting on GA4's
+        // detection window would delay every X event for a decision that
+        // has nothing to do with X.
+        relayEvent(event, ['x']);
+
+        // GA4: unchanged. Relay only when gtag.js did not load, so a normal
+        // visitor's event is never counted twice.
+        if (ga4Loaded === true) return;
         if (ga4Loaded === null) {
           if (pendingRelay.length < MAX_PENDING_RELAY_EVENTS) {
             pendingRelay.push(event);
           }
           return;
         }
-        relayEvent(event);
+        relayEvent(event, ['ga4']);
       });
     }
 
@@ -185,11 +198,17 @@ export function PixelBus({config}) {
  * route itself never responds with anything the browser needs to act on.
  *
  * @param {object} event Normalized event.
+ * @param {string[]} destinations Destination ids allowed to receive this
+ *   event. An explicit allow-list, never "everything configured": each
+ *   destination now has its own reason to receive a relayed event, and X's
+ *   reason (its browser pixel sends nothing) is the opposite of GA4's (its
+ *   browser pixel was blocked).
  */
-function relayEvent(event) {
+function relayEvent(event, destinations) {
   if (typeof navigator === 'undefined') return;
+  if (!Array.isArray(destinations) || destinations.length === 0) return;
 
-  const body = JSON.stringify({name: event.name, params: event});
+  const body = JSON.stringify({name: event.name, params: event, destinations});
 
   if (typeof navigator.sendBeacon === 'function') {
     const blob = new Blob([body], {type: 'application/json'});

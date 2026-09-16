@@ -112,80 +112,34 @@ export function loadScript(config, nonce) {
  * }} config
  */
 export function send(event, config) {
-  if (!isConfigured(config)) return;
-  if (typeof window.twq !== 'function') return;
-
-  // Internal/QA traffic (event.trafficType, see
-  // app/lib/analytics/internalTraffic.js) is deliberately not added to
-  // this payload -- X has no equivalent traffic-exclusion filter, and this
-  // adapter is not configured yet anyway (see file header).
-
-  if (event.name === 'page_view') {
-    if (!config.pageViewEventId) return;
-    window.twq('event', config.pageViewEventId, {});
-    return;
-  }
-
-  if (event.name === 'view_item') {
-    if (!config.viewContentEventId) return;
-    const item = event.items?.[0];
-    if (!item) return;
-    window.twq('event', config.viewContentEventId, {
-      value: event.value,
-      currency: event.currency || 'USD',
-      contents: [
-        {
-          content_id: item.id,
-          content_name: item.name,
-          content_type: 'product',
-          num_items: item.quantity || 1,
-        },
-      ],
-    });
-    return;
-  }
-
-  // Checkout is Shopify hosted, so this fires on the click that leaves for
-  // checkout, not on the checkout page itself. CartSummary.jsx publishes
-  // custom_begin_checkout and holds the navigation until the event is
-  // confirmed sent, so this is not a fire-and-hope on an unloading page.
-  //
-  // Cart-level, so it sums the whole cart rather than reading items[0] the
-  // way view_item and add_to_cart do. Sending only the first line would
-  // under-report the value of every multi-item checkout, which is exactly
-  // the step where value matters most.
-  if (event.name === 'begin_checkout') {
-    if (!config.beginCheckoutEventId) return;
-    const items = Array.isArray(event.items) ? event.items : [];
-    window.twq('event', config.beginCheckoutEventId, {
-      value: event.value,
-      currency: event.currency || 'USD',
-      num_items: items.reduce((sum, i) => sum + (Number(i.quantity) || 1), 0),
-      contents: items.map((i) => ({
-        content_id: i.id,
-        content_name: i.name,
-        content_type: 'product',
-        num_items: i.quantity || 1,
-      })),
-    });
-    return;
-  }
-
-  if (event.name === 'add_to_cart') {
-    if (!config.addToCartEventId) return;
-    const item = event.items?.[0];
-    if (!item) return;
-    window.twq('event', config.addToCartEventId, {
-      value: event.value,
-      currency: event.currency || 'USD',
-      contents: [
-        {
-          content_id: item.id,
-          content_name: item.name,
-          content_type: 'product',
-          num_items: item.quantity || 1,
-        },
-      ],
-    });
-  }
+  /*
+   * DELIBERATELY A NO-OP. X's events are server side only now.
+   *
+   * This used to fire twq('event', ...) for page_view, view_item,
+   * add_to_cart and begin_checkout. It no longer fires anything, and that
+   * is the point rather than a regression.
+   *
+   * X Events Manager reported CAPI as "Partially set up: working, but it
+   * only covers a tiny fraction of your conversions", because CAPI carried
+   * purchase alone while the browser carried the whole funnel. The obvious
+   * fix, send both ways, needs a shared conversion_id on both sides or X
+   * counts every event twice, and this adapter never sent one. Sending
+   * everything twice with nothing to reconcile on is worse than the banner.
+   *
+   * So the events moved server side entirely: PixelBus relays every event
+   * to /api/e for EVERY visitor, not only ad-blocked ones, and
+   * app/lib/conversions/x.server.js sends it through the Conversion API.
+   * Exactly one system sends each event, so there is nothing to dedupe.
+   *
+   * loadScript() above is UNTOUCHED on purpose, and that distinction is the
+   * whole design: the BASE TAG stays, only OUR EVENTS go. twq('config',
+   * pixelId) still installs uwt.js, which sets X's own cookie and keeps X's
+   * auto-created "Site visits" and "Landing page views" firing. Those are
+   * what website audiences are built from. Pulling the tag would have
+   * traded a cosmetic banner for a real loss of retargeting, and X's docs
+   * do not say CAPI alone can build an audience.
+   *
+   * The export stays: PixelBus calls send() on every configured pixel and a
+   * missing one throws.
+   */
 }

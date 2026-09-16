@@ -82,6 +82,29 @@ export async function action({request, context}) {
   const params =
     body?.params && typeof body.params === 'object' ? body.params : {};
 
+  /*
+   * WHICH destinations may receive this event. An explicit allow-list from
+   * the caller, not "every configured destination".
+   *
+   * This route used to fan out to everything, because there was one reason
+   * to relay and it applied to all of them: the browser pixel was blocked.
+   * That stopped being true when X's events moved server side. X's browser
+   * adapter now sends nothing at all (see app/lib/analytics/pixels/x.js), so
+   * X wants a relayed event from EVERY visitor, while GA4 still wants one
+   * only from a visitor whose gtag.js was blocked. One flag cannot express
+   * two opposite conditions, and getting it wrong double counts GA4 on every
+   * page view of every normal visit.
+   *
+   * Missing field falls back to ['ga4'], which is EXACTLY the old behaviour:
+   * a browser still running a cached pre-deploy bundle only ever posted here
+   * when GA4 was blocked, so its events keep working and cannot reach X
+   * twice.
+   */
+  const requested = Array.isArray(body?.destinations)
+    ? body.destinations.filter((d) => typeof d === 'string')
+    : ['ga4'];
+  const allowed = new Set(requested);
+
   // Internal/QA traffic tag (see app/lib/analytics/internalTraffic.js),
   // validated like any other client input: only the exact literal string
   // `internal` is accepted, anything else is dropped rather than echoed
@@ -121,6 +144,7 @@ export async function action({request, context}) {
   const results = await Promise.allSettled(
     destinations
       .filter((destination) => typeof destination.sendEvent === 'function')
+      .filter((destination) => allowed.has(destination.id))
       .map(async (destination) => {
         if (!destination.isConfigured(context.env)) {
           return {id: destination.id, ok: false, reason: 'not_configured'};

@@ -154,9 +154,72 @@ console.log('\nunconfigured X sends nothing');
   check('no pixel id means no send', sent === null && r.reason === 'not_configured');
 }
 
+
+/*
+ * WIRING GUARD. Source-level, and deliberately so.
+ *
+ * Everything above proves x.server.js shapes a correct CAPI payload. None of
+ * it can prove the thing that actually costs money here, which is how many
+ * places an event is sent FROM. The dangerous regression is someone adding
+ * twq('event', ...) back into the browser adapter: X would then receive the
+ * same event from the pixel and from CAPI with no shared conversion_id, and
+ * double count every page view, add to cart and checkout. Nothing fails,
+ * nothing errors, the numbers are just wrong and the bidder optimises on
+ * them.
+ *
+ * A behavioural test cannot see this: /api/e answers 204 either way, and X's
+ * own totals are the only place the duplication shows up, days later. So
+ * these read the source and assert the invariant directly. Brittle on
+ * purpose: if someone edits these files, this SHOULD make them think.
+ */
+import {readFileSync} from 'node:fs';
+const R = new URL('..', import.meta.url).pathname;
+const src = (f) => readFileSync(`${R}/${f}`, 'utf8');
+/*
+ * Count CODE, not prose. The first run of this guard failed on the comment
+ * that explains why the events were removed, which contains the literal
+ * text twq('event', ...). A guard that cannot tell an instruction from a
+ * sentence about an instruction will be silenced by the next person who
+ * hits it, and a silenced guard protects nothing.
+ */
+const code = (f) =>
+  src(f)
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/^\s*\/\/.*$/gm, ' ');
+
+console.log('\nwiring: exactly one system sends each event');
+{
+  const x = code('app/lib/analytics/pixels/x.js');
+  const events = (x.match(/twq\('event'/g) || []).length;
+  const config = (x.match(/twq\('config'/g) || []).length;
+  check('X browser adapter fires NO events', events === 0, `${events} twq('event') calls`);
+  check('X base tag is still installed', config > 0, `${config} twq('config') calls`);
+  check('uwt.js loader retained', x.includes('static.ads-twitter.com/uwt.js'));
+}
+{
+  const bus = code('app/components/pixels/PixelBus.jsx');
+  check("X is relayed unconditionally", bus.includes("relayEvent(event, ['x'])"));
+  check("GA4 is relayed as ['ga4']", bus.includes("relayEvent(event, ['ga4'])"));
+  // The GA4 gate must still stand between the subscribe body and GA4's relay,
+  // or a normal visitor's event reaches GA4 from gtag.js AND from the relay.
+  const xAt = bus.indexOf("relayEvent(event, ['x'])");
+  const gateAt = bus.indexOf('if (ga4Loaded === true) return;');
+  const ga4At = bus.indexOf("relayEvent(event, ['ga4'])");
+  check('GA4 relay still sits behind the loaded gate', gateAt > xAt && ga4At > gateAt,
+    `x@${xAt} gate@${gateAt} ga4@${ga4At}`);
+  check('purchase is never relayed', bus.includes("if (event.name === 'purchase') return;"));
+}
+{
+  const route = code('app/routes/api.e.jsx');
+  check('relay filters by the destinations allow-list', route.includes('allowed.has(destination.id)'));
+  check('missing allow-list falls back to ga4 only', route.includes(": ['ga4'];"));
+  check('purchase still rejected at the route', !route.includes("'purchase',"));
+}
+
+const wiringFailed = fail.length;
 console.log(`\n${pass.length} passed, ${fail.length} failed`);
-if (fail.length) {
+if (wiringFailed) {
   for (const f of fail) console.error('  FAIL ' + f);
   process.exit(1);
 }
-console.log('PASS: X receives the funnel events, correctly shaped, or nothing at all.');
+console.log('PASS: X receives every funnel event, correctly shaped, from exactly one system.');
