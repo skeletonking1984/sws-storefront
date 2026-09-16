@@ -1,0 +1,608 @@
+{
+ "generatedAt": "2026-09-16T00:17:08.661Z",
+ "note": "previousImage is the ROLLBACK record. Every article image before this pass. Re-running articleUpdate with previousImage.url restores it.",
+ "rows": [
+  {
+   "handle": "best-vtuber-overlays-2026-kawaii-celestial-guide",
+   "articleId": "gid://shopify/Article/564796817598",
+   "title": "Best VTuber Overlays 2026: Kawaii & Celestial Guide",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-vtuber-overlays-2026-lunar-cat-streamwidgetshop.png?v=1773092929",
+    "altText": null,
+    "width": 475,
+    "height": 472
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-vtuber-overlays-2026-kawaii-celestial-guide.jpg",
+   "bytes": 179458,
+   "altText": "VTuber overlays: Your overlay is the first thing they judge - Stream Widget Shop"
+  },
+  {
+   "handle": "how-to-set-up-streamelements-widgets-in-60-seconds",
+   "articleId": "gid://shopify/Article/564810023102",
+   "title": "How to Set Up StreamElements Widgets in 60 Seconds",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/streamelements-widget-setup-guide.png?v=1773282465",
+    "altText": null,
+    "width": 1200,
+    "height": 600
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/how-to-set-up-streamelements-widgets-in-60-seconds.jpg",
+   "bytes": 168524,
+   "altText": "StreamElements: Installed in under a minute - Stream Widget Shop"
+  },
+  {
+   "handle": "best-vtuber-overlays-2026-kawaii-celestial-guide-1",
+   "articleId": "gid://shopify/Article/564860289214",
+   "title": "Best VTuber Overlays 2026: Kawaii & Celestial Guide",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/streamelements-widget-setup-guide_1f56fd13-95d3-4d07-859a-1c147a07a2cb.png?v=1773949878",
+    "altText": null,
+    "width": 1200,
+    "height": 600
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-vtuber-overlays-2026-kawaii-celestial-guide-1.jpg",
+   "bytes": 173739,
+   "altText": "VTuber overlays: Kawaii, celestial, and actually readable - Stream Widget Shop"
+  },
+  {
+   "handle": "what-is-webm-and-why-it-matters-for-streamers",
+   "articleId": "gid://shopify/Article/564901773502",
+   "title": "What Is WebM and Why It Matters for Streamers",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/streamelements-widget-setup-guide_6f36c448-34a6-4acb-834e-d93078a1eae0.png?v=1774463520",
+    "altText": null,
+    "width": 1200,
+    "height": 600
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/what-is-webm-and-why-it-matters-for-streamers.jpg",
+   "bytes": 170445,
+   "altText": "File formats: WebM is why your overlay stays smooth - Stream Widget Shop"
+  },
+  {
+   "handle": "webm-vs-gif-for-twitch-the-secret-to-lag-free-stream-widgets",
+   "articleId": "gid://shopify/Article/564901839038",
+   "title": "WebM vs GIF for Twitch: The Secret to Lag-Free Stream Widgets",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/streamelements-widget-setup-guide_f3080110-6b43-4cee-9ab3-e39bcb6085ec.png?v=1774464938",
+    "altText": null,
+    "width": 1200,
+    "height": 600
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/webm-vs-gif-for-twitch-the-secret-to-lag-free-stream-widgets.jpg",
+   "bytes": 163541,
+   "altText": "WebM vs GIF: One of these is eating your frames - Stream Widget Shop"
+  },
+  {
+   "handle": "best-stream-overlays-for-spring-2026-anime-season",
+   "articleId": "gid://shopify/Article/565001978046",
+   "title": "Best Stream Overlays for Spring 2026 Anime Season",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/anime-stream-overlay-2026-spring.png?v=1775521096",
+    "altText": null,
+    "width": 848,
+    "height": 1264
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-stream-overlays-for-spring-2026-anime-season.jpg",
+   "bytes": 164134,
+   "altText": "Spring season: Soft season, soft overlays - Stream Widget Shop"
+  },
+  {
+   "handle": "the-evolution-of-stream-aesthetics-in-2026",
+   "articleId": "gid://shopify/Article/565029077182",
+   "title": "The Evolution of Stream Aesthetics in 2026",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/anime-stream-overlay-2026-minimalist-setup.jpg?v=1775610306",
+    "altText": null,
+    "width": 6000,
+    "height": 3958
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/the-evolution-of-stream-aesthetics-in-2026.jpg",
+   "bytes": 161790,
+   "altText": "Stream aesthetics: RGB is out. Atmosphere is in - Stream Widget Shop"
+  },
+  {
+   "handle": "nba-playoff-stream-widgets-kick",
+   "articleId": "gid://shopify/Article/565058142398",
+   "title": "NBA Playoff Stream Widgets: Kick Watch Party Setup",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/nba-playoff-stream-widgets.jpg?v=1775770057",
+    "altText": null,
+    "width": 5472,
+    "height": 3648
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/nba-playoff-stream-widgets-kick.jpg",
+   "bytes": 168390,
+   "altText": "Watch parties: Your watch party needs a scoreboard - Stream Widget Shop"
+  },
+  {
+   "handle": "the-cozy-aesthetic-spring-collection",
+   "articleId": "gid://shopify/Article/565058175166",
+   "title": "The Cozy & Aesthetic Spring Collection",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/aesthetic-vtuber-assets-cozy-spring-setup.webp?v=1775770698",
+    "altText": null,
+    "width": 1588,
+    "height": 1588
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/the-cozy-aesthetic-spring-collection.jpg",
+   "bytes": 178847,
+   "altText": "Cozy collection: Cozy is a whole aesthetic, not a filter - Stream Widget Shop"
+  },
+  {
+   "handle": "best-sci-fi-stream-overlays-to-upgrade-your-setup-in-2026",
+   "articleId": "gid://shopify/Article/565184823486",
+   "title": "Best Sci-Fi Stream Overlays to Upgrade Your Setup in 2026",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/sci-fi-stream-overlay-2026-setup_jpg_bdfb13c3-ab46-4759-8b01-45a7de647689.jpg?v=1776794418",
+    "altText": null,
+    "width": 1581,
+    "height": 1600
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-sci-fi-stream-overlays-to-upgrade-your-setup-in-2026.jpg",
+   "bytes": 185719,
+   "altText": "Sci-fi overlays: Make your stream look like the future - Stream Widget Shop"
+  },
+  {
+   "handle": "star-wars-stream-setup-for-may-4th-guide",
+   "articleId": "gid://shopify/Article/565416067262",
+   "title": "Star Wars Stream Setup for May 4th Guide",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/sci-fi-stream-overlay-2026-setup_jpg.jpg?v=1777301945",
+    "altText": null,
+    "width": 1581,
+    "height": 1600
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/star-wars-stream-setup-for-may-4th-guide.jpg",
+   "bytes": 189202,
+   "altText": "Sci-fi setup: Build the whole sci-fi stream, not just a theme - Stream Widget Shop"
+  },
+  {
+   "handle": "star-wars-stream-setup-may-4th-widgets",
+   "articleId": "gid://shopify/Article/565512732862",
+   "title": "May 4th: The Ultimate Star Wars Stream Setup Guide (With Widgets That Feel Alive)",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/Instagram_Post_-_Stream_Widget_Shop_Professional_Showcase_1.png?v=1777489811",
+    "altText": null,
+    "width": 1080,
+    "height": 1350
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/star-wars-stream-setup-may-4th-widgets.jpg",
+   "bytes": 155826,
+   "altText": "Sci-fi setup: Widgets that feel alive - Stream Widget Shop"
+  },
+  {
+   "handle": "may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget",
+   "articleId": "gid://shopify/Article/565693055166",
+   "title": "May the 4th Be With Your Stream: Introducing the Ultimate Sci-Fi Chat Widget",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/sci-fi-stream-overlay-2026-setup_jpg_a0655b51-0026-43d9-8862-f3302a44e8ce.jpg?v=1777839406",
+    "altText": null,
+    "width": 1581,
+    "height": 1600
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget.jpg",
+   "bytes": 165108,
+   "altText": "Sci-fi chat: A chat box from a better century - Stream Widget Shop"
+  },
+  {
+   "handle": "upgrade-your-stream-the-sci-fi-neon-chat-widget-built-for-kick-twitch-obs",
+   "articleId": "gid://shopify/Article/565695381694",
+   "title": "Upgrade Your Stream: The Sci-Fi Neon Chat Widget Built for Kick, Twitch & OBS",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/Instagram_Post_-_Stream_Widget_Shop_Professional_Showcase.png?v=1777840062",
+    "altText": null,
+    "width": 1080,
+    "height": 1350
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/upgrade-your-stream-the-sci-fi-neon-chat-widget-built-for-kick-twitch-obs.jpg",
+   "bytes": 158843,
+   "altText": "Neon chat: Built for Kick, Twitch and OBS - Stream Widget Shop"
+  },
+  {
+   "handle": "hire-a-custom-stream-widget-developer-for-kick-twitch",
+   "articleId": "gid://shopify/Article/566184247486",
+   "title": "Hire a Custom Stream Widget Developer for Kick & Twitch",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/coso.jpg?v=1778791340",
+    "altText": null,
+    "width": 1024,
+    "height": 559
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/hire-a-custom-stream-widget-developer-for-kick-twitch.jpg",
+   "bytes": 178742,
+   "altText": "Custom work: Want one nobody else has? - Stream Widget Shop"
+  },
+  {
+   "handle": "streamelements-shutdown-alternatives",
+   "articleId": "gid://shopify/Article/566235955390",
+   "title": "StreamElements Might Be Shutting Down — And That Changes Everything for Streamers",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/streamelements_shut_down.png?v=1778883910",
+    "altText": null,
+    "width": 1408,
+    "height": 768
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/streamelements-shutdown-alternatives.jpg",
+   "bytes": 178290,
+   "altText": "Platform news: If StreamElements goes, your overlays stay - Stream Widget Shop"
+  },
+  {
+   "handle": "celestial-butterfly-goal-widget-for-twitch-kick-obs",
+   "articleId": "gid://shopify/Article/566241984702",
+   "title": "Celestial Butterfly Goal Widget for Twitch, Kick & OBS",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/celestial-butterfly-goal-widget-vtuber-stream-2026_jpg.jpg?v=1778893533",
+    "altText": null,
+    "width": 474,
+    "height": 474
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/celestial-butterfly-goal-widget-for-twitch-kick-obs.jpg",
+   "bytes": 131197,
+   "altText": "Goal widget: A goal bar with wings - Stream Widget Shop"
+  },
+  {
+   "handle": "the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic",
+   "articleId": "gid://shopify/Article/566243983550",
+   "title": "The Mandalorian & Grogu: When to Watch and Why VTubers and Streamers Are Copying This Sci-Fi Aesthetic",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/il_1588xN.8027454593_6h7x_dc41f1c0-4450-4ce0-b262-503cf2ba861a.jpg?v=1778900571",
+    "altText": null,
+    "width": 1588,
+    "height": 1588
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic.jpg",
+   "bytes": 190126,
+   "altText": "Sci-fi aesthetic: Why everyone wants the space western look - Stream Widget Shop"
+  },
+  {
+   "handle": "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable",
+   "articleId": "gid://shopify/Article/566245851326",
+   "title": "Why Your Twitch Chat Widget Matters More Than You Think (And Why Most Streams Feel Forgettable)",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/Yoda_3.jpg?v=1778900814",
+    "altText": null,
+    "width": 500,
+    "height": 500
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable.jpg",
+   "bytes": 171355,
+   "altText": "Chat widgets: Most streams are forgettable. Chat is why - Stream Widget Shop"
+  },
+  {
+   "handle": "streamelements-is-closing-best-alternatives-for-stream-overlays-chat-widgets-alerts-2026-guide",
+   "articleId": "gid://shopify/Article/566272196798",
+   "title": "StreamElements Is Closing? Best Alternatives for Stream Overlays, Chat Widgets & Alerts (2026 Guide)",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/we_ve_got_you.jpg?v=1778952839",
+    "altText": null,
+    "width": 1024,
+    "height": 559
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/streamelements-is-closing-best-alternatives-for-stream-overlays-chat-widgets-alerts-2026-guide.jpg",
+   "bytes": 175190,
+   "altText": "Platform news: Overlays that outlive the platform - Stream Widget Shop"
+  },
+  {
+   "handle": "how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics",
+   "articleId": "gid://shopify/Article/566319055038",
+   "title": "How to Create a Cozy Stream Setup With Cute Frog Widgets and Cottagecore Twitch Aesthetics",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/9.png?v=1779047103",
+    "altText": null,
+    "width": 2400,
+    "height": 2399
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics.jpg",
+   "bytes": 171087,
+   "altText": "Cottagecore: Cute frogs, calm stream - Stream Widget Shop"
+  },
+  {
+   "handle": "how-to-create-a-dreamy-celestial-stream-setup-for-twitch-and-kick",
+   "articleId": "gid://shopify/Article/566352412862",
+   "title": "How to Create a Dreamy Celestial Stream Setup for Twitch and Kick",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/il_fullxfull.7899677459_a54w.png?v=1779113739",
+    "altText": null,
+    "width": 2462,
+    "height": 2274
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/how-to-create-a-dreamy-celestial-stream-setup-for-twitch-and-kick.jpg",
+   "bytes": 178897,
+   "altText": "Celestial setup: Build a stream that looks like a night sky - Stream Widget Shop"
+  },
+  {
+   "handle": "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups",
+   "articleId": "gid://shopify/Article/566463365310",
+   "title": "Best Cyberpunk Twitch Overlays and Chat Widgets for Futuristic Stream Setups",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/cyberpunk-twitch-overlay-futuristic-stream-setup-neon-ui.png?v=1779301778",
+    "altText": null,
+    "width": 1376,
+    "height": 768
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups.jpg",
+   "bytes": 167762,
+   "altText": "Cyberpunk: Neon, chrome, and a chat box to match - Stream Widget Shop"
+  },
+  {
+   "handle": "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups",
+   "articleId": "gid://shopify/Article/566558720190",
+   "title": "Best Cyberpunk Twitch Overlays for Futuristic Stream Setups",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/cyberpunk-twitch-overlay-futuristic-stream-setup-neon-ui_4dbedf8a-d1ef-4f42-9751-77bdde5241c0.png?v=1779476913",
+    "altText": null,
+    "width": 1376,
+    "height": 768
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-cyberpunk-twitch-overlays-for-futuristic-stream-setups.jpg",
+   "bytes": 163934,
+   "altText": "Cyberpunk: Futuristic without looking cluttered - Stream Widget Shop"
+  },
+  {
+   "handle": "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1",
+   "articleId": "gid://shopify/Article/566558818494",
+   "title": "Best Cyberpunk Twitch Overlays for Futuristic Stream Setups",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/cyberpunk-twitch-overlay-futuristic-stream-setup-neon-ui_5f27e291-58ed-4c50-b9a9-3fa36ff2669b.png?v=1779477320",
+    "altText": null,
+    "width": 1376,
+    "height": 768
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1.jpg",
+   "bytes": 164984,
+   "altText": "Cyberpunk: Glow that reads over gameplay - Stream Widget Shop"
+  },
+  {
+   "handle": "best-vtuber-widgets-for-neon-and-cyberpunk-streamers",
+   "articleId": "gid://shopify/Article/566558916798",
+   "title": "Best VTuber Widgets for Neon and Cyberpunk Streamers",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/cyberpunk-twitch-overlay-futuristic-stream-setup-neon-ui_d7317871-c32c-40c5-83dd-060b5ed6428c.png?v=1779477629",
+    "altText": null,
+    "width": 1376,
+    "height": 768
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-vtuber-widgets-for-neon-and-cyberpunk-streamers.jpg",
+   "bytes": 163697,
+   "altText": "VTuber widgets: Neon widgets that match your model - Stream Widget Shop"
+  },
+  {
+   "handle": "best-twitch-and-kick-chat-widgets-and-stream-overlays-for-obs-in-2026",
+   "articleId": "gid://shopify/Article/566684483774",
+   "title": "Best Twitch and Kick Chat Widgets and Stream Overlays for OBS in 2026",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/80f2ce1c-edb4-4d6c-8e0e-9a0fb9f61961.jpg?v=1779735544",
+    "altText": null,
+    "width": 1024,
+    "height": 559
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-twitch-and-kick-chat-widgets-and-stream-overlays-for-obs-in-2026.jpg",
+   "bytes": 160838,
+   "altText": "Chat and overlays: Twitch and Kick, one clean setup - Stream Widget Shop"
+  },
+  {
+   "handle": "best-desktop-widgets-for-streamers-how-to-add-widgets-to-obs-iphone-and-modern-stream-setups",
+   "articleId": "gid://shopify/Article/566684549310",
+   "title": "Best Desktop Widgets for Streamers: How to Add Widgets to OBS, iPhone, and Modern Stream Setups",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-desktop-widgets-streamers-obs-neon-ui.jpg?v=1779737011",
+    "altText": null,
+    "width": 784,
+    "height": 1168
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-desktop-widgets-for-streamers-how-to-add-widgets-to-obs-iphone-and-modern-stream-setups.jpg",
+   "bytes": 160392,
+   "altText": "OBS setup: Add a widget to OBS in two steps - Stream Widget Shop"
+  },
+  {
+   "handle": "how-to-make-your-twitch-stream-look-more-professional-in-2026",
+   "articleId": "gid://shopify/Article/566700081342",
+   "title": "How to Make Your Twitch Stream Look More Professional in 2026",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-desktop-widgets-streamers-obs-neon-ui_f0b8e074-cbcb-4c42-889c-e0eed4139fd7.jpg?v=1779832058",
+    "altText": null,
+    "width": 1024,
+    "height": 1024
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/how-to-make-your-twitch-stream-look-more-professional-in-2026.jpg",
+   "bytes": 176729,
+   "altText": "Looking pro: Professional is a look you can install - Stream Widget Shop"
+  },
+  {
+   "handle": "how-to-make-money-on-twitch-as-a-beginner-in-2026",
+   "articleId": "gid://shopify/Article/566700212414",
+   "title": "How to Make Money on Twitch as a Beginner in 2026",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/Tips_to_Earn_Money.jpg?v=1779834488",
+    "altText": null,
+    "width": 1024,
+    "height": 1024
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/how-to-make-money-on-twitch-as-a-beginner-in-2026.jpg",
+   "bytes": 162526,
+   "altText": "Monetization: Give people a reason to tip - Stream Widget Shop"
+  },
+  {
+   "handle": "how-to-make-custom-twitch-widgets-in-2026-or-let-professionals-build-them-for-you",
+   "articleId": "gid://shopify/Article/566705848510",
+   "title": "How to Make Custom Twitch Widgets in 2026 (Or Let Professionals Build Them for You)",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/custom-twitch-widgets-obs-studio-streamelements-2026.jpg?v=1779903526",
+    "altText": null,
+    "width": 1360,
+    "height": 768
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/how-to-make-custom-twitch-widgets-in-2026-or-let-professionals-build-them-for-you.jpg",
+   "bytes": 135364,
+   "altText": "Custom widgets: Build it yourself, or don't - Stream Widget Shop"
+  },
+  {
+   "handle": "why-cozy-and-celestial-stream-setups-are-trending-in-2026-and-why-streamers-are-moving-beyond-rgb",
+   "articleId": "gid://shopify/Article/566716793022",
+   "title": "Why Cozy and Celestial Stream Setups Are Trending in 2026 (And Why Streamers Are Moving Beyond RGB)",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/cozy-celestial-stream-setup-twitch-widgets-2026.jpg?v=1780083918",
+    "altText": null,
+    "width": 1024,
+    "height": 1024
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/why-cozy-and-celestial-stream-setups-are-trending-in-2026-and-why-streamers-are-moving-beyond-rgb.jpg",
+   "bytes": 149555,
+   "altText": "Cozy and celestial: Streamers are moving on from RGB - Stream Widget Shop"
+  },
+  {
+   "handle": "is-streamelements-shutting-down-what-streamers-need-to-know-in-2026",
+   "articleId": "gid://shopify/Article/566724460734",
+   "title": "Is StreamElements Shutting Down? What Streamers Need to Know in 2026",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/is-streamelements-shutting-down-streaming-platform-alternatives-2026.jpg?v=1780337168",
+    "altText": null,
+    "width": 1024,
+    "height": 1024
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/is-streamelements-shutting-down-what-streamers-need-to-know-in-2026.jpg",
+   "bytes": 155256,
+   "altText": "Platform news: What happens to your overlays if it closes - Stream Widget Shop"
+  },
+  {
+   "handle": "best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more",
+   "articleId": "gid://shopify/Article/566724493502",
+   "title": "Best StreamElements Alternatives in 2026: Streamlabs, Streamer.bot, BotRix & More",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-streamelements-alternatives-streamlabs-streamerbot-botrix-2026.jpg?v=1780339150",
+    "altText": null,
+    "width": 1024,
+    "height": 1024
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more.jpg",
+   "bytes": 176332,
+   "altText": "Alternatives: Where to go if you leave StreamElements - Stream Widget Shop"
+  },
+  {
+   "handle": "why-star-bottle-goal-widgets-are-becoming-a-favorite-among-twitch-streamers-in-2026",
+   "articleId": "gid://shopify/Article/566724690110",
+   "title": "Why Star Bottle Goal Widgets Are Becoming a Favorite Among Twitch Streamers in 2026",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/Star_Goal_3873fbc8-eee5-4d87-9b48-168ec0db1c12.jpg?v=1780341799",
+    "altText": null,
+    "width": 1024,
+    "height": 1024
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/why-star-bottle-goal-widgets-are-becoming-a-favorite-among-twitch-streamers-in-2026.jpg",
+   "bytes": 147742,
+   "altText": "Goal widgets: A goal people can watch fill up - Stream Widget Shop"
+  },
+  {
+   "handle": "how-twitch-goal-widgets-increase-viewer-engagement-and-help-grow-your-community-faster",
+   "articleId": "gid://shopify/Article/566737436862",
+   "title": "How Twitch Goal Widgets Increase Viewer Engagement (And Help Grow Your Community Faster)",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/Twitch-Goal-Bars-sakura_jpg.jpg?v=1780530688",
+    "altText": null,
+    "width": 1360,
+    "height": 768
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/how-twitch-goal-widgets-increase-viewer-engagement-and-help-grow-your-community-faster.jpg",
+   "bytes": 167964,
+   "altText": "Goal widgets: A goal bar people actually want to fill - Stream Widget Shop"
+  },
+  {
+   "handle": "why-every-twitch-streamer-should-have-a-goal-widget-in-2026",
+   "articleId": "gid://shopify/Article/566770434238",
+   "title": "Why Every Twitch Streamer Should Have a Goal Widget in 2026",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/twitch-goals-streamer-streamelements.jpg?v=1780610398",
+    "altText": null,
+    "width": 1360,
+    "height": 768
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/why-every-twitch-streamer-should-have-a-goal-widget-in-2026.jpg",
+   "bytes": 140001,
+   "altText": "Goal widgets: Give the chat something to chase - Stream Widget Shop"
+  },
+  {
+   "handle": "is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026",
+   "articleId": "gid://shopify/Article/566770794686",
+   "title": "Is StreamElements Shutting Down? Best StreamElements Alternatives for Twitch Streamers in 2026",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/streamelements-alternatives2026_67213e1e-4440-472b-a9dc-337507998449.jpg?v=1780615920",
+    "altText": null,
+    "width": 1360,
+    "height": 768
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026.jpg",
+   "bytes": 166995,
+   "altText": "Alternatives: Your overlays should not depend on one host - Stream Widget Shop"
+  },
+  {
+   "handle": "moon-glow-content-sprint-why-celestial-stream-overlays-are-becoming-the-future-of-twitch-branding",
+   "articleId": "gid://shopify/Article/566799007934",
+   "title": "Moon Glow Content Sprint: Why Celestial Stream Overlays Are Becoming the Future of Twitch Branding",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/moon-glow-celestial-twitch-chat-widget-stream-overlay-2026.jpg?v=1780935205",
+    "altText": null,
+    "width": 1024,
+    "height": 1024
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/moon-glow-content-sprint-why-celestial-stream-overlays-are-becoming-the-future-of-twitch-branding.jpg",
+   "bytes": 147947,
+   "altText": "Celestial branding: Moon glow is a brand, not a colour - Stream Widget Shop"
+  },
+  {
+   "handle": "how-streamers-can-grow-during-the-fifa-world-cup-2026-content-ideas-watch-parties-twitch-growth-opportunities",
+   "articleId": "gid://shopify/Article/566799368382",
+   "title": "How Streamers Can Grow During the FIFA World Cup 2026: Content Ideas, Watch Parties & Twitch Growth Opportunities",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-streamers-can-grow-during-fifa-world-cup-2026-goal-widget-stream-overlay.jpg?v=1780939877",
+    "altText": null,
+    "width": 1024,
+    "height": 1024
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/how-streamers-can-grow-during-the-fifa-world-cup-2026-content-ideas-watch-parties-twitch-growth-opportunities.jpg",
+   "bytes": 162371,
+   "altText": "Watch parties: The biggest watch party of the year - Stream Widget Shop"
+  },
+  {
+   "handle": "where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it",
+   "articleId": "gid://shopify/Article/566799499454",
+   "title": "Where to Watch the FIFA World Cup 2026 as a Streamer (And How to Create Content Around It)",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/where-to-watch-fifa-world-cup-2026-streamers-guide.jpg?v=1780941244",
+    "altText": null,
+    "width": 1280,
+    "height": 720
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it.jpg",
+   "bytes": 167658,
+   "altText": "Watch parties: Where to watch, and what to stream around it - Stream Widget Shop"
+  },
+  {
+   "handle": "best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide",
+   "articleId": "gid://shopify/Article/567221158078",
+   "title": "Best Multistream Chat Widget for Twitch, YouTube & Kick (2026 Guide)",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/multistream-chat-widget-twitch-youtube-kick-pastel-2026.jpg?v=1784223637",
+    "altText": null,
+    "width": 1280,
+    "height": 720
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide.jpg",
+   "bytes": 159148,
+   "altText": "Multistream: Every platform in one chat box - Stream Widget Shop"
+  },
+  {
+   "handle": "5-custom-obs-widgets-every-streamer-needs-to-stand-out-in-2026",
+   "articleId": "gid://shopify/Article/567262740670",
+   "title": "5 Custom OBS Widgets Every Streamer Needs to Stand Out in 2026",
+   "previousImage": {
+    "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/Premium_Custom_Widgets.jpg?v=1784753518",
+    "altText": null,
+    "width": 1024,
+    "height": 1024
+   },
+   "newFile": "/Users/todd/Documents/orgs/SWS/repos/sws-storefront/blog-hero/upload/5-custom-obs-widgets-every-streamer-needs-to-stand-out-in-2026.jpg",
+   "bytes": 168443,
+   "altText": "OBS widgets: Five widgets that make people stay - Stream Widget Shop"
+  }
+ ]
+}
