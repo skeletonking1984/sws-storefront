@@ -102,6 +102,16 @@ export async function action({request, context}) {
   // sendEvent below is always the live one, never a stale cart attribute.
   const clickIds = readClickIds(request, context.env);
 
+  // Taken from the request, never from the body: a client that can post its
+  // own IP can post anyone's. Oxygen sits behind Shopify's edge, so the
+  // socket address is the proxy and the real client is in the forwarded
+  // header. Left-most entry is the original client, the rest are proxies.
+  const ip =
+    (request.headers.get('X-Forwarded-For') || '').split(',')[0].trim() ||
+    request.headers.get('CF-Connecting-IP') ||
+    undefined;
+  const userAgent = request.headers.get('User-Agent') || undefined;
+
   // Fan out to every destination that implements the optional `sendEvent`
   // (see app/lib/conversions/index.server.js). A destination without it is
   // simply skipped -- adding a platform's event relay stays one file.
@@ -120,6 +130,17 @@ export async function action({request, context}) {
           name,
           params,
           clickIds,
+          // X needs these; GA4 ignores them.
+          //
+          // A purchase carries the buyer's email, so x.server.js can match on
+          // hashed_email. A page view carries no email, no name and no order:
+          // the only identifiers left are twclid (present only if they arrived
+          // from an X ad, and X's own diagnostics reported zero click ids
+          // across 191 events) plus the request's IP and user agent. Without
+          // these two, every relayed event to X would no-op on no_identifier
+          // and this whole path would be decorative.
+          ip,
+          userAgent,
         });
       }),
   );

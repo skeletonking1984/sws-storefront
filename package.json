@@ -24,7 +24,8 @@
     "audit:policy:self-test": "node scripts/audit-policy-claims.mjs --self-test",
     "bundles:sales": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/bundle-sales.mjs",
     "verify:test-orders": "node scripts/verify-test-order-filter.mjs",
-    "verify:feed": "node scripts/verify-feed.mjs"
+    "verify:feed": "node scripts/verify-feed.mjs",
+    "verify:x-events": "node scripts/verify-x-events.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

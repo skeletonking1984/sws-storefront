@@ -208,6 +208,23 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
     ],
   };
 
+  return postConversions(env, body.conversions);
+}
+
+/**
+ * The transport, shared by sendPurchase and sendEvent.
+ *
+ * Extracted when sendEvent was added, so the three auth modes, the relay's
+ * "200 carrying X's 401" trap and the timeout live in exactly one place. Two
+ * copies of this would drift, and the half that drifted would fail silently:
+ * every caller here already swallows errors by design so one destination
+ * cannot break a page or a webhook.
+ *
+ * @param {Record<string, string | undefined>} env
+ * @param {Array<object>} conversions
+ * @returns {Promise<{ok: boolean, reason?: string}>}
+ */
+async function postConversions(env, conversions) {
   const mode = authMode(env);
 
   // Relay: the connector signs, so this never builds an ads-api.x.com URL
@@ -222,7 +239,7 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
         },
         body: JSON.stringify({
           pixel_id: env.PUBLIC_X_PIXEL_ID,
-          conversions: body.conversions,
+          conversions,
         }),
         signal: AbortSignal.timeout(8000),
       });
@@ -263,7 +280,7 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
     const response = await fetch(url, {
       method: 'POST',
       headers,
-      body: JSON.stringify(body),
+      body: JSON.stringify({conversions}),
       signal: AbortSignal.timeout(8000),
     });
 
@@ -275,4 +292,109 @@ export async function sendPurchase({env, order, clickIds, eventId}) {
   } catch {
     return {ok: false, reason: 'send_failed'};
   }
+}
+
+/**
+ * Browser funnel events, server side. The other half of `sendPurchase`.
+ *
+ * WHY THIS EXISTS. X's Events Manager reported CAPI as "Partially set up:
+ * your CAPI setup is working, but it only covers a tiny fraction of your
+ * conversions", and it was right for a reason worse than the wording. This
+ * file used to implement `sendPurchase` and nothing else, so `/api/e` (the
+ * same-origin relay that exists precisely because content blockers kill
+ * uwt.js) filtered X out entirely: it fans out only to destinations that
+ * implement `sendEvent`, and only ga4.server.js did. A blocked visitor's
+ * page_view, view_item, add_to_cart and begin_checkout all reached GA4 and
+ * none of them reached X. X saw a blocked visitor as no visitor.
+ *
+ * NO DOUBLE COUNTING, by construction rather than by dedup. PixelBus only
+ * POSTs to /api/e when it has already determined the browser pixel did NOT
+ * load, so the pixel path and this path are mutually exclusive for a given
+ * visitor. This is the same contract ga4.server.js's sendEvent relies on.
+ * `conversion_id` is still sent when the caller supplies one, so X can also
+ * reconcile on its own if that assumption ever stops holding.
+ *
+ * IDENTIFIERS ARE THE BINDING CONSTRAINT HERE, more than on purchase. A
+ * purchase has the buyer's email; a page view has no email, no name and no
+ * order. All that is left is twclid (only present if they arrived from an X
+ * ad), and the request's IP and user agent. So this needs `ip` and
+ * `userAgent` threaded in from the request by api.e.jsx, and it no-ops
+ * rather than sending an unattributable event. Same single-object shape as
+ * sendPurchase: X rejects [{a},{b}] as "At least one user identifier must
+ * be provided" even when several were supplied. Do not split them out.
+ *
+ * Only the four events that have an X conversion event configured are sent.
+ * The rest of ALLOWED_EVENT_NAMES in api.e.jsx (view_item_list, select_item,
+ * remove_from_cart, view_cart, search) have no X equivalent defined in
+ * Events Manager, and inventing one would report an event against an id
+ * that means something else.
+ */
+const X_EVENT_ID_KEYS = {
+  page_view: 'PUBLIC_X_EVENT_ID_PAGE_VIEW',
+  view_item: 'PUBLIC_X_EVENT_ID_VIEW_CONTENT',
+  add_to_cart: 'PUBLIC_X_EVENT_ID_ADD_TO_CART',
+  begin_checkout: 'PUBLIC_X_EVENT_ID_BEGIN_CHECKOUT',
+};
+
+/**
+ * @param {object} args
+ * @param {Record<string, string | undefined>} args.env
+ * @param {string} args.name Normalized event name from analytics/events.js.
+ * @param {Record<string, any>} args.params
+ * @param {Record<string, string>} args.clickIds
+ * @param {string} [args.ip] Caller's IP, from the request.
+ * @param {string} [args.userAgent] Caller's user agent, from the request.
+ * @param {string} [args.eventId] Optional dedup id.
+ * @returns {Promise<{ok: boolean, reason?: string}>}
+ */
+export async function sendEvent({env, name, params, clickIds, ip, userAgent, eventId}) {
+  if (!isConfigured(env)) return {ok: false, reason: 'not_configured'};
+
+  const key = X_EVENT_ID_KEYS[name];
+  if (!key) return {ok: false, reason: 'no_x_event_for_name'};
+  const xEventId = env?.[key];
+  if (!xEventId) return {ok: false, reason: 'not_configured'};
+
+  const identifier = {};
+  const twclid = clickIds?._twclid;
+  if (twclid) identifier.twclid = twclid;
+  if (ip) identifier.ip_address = String(ip);
+  if (userAgent) identifier.user_agent = String(userAgent);
+
+  if (Object.keys(identifier).length === 0) {
+    return {ok: false, reason: 'no_identifier'};
+  }
+
+  const items = Array.isArray(params?.items) ? params.items : [];
+
+  const conversion = {
+    event_id: xEventId,
+    conversion_time: new Date().toISOString(),
+    identifiers: [identifier],
+  };
+
+  // value without price_currency reports a conversion with a blank sale
+  // amount, which is the exact fault that cost a day on the purchase path
+  // (see sendPurchase). Send both or neither.
+  if (params?.value !== undefined && params?.value !== null) {
+    conversion.value = String(params.value);
+    conversion.price_currency = params.currency || 'USD';
+  }
+
+  if (items.length) {
+    conversion.number_items = items.reduce(
+      (sum, item) => sum + (Number(item.quantity) || 1),
+      0,
+    );
+    conversion.contents = items.map((item) => ({
+      content_id: item.id !== undefined ? String(item.id) : undefined,
+      content_name: item.name,
+      content_price: item.price !== undefined ? String(item.price) : undefined,
+      num_items: item.quantity || 1,
+    }));
+  }
+
+  if (eventId) conversion.conversion_id = eventId;
+
+  return postConversions(env, [conversion]);
 }
