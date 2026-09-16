@@ -52,7 +52,7 @@
     background:
       radial-gradient(760px 520px at var(--glow-x, 74%) var(--glow-y, 22%), var(--glow-1), transparent 62%),
       radial-gradient(620px 520px at 8% 88%, var(--glow-2), transparent 60%),
-      linear-gradient(158deg, #0a0614 0%, #140c24 52%, #1b1030 100%);
+      linear-gradient(158deg, var(--base1) 0%, var(--base2) 52%, var(--base3) 100%);
   }
 
   /* bloom: one big lamp directly behind the widget, everything else falls away. */
@@ -60,15 +60,15 @@
     background:
       radial-gradient(680px 640px at var(--glow-x, 74%) 50%, var(--glow-1), transparent 66%),
       radial-gradient(1100px 700px at 50% 120%, var(--glow-2), transparent 60%),
-      linear-gradient(180deg, #08050f 0%, #130b21 60%, #1a1030 100%);
+      linear-gradient(180deg, var(--base1) 0%, var(--base2) 60%, var(--base3) 100%);
   }
 
   /* duo: the field splits, deep on the copy side, lit on the art side. */
   #canvas.bg-duo {
     background:
-      linear-gradient(100deg, #0a0614 0%, #0a0614 38%, transparent 78%),
+      linear-gradient(100deg, var(--base1) 0%, var(--base1) 38%, transparent 78%),
       radial-gradient(820px 700px at 82% 46%, var(--glow-1), transparent 68%),
-      linear-gradient(100deg, #120a20 0%, #241443 58%, #2d1550 100%);
+      linear-gradient(100deg, var(--base2) 0%, var(--base3) 58%, var(--base3) 100%);
   }
 
   /* beam: a hard diagonal shaft of light. The most graphic of the four. */
@@ -76,7 +76,7 @@
     background:
       linear-gradient(112deg, transparent 40%, var(--glow-1) 52%, transparent 64%),
       radial-gradient(700px 600px at 88% 14%, var(--glow-2), transparent 62%),
-      linear-gradient(170deg, #09050f 0%, #160d28 55%, #1d1133 100%);
+      linear-gradient(170deg, var(--base1) 0%, var(--base2) 55%, var(--base3) 100%);
   }
 
   /* Starfield. Hand placed, not a noise texture: a regular dot pattern reads as
@@ -207,6 +207,9 @@ const cfg = JSON.parse(new URLSearchParams(location.search).get('c') || '{}');
 const canvas = document.getElementById('canvas');
 canvas.classList.add('bg-' + (cfg.bg || 'aurora'));
 if (cfg.side === 'right') canvas.classList.add('side-right');
+canvas.style.setProperty('--base1', cfg.base1 || '#0a0614');
+canvas.style.setProperty('--base2', cfg.base2 || '#140c24');
+canvas.style.setProperty('--base3', cfg.base3 || '#1b1030');
 canvas.style.setProperty('--glow-1', cfg.glow1 || 'rgba(242,166,216,.34)');
 canvas.style.setProperty('--glow-2', cfg.glow2 || 'rgba(127,230,255,.20)');
 canvas.style.setProperty('--accent', cfg.accent || '#f2a6d8');

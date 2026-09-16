@@ -26,10 +26,31 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CANVAS_W, CANVAS_H = 1200, 630
 # Left edge of the art zone. The copy column is 66 + copyW wide, so this leaves
 # a gutter rather than letting the widget crowd the headline.
-ZONE_X = 706
-ZONE_RIGHT = 1168
-ZONE_TOP = 20
-BLEED_MAX = 58          # how far past the bottom edge a sticker may run
+# The art zone was 462px of a 1200px canvas and that was the single biggest
+# reason the first full set read as "kinda boring, they mostly still look
+# similar": at that width a chat widget renders too small for its own text to be
+# legible, so it stops being a product and becomes texture. 600px, and the
+# sticker is allowed to bleed off the right edge as well as the bottom.
+#
+# A bleed is only acceptable when the art is BIG. The earlier mid-word clipping
+# looked broken because the widget was small and the cut looked accidental.
+ZONE_X = 592
+ZONE_RIGHT = 1188       # inside the 1200 canvas: CONTAINED, not bled
+ZONE_TOP = 16
+BLEED_MAX = 0           # fully contained: any bleed cut an alert row mid word
+ZONE_BOTTOM = 34        # real margin, not just "no bleed"
+
+# Setting BLEED_MAX to 0 was not enough on its own. Art that filled the zone
+# ended FLUSH with the canvas edge at y=630, and flush still reads as cut: the
+# QA gate kept reporting 20% bottom edge ink on three cards. Art needs a margin
+# to sit in, not merely permission not to overflow.
+
+# Bleeding was tried and rejected by looking at the output. At ZONE_RIGHT 1232
+# and BLEED_MAX 96 the art was big and legible, which was the goal, but alert
+# rows came off cut mid word: "Plumcircuit Tipped", "just tipped $25!". A cut
+# word reads as a broken image no matter how deliberate the crop was meant to
+# look. The art zone is 596px wide either way, so containment costs almost no
+# size and removes the whole failure mode.
 ROT = {"chat": -4, "goal": 3}
 ROT_DEFAULT = -3        # anything else, e.g. kind "alert"
 
@@ -65,6 +86,7 @@ def glow_for(theme):
 heroes = []
 missing = []
 too_wide = []
+PALETTE_ORDER = ["celestial", "cyber", "gold", "violet", "neon", "cozy", "ember", "pastel"]
 SIDES = ["left", "right"]
 BGS = ["aurora", "bloom", "duo", "beam"]
 
@@ -88,7 +110,7 @@ for idx, (handle, theme, kicker, title, wid) in enumerate(rows):
     bg = BGS[idx % 4]
 
     zone_w = ZONE_RIGHT - ZONE_X
-    zone_h = CANVAS_H - ZONE_TOP + BLEED_MAX
+    zone_h = CANVAS_H - ZONE_TOP - ZONE_BOTTOM + BLEED_MAX
 
     # Fit to the zone, width first because width is the hard constraint.
     w = zone_w
@@ -106,27 +128,47 @@ for idx, (handle, theme, kicker, title, wid) in enumerate(rows):
         h = w / ratio
 
     if side == "right":
-        # Mirror the art zone: copy moves right, art moves left.
-        x = 32 + (zone_w - w) / 2
+        # Mirror: copy right, art left. The 12px inset is NOT cosmetic. A -32
+        # offset was tried and it pushed art off the left edge, which the QA
+        # gate then caught at 41% edge ink on the StreamElements card.
+        x = 12 + (zone_w - w) / 2
     else:
         x = ZONE_X + (zone_w - w) / 2
     # Prefer vertical centring; let tall art sit at the top and bleed instead.
     y = ZONE_TOP if h >= CANVAS_H - ZONE_TOP else (CANVAS_H - h) / 2
 
-    t = themes[theme]
+    # PALETTE ROTATES, it does not follow the theme.
+    #
+    # Taking the field colour from the article's theme sounds right and measured
+    # wrong: the themes cluster (10 general, 9 celestial, 8 neon), so the set
+    # collapsed to 4 distinct hues across 43 cards and read as one design again.
+    # The field is a backdrop, not a description, and every widget reads on any
+    # of these dark fields. Rotating guarantees the spread that the theme could
+    # not, while the THEME still decides the widget, which is the part that
+    # actually has to be relevant.
+    palette_name = PALETTE_ORDER[idx % len(PALETTE_ORDER)]
+    t = themes[palette_name]
     heroes.append({
         "slug": handle,
         "kicker": kicker,
         "title": title,
         "seed": (abs(hash(handle)) % 97) + 3,
         "accent": t["accent"], "glow1": t["glow1"], "glow2": t["glow2"],
+        # base1/2/3 are the FIELD colours and they have to be passed through.
+        # themes.json defined eight genuinely different bases and this dict
+        # never emitted them, so hero.html fell back to its violet defaults on
+        # all 43 cards. The palettes rotated correctly and nothing changed
+        # colour, which is why the QA gate kept reporting 4 hues while the
+        # config looked right.
+        "base1": t["base1"], "base2": t["base2"], "base3": t["base3"],
         "glowX": t["glowX"], "glowY": t["glowY"],
         "titleGlow": t["titleGlow"], "kickerGlow": t["kickerGlow"],
         "side": side, "bg": bg,
-        "copyW": "590px", "subW": "420px",
+        # Copy column narrows to make room for the bigger art.
+        "copyW": "520px", "subW": "400px",
         # Nudge the headline size by article so the type block is not identical
         # everywhere either.
-        "titleSize": f"{[58, 62, 66][idx % 3]}px",
+        "titleSize": f"{[54, 58, 62][idx % 3]}px",
         "stickers": [{
             # The article handle, NOT the widget id: art is captured per article
             # now and the file is named for the article. Leaving the widget id

@@ -1,31 +1,43 @@
 {
-  "_comment": "Palette per theme. Every hero picks one and overrides only its own headline and widget. Kept separate from heroes.json so a palette tweak is one edit, not 43.",
+  "_comment": "Eight palettes with genuinely different HUES, not eight tints of purple. The first 43-card set was rejected as 'kinda boring, they mostly still look similar' and the honest cause was that every field was violet and every widget was small. Hue is the fastest signal of difference at card size, ahead of layout.",
   "celestial": {
-    "accent": "#f2a6d8", "glow1": "rgba(242,166,216,.42)", "glow2": "rgba(146,120,255,.28)",
-    "titleGlow": "rgba(219,140,255,.5)", "kickerGlow": "rgba(240,80,154,.5)", "glowX": "76%", "glowY": "36%"
+    "accent": "#f2a6d8", "glow1": "rgba(242,166,216,.50)", "glow2": "rgba(146,120,255,.34)",
+    "base1": "#0a0614", "base2": "#1b1030", "base3": "#2a1450",
+    "titleGlow": "rgba(219,140,255,.5)", "kickerGlow": "rgba(240,80,154,.5)", "glowX": "72%", "glowY": "36%"
   },
   "neon": {
-    "accent": "#ff5fd0", "glow1": "rgba(255,80,190,.36)", "glow2": "rgba(127,230,255,.26)",
-    "titleGlow": "rgba(255,110,200,.45)", "kickerGlow": "rgba(255,60,170,.5)", "glowX": "72%", "glowY": "30%"
+    "accent": "#ff5fd0", "glow1": "rgba(255,60,170,.46)", "glow2": "rgba(127,230,255,.30)",
+    "base1": "#12030f", "base2": "#2a0724", "base3": "#3d0b33",
+    "titleGlow": "rgba(255,110,200,.5)", "kickerGlow": "rgba(255,60,170,.55)", "glowX": "70%", "glowY": "28%"
   },
   "cyber": {
-    "accent": "#7fe6ff", "glow1": "rgba(90,220,255,.34)", "glow2": "rgba(190,90,255,.28)",
-    "titleGlow": "rgba(120,220,255,.46)", "kickerGlow": "rgba(90,210,255,.5)", "glowX": "74%", "glowY": "28%"
+    "accent": "#6ff2ff", "glow1": "rgba(60,220,255,.42)", "glow2": "rgba(120,90,255,.30)",
+    "base1": "#010d14", "base2": "#04232f", "base3": "#063445",
+    "titleGlow": "rgba(120,230,255,.5)", "kickerGlow": "rgba(70,215,255,.55)", "glowX": "74%", "glowY": "26%"
   },
   "cozy": {
-    "accent": "#9fe6a0", "glow1": "rgba(150,225,160,.30)", "glow2": "rgba(255,200,140,.24)",
-    "titleGlow": "rgba(175,235,180,.40)", "kickerGlow": "rgba(140,220,150,.45)", "glowX": "75%", "glowY": "40%"
+    "accent": "#a8e6a0", "glow1": "rgba(140,225,150,.38)", "glow2": "rgba(255,196,120,.30)",
+    "base1": "#04120a", "base2": "#0b2a16", "base3": "#123a1e",
+    "titleGlow": "rgba(175,235,180,.44)", "kickerGlow": "rgba(140,220,150,.5)", "glowX": "73%", "glowY": "40%"
   },
   "pastel": {
-    "accent": "#ffc4e6", "glow1": "rgba(255,190,225,.36)", "glow2": "rgba(170,200,255,.26)",
-    "titleGlow": "rgba(255,200,230,.44)", "kickerGlow": "rgba(255,150,205,.45)", "glowX": "76%", "glowY": "34%"
+    "accent": "#ffc4e6", "glow1": "rgba(255,180,225,.44)", "glow2": "rgba(150,190,255,.32)",
+    "base1": "#150a17", "base2": "#2e1433", "base3": "#43204a",
+    "titleGlow": "rgba(255,200,230,.46)", "kickerGlow": "rgba(255,150,205,.5)", "glowX": "74%", "glowY": "32%"
   },
   "gold": {
-    "accent": "#ffd66e", "glow1": "rgba(255,196,110,.34)", "glow2": "rgba(146,120,255,.30)",
-    "titleGlow": "rgba(255,206,130,.42)", "kickerGlow": "rgba(255,190,90,.45)", "glowX": "74%", "glowY": "42%"
+    "accent": "#ffcf5c", "glow1": "rgba(255,186,70,.42)", "glow2": "rgba(255,110,90,.28)",
+    "base1": "#140b02", "base2": "#2e1a05", "base3": "#432608",
+    "titleGlow": "rgba(255,206,110,.48)", "kickerGlow": "rgba(255,180,70,.5)", "glowX": "72%", "glowY": "42%"
   },
   "violet": {
-    "accent": "#b79df2", "glow1": "rgba(160,120,255,.38)", "glow2": "rgba(127,230,255,.22)",
-    "titleGlow": "rgba(183,157,242,.48)", "kickerGlow": "rgba(150,110,245,.48)", "glowX": "75%", "glowY": "32%"
+    "accent": "#b79df2", "glow1": "rgba(150,110,245,.46)", "glow2": "rgba(90,220,255,.26)",
+    "base1": "#07040f", "base2": "#180e30", "base3": "#241448",
+    "titleGlow": "rgba(183,157,242,.5)", "kickerGlow": "rgba(150,110,245,.52)", "glowX": "73%", "glowY": "30%"
+  },
+  "ember": {
+    "accent": "#ff8a5c", "glow1": "rgba(255,120,70,.44)", "glow2": "rgba(255,60,120,.26)",
+    "base1": "#120404", "base2": "#2c0a0c", "base3": "#401014",
+    "titleGlow": "rgba(255,150,100,.48)", "kickerGlow": "rgba(255,110,70,.52)", "glowX": "71%", "glowY": "34%"
   }
 }

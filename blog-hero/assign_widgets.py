@@ -26,12 +26,39 @@ GOAL_ANY = ["moon-jar-goal", "star-goal", "potion-bottle-1", "lotus-glass-goal",
 GOAL_CELESTIAL = ["celestial-moon-goal", "moon-jar-goal", "star-goal"]
 MULTI = ["multistreamchatwidget-final", "sws-neon-multichat", "celestial-multistream-chat"]
 CHAT_CELESTIAL = ["celestial-multistream-chat", "moonflower-chat", "lotus-glass-chat", "sparkling-chat"]
-# cyber-bear-chat-h (1830x551, 3.3:1) and khepri-chat (2200x983, 2.2:1) are
-# deliberately NOT here. build_heroes.py rejects anything past 2:1 because it
-# shrinks to an illegible sliver in the art zone, and a widget this picker
-# chooses but the builder then drops leaves the article with NO hero at all,
-# silently keeping its old one. Candidates must satisfy both stages.
-CHAT_NEON = ["neon-chat", "sws-neon-multichat", "cyber-bear-chat", "soul-blade-chat", "waylay-chat"]
+# Widened because four of these are now excluded as too dim. Relevance is the
+# constraint, so the bucket needs enough BRIGHT members to serve ~10 neon and
+# sci-fi articles without one widget carrying four of them.
+CHAT_NEON = ["neon-chat", "cyber-bear-chat", "waylay-chat", "y2k-chat",
+             "spooky-neon-chat", "alchemist-chat", "sparkling-chat"]
+
+# ONE list, filtered out of EVERY pool below.
+#
+# These are wider than build_heroes.py's 2:1 limit, so it drops them and the
+# article silently keeps its OLD hero. Removing them pool by pool does not work
+# and was already proven not to work: khepri-chat was taken out of CHAT_NEON and
+# came straight back through CHAT_ANY on the next run, costing another full
+# render. Measured aspect ratios, from the captures:
+#   neon-goal 8.3   cyber-bear-chat-h 3.3   luna-alerts 2.5
+#   luna-chat 2.4   khepri-chat 2.2         diamond-butterfly-goal 2.1
+TOO_WIDE = {
+    "neon-goal", "cyber-bear-chat-h", "luna-alerts", "luna-chat",
+    "khepri-chat", "diamond-butterfly-goal",
+}
+
+# Same idea, different failure: these render legibly at full size but are so
+# DARK that on a dark hero field they disappear. tarot-chat filled 550x525 of
+# the art zone and still measured 2.5% coverage, the faintest card in the set.
+# Size is not the only way art can fail to read, so the picker has to know about
+# both. Measured by qa_heroes.py, not guessed.
+TOO_DARK = {
+    "tarot-chat",          # 550x525 in the zone and still 2.5% coverage
+    "sws-neon-multichat",  # behind 2 of the 4 faintest cards: 5.6% and 5.4%
+    "soul-blade-chat",     # behind the other 2: 8.4% and 7.5%
+    "moonflower-chat",     # 7.2% ink density in its own crop, the sparsest
+}
+
+EXCLUDED = TOO_WIDE | TOO_DARK
 CHAT_COZY = ["froggy-starlight", "lotus-butterfly-chat", "blueberry-milk-chat", "cloud-chat"]
 CHAT_PASTEL = ["pastel-chat", "blueberry-milk-chat", "y2k-chat", "gradient-cloud-chat"]
 CHAT_SPOOKY = ["spooky-neon-chat", "halloween-chat", "tarot-chat", "alchemist-chat"]
@@ -86,7 +113,7 @@ have = set(os.listdir(STAGE))
 used = {}
 out = []
 for handle, theme, kicker, title, old in rows:
-    pool = [w for w in POOLS[bucket(handle)] if w in have]
+    pool = [w for w in POOLS[bucket(handle)] if w in have and w not in EXCLUDED]
     # Least-used candidate wins, so relevance holds and usage still spreads.
     pick = min(pool, key=lambda w: (used.get(w, 0), pool.index(w)))
     used[pick] = used.get(pick, 0) + 1

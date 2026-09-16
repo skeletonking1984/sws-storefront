@@ -48,6 +48,49 @@ port is wired to his live OBS source.
 - **Composite transparent captures before judging them** (`out/_contact.png`
   contact sheet). Viewers drop alpha and soft glows read as slabs.
 
+## The QA gate
+
+`python3 qa_heroes.py` (add `--strict` to exit 1). Run it on every set.
+
+Todd rejected two complete sets by eye, "these all look too similar" and "kinda
+boring, they mostly still look similar", and both times the cause was
+measurable. Waiting for a human to spot it is the wrong gate.
+
+It measures, per card: how much of the art zone is actually lit, peak art
+contrast against the card's own background, and ink pressed against each canvas
+edge. Across the set it measures hue spread and flags adjacent cards sharing
+palette, side and background.
+
+Three exclusion classes feed back into `assign_widgets.py`, all measured rather
+than guessed:
+
+- **TOO_WIDE** shrinks to a sliver in the art zone. Ratios 2.1 to 8.3.
+- **TOO_DARK** renders dim at any size. `tarot-chat` filled 550x525 of the zone
+  and still measured 2.5% coverage.
+- The per-card thresholds catch the rest.
+
+**Fitting a bounding box is not the same as filling it.** A chat with few
+messages and large transparent gaps fills the art zone geometrically and still
+looks blank, which is why the coverage threshold sits at 10% and not lower.
+
+## Mistakes already made here, do not repeat them
+
+- **Bleeding art off the canvas cut words in half.** "Plumcircuit Tipped", "just
+  tipped $25!". A cut word reads as broken no matter how deliberate. Art is
+  contained, with a real 34px bottom margin: setting bleed to 0 was not enough
+  because flush with the edge still reads as cut.
+- **Excluding a bad widget from ONE pool does not work.** `khepri-chat` was
+  removed from CHAT_NEON and came straight back through CHAT_ANY, costing a full
+  render. One `EXCLUDED` set, filtered from every pool.
+- **The palette must NOT follow the article theme.** It sounds right and it
+  produced exactly the monotony Todd rejected twice: the themes cluster, so the
+  set collapsed to 4 hues across 43 cards. The palette rotates independently;
+  the theme still picks the widget, which is the part that has to be relevant.
+- **Passing a palette is not the same as using it.** themes.json defined eight
+  distinct field colours and `build_heroes.py` never emitted base1/2/3, so every
+  card rendered violet while the config looked perfect and the gate kept
+  reporting 4 hues.
+
 ## Before any hero ships
 
 Art QA is mandatory, see `products/OVERLAY-PIPELINE.md`. Pixel-verify, then hand
