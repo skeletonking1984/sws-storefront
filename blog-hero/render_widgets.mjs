@@ -105,22 +105,51 @@ for (const id of ids) {
   await new Promise((r) => setTimeout(r, 1500));
 
   /*
-   * Fill to ~68% of the widget's OWN target, read from its fieldData. A fixed
-   * tip amount cannot work: targets differ per widget (celestial-moon-goal is
-   * 100, moon-jar-goal is 50), and the first pass sent a flat 420 into a 100
-   * target, so the hero showed "goal $420 / $100" on a bar past full. A goal
-   * widget that has already blown past its goal is the one state that sells
-   * nothing.
+   * Fill a goal to ~68% of its own target, using the event it actually counts.
+   *
+   * Two separate traps here, both of which shipped a broken looking card once:
+   *
+   * 1. TARGET. Targets differ per widget (celestial-moon-goal 100, moon-jar-goal
+   *    50, star-goal 10). A flat amount sent 420 into a target of 100 and the
+   *    hero read "goal $420 / $100", a bar past full, which is the one state
+   *    that sells nothing.
+   *
+   * 2. EVENT TYPE. Each goal declares `goalType` naming what it counts, and a
+   *    widget ignores everything else. star-goal counts SUBSCRIBERS and
+   *    lotus-butterfly-goal counts CHEERS, so feeding both a tip left them
+   *    sitting at "Donation Goal 0 / 10" and "0 / 10000" in the first full
+   *    render of all 43. An empty goal bar looks like a bug, not a product.
+   *
+   * Count based goals (subscriber, follower, raid) need N DISCRETE events
+   * rather than one carrying an amount, so those are emitted individually and
+   * capped, since a target of 100 subscribers is not worth 68 postMessages.
    */
   const fd = bundle.fieldData || {};
+  const goalType = String(fd.goalType || 'tip').toLowerCase();
   const target = Number(fd.goalTarget ?? fd.goal ?? fd.target ?? 100) || 100;
   const fill = target * 0.68;
+  const MAX_EVENTS = 15;
+
+  let goalFeed;
+  if (goalType === 'subscriber' || goalType === 'follower' || goalType === 'raid') {
+    const n = Math.max(1, Math.min(MAX_EVENTS, Math.round(fill)));
+    const names = ['Marney', 'Strong', 'CometTip', 'lunaflux', 'velvetmoth', 'astra_dawn'];
+    goalFeed = Array.from({length: n}, (_, i) => ({
+      listener: `${goalType}-latest`,
+      event: {name: names[i % names.length], amount: 1},
+    }));
+  } else {
+    // tip and cheer both carry a value, so three events can cover the fill.
+    const listener = goalType === 'cheer' ? 'cheer-latest' : 'tip-latest';
+    goalFeed = [
+      {listener, event: {amount: +(fill * 0.45).toFixed(2), name: 'Marney'}},
+      {listener, event: {amount: +(fill * 0.32).toFixed(2), name: 'Strong'}},
+      {listener, event: {amount: +(fill * 0.23).toFixed(2), name: 'CometTip'}},
+    ];
+  }
+
   const feed = kind === 'goal'
-    ? [
-        {listener: 'tip-latest', event: {amount: +(fill * 0.45).toFixed(2), name: 'Marney'}},
-        {listener: 'tip-latest', event: {amount: +(fill * 0.32).toFixed(2), name: 'Strong'}},
-        {listener: 'tip-latest', event: {amount: +(fill * 0.23).toFixed(2), name: 'CometTip'}},
-      ]
+    ? goalFeed
     : [
         ...CHAT.map((m) => ({listener: 'message', event: {data: {...m, displayName: m.nick, tags: {}, emotes: []}}})),
         {listener: 'tip-latest', event: {amount: 25, name: 'Jordan'}},
@@ -130,14 +159,14 @@ for (const id of ids) {
     await page.evaluate((p) => {
       window.postMessage({__sws: true, type: 'event', payload: p}, '*');
     }, payload);
-    await new Promise((r) => setTimeout(r, 450));
+    await new Promise((r) => setTimeout(r, feed.length > 6 ? 180 : 450));
   }
 
   // Let entry animations land and settle before the frame is taken.
   await new Promise((r) => setTimeout(r, 2500));
 
   await page.screenshot({path: path.join(OUT, `${id}.png`), omitBackground: true, type: 'png'});
-  console.log(`ok    ${id.padEnd(30)} kind=${kind} events=${feed.length}` + (kind === 'goal' ? ` target=${target} filled=${fill.toFixed(0)}` : ''));
+  console.log(`ok    ${id.padEnd(30)} kind=${kind} events=${feed.length}` + (kind === 'goal' ? ` type=${goalType} target=${target} fill=${fill.toFixed(0)}` : ''));
   await page.close();
 }
 

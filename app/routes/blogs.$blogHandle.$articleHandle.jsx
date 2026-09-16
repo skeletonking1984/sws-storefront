@@ -1,12 +1,12 @@
 import {Await, useLoaderData} from 'react-router';
 import {Suspense} from 'react';
 import {Image} from '@shopify/hydrogen';
-import {ProductItem} from '~/components/ProductItem';
 import {
   crossSellQuery,
   crossSellHeading,
-  filterCrossSell,
+  buildCrossSellShelf,
 } from '~/lib/blogCrossSell';
+import {ArticleCarousel} from '~/components/ArticleCarousel';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {buildMeta, getOrigin} from '~/lib/seo';
 import spaceGroteskLatin from '~/assets/fonts/space-grotesk-latin.woff2?url';
@@ -101,29 +101,80 @@ async function loadCriticalData({context, request, params}) {
   const article = blog.articleByHandle;
 
   /*
-    Cross-sell is derived from the article, so it cannot live in
-    loadDeferredData, which runs before the article exists. Started here and
-    returned UNAWAITED so it streams in behind the page instead of holding
-    time-to-first-byte for a row that sits below the whole article.
-
-    Resolves to null when the article gives nothing honest to match on; see
-    app/lib/blogCrossSell.js for why a themeless article gets no themed row.
-  */
+   * Product shelf under the article.
+   *
+   * Derived from the article, so it cannot live in loadDeferredData, which runs
+   * before the article exists. Started here and returned UNAWAITED so it
+   * streams in behind the page instead of holding time-to-first-byte for a row
+   * that sits below the whole article.
+   *
+   * Two requests at most: the themed search, then best sellers to top up.
+   *
+   * The fallback is not a nicety, it is most of the blog. Measured against all
+   * 43 live articles on 2026-09-15, the themed query ALONE left 25 of them with
+   * an EMPTY shelf, for two different reasons:
+   *
+   *   14 produce no query at all, because the title carries neither a theme nor
+   *   a product type ("How to Make Money on Twitch as a Beginner in 2026").
+   *
+   *   11 query a theme the catalogue does not stock. "cyberpunk" and "sci-fi"
+   *   return ZERO products in every spelling tried, yet eight articles are
+   *   written around exactly those words.
+   *
+   * Best selling is the right pool: it needs no relevance claim, and it is the
+   * likeliest thing to sell to someone who just finished reading. The heading
+   * downgrades to "From the shop" whenever themed matches do not carry the
+   * shelf, so the row never claims a connection the products cannot back up.
+   */
   const picked = crossSellQuery(article);
-  const crossSell = picked
+  const linkedInBody = new Set(
+    Array.from(
+      String(article?.contentHtml || '').matchAll(/\/products\/([a-z0-9-]+)/g),
+    ).map((m) => m[1]),
+  );
+
+  const crossSell = (picked
     ? context.storefront
         .query(CROSS_SELL_QUERY, {variables: {query: picked.query}})
-        .then((data) => ({
-          heading: crossSellHeading(picked),
-          products: filterCrossSell(
+        .catch(() => null)
+    : Promise.resolve(null)
+  )
+    .then(async (data) => {
+      const shelf = picked
+        ? buildCrossSellShelf(
             data?.products?.nodes || [],
             picked,
             article.contentHtml || '',
-          ).slice(0, 4),
-        }))
-        // Never let a failed cross-sell take the article down with it.
-        .catch(() => null)
-    : null;
+            SHELF_SIZE,
+          )
+        : {products: [], matched: 0};
+
+      if (shelf.products.length < SHELF_MIN) {
+        const pool = await context.storefront
+          .query(CROSS_SELL_FALLBACK_QUERY, {variables: {first: SHELF_SIZE}})
+          .then((d) => d?.products?.nodes || [])
+          .catch(() => []);
+        const have = new Set(shelf.products.map((p) => p.handle));
+        for (const p of pool) {
+          if (shelf.products.length >= SHELF_SIZE) break;
+          if (!p?.handle || have.has(p.handle) || linkedInBody.has(p.handle)) continue;
+          have.add(p.handle);
+          shelf.products.push(p);
+        }
+      }
+
+      if (!shelf.products.length) return null;
+
+      return {
+        heading:
+          picked && shelf.matched >= Math.ceil(shelf.products.length / 2)
+            ? crossSellHeading(picked)
+            : 'From the shop',
+        products: shelf.products,
+      };
+    })
+    // Never let a failed shelf take the article down with it.
+    .catch(() => null);
 
   return {article, crossSell};
 }
@@ -271,18 +322,10 @@ export default function Article() {
           <Await resolve={crossSell} errorElement={null}>
             {(data) =>
               data && data.products.length > 0 ? (
-                <aside className="article-crosssell">
-                  <h2>{data.heading}</h2>
-                  <div className="article-crosssell-grid">
-                    {data.products.map((product) => (
-                      <ProductItem
-                        key={product.id}
-                        product={product}
-                        headingLevel={3}
-                      />
-                    ))}
-                  </div>
-                </aside>
+                <ArticleCarousel
+                  heading={data.heading}
+                  products={data.products}
+                />
               ) : null
             }
           </Await>
@@ -294,13 +337,27 @@ export default function Article() {
 
 /*
   Cross-sell row query. Same shape ProductItem expects everywhere else, kept
-  local rather than imported so this route owns what it asks for. `first: 12`
-  and not 4: filterCrossSell() throws away anything that shares no term with
+  local rather than imported so this route owns what it asks for. `first: 24`
+  and not 10: filterCrossSell() throws away anything that shares no term with
   the query, because Shopify full-text search will return a Christmas goal bar
-  for a Halloween query once the close matches run out, so the row needs
-  headroom to discard from before it trims to 4.
+  for a Halloween query once the close matches run out, so the shelf needs
+  headroom to discard from before buildCrossSellShelf trims it to SHELF_SIZE.
 */
-const CROSS_SELL_QUERY = `#graphql
+/* How many cards the shelf holds. 10 fills a wide screen with a little to
+   scroll to, without the query having to return the whole catalogue. */
+const SHELF_SIZE = 10;
+
+/* Below this many themed matches the shelf is topped up from best sellers
+   rather than shipping a near empty row. */
+const SHELF_MIN = 6;
+
+/* Best sellers, the fallback pool. Sorted by BEST_SELLING rather than by a
+   search term, so it needs no relevance claim and is the most likely thing to
+   sell to someone who just finished reading. */
+/* Shared by both shelf queries. Declared once as a JS constant and
+   interpolated, so the two can never drift into asking for different fields and
+   handing ProductItem two different shapes. */
+const CROSS_SELL_FRAGMENTS = `#graphql
   fragment MoneyCrossSell on MoneyV2 {
     amount
     currencyCode
@@ -325,15 +382,32 @@ const CROSS_SELL_QUERY = `#graphql
       }
     }
   }
-  query BlogCrossSell($query: String!, $country: CountryCode, $language: LanguageCode)
+`;
+
+const CROSS_SELL_FALLBACK_QUERY = `#graphql
+  ${CROSS_SELL_FRAGMENTS}
+  query BlogShelfFallback($first: Int!, $country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 12, query: $query, sortKey: RELEVANCE) {
+    products(first: $first, sortKey: BEST_SELLING) {
       nodes {
         ...CrossSellItem
       }
     }
   }
 `;
+
+const CROSS_SELL_QUERY = `#graphql
+  ${CROSS_SELL_FRAGMENTS}
+  query BlogCrossSell($query: String!, $country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    products(first: 24, query: $query, sortKey: RELEVANCE) {
+      nodes {
+        ...CrossSellItem
+      }
+    }
+  }
+`;
+
 
 // NOTE: https://shopify.dev/docs/api/storefront/latest/objects/blog#field-blog-articlebyhandle
 const ARTICLE_QUERY = `#graphql

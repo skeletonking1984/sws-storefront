@@ -1189,6 +1189,35 @@ export type CrossSellItemFragment = Pick<
   };
 };
 
+export type BlogShelfFallbackQueryVariables = StorefrontAPI.Exact<{
+  first: StorefrontAPI.Scalars['Int']['input'];
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+}>;
+
+export type BlogShelfFallbackQuery = {
+  products: {
+    nodes: Array<
+      Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title' | 'productType'> & {
+        worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+        featuredImage?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url'>
+        >;
+        priceRange: {
+          minVariantPrice: Pick<
+            StorefrontAPI.MoneyV2,
+            'amount' | 'currencyCode'
+          >;
+          maxVariantPrice: Pick<
+            StorefrontAPI.MoneyV2,
+            'amount' | 'currencyCode'
+          >;
+        };
+      }
+    >;
+  };
+};
+
 export type BlogCrossSellQueryVariables = StorefrontAPI.Exact<{
   query: StorefrontAPI.Scalars['String']['input'];
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
@@ -2295,7 +2324,11 @@ interface GeneratedQueryTypes {
     return: AgentProductByHandleQuery;
     variables: AgentProductByHandleQueryVariables;
   };
-  '#graphql\n  fragment MoneyCrossSell on MoneyV2 {\n    amount\n    currencyCode\n  }\n  fragment CrossSellItem on Product {\n    id\n    handle\n    title\n    productType\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    featuredImage {\n      id\n      altText\n      url\n    }\n    priceRange {\n      minVariantPrice {\n        ...MoneyCrossSell\n      }\n      maxVariantPrice {\n        ...MoneyCrossSell\n      }\n    }\n  }\n  query BlogCrossSell($query: String!, $country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: 12, query: $query, sortKey: RELEVANCE) {\n      nodes {\n        ...CrossSellItem\n      }\n    }\n  }\n': {
+  '#graphql\n  #graphql\n  fragment MoneyCrossSell on MoneyV2 {\n    amount\n    currencyCode\n  }\n  fragment CrossSellItem on Product {\n    id\n    handle\n    title\n    productType\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    featuredImage {\n      id\n      altText\n      url\n    }\n    priceRange {\n      minVariantPrice {\n        ...MoneyCrossSell\n      }\n      maxVariantPrice {\n        ...MoneyCrossSell\n      }\n    }\n  }\n\n  query BlogShelfFallback($first: Int!, $country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: $first, sortKey: BEST_SELLING) {\n      nodes {\n        ...CrossSellItem\n      }\n    }\n  }\n': {
+    return: BlogShelfFallbackQuery;
+    variables: BlogShelfFallbackQueryVariables;
+  };
+  '#graphql\n  #graphql\n  fragment MoneyCrossSell on MoneyV2 {\n    amount\n    currencyCode\n  }\n  fragment CrossSellItem on Product {\n    id\n    handle\n    title\n    productType\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    featuredImage {\n      id\n      altText\n      url\n    }\n    priceRange {\n      minVariantPrice {\n        ...MoneyCrossSell\n      }\n      maxVariantPrice {\n        ...MoneyCrossSell\n      }\n    }\n  }\n\n  query BlogCrossSell($query: String!, $country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: 24, query: $query, sortKey: RELEVANCE) {\n      nodes {\n        ...CrossSellItem\n      }\n    }\n  }\n': {
     return: BlogCrossSellQuery;
     variables: BlogCrossSellQueryVariables;
   };

@@ -4248,30 +4248,110 @@ button.reset:hover:not(:has(> *)) {
   See app/lib/blogCrossSell.js for how the products are chosen, and why a row
   is omitted entirely when nothing honest matches.
 */
-.article-crosssell {
-  max-width: 68ch;
-  margin: 3.5rem auto 0;
+/*
+  Product shelf under an article.
+
+  Breaks out WIDER than the .article-body measure (68ch) on purpose. The old
+  version was a four-item grid locked to the text column, so it read as the last
+  paragraph of the article rather than as a shop shelf. The width change is the
+  signal that the reading has ended.
+*/
+.article-shelf {
+  max-width: min(1200px, 92vw);
+  margin: 3.75rem auto 0;
   padding-top: 2rem;
   border-top: 1px solid var(--sws-border);
 }
 
-.article-crosssell h2 {
-  font-family: var(--font-display);
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--sws-text, #f3eefb);
-  margin: 0 0 1.25rem;
+.article-shelf-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-.article-crosssell-grid {
+.article-shelf h2 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--sws-text, #f3eefb);
+  margin: 0;
+}
+
+.article-shelf-nav {
+  display: flex;
+  gap: .5rem;
+  flex: none;
+}
+
+.article-shelf-nav button {
+  width: 38px;
+  height: 38px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--sws-border);
+  background: rgba(255, 255, 255, .05);
+  color: var(--sws-text, #f3eefb);
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, opacity .15s ease;
+}
+
+.article-shelf-nav button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, .12);
+  border-color: var(--sws-holo-2, #c49bff);
+}
+
+.article-shelf-nav button:disabled {
+  opacity: .3;
+  cursor: default;
+}
+
+.article-shelf-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.article-shelf-track {
+  display: grid;
+  grid-auto-flow: column;
+  /*
+    Fixed track width per card, not 1fr. In a column-flow grid 1fr would size
+    every card to the WIDEST one's content, so one long product title stretches
+    the whole shelf and the snap points drift out of step with the arrows.
+  */
+  grid-auto-columns: minmax(150px, 1fr);
   gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  /* Room for the card hover lift and any focus ring, which a plain
+     overflow container would otherwise clip. */
+  padding: 4px 4px 1rem;
+  margin: 0 -4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sws-border) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.article-shelf-item {
+  scroll-snap-align: start;
+  min-width: 0;
+}
+
+.article-shelf-track::-webkit-scrollbar {
+  height: 8px;
+}
+
+.article-shelf-track::-webkit-scrollbar-thumb {
+  background: var(--sws-border);
+  border-radius: 999px;
 }
 
 @media (min-width: 45em) {
-  .article-crosssell-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .article-shelf-track {
+    grid-auto-columns: minmax(196px, 1fr);
   }
 }
 

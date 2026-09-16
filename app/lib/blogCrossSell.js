@@ -142,11 +142,24 @@ export function crossSellQuery(article) {
     }
   }
 
-  // Nothing to go on. Better to render no row than a random one.
-  if (themes.length === 0 && !type) return null;
-
   const terms = [...themes, type].filter(Boolean);
-  return {query: terms.join(' '), themes, type};
+
+  /*
+   * TERMS ARE OR-ed, NOT SPACE JOINED.
+   *
+   * Shopify's product search ANDs bare space separated terms. Measured against
+   * the live catalogue on 2026-09-15: `celestial kawaii` returns 0 products and
+   * `celestial OR kawaii` returns 5, because almost nothing is titled with both
+   * words. The old space-joined query was quietly producing an empty shelf on
+   * every article that matched more than one theme.
+   */
+  const query = terms.length ? terms.map((t) => `"${t}"`).join(' OR ') : null;
+
+  // Nothing to go on. The caller falls back to best sellers rather than
+  // inventing a relevance claim.
+  if (!query) return null;
+
+  return {query, themes, type, terms};
 }
 
 /**
@@ -192,6 +205,50 @@ export function filterCrossSell(products, picked, contentHtml = '') {
     const hay = `${p.title || ''} ${p.handle}`.toLowerCase();
     return needles.some((n) => n && hasTerm(hay, n));
   });
+}
+
+/**
+ * Fill the carousel up to `want` items.
+ *
+ * filterCrossSell is deliberately strict: it throws away anything that shares
+ * no term with the query, because Shopify's full-text search happily returns a
+ * Christmas goal bar for a Halloween query once the close matches run out. That
+ * is the right call for a four-item row, where one bad match is a quarter of
+ * the row and the whole thing reads as random.
+ *
+ * A carousel is a shelf, not a row, and an almost-empty shelf reads as broken.
+ * So strict matches come FIRST, in order, and the remaining slots are topped up
+ * from the same search's weaker hits. Those are still hits for the article's
+ * theme, just ones that did not clear the word-boundary test, which is a much
+ * better neighbour than an unrelated product pulled from a second query.
+ *
+ * Anything already linked in the article body stays excluded either way: the
+ * reader has been offered it once already.
+ *
+ * Returns {products, matched} so the caller can title the row honestly. A shelf
+ * that is mostly top-up should not claim to be "Celestial chat widgets".
+ *
+ * @param {Array<{title?: string, handle?: string}>} products raw search results
+ * @param {{query: string, themes: string[], type: string | null}} picked
+ * @param {string} contentHtml
+ * @param {number} want
+ */
+export function buildCrossSellShelf(products, picked, contentHtml = '', want = 10) {
+  const strict = filterCrossSell(products, picked, contentHtml);
+  const taken = new Set(strict.map((p) => p.handle));
+  const linked = new Set(
+    Array.from(String(contentHtml).matchAll(/\/products\/([a-z0-9-]+)/g)).map((m) => m[1]),
+  );
+
+  const topUp = [];
+  for (const p of products || []) {
+    if (strict.length + topUp.length >= want) break;
+    if (!p?.handle || taken.has(p.handle) || linked.has(p.handle)) continue;
+    taken.add(p.handle);
+    topUp.push(p);
+  }
+
+  return {products: [...strict, ...topUp].slice(0, want), matched: strict.length};
 }
 
 export const CROSS_SELL_NOISE = NOISE;

@@ -1,0 +1,31 @@
+{
+  "_comment": "Palette per theme. Every hero picks one and overrides only its own headline and widget. Kept separate from heroes.json so a palette tweak is one edit, not 43.",
+  "celestial": {
+    "accent": "#f2a6d8", "glow1": "rgba(242,166,216,.42)", "glow2": "rgba(146,120,255,.28)",
+    "titleGlow": "rgba(219,140,255,.5)", "kickerGlow": "rgba(240,80,154,.5)", "glowX": "76%", "glowY": "36%"
+  },
+  "neon": {
+    "accent": "#ff5fd0", "glow1": "rgba(255,80,190,.36)", "glow2": "rgba(127,230,255,.26)",
+    "titleGlow": "rgba(255,110,200,.45)", "kickerGlow": "rgba(255,60,170,.5)", "glowX": "72%", "glowY": "30%"
+  },
+  "cyber": {
+    "accent": "#7fe6ff", "glow1": "rgba(90,220,255,.34)", "glow2": "rgba(190,90,255,.28)",
+    "titleGlow": "rgba(120,220,255,.46)", "kickerGlow": "rgba(90,210,255,.5)", "glowX": "74%", "glowY": "28%"
+  },
+  "cozy": {
+    "accent": "#9fe6a0", "glow1": "rgba(150,225,160,.30)", "glow2": "rgba(255,200,140,.24)",
+    "titleGlow": "rgba(175,235,180,.40)", "kickerGlow": "rgba(140,220,150,.45)", "glowX": "75%", "glowY": "40%"
+  },
+  "pastel": {
+    "accent": "#ffc4e6", "glow1": "rgba(255,190,225,.36)", "glow2": "rgba(170,200,255,.26)",
+    "titleGlow": "rgba(255,200,230,.44)", "kickerGlow": "rgba(255,150,205,.45)", "glowX": "76%", "glowY": "34%"
+  },
+  "gold": {
+    "accent": "#ffd66e", "glow1": "rgba(255,196,110,.34)", "glow2": "rgba(146,120,255,.30)",
+    "titleGlow": "rgba(255,206,130,.42)", "kickerGlow": "rgba(255,190,90,.45)", "glowX": "74%", "glowY": "42%"
+  },
+  "violet": {
+    "accent": "#b79df2", "glow1": "rgba(160,120,255,.38)", "glow2": "rgba(127,230,255,.22)",
+    "titleGlow": "rgba(183,157,242,.48)", "kickerGlow": "rgba(150,110,245,.48)", "glowX": "75%", "glowY": "32%"
+  }
+}
