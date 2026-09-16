@@ -3,7 +3,7 @@
   "slug": "best-vtuber-overlays-2026-kawaii-celestial-guide",
   "kicker": "VTuber overlays",
   "title": "Your overlay is<br>the first thing<br>they judge",
-  "seed": 38,
+  "seed": 81,
   "accent": "#f2a6d8",
   "glow1": "rgba(242,166,216,.42)",
   "glow2": "rgba(146,120,255,.28)",
@@ -11,16 +11,18 @@
   "glowY": "36%",
   "titleGlow": "rgba(219,140,255,.5)",
   "kickerGlow": "rgba(240,80,154,.5)",
+  "side": "left",
+  "bg": "aurora",
   "copyW": "590px",
   "subW": "420px",
-  "titleSize": "62px",
+  "titleSize": "58px",
   "stickers": [
    {
-    "id": "celestial-multistream-chat",
-    "x": 733,
+    "id": "best-vtuber-overlays-2026-kawaii-celestial-guide",
+    "x": 747,
     "y": 20,
-    "w": 409,
-    "h": 655,
+    "w": 379,
+    "h": 668,
     "rotate": -4,
     "z": 3,
     "glow": "drop-shadow(0 0 30px rgba(240,80,154,.5)) drop-shadow(0 0 76px rgba(146,120,255,.28))"
@@ -31,7 +33,7 @@
   "slug": "how-to-set-up-streamelements-widgets-in-60-seconds",
   "kicker": "StreamElements",
   "title": "Installed in<br>under a minute",
-  "seed": 27,
+  "seed": 88,
   "accent": "#b79df2",
   "glow1": "rgba(160,120,255,.38)",
   "glow2": "rgba(127,230,255,.22)",
@@ -39,16 +41,18 @@
   "glowY": "32%",
   "titleGlow": "rgba(183,157,242,.48)",
   "kickerGlow": "rgba(150,110,245,.48)",
+  "side": "right",
+  "bg": "bloom",
   "copyW": "590px",
   "subW": "420px",
   "titleSize": "62px",
   "stickers": [
    {
-    "id": "pastel-chat",
-    "x": 728,
-    "y": 50,
+    "id": "how-to-set-up-streamelements-widgets-in-60-seconds",
+    "x": 54,
+    "y": 19,
     "w": 418,
-    "h": 530,
+    "h": 592,
     "rotate": -4,
     "z": 3,
     "glow": "drop-shadow(0 0 30px rgba(150,110,245,.48)) drop-shadow(0 0 76px rgba(127,230,255,.22))"
@@ -59,7 +63,7 @@
   "slug": "best-vtuber-overlays-2026-kawaii-celestial-guide-1",
   "kicker": "VTuber overlays",
   "title": "Kawaii, celestial,<br>and actually<br>readable",
-  "seed": 48,
+  "seed": 34,
   "accent": "#ffc4e6",
   "glow1": "rgba(255,190,225,.36)",
   "glow2": "rgba(170,200,255,.26)",
@@ -67,16 +71,18 @@
   "glowY": "34%",
   "titleGlow": "rgba(255,200,230,.44)",
   "kickerGlow": "rgba(255,150,205,.45)",
+  "side": "left",
+  "bg": "duo",
   "copyW": "590px",
   "subW": "420px",
-  "titleSize": "62px",
+  "titleSize": "66px",
   "stickers": [
    {
-    "id": "pastel-chat",
-    "x": 728,
-    "y": 50,
-    "w": 418,
-    "h": 530,
+    "id": "best-vtuber-overlays-2026-kawaii-celestial-guide-1",
+    "x": 733,
+    "y": 20,
+    "w": 408,
+    "h": 655,
     "rotate": -4,
     "z": 3,
     "glow": "drop-shadow(0 0 30px rgba(255,150,205,.45)) drop-shadow(0 0 76px rgba(170,200,255,.26))"
@@ -87,7 +93,7 @@
   "slug": "what-is-webm-and-why-it-matters-for-streamers",
   "kicker": "File formats",
   "title": "WebM is why<br>your overlay<br>stays smooth",
-  "seed": 60,
+  "seed": 12,
   "accent": "#7fe6ff",
   "glow1": "rgba(90,220,255,.34)",
   "glow2": "rgba(190,90,255,.28)",
@@ -95,16 +101,18 @@
   "glowY": "28%",
   "titleGlow": "rgba(120,220,255,.46)",
   "kickerGlow": "rgba(90,210,255,.5)",
+  "side": "right",
+  "bg": "beam",
   "copyW": "590px",
   "subW": "420px",
-  "titleSize": "62px",
+  "titleSize": "58px",
   "stickers": [
    {
-    "id": "neon-chat",
-    "x": 728,
-    "y": 28,
+    "id": "what-is-webm-and-why-it-matters-for-streamers",
+    "x": 54,
+    "y": 17,
     "w": 418,
-    "h": 574,
+    "h": 596,
     "rotate": -4,
     "z": 3,
     "glow": "drop-shadow(0 0 30px rgba(90,210,255,.5)) drop-shadow(0 0 76px rgba(190,90,255,.28))"
@@ -115,370 +123,6 @@
   "slug": "webm-vs-gif-for-twitch-the-secret-to-lag-free-stream-widgets",
   "kicker": "WebM vs GIF",
   "title": "One of these<br>is eating<br>your frames",
-  "seed": 65,
-  "accent": "#7fe6ff",
-  "glow1": "rgba(90,220,255,.34)",
-  "glow2": "rgba(190,90,255,.28)",
-  "glowX": "74%",
-  "glowY": "28%",
-  "titleGlow": "rgba(120,220,255,.46)",
-  "kickerGlow": "rgba(90,210,255,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "sws-neon-multichat",
-    "x": 728,
-    "y": 20,
-    "w": 418,
-    "h": 591,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(90,210,255,.5)) drop-shadow(0 0 76px rgba(190,90,255,.28))"
-   }
-  ]
- },
- {
-  "slug": "best-stream-overlays-for-spring-2026-anime-season",
-  "kicker": "Spring season",
-  "title": "Soft season,<br>soft overlays",
-  "seed": 83,
-  "accent": "#ffc4e6",
-  "glow1": "rgba(255,190,225,.36)",
-  "glow2": "rgba(170,200,255,.26)",
-  "glowX": "76%",
-  "glowY": "34%",
-  "titleGlow": "rgba(255,200,230,.44)",
-  "kickerGlow": "rgba(255,150,205,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "blueberry-milk-chat",
-    "x": 731,
-    "y": 20,
-    "w": 411,
-    "h": 668,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,150,205,.45)) drop-shadow(0 0 76px rgba(170,200,255,.26))"
-   }
-  ]
- },
- {
-  "slug": "the-evolution-of-stream-aesthetics-in-2026",
-  "kicker": "Stream aesthetics",
-  "title": "RGB is out.<br>Atmosphere<br>is in",
-  "seed": 41,
-  "accent": "#b79df2",
-  "glow1": "rgba(160,120,255,.38)",
-  "glow2": "rgba(127,230,255,.22)",
-  "glowX": "75%",
-  "glowY": "32%",
-  "titleGlow": "rgba(183,157,242,.48)",
-  "kickerGlow": "rgba(150,110,245,.48)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "spooky-neon-chat",
-    "x": 724,
-    "y": 99,
-    "w": 426,
-    "h": 431,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(150,110,245,.48)) drop-shadow(0 0 76px rgba(127,230,255,.22))"
-   }
-  ]
- },
- {
-  "slug": "nba-playoff-stream-widgets-kick",
-  "kicker": "Watch parties",
-  "title": "Your watch party<br>needs a<br>scoreboard",
-  "seed": 13,
-  "accent": "#ff5fd0",
-  "glow1": "rgba(255,80,190,.36)",
-  "glow2": "rgba(127,230,255,.26)",
-  "glowX": "72%",
-  "glowY": "30%",
-  "titleGlow": "rgba(255,110,200,.45)",
-  "kickerGlow": "rgba(255,60,170,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "neon-chat",
-    "x": 728,
-    "y": 28,
-    "w": 418,
-    "h": 574,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,60,170,.5)) drop-shadow(0 0 76px rgba(127,230,255,.26))"
-   }
-  ]
- },
- {
-  "slug": "the-cozy-aesthetic-spring-collection",
-  "kicker": "Cozy collection",
-  "title": "Cozy is a<br>whole aesthetic,<br>not a filter",
-  "seed": 4,
-  "accent": "#9fe6a0",
-  "glow1": "rgba(150,225,160,.30)",
-  "glow2": "rgba(255,200,140,.24)",
-  "glowX": "75%",
-  "glowY": "40%",
-  "titleGlow": "rgba(175,235,180,.40)",
-  "kickerGlow": "rgba(140,220,150,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "froggy-starlight",
-    "x": 728,
-    "y": 43,
-    "w": 418,
-    "h": 545,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(140,220,150,.45)) drop-shadow(0 0 76px rgba(255,200,140,.24))"
-   }
-  ]
- },
- {
-  "slug": "best-sci-fi-stream-overlays-to-upgrade-your-setup-in-2026",
-  "kicker": "Sci-fi overlays",
-  "title": "Make your stream<br>look like<br>the future",
-  "seed": 42,
-  "accent": "#7fe6ff",
-  "glow1": "rgba(90,220,255,.34)",
-  "glow2": "rgba(190,90,255,.28)",
-  "glowX": "74%",
-  "glowY": "28%",
-  "titleGlow": "rgba(120,220,255,.46)",
-  "kickerGlow": "rgba(90,210,255,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "cyber-bear-chat",
-    "x": 724,
-    "y": 51,
-    "w": 426,
-    "h": 528,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(90,210,255,.5)) drop-shadow(0 0 76px rgba(190,90,255,.28))"
-   }
-  ]
- },
- {
-  "slug": "star-wars-stream-setup-for-may-4th-guide",
-  "kicker": "Sci-fi setup",
-  "title": "Build the whole<br>sci-fi stream,<br>not just a theme",
-  "seed": 82,
-  "accent": "#7fe6ff",
-  "glow1": "rgba(90,220,255,.34)",
-  "glow2": "rgba(190,90,255,.28)",
-  "glowX": "74%",
-  "glowY": "28%",
-  "titleGlow": "rgba(120,220,255,.46)",
-  "kickerGlow": "rgba(90,210,255,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "cyber-bear-chat",
-    "x": 724,
-    "y": 51,
-    "w": 426,
-    "h": 528,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(90,210,255,.5)) drop-shadow(0 0 76px rgba(190,90,255,.28))"
-   }
-  ]
- },
- {
-  "slug": "star-wars-stream-setup-may-4th-widgets",
-  "kicker": "Sci-fi setup",
-  "title": "Widgets that<br>feel alive",
-  "seed": 48,
-  "accent": "#b79df2",
-  "glow1": "rgba(160,120,255,.38)",
-  "glow2": "rgba(127,230,255,.22)",
-  "glowX": "75%",
-  "glowY": "32%",
-  "titleGlow": "rgba(183,157,242,.48)",
-  "kickerGlow": "rgba(150,110,245,.48)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "sws-neon-multichat",
-    "x": 728,
-    "y": 20,
-    "w": 418,
-    "h": 591,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(150,110,245,.48)) drop-shadow(0 0 76px rgba(127,230,255,.22))"
-   }
-  ]
- },
- {
-  "slug": "may-the-4th-be-with-your-stream-introducing-the-ultimate-sci-fi-chat-widget",
-  "kicker": "Sci-fi chat",
-  "title": "A chat box<br>from a<br>better century",
-  "seed": 14,
-  "accent": "#7fe6ff",
-  "glow1": "rgba(90,220,255,.34)",
-  "glow2": "rgba(190,90,255,.28)",
-  "glowX": "74%",
-  "glowY": "28%",
-  "titleGlow": "rgba(120,220,255,.46)",
-  "kickerGlow": "rgba(90,210,255,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "neon-chat",
-    "x": 728,
-    "y": 28,
-    "w": 418,
-    "h": 574,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(90,210,255,.5)) drop-shadow(0 0 76px rgba(190,90,255,.28))"
-   }
-  ]
- },
- {
-  "slug": "upgrade-your-stream-the-sci-fi-neon-chat-widget-built-for-kick-twitch-obs",
-  "kicker": "Neon chat",
-  "title": "Built for Kick,<br>Twitch and OBS",
-  "seed": 52,
-  "accent": "#ff5fd0",
-  "glow1": "rgba(255,80,190,.36)",
-  "glow2": "rgba(127,230,255,.26)",
-  "glowX": "72%",
-  "glowY": "30%",
-  "titleGlow": "rgba(255,110,200,.45)",
-  "kickerGlow": "rgba(255,60,170,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "sws-neon-multichat",
-    "x": 728,
-    "y": 20,
-    "w": 418,
-    "h": 591,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,60,170,.5)) drop-shadow(0 0 76px rgba(127,230,255,.26))"
-   }
-  ]
- },
- {
-  "slug": "hire-a-custom-stream-widget-developer-for-kick-twitch",
-  "kicker": "Custom work",
-  "title": "Want one<br>nobody else<br>has?",
-  "seed": 44,
-  "accent": "#b79df2",
-  "glow1": "rgba(160,120,255,.38)",
-  "glow2": "rgba(127,230,255,.22)",
-  "glowX": "75%",
-  "glowY": "32%",
-  "titleGlow": "rgba(183,157,242,.48)",
-  "kickerGlow": "rgba(150,110,245,.48)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "cyber-bear-chat",
-    "x": 724,
-    "y": 51,
-    "w": 426,
-    "h": 528,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(150,110,245,.48)) drop-shadow(0 0 76px rgba(127,230,255,.22))"
-   }
-  ]
- },
- {
-  "slug": "streamelements-shutdown-alternatives",
-  "kicker": "Platform news",
-  "title": "If StreamElements<br>goes, your<br>overlays stay",
-  "seed": 79,
-  "accent": "#ffd66e",
-  "glow1": "rgba(255,196,110,.34)",
-  "glow2": "rgba(146,120,255,.30)",
-  "glowX": "74%",
-  "glowY": "42%",
-  "titleGlow": "rgba(255,206,130,.42)",
-  "kickerGlow": "rgba(255,190,90,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "sparkling-chat",
-    "x": 728,
-    "y": 39,
-    "w": 418,
-    "h": 553,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,190,90,.45)) drop-shadow(0 0 76px rgba(146,120,255,.30))"
-   }
-  ]
- },
- {
-  "slug": "celestial-butterfly-goal-widget-for-twitch-kick-obs",
-  "kicker": "Goal widget",
-  "title": "A goal bar<br>with wings",
-  "seed": 18,
-  "accent": "#ffc4e6",
-  "glow1": "rgba(255,190,225,.36)",
-  "glow2": "rgba(170,200,255,.26)",
-  "glowX": "76%",
-  "glowY": "34%",
-  "titleGlow": "rgba(255,200,230,.44)",
-  "kickerGlow": "rgba(255,150,205,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "lotus-butterfly-goal",
-    "x": 715,
-    "y": 199,
-    "w": 444,
-    "h": 233,
-    "rotate": 3,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,150,205,.45)) drop-shadow(0 0 76px rgba(170,200,255,.26))"
-   }
-  ]
- },
- {
-  "slug": "the-mandalorian-grogu-when-to-watch-and-why-vtubers-and-streamers-are-copying-this-sci-fi-aesthetic",
-  "kicker": "Sci-fi aesthetic",
-  "title": "Why everyone<br>wants the<br>space western look",
   "seed": 20,
   "accent": "#7fe6ff",
   "glow1": "rgba(90,220,255,.34)",
@@ -487,719 +131,21 @@
   "glowY": "28%",
   "titleGlow": "rgba(120,220,255,.46)",
   "kickerGlow": "rgba(90,210,255,.5)",
+  "side": "left",
+  "bg": "aurora",
   "copyW": "590px",
   "subW": "420px",
   "titleSize": "62px",
   "stickers": [
    {
-    "id": "cyber-bear-chat",
-    "x": 724,
-    "y": 51,
-    "w": 426,
-    "h": 528,
+    "id": "webm-vs-gif-for-twitch-the-secret-to-lag-free-stream-widgets",
+    "x": 728,
+    "y": 36,
+    "w": 418,
+    "h": 557,
     "rotate": -4,
     "z": 3,
     "glow": "drop-shadow(0 0 30px rgba(90,210,255,.5)) drop-shadow(0 0 76px rgba(190,90,255,.28))"
-   }
-  ]
- },
- {
-  "slug": "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable",
-  "kicker": "Chat widgets",
-  "title": "Most streams<br>are forgettable.<br>Chat is why",
-  "seed": 8,
-  "accent": "#ff5fd0",
-  "glow1": "rgba(255,80,190,.36)",
-  "glow2": "rgba(127,230,255,.26)",
-  "glowX": "72%",
-  "glowY": "30%",
-  "titleGlow": "rgba(255,110,200,.45)",
-  "kickerGlow": "rgba(255,60,170,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "neon-chat",
-    "x": 728,
-    "y": 28,
-    "w": 418,
-    "h": 574,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,60,170,.5)) drop-shadow(0 0 76px rgba(127,230,255,.26))"
-   }
-  ]
- },
- {
-  "slug": "streamelements-is-closing-best-alternatives-for-stream-overlays-chat-widgets-alerts-2026-guide",
-  "kicker": "Platform news",
-  "title": "Overlays that<br>outlive the<br>platform",
-  "seed": 71,
-  "accent": "#ffd66e",
-  "glow1": "rgba(255,196,110,.34)",
-  "glow2": "rgba(146,120,255,.30)",
-  "glowX": "74%",
-  "glowY": "42%",
-  "titleGlow": "rgba(255,206,130,.42)",
-  "kickerGlow": "rgba(255,190,90,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "y2k-chat",
-    "x": 724,
-    "y": 88,
-    "w": 426,
-    "h": 455,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,190,90,.45)) drop-shadow(0 0 76px rgba(146,120,255,.30))"
-   }
-  ]
- },
- {
-  "slug": "how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics",
-  "kicker": "Cottagecore",
-  "title": "Cute frogs,<br>calm stream",
-  "seed": 77,
-  "accent": "#9fe6a0",
-  "glow1": "rgba(150,225,160,.30)",
-  "glow2": "rgba(255,200,140,.24)",
-  "glowX": "75%",
-  "glowY": "40%",
-  "titleGlow": "rgba(175,235,180,.40)",
-  "kickerGlow": "rgba(140,220,150,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "froggy-starlight",
-    "x": 728,
-    "y": 43,
-    "w": 418,
-    "h": 545,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(140,220,150,.45)) drop-shadow(0 0 76px rgba(255,200,140,.24))"
-   }
-  ]
- },
- {
-  "slug": "how-to-create-a-dreamy-celestial-stream-setup-for-twitch-and-kick",
-  "kicker": "Celestial setup",
-  "title": "Build a stream<br>that looks<br>like a night sky",
-  "seed": 74,
-  "accent": "#f2a6d8",
-  "glow1": "rgba(242,166,216,.42)",
-  "glow2": "rgba(146,120,255,.28)",
-  "glowX": "76%",
-  "glowY": "36%",
-  "titleGlow": "rgba(219,140,255,.5)",
-  "kickerGlow": "rgba(240,80,154,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "celestial-multistream-chat",
-    "x": 733,
-    "y": 20,
-    "w": 409,
-    "h": 655,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(240,80,154,.5)) drop-shadow(0 0 76px rgba(146,120,255,.28))"
-   }
-  ]
- },
- {
-  "slug": "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups",
-  "kicker": "Cyberpunk",
-  "title": "Neon, chrome,<br>and a chat box<br>to match",
-  "seed": 37,
-  "accent": "#7fe6ff",
-  "glow1": "rgba(90,220,255,.34)",
-  "glow2": "rgba(190,90,255,.28)",
-  "glowX": "74%",
-  "glowY": "28%",
-  "titleGlow": "rgba(120,220,255,.46)",
-  "kickerGlow": "rgba(90,210,255,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "neon-chat",
-    "x": 728,
-    "y": 28,
-    "w": 418,
-    "h": 574,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(90,210,255,.5)) drop-shadow(0 0 76px rgba(190,90,255,.28))"
-   }
-  ]
- },
- {
-  "slug": "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups",
-  "kicker": "Cyberpunk",
-  "title": "Futuristic without<br>looking cluttered",
-  "seed": 67,
-  "accent": "#7fe6ff",
-  "glow1": "rgba(90,220,255,.34)",
-  "glow2": "rgba(190,90,255,.28)",
-  "glowX": "74%",
-  "glowY": "28%",
-  "titleGlow": "rgba(120,220,255,.46)",
-  "kickerGlow": "rgba(90,210,255,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "sws-neon-multichat",
-    "x": 728,
-    "y": 20,
-    "w": 418,
-    "h": 591,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(90,210,255,.5)) drop-shadow(0 0 76px rgba(190,90,255,.28))"
-   }
-  ]
- },
- {
-  "slug": "best-cyberpunk-twitch-overlays-for-futuristic-stream-setups-1",
-  "kicker": "Cyberpunk",
-  "title": "Glow that reads<br>over gameplay",
-  "seed": 8,
-  "accent": "#ff5fd0",
-  "glow1": "rgba(255,80,190,.36)",
-  "glow2": "rgba(127,230,255,.26)",
-  "glowX": "72%",
-  "glowY": "30%",
-  "titleGlow": "rgba(255,110,200,.45)",
-  "kickerGlow": "rgba(255,60,170,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "neon-chat",
-    "x": 728,
-    "y": 28,
-    "w": 418,
-    "h": 574,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,60,170,.5)) drop-shadow(0 0 76px rgba(127,230,255,.26))"
-   }
-  ]
- },
- {
-  "slug": "best-vtuber-widgets-for-neon-and-cyberpunk-streamers",
-  "kicker": "VTuber widgets",
-  "title": "Neon widgets<br>that match<br>your model",
-  "seed": 30,
-  "accent": "#ff5fd0",
-  "glow1": "rgba(255,80,190,.36)",
-  "glow2": "rgba(127,230,255,.26)",
-  "glowX": "72%",
-  "glowY": "30%",
-  "titleGlow": "rgba(255,110,200,.45)",
-  "kickerGlow": "rgba(255,60,170,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "sws-neon-multichat",
-    "x": 728,
-    "y": 20,
-    "w": 418,
-    "h": 591,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,60,170,.5)) drop-shadow(0 0 76px rgba(127,230,255,.26))"
-   }
-  ]
- },
- {
-  "slug": "best-twitch-and-kick-chat-widgets-and-stream-overlays-for-obs-in-2026",
-  "kicker": "Chat and overlays",
-  "title": "Twitch and Kick,<br>one clean<br>setup",
-  "seed": 91,
-  "accent": "#b79df2",
-  "glow1": "rgba(160,120,255,.38)",
-  "glow2": "rgba(127,230,255,.22)",
-  "glowX": "75%",
-  "glowY": "32%",
-  "titleGlow": "rgba(183,157,242,.48)",
-  "kickerGlow": "rgba(150,110,245,.48)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "multistreamchatwidget-final",
-    "x": 724,
-    "y": 99,
-    "w": 426,
-    "h": 432,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(150,110,245,.48)) drop-shadow(0 0 76px rgba(127,230,255,.22))"
-   }
-  ]
- },
- {
-  "slug": "best-desktop-widgets-for-streamers-how-to-add-widgets-to-obs-iphone-and-modern-stream-setups",
-  "kicker": "OBS setup",
-  "title": "Add a widget<br>to OBS in<br>two steps",
-  "seed": 60,
-  "accent": "#b79df2",
-  "glow1": "rgba(160,120,255,.38)",
-  "glow2": "rgba(127,230,255,.22)",
-  "glowX": "75%",
-  "glowY": "32%",
-  "titleGlow": "rgba(183,157,242,.48)",
-  "kickerGlow": "rgba(150,110,245,.48)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "multistreamchatwidget-final",
-    "x": 724,
-    "y": 99,
-    "w": 426,
-    "h": 432,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(150,110,245,.48)) drop-shadow(0 0 76px rgba(127,230,255,.22))"
-   }
-  ]
- },
- {
-  "slug": "how-to-make-your-twitch-stream-look-more-professional-in-2026",
-  "kicker": "Looking pro",
-  "title": "Professional is<br>a look you<br>can install",
-  "seed": 92,
-  "accent": "#b79df2",
-  "glow1": "rgba(160,120,255,.38)",
-  "glow2": "rgba(127,230,255,.22)",
-  "glowX": "75%",
-  "glowY": "32%",
-  "titleGlow": "rgba(183,157,242,.48)",
-  "kickerGlow": "rgba(150,110,245,.48)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "sparkling-chat",
-    "x": 728,
-    "y": 39,
-    "w": 418,
-    "h": 553,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(150,110,245,.48)) drop-shadow(0 0 76px rgba(127,230,255,.22))"
-   }
-  ]
- },
- {
-  "slug": "how-to-make-money-on-twitch-as-a-beginner-in-2026",
-  "kicker": "Monetization",
-  "title": "Give people<br>a reason<br>to tip",
-  "seed": 77,
-  "accent": "#ffd66e",
-  "glow1": "rgba(255,196,110,.34)",
-  "glow2": "rgba(146,120,255,.30)",
-  "glowX": "74%",
-  "glowY": "42%",
-  "titleGlow": "rgba(255,206,130,.42)",
-  "kickerGlow": "rgba(255,190,90,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "moon-jar-goal",
-    "x": 724,
-    "y": 55,
-    "w": 426,
-    "h": 520,
-    "rotate": 3,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,190,90,.45)) drop-shadow(0 0 76px rgba(146,120,255,.30))"
-   }
-  ]
- },
- {
-  "slug": "how-to-make-custom-twitch-widgets-in-2026-or-let-professionals-build-them-for-you",
-  "kicker": "Custom widgets",
-  "title": "Build it yourself,<br>or don't",
-  "seed": 67,
-  "accent": "#b79df2",
-  "glow1": "rgba(160,120,255,.38)",
-  "glow2": "rgba(127,230,255,.22)",
-  "glowX": "75%",
-  "glowY": "32%",
-  "titleGlow": "rgba(183,157,242,.48)",
-  "kickerGlow": "rgba(150,110,245,.48)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "gradient-cloud-chat",
-    "x": 728,
-    "y": 37,
-    "w": 418,
-    "h": 556,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(150,110,245,.48)) drop-shadow(0 0 76px rgba(127,230,255,.22))"
-   }
-  ]
- },
- {
-  "slug": "why-cozy-and-celestial-stream-setups-are-trending-in-2026-and-why-streamers-are-moving-beyond-rgb",
-  "kicker": "Cozy and celestial",
-  "title": "Streamers are<br>moving on<br>from RGB",
-  "seed": 38,
-  "accent": "#f2a6d8",
-  "glow1": "rgba(242,166,216,.42)",
-  "glow2": "rgba(146,120,255,.28)",
-  "glowX": "76%",
-  "glowY": "36%",
-  "titleGlow": "rgba(219,140,255,.5)",
-  "kickerGlow": "rgba(240,80,154,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "celestial-moon-goal",
-    "x": 725,
-    "y": 20,
-    "w": 424,
-    "h": 642,
-    "rotate": 3,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(240,80,154,.5)) drop-shadow(0 0 76px rgba(146,120,255,.28))"
-   }
-  ]
- },
- {
-  "slug": "is-streamelements-shutting-down-what-streamers-need-to-know-in-2026",
-  "kicker": "Platform news",
-  "title": "What happens<br>to your overlays<br>if it closes",
-  "seed": 77,
-  "accent": "#ffd66e",
-  "glow1": "rgba(255,196,110,.34)",
-  "glow2": "rgba(146,120,255,.30)",
-  "glowX": "74%",
-  "glowY": "42%",
-  "titleGlow": "rgba(255,206,130,.42)",
-  "kickerGlow": "rgba(255,190,90,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "potion-bottle-1",
-    "x": 720,
-    "y": 89,
-    "w": 435,
-    "h": 451,
-    "rotate": 3,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,190,90,.45)) drop-shadow(0 0 76px rgba(146,120,255,.30))"
-   }
-  ]
- },
- {
-  "slug": "best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more",
-  "kicker": "Alternatives",
-  "title": "Where to go<br>if you leave<br>StreamElements",
-  "seed": 44,
-  "accent": "#ffd66e",
-  "glow1": "rgba(255,196,110,.34)",
-  "glow2": "rgba(146,120,255,.30)",
-  "glowX": "74%",
-  "glowY": "42%",
-  "titleGlow": "rgba(255,206,130,.42)",
-  "kickerGlow": "rgba(255,190,90,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "sparkling-chat",
-    "x": 728,
-    "y": 39,
-    "w": 418,
-    "h": 553,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,190,90,.45)) drop-shadow(0 0 76px rgba(146,120,255,.30))"
-   }
-  ]
- },
- {
-  "slug": "why-star-bottle-goal-widgets-are-becoming-a-favorite-among-twitch-streamers-in-2026",
-  "kicker": "Goal widgets",
-  "title": "A goal people<br>can watch<br>fill up",
-  "seed": 53,
-  "accent": "#ffd66e",
-  "glow1": "rgba(255,196,110,.34)",
-  "glow2": "rgba(146,120,255,.30)",
-  "glowX": "74%",
-  "glowY": "42%",
-  "titleGlow": "rgba(255,206,130,.42)",
-  "kickerGlow": "rgba(255,190,90,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "potion-bottle-1",
-    "x": 720,
-    "y": 89,
-    "w": 435,
-    "h": 451,
-    "rotate": 3,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,190,90,.45)) drop-shadow(0 0 76px rgba(146,120,255,.30))"
-   }
-  ]
- },
- {
-  "slug": "how-twitch-goal-widgets-increase-viewer-engagement-and-help-grow-your-community-faster",
-  "kicker": "Goal widgets",
-  "title": "A goal bar<br>people actually<br>want to fill",
-  "seed": 53,
-  "accent": "#ffd66e",
-  "glow1": "rgba(255,196,110,.34)",
-  "glow2": "rgba(146,120,255,.30)",
-  "glowX": "74%",
-  "glowY": "42%",
-  "titleGlow": "rgba(255,206,130,.42)",
-  "kickerGlow": "rgba(255,190,90,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "moon-jar-goal",
-    "x": 724,
-    "y": 55,
-    "w": 426,
-    "h": 520,
-    "rotate": 3,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,190,90,.45)) drop-shadow(0 0 76px rgba(146,120,255,.30))"
-   }
-  ]
- },
- {
-  "slug": "why-every-twitch-streamer-should-have-a-goal-widget-in-2026",
-  "kicker": "Goal widgets",
-  "title": "Give the chat<br>something<br>to chase",
-  "seed": 33,
-  "accent": "#ffd66e",
-  "glow1": "rgba(255,196,110,.34)",
-  "glow2": "rgba(146,120,255,.30)",
-  "glowX": "74%",
-  "glowY": "42%",
-  "titleGlow": "rgba(255,206,130,.42)",
-  "kickerGlow": "rgba(255,190,90,.45)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "star-goal",
-    "x": 720,
-    "y": 105,
-    "w": 435,
-    "h": 420,
-    "rotate": 3,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,190,90,.45)) drop-shadow(0 0 76px rgba(146,120,255,.30))"
-   }
-  ]
- },
- {
-  "slug": "is-streamelements-shutting-down-best-streamelements-alternatives-for-twitch-streamers-in-2026",
-  "kicker": "Alternatives",
-  "title": "Your overlays<br>should not<br>depend on one host",
-  "seed": 64,
-  "accent": "#b79df2",
-  "glow1": "rgba(160,120,255,.38)",
-  "glow2": "rgba(127,230,255,.22)",
-  "glowX": "75%",
-  "glowY": "32%",
-  "titleGlow": "rgba(183,157,242,.48)",
-  "kickerGlow": "rgba(150,110,245,.48)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "multistreamchatwidget-final",
-    "x": 724,
-    "y": 99,
-    "w": 426,
-    "h": 432,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(150,110,245,.48)) drop-shadow(0 0 76px rgba(127,230,255,.22))"
-   }
-  ]
- },
- {
-  "slug": "moon-glow-content-sprint-why-celestial-stream-overlays-are-becoming-the-future-of-twitch-branding",
-  "kicker": "Celestial branding",
-  "title": "Moon glow is<br>a brand,<br>not a colour",
-  "seed": 54,
-  "accent": "#f2a6d8",
-  "glow1": "rgba(242,166,216,.42)",
-  "glow2": "rgba(146,120,255,.28)",
-  "glowX": "76%",
-  "glowY": "36%",
-  "titleGlow": "rgba(219,140,255,.5)",
-  "kickerGlow": "rgba(240,80,154,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "celestial-moon-goal",
-    "x": 725,
-    "y": 20,
-    "w": 424,
-    "h": 642,
-    "rotate": 3,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(240,80,154,.5)) drop-shadow(0 0 76px rgba(146,120,255,.28))"
-   }
-  ]
- },
- {
-  "slug": "how-streamers-can-grow-during-the-fifa-world-cup-2026-content-ideas-watch-parties-twitch-growth-opportunities",
-  "kicker": "Watch parties",
-  "title": "The biggest<br>watch party<br>of the year",
-  "seed": 40,
-  "accent": "#ff5fd0",
-  "glow1": "rgba(255,80,190,.36)",
-  "glow2": "rgba(127,230,255,.26)",
-  "glowX": "72%",
-  "glowY": "30%",
-  "titleGlow": "rgba(255,110,200,.45)",
-  "kickerGlow": "rgba(255,60,170,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "multistreamchatwidget-final",
-    "x": 724,
-    "y": 99,
-    "w": 426,
-    "h": 432,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,60,170,.5)) drop-shadow(0 0 76px rgba(127,230,255,.26))"
-   }
-  ]
- },
- {
-  "slug": "where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it",
-  "kicker": "Watch parties",
-  "title": "Where to watch,<br>and what to<br>stream around it",
-  "seed": 23,
-  "accent": "#ff5fd0",
-  "glow1": "rgba(255,80,190,.36)",
-  "glow2": "rgba(127,230,255,.26)",
-  "glowX": "72%",
-  "glowY": "30%",
-  "titleGlow": "rgba(255,110,200,.45)",
-  "kickerGlow": "rgba(255,60,170,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "sws-neon-multichat",
-    "x": 728,
-    "y": 20,
-    "w": 418,
-    "h": 591,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,60,170,.5)) drop-shadow(0 0 76px rgba(127,230,255,.26))"
-   }
-  ]
- },
- {
-  "slug": "best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide",
-  "kicker": "Multistream",
-  "title": "Every platform<br>in one<br>chat box",
-  "seed": 9,
-  "accent": "#b79df2",
-  "glow1": "rgba(160,120,255,.38)",
-  "glow2": "rgba(127,230,255,.22)",
-  "glowX": "75%",
-  "glowY": "32%",
-  "titleGlow": "rgba(183,157,242,.48)",
-  "kickerGlow": "rgba(150,110,245,.48)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "multistreamchatwidget-final",
-    "x": 724,
-    "y": 99,
-    "w": 426,
-    "h": 432,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(150,110,245,.48)) drop-shadow(0 0 76px rgba(127,230,255,.22))"
-   }
-  ]
- },
- {
-  "slug": "5-custom-obs-widgets-every-streamer-needs-to-stand-out-in-2026",
-  "kicker": "OBS widgets",
-  "title": "Five widgets<br>that make people<br>stay",
-  "seed": 91,
-  "accent": "#ff5fd0",
-  "glow1": "rgba(255,80,190,.36)",
-  "glow2": "rgba(127,230,255,.26)",
-  "glowX": "72%",
-  "glowY": "30%",
-  "titleGlow": "rgba(255,110,200,.45)",
-  "kickerGlow": "rgba(255,60,170,.5)",
-  "copyW": "590px",
-  "subW": "420px",
-  "titleSize": "62px",
-  "stickers": [
-   {
-    "id": "neon-chat",
-    "x": 728,
-    "y": 28,
-    "w": 418,
-    "h": 574,
-    "rotate": -4,
-    "z": 3,
-    "glow": "drop-shadow(0 0 30px rgba(255,60,170,.5)) drop-shadow(0 0 76px rgba(127,230,255,.26))"
    }
   ]
  }

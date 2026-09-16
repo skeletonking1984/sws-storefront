@@ -59,7 +59,16 @@ export function ArticleCarousel({heading, products}) {
   if (!products?.length) return null;
 
   return (
-    <aside className="article-shelf" aria-label={heading}>
+    /*
+      <section>, NOT <aside>.
+
+      app.css styles the bare `aside` selector as Hydrogen's cart/menu drawer:
+      position fixed, 400px wide, translated off screen with a backdrop blur.
+      A semantically reasonable <aside> here inherited all of that, so the
+      carousel rendered as an invisible off-screen drawer. It was in the
+      server HTML the whole time, which is why it looked shipped and was not.
+    */
+    <section className="article-shelf" aria-label={heading}>
       <div className="article-shelf-head">
         <h2>{heading}</h2>
         {overflows && (
@@ -95,6 +104,6 @@ export function ArticleCarousel({heading, products}) {
           </div>
         ))}
       </div>
-    </aside>
+    </section>
   );
 }

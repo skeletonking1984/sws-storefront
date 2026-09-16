@@ -30,11 +30,28 @@ const STAGE = 'http://localhost:8791';
 const STAGE_REPO = '/Users/todd/Documents/orgs/SWS/repos/sws-widget-stage';
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
-/* Which LINES group suits each hero theme. */
-const LINE_GROUP = {
-  celestial: 'celestial', cozy: 'cozy', neon: 'neon', cyber: 'neon',
-  pastel: 'general', gold: 'goal', violet: 'general',
-};
+/*
+ * Which LINES group suits an article, chosen from the ARTICLE's own handle and
+ * not from its hero palette.
+ *
+ * Keying off the palette put "cyberpunk vibes" and "chrome and pink, yes" in
+ * the chat of an article about the WebM file format, because that hero happens
+ * to use the cyber palette. The palette is a look; the handle is the topic.
+ * When the handle says nothing, general chatter is the honest choice.
+ */
+const TOPIC_GROUPS = [
+  [/celestial|moon|star|cosmic|dreamy/, 'celestial'],
+  [/cozy|cottagecore|frog|spring|comfy/, 'cozy'],
+  [/cyberpunk|neon|futuristic|sci-fi/, 'neon'],
+  [/goal|tip|donation|money|monetiz/, 'goal'],
+  [/multistream|kick|youtube|multi-stream/, 'multistream'],
+  [/streamelements|shutting-down|shutdown|alternativ/, 'platform'],
+];
+
+function groupFor(handle) {
+  for (const [re, g] of TOPIC_GROUPS) if (re.test(handle)) return g;
+  return 'general';
+}
 
 const rows = JSON.parse(fs.readFileSync(path.join(HERE, 'map.json'), 'utf8'));
 const only = process.argv.slice(2);
@@ -59,7 +76,7 @@ const browser = await puppeteer.launch({
 });
 
 let done = 0;
-for (const [handle, theme, , , widgetId] of todo) {
+for (const [handle, , , , widgetId] of todo) {
   let kind = 'chat';
   const metaPath = path.join(STAGE_REPO, 'widgets', widgetId, 'widget.json');
   if (fs.existsSync(metaPath)) kind = JSON.parse(fs.readFileSync(metaPath, 'utf8')).kind || 'chat';
@@ -107,7 +124,7 @@ for (const [handle, theme, , , widgetId] of todo) {
       ];
     }
   } else {
-    const msgs = chatFor(handle, LINE_GROUP[theme] || 'general', 5);
+    const msgs = chatFor(handle, groupFor(handle), 5);
     const tip = tipFor(handle);
     feed = [
       ...msgs.map((m) => ({listener: 'message', event: {data: {...m, displayName: m.nick, tags: {}, emotes: []}}})),

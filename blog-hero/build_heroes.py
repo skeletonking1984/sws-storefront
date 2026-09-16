@@ -128,7 +128,11 @@ for idx, (handle, theme, kicker, title, wid) in enumerate(rows):
         # everywhere either.
         "titleSize": f"{[58, 62, 66][idx % 3]}px",
         "stickers": [{
-            "id": wid,
+            # The article handle, NOT the widget id: art is captured per article
+            # now and the file is named for the article. Leaving the widget id
+            # here silently 404s the sticker and the card renders as background
+            # only, which still looks deliberate enough to ship by mistake.
+            "id": handle,
             "x": round(x), "y": round(y), "w": round(w), "h": round(h),
             "rotate": ROT.get(widget_kind(wid), ROT_DEFAULT), "z": 3, "glow": glow_for(theme),
         }],
