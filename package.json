@@ -12,7 +12,7 @@
     "codegen": "shopify hydrogen codegen && react-router typegen",
     "logo": "node og/make-logo.mjs",
     "verify:tracking": "node scripts/verify-tracking.mjs",
-    "verify:all": "node scripts/audit-catalog.mjs && node scripts/audit-shipping.mjs && node scripts/audit-policy-claims.mjs && npm run audit:ip && node scripts/verify-test-order-filter.mjs && node scripts/verify-tracking.mjs",
+    "verify:all": "node scripts/audit-catalog.mjs && node scripts/audit-shipping.mjs && node scripts/audit-policy-claims.mjs && npm run audit:ip && node scripts/verify-test-order-filter.mjs && node scripts/verify-tracking.mjs && node scripts/verify-feed.mjs",
     "audit:ip": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/audit-ip-risk.mjs",
     "optimize:assets": "node scripts/optimize-assets.mjs",
     "verify:oauth1": "node scripts/verify-oauth1.mjs",
@@ -22,7 +22,8 @@
     "audit:policy": "node scripts/audit-policy-claims.mjs",
     "audit:policy:self-test": "node scripts/audit-policy-claims.mjs --self-test",
     "bundles:sales": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/bundle-sales.mjs",
-    "verify:test-orders": "node scripts/verify-test-order-filter.mjs"
+    "verify:test-orders": "node scripts/verify-test-order-filter.mjs",
+    "verify:feed": "node scripts/verify-feed.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

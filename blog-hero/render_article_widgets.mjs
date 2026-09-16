@@ -54,11 +54,22 @@ function groupFor(handle) {
 }
 
 const rows = JSON.parse(fs.readFileSync(path.join(HERE, 'map.json'), 'utf8'));
-const only = process.argv.slice(2);
+const only = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const todo = only.length ? rows.filter((r) => only.includes(r[0])) : rows;
 if (!todo.length) { console.error('nothing to render'); process.exit(1); }
 
 fs.mkdirSync(OUT, {recursive: true});
+
+const MANIFEST = path.join(OUT, 'manifest.json');
+const manifest = fs.existsSync(MANIFEST) ? JSON.parse(fs.readFileSync(MANIFEST, 'utf8')) : {};
+
+/* --stale lists articles whose capture does not match the current map. */
+if (process.argv.includes('--stale')) {
+  const bad = rows.filter(([h, , , , w]) =>
+    !fs.existsSync(path.join(OUT, `${h}.png`)) || manifest[h] !== w).map((r) => r[0]);
+  console.log(bad.join('\n'));
+  process.exit(0);
+}
 
 const bundleCache = new Map();
 async function bundleFor(id) {
@@ -140,6 +151,14 @@ for (const [handle, , , , widgetId] of todo) {
 
   // Named by ARTICLE, so two articles sharing a widget still get their own art.
   await page.screenshot({path: path.join(OUT, `${handle}.png`), omitBackground: true, type: 'png'});
+  /*
+   * Sidecar manifest. The mapping changed twice mid-build and there was no way
+   * to tell which captures were stale short of re-rendering all 43, because the
+   * PNG is named for the article and says nothing about which widget made it.
+   * With this, `--stale` can answer the question exactly.
+   */
+  manifest[handle] = widgetId;
+  fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 1));
   await page.close();
   done++;
   console.log(`ok ${String(done).padStart(2)}/${todo.length}  ${widgetId.padEnd(28)} ${handle.slice(0, 44)}`);

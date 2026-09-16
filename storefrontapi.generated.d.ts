@@ -519,6 +519,46 @@ export type CartApiMutationFragment = Pick<
   'id' | 'totalQuantity' | 'checkoutUrl'
 > & {attributes: Array<Pick<StorefrontAPI.Attribute, 'key' | 'value'>>};
 
+export type ProductFeedQueryVariables = StorefrontAPI.Exact<{
+  first: StorefrontAPI.Scalars['Int']['input'];
+  after?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['String']['input']>;
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+}>;
+
+export type ProductFeedQuery = {
+  products: {
+    pageInfo: Pick<StorefrontAPI.PageInfo, 'hasNextPage' | 'endCursor'>;
+    nodes: Array<
+      Pick<
+        StorefrontAPI.Product,
+        | 'id'
+        | 'handle'
+        | 'title'
+        | 'description'
+        | 'productType'
+        | 'vendor'
+        | 'tags'
+      > & {
+        featuredImage?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.Image, 'url' | 'altText'>
+        >;
+        images: {nodes: Array<Pick<StorefrontAPI.Image, 'url'>>};
+        variants: {
+          nodes: Array<
+            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
+              price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+              compareAtPrice?: StorefrontAPI.Maybe<
+                Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+              >;
+            }
+          >;
+        };
+      }
+    >;
+  };
+};
+
 export type SitemapCountsQueryVariables = StorefrontAPI.Exact<{
   [key: string]: never;
 }>;
@@ -2259,6 +2299,10 @@ interface GeneratedQueryTypes {
   '#graphql\n  fragment NavCollection on Collection {\n    id\n    handle\n    title\n    image {\n      url\n      altText\n    }\n    products(first: 250) {\n      nodes {\n        id\n      }\n    }\n  }\n  fragment NavProduct on Product {\n    id\n    handle\n    title\n    featuredImage {\n      url\n      altText\n    }\n    selectedOrFirstAvailableVariant {\n      price {\n        amount\n        currencyCode\n      }\n    }\n  }\n  query Nav(\n    $country: CountryCode\n    $language: LanguageCode\n    $featuredWidgetHandle: String!\n    $overlayHandle0: String!\n    $overlayHandle1: String!\n    $overlayHandle2: String!\n    $overlayHandle3: String!\n  ) @inContext(language: $language, country: $country) {\n    allWidgets: collection(handle: "widgets") {\n      ...NavCollection\n    }\n    chatWidgets: collection(handle: "frontpage") {\n      ...NavCollection\n    }\n    goalWidgets: collection(handle: "stream-widgets-templates") {\n      ...NavCollection\n    }\n    topWidgets: collection(handle: "top-widgets") {\n      ...NavCollection\n      thumbs: products(first: 8) {\n        nodes {\n          ...NavProduct\n        }\n      }\n    }\n    overlays: collection(handle: "overlays") {\n      ...NavCollection\n    }\n    bundles: collection(handle: "bundles") {\n      ...NavCollection\n    }\n    featuredWidget: product(handle: $featuredWidgetHandle) {\n      ...NavProduct\n    }\n    overlayFeatured0: product(handle: $overlayHandle0) {\n      ...NavProduct\n    }\n    overlayFeatured1: product(handle: $overlayHandle1) {\n      ...NavProduct\n    }\n    overlayFeatured2: product(handle: $overlayHandle2) {\n      ...NavProduct\n    }\n    overlayFeatured3: product(handle: $overlayHandle3) {\n      ...NavProduct\n    }\n  }\n': {
     return: NavQuery;
     variables: NavQueryVariables;
+  };
+  '#graphql\n  query ProductFeed($first: Int!, $after: String, $country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: $first, after: $after) {\n      pageInfo { hasNextPage endCursor }\n      nodes {\n        id\n        handle\n        title\n        description\n        productType\n        vendor\n        tags\n        featuredImage { url altText }\n        images(first: 10) { nodes { url } }\n        variants(first: 1) {\n          nodes {\n            id\n            availableForSale\n            price { amount currencyCode }\n            compareAtPrice { amount currencyCode }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: ProductFeedQuery;
+    variables: ProductFeedQueryVariables;
   };
   '#graphql\n  query SitemapCounts {\n    products: sitemap(type: PRODUCT) {\n      pagesCount {\n        count\n      }\n    }\n    collections: sitemap(type: COLLECTION) {\n      pagesCount {\n        count\n      }\n    }\n    pages: sitemap(type: PAGE) {\n      pagesCount {\n        count\n      }\n    }\n    blogs: sitemap(type: BLOG) {\n      pagesCount {\n        count\n      }\n    }\n  }\n': {
     return: SitemapCountsQuery;

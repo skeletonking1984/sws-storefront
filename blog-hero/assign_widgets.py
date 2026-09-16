@@ -26,7 +26,12 @@ GOAL_ANY = ["moon-jar-goal", "star-goal", "potion-bottle-1", "lotus-glass-goal",
 GOAL_CELESTIAL = ["celestial-moon-goal", "moon-jar-goal", "star-goal"]
 MULTI = ["multistreamchatwidget-final", "sws-neon-multichat", "celestial-multistream-chat"]
 CHAT_CELESTIAL = ["celestial-multistream-chat", "moonflower-chat", "lotus-glass-chat", "sparkling-chat"]
-CHAT_NEON = ["neon-chat", "sws-neon-multichat", "cyber-bear-chat", "cyber-bear-chat-h", "khepri-chat"]
+# cyber-bear-chat-h (1830x551, 3.3:1) and khepri-chat (2200x983, 2.2:1) are
+# deliberately NOT here. build_heroes.py rejects anything past 2:1 because it
+# shrinks to an illegible sliver in the art zone, and a widget this picker
+# chooses but the builder then drops leaves the article with NO hero at all,
+# silently keeping its old one. Candidates must satisfy both stages.
+CHAT_NEON = ["neon-chat", "sws-neon-multichat", "cyber-bear-chat", "soul-blade-chat", "waylay-chat"]
 CHAT_COZY = ["froggy-starlight", "lotus-butterfly-chat", "blueberry-milk-chat", "cloud-chat"]
 CHAT_PASTEL = ["pastel-chat", "blueberry-milk-chat", "y2k-chat", "gradient-cloud-chat"]
 CHAT_SPOOKY = ["spooky-neon-chat", "halloween-chat", "tarot-chat", "alchemist-chat"]
