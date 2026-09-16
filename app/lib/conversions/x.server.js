@@ -347,7 +347,7 @@ const X_EVENT_ID_KEYS = {
  * @param {string} [args.eventId] Optional dedup id.
  * @returns {Promise<{ok: boolean, reason?: string}>}
  */
-export async function sendEvent({env, name, params, clickIds, ip, userAgent, eventId}) {
+export async function sendEvent({env, name, params, clickIds, ip, userAgent, hashedEmail, eventId}) {
   if (!isConfigured(env)) return {ok: false, reason: 'not_configured'};
 
   const key = X_EVENT_ID_KEYS[name];
@@ -358,6 +358,19 @@ export async function sendEvent({env, name, params, clickIds, ip, userAgent, eve
   const identifier = {};
   const twclid = clickIds?._twclid;
   if (twclid) identifier.twclid = twclid;
+  /*
+   * hashed_email is the strongest identifier X takes short of a completed
+   * order, and until now every pre-purchase event went without one: a page
+   * view carries no email, and twclid only exists for an ad click (X's own
+   * diagnostics reported zero click ids across 191 events), so the funnel was
+   * matched on IP and user agent alone.
+   *
+   * Already hashed by app/lib/hashedEmail.server.js with the SAME
+   * normalization sha256Hex uses below for the purchase path, lowercased and
+   * trimmed then unsalted SHA256. If those two ever diverge the same person
+   * reads as two different people and matching silently halves.
+   */
+  if (hashedEmail) identifier.hashed_email = String(hashedEmail);
   if (ip) identifier.ip_address = String(ip);
   if (userAgent) identifier.user_agent = String(userAgent);
 

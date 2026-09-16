@@ -23,7 +23,12 @@ export async function action({request, context}) {
   // `fetcher.data` for a non-2xx, so encoding "this email was rejected" as a
   // 400 silently loses the message the component needs to show the fallback
   // code. Verified 2026-09-14: the popup rendered nothing on a 400.
-  return Response.json(result);
+  // Set-Cookie, not part of the JSON body: the browser must never see the
+  // hash (HttpOnly), and the component only needs {ok, reason, values}.
+  const headers = new Headers();
+  if (result.setCookie) headers.append('Set-Cookie', result.setCookie);
+  const {setCookie: _omit, ...body} = result;
+  return Response.json(body, {headers});
 }
 
 /** No GET rendering for a resource route. */

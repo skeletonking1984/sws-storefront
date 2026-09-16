@@ -30,6 +30,7 @@
 
 import {destinations} from '~/lib/conversions/index.server';
 import {readClickIds} from '~/lib/clickIds.server';
+import {readHashedEmail} from '~/lib/hashedEmail.server';
 
 /**
  * Every event name app/lib/analytics/events.js's `normalizeEvent` can
@@ -135,6 +136,15 @@ export async function action({request, context}) {
     undefined;
   const userAgent = request.headers.get('User-Agent') || undefined;
 
+  /*
+   * The visitor's hashed email, when we already know them: they gave us an
+   * address through the newsletter form (see app/lib/newsletter.server.js).
+   * Read from an HttpOnly cookie, so page JS can neither read it nor forge
+   * it, and validated as a SHA256 hex digest before it can reach an ad
+   * platform. Never the plaintext address, which this app does not store.
+   */
+  const hashedEmail = readHashedEmail(request) || undefined;
+
   // Fan out to every destination that implements the optional `sendEvent`
   // (see app/lib/conversions/index.server.js). A destination without it is
   // simply skipped -- adding a platform's event relay stays one file.
@@ -165,6 +175,7 @@ export async function action({request, context}) {
           // and this whole path would be decorative.
           ip,
           userAgent,
+          hashedEmail,
         });
       }),
   );

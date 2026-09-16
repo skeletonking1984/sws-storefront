@@ -8,6 +8,7 @@
  */
 import {sendNotificationEmail} from '~/lib/notify.server';
 import {subscribeToMarketing} from '~/lib/subscribe.server';
+import {buildHashedEmailCookie} from '~/lib/hashedEmail.server';
 
 /**
  * @param {{formData: FormData, env: Record<string, string|undefined>, origin: string, source: string}} args
@@ -25,6 +26,21 @@ export async function handleNewsletterSignup({formData, env, origin, source}) {
   }
 
   const subscribed = await subscribeToMarketing({email, env});
+
+  /*
+   * The visitor just told us who they are. Hash it and hand the caller a
+   * Set-Cookie so every SERVER-SIDE event from here on can carry
+   * hashed_email, which is the strongest identifier X's Conversion API
+   * accepts short of a completed order. See app/lib/hashedEmail.server.js
+   * for what is stored (the hash, never the address) and why.
+   *
+   * Deliberately NOT gated on `subscribed`. Whether Shopify accepted the
+   * marketing consent is a separate question from whether we now know who
+   * this person is, and the consent call is inert without an admin token.
+   * Tying the two would mean the identifier silently depends on a token
+   * that may not exist.
+   */
+  const setCookie = await buildHashedEmailCookie(email);
 
   const sent = await sendNotificationEmail({
     env,
@@ -47,7 +63,11 @@ export async function handleNewsletterSignup({formData, env, origin, source}) {
   // failure when nothing got through at all, because the UI shows the
   // discount code either way and claiming failure would be wrong.
   if (!subscribed.ok && !sent.ok) {
-    return {ok: false, reason: sent.reason, values: {email}};
+    // setCookie even here. This branch means the NOTIFICATION email failed,
+    // not that the address was bad, and the visitor still told us who they
+    // are. Dropping the identifier because an unrelated send failed would
+    // lose real matching for no reason.
+    return {ok: false, reason: sent.reason, values: {email}, setCookie};
   }
-  return {ok: true};
+  return {ok: true, setCookie};
 }

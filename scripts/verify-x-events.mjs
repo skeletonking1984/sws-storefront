@@ -103,6 +103,38 @@ console.log('\nidentifiers is ONE object, never one per signal');
   );
 }
 
+console.log('\nhashed_email rides on funnel events when we know the visitor');
+{
+  const HE = 'a'.repeat(64);
+  const {sent} = await capture({name: 'view_item', hashedEmail: HE, ...IDS});
+  const ids = sent?.body?.conversions?.[0]?.identifiers;
+  check('hashed_email is attached', ids?.[0]?.hashed_email === HE, JSON.stringify(ids?.[0] || null));
+  check('still ONE identifier object', ids?.length === 1, `length ${ids?.length}`);
+}
+{
+  const {sent} = await capture({name: 'page_view', hashedEmail: 'x'.repeat(64)});
+  check('hashed_email alone is enough to send', sent !== null);
+}
+{
+  const {sent} = await capture({name: 'page_view', ...IDS});
+  const id0 = sent?.body?.conversions?.[0]?.identifiers?.[0];
+  check('absent when unknown, never empty-string', id0 && !('hashed_email' in id0),
+    JSON.stringify(id0 || null));
+}
+
+// The two hashers MUST agree. hashedEmail.server.js hashes the signup address
+// and x.server.js hashes the ORDER address; if their normalization diverges the
+// same person is two people to X and matching silently halves. Nothing at
+// runtime would ever surface that, so it is asserted here against a known digest.
+{
+  const {hashEmail} = await import('../app/lib/hashedEmail.server.js');
+  const a = await hashEmail('  Todd@Example.COM ');
+  const b = await hashEmail('todd@example.com');
+  check('normalization is trim + lowercase', a === b, a);
+  check('digest is SHA256 hex', /^[0-9a-f]{64}$/.test(a || ''), String(a).slice(0, 16));
+  check('rejects a non-address', (await hashEmail('nope')) === null);
+}
+
 console.log('\nan event with nothing to attribute on is not sent');
 {
   const {sent, result} = await capture({name: 'page_view'});
