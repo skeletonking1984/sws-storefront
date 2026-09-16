@@ -27,7 +27,8 @@
     "verify:feed": "node scripts/verify-feed.mjs",
     "verify:x-events": "node scripts/verify-x-events.mjs",
     "verify:feed:csv": "node scripts/verify-feed-csv.mjs",
-    "verify:session": "node scripts/verify-first-party-session.mjs"
+    "verify:session": "node scripts/verify-first-party-session.mjs",
+    "verify:feed:pinterest": "node scripts/verify-feed-pinterest.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

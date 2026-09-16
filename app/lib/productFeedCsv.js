@@ -147,3 +147,137 @@ export function buildFeedCsv(nodes, origin) {
     skippedUnavailable,
   };
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * Pinterest.
+ *
+ * WHY A THIRD SHAPE AND NOT JUST REUSING THE X ONE. Pinterest and X agree on
+ * the field that broke us ("in stock", not Google's "in_stock"), so the X feed
+ * would very likely have worked. "Very likely" is exactly the reasoning that
+ * sent 122 items into X and got 400 errors back. Pinterest publishes its own
+ * sample CSV with its own column set, so this matches that sample rather than
+ * hoping one file satisfies two specs.
+ *
+ * It costs one column list. The QUERY, the IP exclusion, the id, and the
+ * escaping all still come from one place, so the three feeds can never
+ * disagree about which products exist.
+ *
+ * What Pinterest's template carries that X's does not:
+ *
+ *   item_group_id            required only for multi-variant products. Every
+ *                            product here is single variant, so this is the
+ *                            product id: a stable parent for the day one of
+ *                            them does gain variants.
+ *   google_product_category  optional, improves how Pinterest matches a
+ *                            product to a browsing person.
+ *   shipping                 country:region:service:price. Free, and true:
+ *                            every product is an instant download. This is the
+ *                            same declaration that unblocked Merchant Center.
+ *   custom_label_0           used for building product groups in the Pinterest
+ *                            UI without re-deriving categories by hand.
+ *
+ * Fields in their sample that are deliberately EMPTY here: gender, age_group,
+ * size, size_type. They describe apparel. Emitting a guess would be worse than
+ * emitting nothing, because Pinterest would use it to target.
+ */
+
+export const PINTEREST_COLUMNS = [
+  'id',
+  'item_group_id',
+  'title',
+  'description',
+  'link',
+  'image_link',
+  'price',
+  'availability',
+  'condition',
+  'google_product_category',
+  'product_type',
+  'additional_image_link',
+  'sale_price',
+  'brand',
+  'shipping',
+  'custom_label_0',
+];
+
+/*
+ * Google's taxonomy path. These are OBS/StreamElements overlay files: software
+ * that runs in a browser source, not artwork and not a media file. A wrong
+ * category is worse than none because Pinterest surfaces the product to the
+ * wrong browsing intent, so this stays deliberately general rather than
+ * guessing at a leaf node.
+ */
+const GOOGLE_CATEGORY = 'Software > Computer Software';
+
+/** Pinterest's shipping syntax: country:region:service:price. Region may be empty. */
+const SHIPPING = 'US::Instant download:0 USD';
+
+/**
+ * Pinterest quotes EVERY field in its own sample. Ours only quotes when a
+ * field needs it, which is equally valid RFC 4180, but matching their template
+ * removes one more thing for their parser to disagree with us about.
+ */
+function qAlways(value) {
+  return `"${String(value ?? '').replace(/"/g, '""')}"`;
+}
+
+/**
+ * @param {Array} nodes Storefront product nodes (same shape as FEED_QUERY)
+ * @param {string} origin
+ * @returns {{csv: string, items: number, skippedIp: number, skippedUnavailable: number}}
+ */
+export function buildPinterestCsv(nodes, origin) {
+  let skippedIp = 0;
+  let skippedUnavailable = 0;
+  const rows = [];
+
+  for (const p of nodes) {
+    if (isIpRisky(p)) { skippedIp++; continue; }
+    const v = p.variants?.nodes?.[0];
+    if (!v) { skippedUnavailable++; continue; }
+
+    const onSale =
+      v.compareAtPrice && Number(v.compareAtPrice.amount) > Number(v.price.amount);
+
+    // Pinterest allows 500; nothing here is close. Truncate anyway so a future
+    // title cannot fail the whole row.
+    const title = p.title.length > 500 ? `${p.title.slice(0, 499)}…` : p.title;
+
+    const extra = (p.images?.nodes || [])
+      .map((i) => i.url)
+      .filter((u) => u && u !== p.featuredImage?.url)
+      .slice(0, 10)
+      .join(', ');
+
+    const productId = String(p.id || '').split('/').pop();
+
+    rows.push([
+      feedId(p, v),
+      productId,
+      title,
+      plain(p.description, 9900),
+      `${origin}/products/${p.handle}`,
+      p.featuredImage?.url || '',
+      onSale
+        ? money(v.compareAtPrice.amount, v.compareAtPrice.currencyCode)
+        : money(v.price.amount, v.price.currencyCode),
+      v.availableForSale ? 'in stock' : 'out of stock',
+      'new',
+      GOOGLE_CATEGORY,
+      p.productType || 'Stream Widget',
+      extra,
+      onSale ? money(v.price.amount, v.price.currencyCode) : '',
+      p.vendor || 'Stream Widget Shop',
+      SHIPPING,
+      p.productType || 'Stream Widget',
+    ].map(qAlways).join(','));
+  }
+
+  return {
+    csv: `${PINTEREST_COLUMNS.map(qAlways).join(',')}\n${rows.join('\n')}\n`,
+    items: rows.length,
+    skippedIp,
+    skippedUnavailable,
+  };
+}

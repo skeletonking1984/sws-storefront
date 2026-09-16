@@ -32,6 +32,7 @@ const CHECKS = [
   ['X funnel events', 'scripts/verify-x-events.mjs', {}],
   ['feed', 'scripts/verify-feed.mjs', {}],
   ['feed csv (X spec)', 'scripts/verify-feed-csv.mjs', {}],
+  ['feed csv (Pinterest spec)', 'scripts/verify-feed-pinterest.mjs', {}],
 ];
 
 const results = [];

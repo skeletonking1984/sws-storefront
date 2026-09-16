@@ -31,6 +31,9 @@ type Pages = {
       "blogHandle": string;
     };
   };
+  "/feed.pinterest.csv": {
+    params: {};
+  };
   "/collections/:handle": {
     params: {
       "handle": string;
@@ -150,7 +153,7 @@ type Pages = {
 type RouteFiles = {
   "root.jsx": {
     id: "root";
-    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/account/logout" | "/collections/all" | "/policies" | "/webhooks/orders" | "/account/login" | "/api/newsletter" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/admin/config" | "/blogs" | "/feed.csv" | "/feed.xml" | "/llms.txt" | "/api/agent" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/api/e" | "/cart" | "/cart/:lines" | "/*";
+    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/feed.pinterest.csv" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/account/logout" | "/collections/all" | "/policies" | "/webhooks/orders" | "/account/login" | "/api/newsletter" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/admin/config" | "/blogs" | "/feed.csv" | "/feed.xml" | "/llms.txt" | "/api/agent" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/api/e" | "/cart" | "/cart/:lines" | "/*";
   };
   "routes/blogs.$blogHandle.$articleHandle.jsx": {
     id: "routes/blogs.$blogHandle.$articleHandle";
@@ -163,6 +166,10 @@ type RouteFiles = {
   "routes/blogs.$blogHandle._index.jsx": {
     id: "routes/blogs.$blogHandle._index";
     page: "/blogs/:blogHandle";
+  };
+  "routes/[feed.pinterest.csv].jsx": {
+    id: "routes/[feed.pinterest.csv]";
+    page: "/feed.pinterest.csv";
   };
   "routes/collections.$handle.jsx": {
     id: "routes/collections.$handle";
@@ -307,6 +314,7 @@ type RouteModules = {
   "routes/blogs.$blogHandle.$articleHandle": typeof import("./app/routes/blogs.$blogHandle.$articleHandle.jsx");
   "routes/sitemap.$type.$page[.xml]": typeof import("./app/routes/sitemap.$type.$page[.xml].jsx");
   "routes/blogs.$blogHandle._index": typeof import("./app/routes/blogs.$blogHandle._index.jsx");
+  "routes/[feed.pinterest.csv]": typeof import("./app/routes/[feed.pinterest.csv].jsx");
   "routes/collections.$handle": typeof import("./app/routes/collections.$handle.jsx");
   "routes/account_.authorize": typeof import("./app/routes/account_.authorize.jsx");
   "routes/collections._index": typeof import("./app/routes/collections._index.jsx");
