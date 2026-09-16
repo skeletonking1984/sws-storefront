@@ -30,6 +30,7 @@ const CHECKS = [
   ['tracking', 'scripts/verify-tracking.mjs', {}],
   ['X funnel events', 'scripts/verify-x-events.mjs', {}],
   ['feed', 'scripts/verify-feed.mjs', {}],
+  ['feed csv (X spec)', 'scripts/verify-feed-csv.mjs', {}],
 ];
 
 const results = [];

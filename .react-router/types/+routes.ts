@@ -92,6 +92,9 @@ type Pages = {
   "/blogs": {
     params: {};
   };
+  "/feed.csv": {
+    params: {};
+  };
   "/feed.xml": {
     params: {};
   };
@@ -147,7 +150,7 @@ type Pages = {
 type RouteFiles = {
   "root.jsx": {
     id: "root";
-    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/account/logout" | "/collections/all" | "/policies" | "/webhooks/orders" | "/account/login" | "/api/newsletter" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/admin/config" | "/blogs" | "/feed.xml" | "/llms.txt" | "/api/agent" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/api/e" | "/cart" | "/cart/:lines" | "/*";
+    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/account/logout" | "/collections/all" | "/policies" | "/webhooks/orders" | "/account/login" | "/api/newsletter" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/admin/config" | "/blogs" | "/feed.csv" | "/feed.xml" | "/llms.txt" | "/api/agent" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/api/e" | "/cart" | "/cart/:lines" | "/*";
   };
   "routes/blogs.$blogHandle.$articleHandle.jsx": {
     id: "routes/blogs.$blogHandle.$articleHandle";
@@ -228,6 +231,10 @@ type RouteFiles = {
   "routes/blogs._index.jsx": {
     id: "routes/blogs._index";
     page: "/blogs";
+  };
+  "routes/[feed.csv].jsx": {
+    id: "routes/[feed.csv]";
+    page: "/feed.csv";
   };
   "routes/[feed.xml].jsx": {
     id: "routes/[feed.xml]";
@@ -317,6 +324,7 @@ type RouteModules = {
   "routes/[robots.txt]": typeof import("./app/routes/[robots.txt].jsx");
   "routes/admin.config": typeof import("./app/routes/admin.config.jsx");
   "routes/blogs._index": typeof import("./app/routes/blogs._index.jsx");
+  "routes/[feed.csv]": typeof import("./app/routes/[feed.csv].jsx");
   "routes/[feed.xml]": typeof import("./app/routes/[feed.xml].jsx");
   "routes/[llms.txt]": typeof import("./app/routes/[llms.txt].jsx");
   "routes/api.agent": typeof import("./app/routes/api.agent.jsx");
