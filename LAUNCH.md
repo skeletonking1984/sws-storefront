@@ -3597,3 +3597,34 @@ Preview: https://01m2pzykxqwj22aktwzqf8h5yz-fb73b5b73c40344d0d20.myshopify.dev
 - Still Todd's: **BAT-160** (Streamlabs badge meaning), the **Celestial kit
   Moon Jar zip** missing its five Option B files, and one look at
   **Settings > Customer events**.
+
+#### `verify:all` after the pass: 12 of 14
+
+`PASS` on channels, catalog, shipping, IP risk, test order filter, tracking,
+first-party session, X funnel events, all three feeds, and descriptions.
+
+Two failures, neither caused by this pass:
+
+- **policy claims, 60.** Expected. That is the BAT-172 queue and it goes down
+  ten a night. It is the one check deliberately allowed to be red.
+- **channel prices, 3.** Shopify is CHEAPER than Etsy on three products, which
+  is drift since the 2026-09-13 match, not a break:
+
+  | Product | Etsy | Shopify | Delta |
+  |---|---|---|---|
+  | Gothic Bottle goal widget (1834826106) | $10.35 | $6.50 | -3.85 |
+  | Animated Star Goal, Celestial (1790018033) | $13.75 | $7.99 | -5.76 |
+  | **Multistream Chat Widget Pack (4570739034)** | $48.38 | $29.99 | **-18.39** |
+
+  Not changed here. Pricing is a revenue call, and the pack is a top seller.
+  **Todd decides** whether Shopify follows Etsy up or Etsy comes down.
+
+**Good news the IP audit surfaced.** BAT-131 still lists three live Etsy
+listings carrying an IP name in their titles. **All three titles are now
+clean**: 1881347726 reads "Fire Dragon Animated Twitch Goal Widget",
+1741695722 reads "Space Crew Goal Widget", 4306870352 reads "Tactical
+Commander Twitch Chat & Goal Widget". `audit:ip` run WITH
+`ETSY_PACKAGE_ROOT` (without it the Etsy half fails closed and a green result
+means nothing) scans 122 Shopify products and 186 Etsy listings and reports no
+IP term in any live title on either channel. What remains is only the
+permanent URL residue described above, on those same three listings.
