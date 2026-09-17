@@ -3672,6 +3672,28 @@ button.reset:hover:not(:has(> *)) {
   gap: 0.6rem;
   /* Fixed icon column so wrapped text lines up under itself, not under the emoji. */
   grid-template-columns: 1.35rem 1fr;
+  /*
+   * A grid item defaults to `min-width: auto`, which refuses to shrink below
+   * its content's min-content width. These lists name real filenames, and
+   * `HalloweenMashroomSpookySlideGoalWidgetCode.zip` has no break opportunity
+   * in it, so the `1fr` column pushed the whole row past the viewport.
+   *
+   * Measured on a 360px screen, 2026-09-17: the `li` came out 330.8px inside
+   * a 296px `ul` and gave the page 3px of horizontal scroll on EVERY product
+   * page. Mobile is 76 to 83 percent of sessions since 2026-09-15, so this
+   * was the majority experience of the page that has to close the sale.
+   */
+  min-width: 0;
+}
+
+/*
+ * The text column has to be allowed to shrink too, and a long filename has to
+ * be allowed to break. `anywhere` rather than `break-word` because the tokens
+ * here are filenames with no hyphen or space to break on.
+ */
+.product-description-body li > .pd-item {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .product-description-body .pd-icon {
