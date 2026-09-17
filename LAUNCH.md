@@ -3179,14 +3179,28 @@ backfill-2026-09-17`, `consentUpdatedAt` set to each person's real signup time):
 - `annlovano@gmail.com` was already a subscribed customer from 2026-09-13
 - `sws-*` probe addresses deliberately left alone, they are Todd's tests
 
-**Still open, and it is Todd's to do because it needs the admin UI:** create a
-custom app (Settings, Apps and sales channels, Develop apps) with Admin API
-scopes `write_customers` and `read_customers`, install it, then set the
-`shpat_` token as `PRIVATE_ADMIN_API_TOKEN` on the **Production** Oxygen
-environment. Do NOT use `shopify hydrogen env push` for this: it pushes the
-whole local `.env`, which holds only 5 of the 22 variables and would flatten
-the rest. Re-probe after setting it and confirm a `site-signup` tagged customer
-appears.
+**Correction, and the reason this entry first said the wrong thing.** An earlier
+draft of this note told Todd to create a custom app and paste a `shpat_` token
+into Oxygen. That route is CLOSED and was already proven closed on 2026-09-16:
+Shopify's own docs say "You can no longer create new admin-created custom apps",
+and a Dev Dashboard app authenticates by OAuth and never issues a static token.
+Todd was walked through four screens that night before that was established. Do
+not send him there again. `PRIVATE_ADMIN_API_TOKEN` has no obtainable source
+short of standing up a real OAuth app with token exchange, which is days of work
+to write one customer record.
+
+**The decided fix is the nightly sweep**, step 4b of
+`sws-nightly-channel-health`: read the Resend signup notifications out of Gmail
+and create the missing customers with their real consent date. It is wired and
+it works. It did not catch these three because the 2026-09-16 22:05 run was
+still sitting on step 1 at 05:30 the next morning, so the sweep had not run yet
+when Todd asked. **The sweep being wired is not the same as the sweep having
+run**, and nothing in the report would have shown the difference.
+
+One real gap in 4b, fixed in the routine on 2026-09-17: step 4 said skip any
+address that already exists as a customer. `sciants.media@gmail.com` existed and
+was `NOT_SUBSCRIBED`, so the sweep would have skipped them forever despite a
+real signup. Existing-but-not-subscribed now gets a consent update instead.
 
 Two changes shipped with this so the failure can never be invisible again: the
 notification subject now reads `SWS newsletter signup (NOT ON LIST: skipped)`
