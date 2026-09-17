@@ -27,7 +27,7 @@
  * storefront no longer sells, or keep selling a product Google had already
  * dropped for naming somebody else's property.
  */
-import {isIpRisky, feedId} from './productFeed.js';
+import {isIpRisky, feedId, GOOGLE_PRODUCT_CATEGORY} from './productFeed.js';
 
 /**
  * CSV field escaping, RFC 4180.
@@ -71,6 +71,7 @@ export const X_COLUMNS = [
   'image_link',
   'brand',
   'additional_image_link',
+  'google_product_category',
   'product_type',
   'sale_price',
   'inventory',
@@ -132,6 +133,7 @@ export function buildFeedCsv(nodes, origin) {
       p.featuredImage?.url || '',
       p.vendor || 'Stream Widget Shop',
       extra,
+      GOOGLE_PRODUCT_CATEGORY,
       p.productType || 'Stream Widget',
       onSale ? money(v.price.amount, v.price.currencyCode) : '',
       // Digital downloads are unlimited. X's spec: an item marked "in stock"
@@ -201,14 +203,7 @@ export const PINTEREST_COLUMNS = [
   'custom_label_0',
 ];
 
-/*
- * Google's taxonomy path. These are OBS/StreamElements overlay files: software
- * that runs in a browser source, not artwork and not a media file. A wrong
- * category is worse than none because Pinterest surfaces the product to the
- * wrong browsing intent, so this stays deliberately general rather than
- * guessing at a leaf node.
- */
-const GOOGLE_CATEGORY = 'Software > Computer Software';
+
 
 /** Pinterest's shipping syntax: country:region:service:price. Region may be empty. */
 const SHIPPING = 'US::Instant download:0 USD';
@@ -264,7 +259,7 @@ export function buildPinterestCsv(nodes, origin) {
         : money(v.price.amount, v.price.currencyCode),
       v.availableForSale ? 'in stock' : 'out of stock',
       'new',
-      GOOGLE_CATEGORY,
+      GOOGLE_PRODUCT_CATEGORY,
       p.productType || 'Stream Widget',
       extra,
       onSale ? money(v.price.amount, v.price.currencyCode) : '',

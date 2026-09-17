@@ -12,6 +12,28 @@ import {IP_TERMS} from './ipTerms.js';
 
 export const PAGE_SIZE = 250;
 
+/**
+ * Google product taxonomy path, shared by every feed.
+ *
+ * `500046 - Software > Digital Goods & Currency > Digital Artwork`, taken from
+ * Google's published taxonomy rather than composed by hand.
+ *
+ * This started as "Software > Computer Software", which was wrong twice over.
+ * Pinterest raised Warning 126 on all 122 items, "some items only have 1 or 2
+ * levels of google_product_category values listed, which may limit
+ * visibility", and more importantly SWS's own house rule already said what to
+ * use: Shopify Category should be Digital Artwork (Digital Goods & Currency).
+ * The answer was written down before the guess was made.
+ *
+ * The deeper Computer Software leaves are all editors (Animation Editing,
+ * Video Editing, Graphic Design & Illustration). These products are not tools
+ * for making things, they are the artwork itself, delivered as a file the
+ * buyer installs. Digital Artwork is the honest node, and a category that
+ * matches buyer intent matters more than one that is merely deeper.
+ */
+export const GOOGLE_PRODUCT_CATEGORY =
+  'Software > Digital Goods & Currency > Digital Artwork';
+
 export const FEED_QUERY = `#graphql
   query ProductFeed($first: Int!, $after: String, $country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
@@ -191,6 +213,7 @@ ${extraImages ? `${extraImages}\n` : ''}    <g:availability>${v.availableForSale
     <g:price>${esc(listPrice)}</g:price>
 ${sale}    <g:condition>new</g:condition>
     <g:brand>${esc(p.vendor || 'Stream Widget Shop')}</g:brand>
+    <g:google_product_category>${esc(GOOGLE_PRODUCT_CATEGORY)}</g:google_product_category>
     <g:product_type>${esc(p.productType || 'Stream Widget')}</g:product_type>
     <g:identifier_exists>no</g:identifier_exists>
     <g:expiration_date>${expiry}</g:expiration_date>
