@@ -17,6 +17,14 @@
  * wide banner. Consumers lay the card out from the declared size before
  * fetching the bytes, which is why a correct image unfurled as a sliver of
  * art in a black box.
+ *
+ * That fix made each card honest about its own shape, and honest turned out
+ * not to be enough: with 1:1, 4:3 and portrait art all declaring themselves
+ * truthfully, every product's card came out a different HEIGHT, which is the
+ * second thing Todd raised the same day. So the shape is decided here now,
+ * rather than by whatever the source art happens to be, and `buildMeta` is
+ * simply told the one size. `SHARE_CARD` and `shareCardUrl` below are that
+ * decision; `ogImageDimensions` stays as the general helper behind it.
  */
 
 /**
