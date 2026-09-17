@@ -43,6 +43,10 @@ const CHECKS = [
   // the image bytes for each product, so 122 of them would dominate the run.
   // Best-selling first, because those are the links that actually get shared.
   ['share cards', 'scripts/audit-share-cards.mjs', {}, ['--limit', '8']],
+  // Search Console found three different missing fields in this markup on
+  // three separate days, each time before anything here did. It is a lagging
+  // indicator by design, so the same questions get asked locally now.
+  ['structured data', 'scripts/audit-structured-data.mjs', {}, ['--limit', '6']],
 ];
 
 const results = [];

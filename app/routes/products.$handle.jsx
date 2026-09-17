@@ -391,8 +391,23 @@ export default function Product() {
              * first and bring this and the FAQ to match, not the other way
              * round.
              *
-             * `returnMethod` is deliberately omitted: nothing is ever sent
-             * back, so every schema.org value for it would be a lie.
+             * `returnMethod` used to be omitted here, with the note that
+             * "nothing is ever sent back, so every schema.org value for it
+             * would be a lie". That was written against GOOGLE's list, which
+             * documents three physical values (ReturnAtKiosk, ReturnByMail,
+             * ReturnInStore). **schema.org has a fourth**, KeepProduct,
+             * defined as "the consumer can keep the product, even when
+             * receiving a refund or store credit", which is precisely what
+             * happens here. So the field can be stated truthfully after all,
+             * and Search Console flagged its absence on 5 items on
+             * 2026-09-15.
+             *
+             * Google does not document KeepProduct. It is valid schema.org
+             * and it is true, and `returnMethod` is a RECOMMENDED field, so
+             * the worst case is that Google ignores a value it does not use
+             * and the non-critical warning stays exactly as it is today.
+             * ReturnByMail would clear the warning and would be a lie about
+             * the refund process, which is not a trade this shop makes.
              */
             hasMerchantReturnPolicy: {
               '@type': 'MerchantReturnPolicy',
@@ -412,6 +427,22 @@ export default function Product() {
                 'https://schema.org/MerchantReturnFiniteReturnWindow',
               merchantReturnDays: 30,
               returnFees: 'https://schema.org/FreeReturn',
+              // Nothing is posted back. A qualifying refund is issued and the
+              // buyer keeps the files they already downloaded.
+              returnMethod: 'https://schema.org/KeepProduct',
+              // Money back, not store credit and not an exchange. That is
+              // what /policies/refund-policy grants.
+              refundType: 'https://schema.org/FullRefund',
+              // Recommended, and the same condition the Offer already states.
+              itemCondition: 'https://schema.org/NewCondition',
+              /*
+               * `merchantReturnLink` is deliberately NOT set. Google treats
+               * it as an ALTERNATIVE to applicableCountry plus
+               * returnPolicyCategory, so supplying both invites it to follow
+               * the link and ignore the detail, losing the 30 day window and
+               * the free-return signal this block exists to state. The link
+               * is one click away in the footer either way.
+               */
             },
             // Instant digital download: nothing ships, nothing costs to
             // ship. Variants on this catalog are set requiresShipping:

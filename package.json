@@ -37,7 +37,9 @@
     "batch:check": "node scripts/check-description-batch.mjs",
     "batch:verify": "node scripts/verify-description-batch.mjs",
     "audit:share-cards": "node scripts/audit-share-cards.mjs",
-    "audit:share-cards:self-test": "node scripts/audit-share-cards.mjs --self-test"
+    "audit:share-cards:self-test": "node scripts/audit-share-cards.mjs --self-test",
+    "audit:schema": "node scripts/audit-structured-data.mjs",
+    "audit:schema:self-test": "node scripts/audit-structured-data.mjs --self-test"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
