@@ -7,6 +7,25 @@ import {ensureFirstPartySession} from '~/lib/firstPartySession.server';
 import {previewGate} from '~/lib/previewGate.server';
 
 /**
+ * Paths served to machines, never to a browsing person: the three product
+ * feeds Google Merchant, X Shopping and Pinterest ingest. Kept as an exact
+ * set rather than a prefix match, so a future `/feedback` route can never
+ * silently opt itself out of analytics by matching a `startsWith`.
+ *
+ * The canonical list of what each channel consumes lives in
+ * app/lib/channels.js; this is the serving side of the same three files.
+ */
+const MACHINE_FEED_PATHS = new Set([
+  '/feed.xml',
+  '/feed.csv',
+  '/feed.pinterest.csv',
+]);
+
+function isMachineFeedPath(pathname) {
+  return MACHINE_FEED_PATHS.has(pathname);
+}
+
+/**
  * Export a fetch handler in module format.
  */
 export default {
@@ -47,6 +66,19 @@ export default {
           'Set-Cookie',
           await hydrogenContext.session.commit(),
         );
+      }
+
+      // Machine feeds are not visitors. The analytics cookie layer below
+      // (first-touch click ids, `sws_cid`, `sws_ses`) exists to follow a
+      // PERSON from a landing page to a purchase, and a channel crawler is
+      // neither. Verified 2026-09-17: a plain curl of /feed.csv came back
+      // carrying `sws_cid` and `sws_ses`, so every ingestion attempt by X,
+      // Google and Pinterest was minting a brand new visitor and a brand
+      // new session against a file no person ever opens. Returned before
+      // the cookie layer, after the Hydrogen session commit above, which
+      // is left alone because it is cart state, not analytics.
+      if (isMachineFeedPath(new URL(request.url).pathname)) {
+        return response;
       }
 
       // First-touch click id capture (see app/lib/clickIds.server.js). A

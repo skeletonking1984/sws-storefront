@@ -32,7 +32,10 @@
     "verify:channels": "node scripts/verify-channels.mjs --live",
     "audit:descriptions": "node scripts/audit-descriptions.mjs",
     "audit:descriptions:gate": "node scripts/audit-descriptions.mjs --gate",
-    "audit:descriptions:self-test": "node scripts/audit-descriptions.mjs --self-test"
+    "audit:descriptions:self-test": "node scripts/audit-descriptions.mjs --self-test",
+    "batch:prep": "node scripts/prep-description-batch.mjs",
+    "batch:check": "node scripts/check-description-batch.mjs",
+    "batch:verify": "node scripts/verify-description-batch.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

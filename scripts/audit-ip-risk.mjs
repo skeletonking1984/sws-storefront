@@ -199,6 +199,7 @@ const rows = [
     label: l.title,
     ref: String(l.listing_id),
     haystack: l.title || '',
+    url: l.url || '',
   })),
 ];
 
@@ -220,6 +221,55 @@ if (denied.length) {
   }
 } else {
   console.log('Deny list: no live product on either channel matches a known IP term.');
+}
+
+// ---- layer 1b: residue in a permanent Etsy URL ---------------------------
+/*
+ * A renamed Etsy listing keeps its ORIGINAL slug forever. Listing 1881347726
+ * reads "Fire Dragon Animated Twitch Goal Widget" today and still lives at
+ * /listing/1881347726/charizard-animated-twitch-goal-widget, so layer 1 calls
+ * it clean while the link a buyer copies, and the link Google indexes, still
+ * says charizard. Verified 2026-09-17.
+ *
+ * This is a SEPARATE severity on purpose and never fails the run. Etsy does
+ * not let a slug be edited, so the only remedy is a fresh listing, which
+ * loses the item's reviews and favourites: Todd's call, not an agent's. A
+ * check that can never go green gets ignored, and then so does layer 1
+ * sitting next to it.
+ *
+ * Only terms the TITLE no longer carries are reported here. A term in both
+ * is already a hard failure above and does not need saying twice.
+ */
+const residue = [];
+for (const row of rows) {
+  if (row.channel !== 'Etsy' || !row.url) continue;
+  const slug = row.url.toLowerCase().split('?')[0].replace(/[^a-z0-9]+/g, ' ');
+  const title = row.haystack.toLowerCase();
+  for (const [category, terms] of Object.entries(DENY_TERMS)) {
+    const matched = terms.filter(
+      (term) => slug.includes(term.replace(/[^a-z0-9]+/g, ' ')) && !title.includes(term),
+    );
+    if (matched.length) residue.push({row, category, matched});
+  }
+}
+
+if (residue.length) {
+  console.log(
+    `\nIP NAME LEFT IN A PERMANENT ETSY URL (${residue.length}). ` +
+      'Copy is clean, the link is not:',
+  );
+  for (const hit of residue) {
+    console.log(`  [${hit.category}] ${hit.matched.join(', ')}`);
+    console.log(`      ${hit.row.label}`);
+    console.log(`      ${hit.row.url}`);
+  }
+  console.log(
+    '  Etsy slugs cannot be edited. Fixing one means relisting, which loses\n' +
+      '  that item\'s reviews and favourites, so it is Todd\'s decision alone.\n' +
+      '  Not counted as a failure.',
+  );
+} else {
+  console.log('\nNo IP name left behind in an Etsy listing URL.');
 }
 
 // ---- layer 2: unrecognised proper nouns ----------------------------------
