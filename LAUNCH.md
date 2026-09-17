@@ -3628,3 +3628,98 @@ Commander Twitch Chat & Goal Widget". `audit:ip` run WITH
 means nothing) scans 122 Shopify products and 186 Etsy listings and reports no
 IP term in any live title on either channel. What remains is only the
 permanent URL residue described above, on those same three listings.
+
+### 2026-09-17 (Todd present) — the share card was never the video, it was the ruler next to it
+
+Todd posted a Discord unfurl of the Dreamy Lotus product page, a narrow sliver
+of the listing art in a wide black box: "SEO image should be main image, not
+the video ... i think the video changed killed the meta image."
+
+**Right that the card is broken, wrong about the cause, and the real cause is
+on every product page, not that one.**
+
+#### The image was never the video
+
+`og:image` on that page is
+`.../99fa802c-il_fullxfull.7031303415_s3x1.jpg?width=1200`, the product's own
+main photo. It could not have been the video: the Storefront API defines
+`featuredImage` as equivalent to `images(first: 1)`, and `images` excludes
+video media entirely. Across the live catalogue, **122 products: 0 with no
+featured image, 0 whose featured image is a video preview URL, and `media[0]`
+is a `Video` on none of them.** The page carries no `og:video` and no
+`twitter:player`. The Product JSON-LD `image` array reads `item.image?.url`,
+which exists only on `MediaImage`, so no frame grab reaches that either.
+
+#### What was actually wrong
+
+The two tags beside it. `og:image:width` and `og:image:height` were
+**hardcoded to 1200x630 on every route**, product pages included.
+
+| Featured image ratio | Products |
+|---|---|
+| 1.00 (square) | 83 |
+| 1.32 / 1.33 (4:3) | 35 |
+| 1.29 / 1.30 | 3 |
+| 0.80 (portrait) | 1 |
+| **1.90 to 1.91 (what the tags claimed)** | **0** |
+
+**Not one product in the catalogue is the shape its own share card declared.**
+Discord, Slack and X lay a card out from the declared size before they ever
+fetch the bytes, which is precisely how a correct square image renders as a
+sliver in a wide black box. The picture was right, the measurement next to it
+was a lie, and it was lying on all 122 pages, not just this one.
+
+#### Fixed
+
+- `buildMeta` takes `imageWidth`/`imageHeight` and emits the pair **only when
+  they are known**. The bundled default card genuinely is 1200x630 and keeps
+  its size; a caller-supplied image gets a size only when the caller supplies
+  one. **Omitting is the deliberate fallback**: every consumer then measures
+  the image itself, and no size beats a wrong size.
+- PDP passes its featured image's real dimensions, scaled the way the CDN will
+  actually serve them. The `width` param **never upscales**, so a source
+  narrower than 1200 is declared at its own width, not at 1200.
+- Blog articles do the same. Their query already carried width and height.
+- A comment on the PDP records why the OG image is `featuredImage` and must
+  never become `media.nodes[0]`, which CAN be a `Video`. That is the
+  regression Todd thought he was looking at, and now it cannot happen quietly.
+
+#### How it was verified without a browser
+
+An unattended run cannot start a dev server, and an Oxygen preview URL answers
+**302** behind Shopify OAuth, so "load it and look" was not available. Rather
+than ship on faith:
+
+- The tag logic moved to **`app/lib/ogImage.js`, which has no imports**, so a
+  plain Node script imports the SHIPPED functions instead of reimplementing
+  them. `seo.js` cannot be imported that way because of its Vite asset import,
+  which is exactly why this logic shipped untested the first time.
+- **`npm run audit:share-cards`** reads the LIVE rendered HTML, then reads the
+  real pixel size out of the first bytes of the image the page actually
+  serves, and compares. Reading the size back from the same catalogue field
+  the page built the tag from would pass even if the transform changed it.
+- **Self-test is 23 cases**: 10 on the audit rules, 5 on the emitted tags, 8
+  on the dimension maths, several asserting correct output still passes
+  (a missing size is allowed, the real 1200x630 default card passes). One case
+  caught my own arithmetic rather than the code's: 1200x1236 scales to 933.
+- **Run against production it fails 6 of 6 best sellers**, every one "say
+  1200x630, the image served is 1200x1200", Moon Jar at 1200x1500. That is the
+  check proving it can go red on the real defect rather than only on fixtures.
+- In the built server bundle the tag is now `String(o.width)`, and the `630`
+  literal survives only on the default-image path.
+
+Added to `verify:all` at `--limit 8`, best sellers first, since it fetches both
+the page and the image bytes per product.
+
+Preview: https://01m2qkvt3pga4rdamp3yryp5bg-fb73b5b73c40344d0d20.myshopify.dev
+
+**Two things this does NOT do.** It does not reach streamwidgetshop.com until
+the next **production** deploy, which is Todd's. And Discord caches unfurls, so
+an already-posted link keeps its old card until that cache expires or the link
+is posted fresh.
+
+**Left alone deliberately:** `twitter:card` stays `summary_large_image`. X
+crops a square to roughly 1.91:1 and will cut the top and bottom off listing
+art. Switching to `summary` would show the whole square in a smaller card.
+That is a taste and click-rate call on the channel SWS actually posts to, so
+it is Todd's, not an agent's.
