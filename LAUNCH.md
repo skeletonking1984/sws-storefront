@@ -45,6 +45,15 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 - [x] Sitemap + robots verified
 - [ ] Google Search Console. **Domain property `sc-domain:streamwidgetshop.com` EXISTS and is healthy, confirmed 2026-09-15: Merchant listings 49 valid, 0 invalid, no critical issues.** Remaining: confirm `/sitemap.xml` is submitted under that property. X-in-Search-Console is already connected (@streamwidget), read-only.
 - [ ] Merchant Center feed via the Google & YouTube app. After DNS cutover (product URLs must resolve on the live domain).
+### AEO (answer-engine optimisation)
+Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pass` (08:20, created 2026-09-17 on Auny's ask). Measure the live page before any bulk edit: BAT-79 killed three of four suspected SEO defects on measurement.
+- [ ] Quotable answer block on every PDP. 40 to 60 words, self-contained, naming product, platforms, what the buyer receives, file format, price band. Visible on the page, not crawler-only.
+- [ ] FAQPage JSON-LD on the PDP and on `pages/faq`. Zero `FAQPage`/`acceptedAnswer` markup exists anywhere in `app/` as of 2026-09-17. Source it from the same `PRODUCT_FAQ_PAGE_QUERY` content the PDP already renders so the two cannot drift.
+- [ ] Site-level answer blocks on the FAQ page (what a chat widget is, multi-platform at once, OBS needed, goal widgets, delivery, refunds). Every answer must agree with the refund policy page; the policy wins.
+- [ ] `llms.txt` truth check: `app/routes/[llms.txt].jsx` ships, but its product list and one-liners have never been re-verified against the live catalog.
+- [ ] `scripts/audit-seo.mjs`: unique + length-bounded title and meta per active product and collection, exits non-zero on findings. Does not exist yet.
+- [ ] Alt text audit on every product image (empty alt, filename alt, and the title repeated on all nine images are each findings).
+
 ### Agentic
 - [ ] WebMCP live for real visitors. Code is shipped and verified: 3 imperative tools on `document.modelContext` (`search_widgets`, `get_widget_details`, `add_to_cart`, via `app/lib/agentTools.js` and `/api/agent`), 4 declarative forms carrying `toolname`/`tooldescription`, and `Layout` renders `<meta http-equiv="origin-trial">` when `PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKEN` is set. **Blocked on two things only Todd can do**, and Lighthouse reports all three WebMCP audits Not Applicable until the first one is done:
   1. Local check: `chrome://flags/#enable-webmcp-testing` to Enabled, **relaunch Chrome**, re-run Lighthouse.
