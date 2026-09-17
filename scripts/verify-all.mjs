@@ -57,6 +57,12 @@ const CHECKS = [
   // `npm run audit:buyable` with no limit before anything that touches the
   // catalogue at scale.
   ['buyable', 'scripts/audit-buyable.mjs', {}, ['--limit', '20']],
+  /*
+   * LAST on purpose. Every check above fetches the live site, so if this one
+   * fails their results describe older code than the repo contains, and the
+   * reader needs to know that after seeing them, not before.
+   */
+  ['deploy freshness', 'scripts/audit-deploy-freshness.mjs', {}],
 ];
 
 const results = [];

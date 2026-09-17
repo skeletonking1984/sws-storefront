@@ -17,3 +17,8 @@ app/assets/hero-widgets.png
 # Blog hero pipeline: captures and renders are reproducible from the scripts.
 blog-hero/widgets-raw/
 blog-hero/out/
+
+# Written by scripts/stamp-build.mjs on every build. Never committed: a stamp
+# read out of git rather than out of the running deployment is the fiction it
+# exists to end.
+app/data/build-info.json

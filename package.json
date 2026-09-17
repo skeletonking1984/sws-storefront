@@ -45,7 +45,11 @@
     "audit:answers:self-test": "node scripts/audit-answer-blocks.mjs --self-test",
     "build:delivery-facts": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/build-delivery-facts.mjs",
     "audit:buyable": "node scripts/audit-buyable.mjs",
-    "audit:buyable:self-test": "node scripts/audit-buyable.mjs --self-test"
+    "audit:buyable:self-test": "node scripts/audit-buyable.mjs --self-test",
+    "prebuild": "node scripts/stamp-build.mjs",
+    "audit:deploy": "node scripts/audit-deploy-freshness.mjs",
+    "audit:deploy:self-test": "node scripts/audit-deploy-freshness.mjs --self-test",
+    "predev": "node scripts/stamp-build.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
