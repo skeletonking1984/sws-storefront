@@ -21,6 +21,7 @@
 import {spawnSync} from 'node:child_process';
 
 const CHECKS = [
+  ['channels', 'scripts/verify-channels.mjs', {}],
   ['catalog', 'scripts/audit-catalog.mjs', {}],
   ['shipping', 'scripts/audit-shipping.mjs', {}],
   ['policy claims', 'scripts/audit-policy-claims.mjs', {}],
