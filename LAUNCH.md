@@ -4509,3 +4509,20 @@ unfurl plus this repo's existing note that Etsy serves its listing hero at
 Expected red until deploy: `audit:share-cards` reports production at 1200x630.
 
 Preview: https://01m2qw5zk8fkb732r4es7gt26c-fb73b5b73c40344d0d20.myshopify.dev
+
+#### Confirmed live after Todd's deploy, 2026-09-17
+
+Both branches of the card-type rule are correct on production:
+
+| Page | og:image | declared | twitter:card |
+|---|---|---|---|
+| Moon Jar product (source ratio 0.80) | `...&width=1200&height=1200&pad_color=0b0713` | 1200x1200 | **summary** |
+| Homepage | the bundled OG banner | 1200x630 | **summary_large_image** |
+
+`audit:share-cards` green against production, every card serving 1200x1200 and
+declaring it. `verify:all` **16 of 18**, the two reds unchanged and both known:
+policy claims (the 60-description queue, BAT-172) and channel prices (three
+products awaiting Todd's pricing decision).
+
+Reminder: consumers cache unfurls. A link already posted keeps its old card
+until that cache expires, so judge the change on a freshly posted link.
