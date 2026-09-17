@@ -4526,3 +4526,30 @@ products awaiting Todd's pricing decision).
 
 Reminder: consumers cache unfurls. A link already posted keeps its old card
 until that cache expires, so judge the change on a freshly posted link.
+
+#### Post-deploy purchase check, 2026-09-17
+
+Todd: "if purchases are not working, I will flip my lid." Four independent
+answers, in order of strength:
+
+1. **A real walk on production, just now.** PDP loads, Add to cart works, the
+   drawer shows three line items and the arithmetic is right
+   (`7.99 + 10.15 + 7.17 = 25.31`), Continue to Checkout carries a real cart
+   URL, and the checkout page renders **all three line items, the correct
+   $25.31 total, the payment section with a card on file, a Pay now button,
+   guest checkout, and NO shipping step**. Stopped there. Pay now was not
+   clicked.
+2. **`npm run audit:buyable`: 122 of 122, zero issues**, each with a real cart
+   created against current production.
+3. **Nothing in today's 48 commits touches the purchase path.** Files changed
+   under `app/` and `server.js` today contain **zero** cart, checkout, webhook,
+   order or conversion files.
+4. **`server.js` is the only middleware change and it is purely additive**: a
+   set of three exact feed paths and an early return for those paths, placed
+   AFTER the Hydrogen session commit, so cart state is untouched. No line was
+   removed.
+
+**Still untested, and only a real purchase can test it:** the payment
+authorisation itself and whether the file is delivered. The last proof of both
+is order **#1048**, a real stranger, PAID and FULFILLED, 2026-09-17 04:43Z, on
+the pre-deploy build.
