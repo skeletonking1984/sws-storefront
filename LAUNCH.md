@@ -47,12 +47,12 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 - [ ] Merchant Center feed via the Google & YouTube app. After DNS cutover (product URLs must resolve on the live domain).
 ### AEO (answer-engine optimisation)
 Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pass` (08:20, created 2026-09-17 on Auny's ask). Measure the live page before any bulk edit: BAT-79 killed three of four suspected SEO defects on measurement.
-- [ ] Quotable answer block on every PDP. 40 to 60 words, self-contained, naming product, platforms, what the buyer receives, file format, price band. Visible on the page, not crawler-only.
+- [ ] Quotable answer block on every PDP. **Built and committed 2026-09-17 (`9ae3cab`), on preview, NOT on production yet: the production deploy is Todd's.** `app/lib/answerBlock.js` generates one paragraph per PDP from sources this repo already checks (seo.title, productType, `custom.works_with`, the live variant price, and a new delivery-facts table), rendered visibly above the Description as `.product-answer`. 121 of 122 land in the 40 to 60 word window; the frog emotes pack is 36 because its `works_with` names no install path, so there is no third sentence to write and padding it would be filler. `npm run audit:answers` (in `verify:all`, 10-case self-test) checks the window, dashes, page references, price, platform overclaim, named format, and duplicate blocks. `npm run audit:answers:live` asserts the paragraph is in the served HTML and still needs to run against production. **Preview could not be curl-verified: an Oxygen preview URL 302s to Shopify account OAuth, so the only proof this run is the built server bundle and the generated text across all 122 products.**
 - [ ] FAQPage JSON-LD on the PDP and on `pages/faq`. Zero `FAQPage`/`acceptedAnswer` markup exists anywhere in `app/` as of 2026-09-17. Source it from the same `PRODUCT_FAQ_PAGE_QUERY` content the PDP already renders so the two cannot drift.
 - [ ] Site-level answer blocks on the FAQ page (what a chat widget is, multi-platform at once, OBS needed, goal widgets, delivery, refunds). Every answer must agree with the refund policy page; the policy wins.
 - [ ] `llms.txt` truth check: `app/routes/[llms.txt].jsx` ships, but its product list and one-liners have never been re-verified against the live catalog.
-- [ ] `scripts/audit-seo.mjs`: unique + length-bounded title and meta per active product and collection, exits non-zero on findings. Does not exist yet.
-- [ ] Alt text audit on every product image (empty alt, filename alt, and the title repeated on all nine images are each findings).
+- [ ] `scripts/audit-seo.mjs`: unique + length-bounded title and meta per active product and collection, exits non-zero on findings. Does not exist yet. **Lower priority than it looked: the five live PDPs measured 2026-09-17 were all unique and all inside the caps (titles 31 to 51 chars, meta 135 to 152), which is the BAT-79 pattern again. Build it as a guard against future drift, not as a fix for a defect nobody has found.**
+- [ ] Alt text audit on every product image (empty alt, filename alt, and the title repeated on all nine images are each findings). **MEASURED 2026-09-17 and it is a real defect, unlike the title/meta suspicions: 17 to 24 `<img>` tags per PDP carry `alt=""`. Two of those per page are decorative chrome (the profile picture and the StreamElements mark) and legitimately empty, but the rest are the product's own gallery and its Etsy review thumbnails. This is now the top unshipped SEO item.**
 
 ### Agentic
 - [ ] WebMCP live for real visitors. Code is shipped and verified: 3 imperative tools on `document.modelContext` (`search_widgets`, `get_widget_details`, `add_to_cart`, via `app/lib/agentTools.js` and `/api/agent`), 4 declarative forms carrying `toolname`/`tooldescription`, and `Layout` renders `<meta http-equiv="origin-trial">` when `PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKEN` is set. **Blocked on two things only Todd can do**, and Lighthouse reports all three WebMCP audits Not Applicable until the first one is done:
@@ -4304,3 +4304,92 @@ site with the UTM string attached.
 Rule updated in all four files that state it (`routines/` plus both
 `~/.claude/scheduled-tasks/` copies, which had drifted). The image rule is
 untouched: post art still comes from the live Etsy listing, only the link moved.
+
+### 2026-09-17 (2) — First AEO layer ships: a quotable answer on every product page
+
+Measured before touching anything, per BAT-133's standing rule.
+
+**Traffic, Shopify sessions, last 7 days.** 868 total. direct 647, X 123,
+**Google 63**, Facebook 10, Instagram 9, Bing 9, Yandex 2, **ChatGPT 2**.
+Top landing pages: `/products/celestial-stream-kit` 331,
+`/` 181, `/products/multistream-chat-widget-pack` 128,
+`/products/spooky-stream-kit` 30, `/collections/all` 21. The three kits are
+the whole organic story; every other PDP is in single digits.
+
+**Five live PDPs curled** (celestial-stream-kit, multistream-chat-widget-pack,
+spooky-stream-kit, neon-aesthetic-glowy..., animated-moon-jar-goal-widget...):
+
+| Check | Result |
+|---|---|
+| `<title>` | unique on all 5, 31 to 51 chars, all under 60 |
+| `<meta name=description>` | unique on all 5, 135 to 152 chars, all under 155 |
+| canonical | correct on all 5 |
+| JSON-LD | 3 blocks each (Product, BreadcrumbList, VideoObject), 15 of 15 parse |
+| `h1` | exactly 1 per page |
+| FAQPage markup | **0 pages** |
+| answer block | **0 pages** |
+| `<img alt="">` | **17 to 24 per page** |
+
+So the two style-guide suspicions on the SEO list (titles, meta descriptions)
+dissolved on measurement, the way three of four did on Etsy in BAT-79. The
+alt text one did not: it is real, and it is now the top SEO item. And the AEO
+column was empty, which is what this run shipped.
+
+**Shipped: the quotable answer block, on every PDP.** One paragraph, 40 to 60
+words, self-contained, naming the product, its platforms, the price, what
+arrives and in what file format. Rendered visibly above the Description, not
+hidden for crawlers.
+
+Sample, celestial-stream-kit:
+
+> Celestial Stream Kit for Twitch is a bundle of animated stream widgets from
+> Stream Widget Shop for Twitch, YouTube, Kick and TikTok streamers. Two ZIPs
+> of widget code download instantly after checkout, for a one-time $39.99,
+> with no subscription. Setup needs a free StreamElements or Streamlabs
+> account, and the overlay loads into OBS as a browser source.
+
+Every clause is generated from a source already checked somewhere else, so
+the passage cannot drift away from the page under it: name and type from
+`seo.title` and `productType`, platforms from `custom.works_with` (the only
+thing allowed to make a platform claim since 2026-09-14), price from the live
+selected variant, delivery from the real Etsy file manifest.
+
+**The delivery half closed a gap worth recording.** The answer block has to
+name a file format, and this repo's whole history says a product's own prose
+cannot be that source. `scripts/build-delivery-facts.mjs` joins the Etsy file
+manifest to each handle instead. Running it found **14 storefront products
+with an image-verified Etsy listing and no manifest on disk**, so their
+delivery was simply unproven; fetched, and `data/etsy-listing-files.json` now
+covers **117 listings**. Result: **114 of 122 products have a proven format,
+8 do not** because no Etsy listing is joined to them at all, and those 8 get a
+block that names no format rather than a guessed one. The audit lists them by
+handle every run. One handle, `celestial-stream-kit`, is proven from the
+actual upload zips on disk instead, and the build fails loudly if those paths
+ever stop existing.
+
+Worth knowing for the next pass: **every one of the 117 manifests ships at
+least one zip**, 93 of 103 originally measured also ship a setup PDF. So the
+format claim is robust even against a mispaired map row.
+
+**New check, in `verify:all`:** `npm run audit:answers`, with a 10-case
+self-test. It asserts the word window, no em or en dash, no reference to the
+page around the passage ("above", "see the", "the gallery"), no opening
+pronoun, a price, **no platform the metafield does not carry**, a named
+format wherever one is proven, and no two products sharing an identical
+block. 122 products, 0 findings, 1 warning (frog emotes, 36 words, because
+its `works_with` names no install path so there is no third sentence to
+write; padding it would be filler).
+
+**Preview:** https://01m2qv00fjgx4tzbmzkbetp39e-fb73b5b73c40344d0d20.myshopify.dev
+
+**Not verified, and say so plainly:** an Oxygen preview URL **302s to Shopify
+account OAuth**, so the served HTML could not be fetched from an agent
+session. The proof this run is the built server bundle carrying
+`.product-answer`, the CSS shipped in `app-CQ3B3zFI.css`, and the generated
+text checked across all 122 products. `npm run audit:answers:live` exists and
+does exactly the served-HTML assertion; it needs to run against production
+once Todd deploys.
+
+**Next:** FAQPage JSON-LD on the PDP and `pages/faq`, sourced from the same
+`PRODUCT_FAQ_PAGE_QUERY` body the PDP already renders so the two cannot
+drift. Then the alt text defect, which is the only measured SEO finding.
