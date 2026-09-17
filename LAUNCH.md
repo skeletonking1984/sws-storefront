@@ -4651,3 +4651,61 @@ against production" can never quietly mean "verified against last week".
 
 Click **VALIDATE FIX** on the five rows reading Not Started. Revalidation takes
 days and only passes once Google recrawls those items.
+
+### 2026-09-17 — Ask production which commit it is, instead of assuming it is this one
+
+Todd: "fix it so its not an issue. or at least tell me/ask me to do it."
+
+The problem it closes: the merchant listing fields were committed on 09-16,
+production stayed on the 09-14 build until the 17th, and for two days every
+check here ran "against production", reported green, and described code nobody
+was serving, while Search Console counted real failures on the build that WAS
+live.
+
+#### Three pieces
+
+| Piece | What it does |
+|---|---|
+| `scripts/stamp-build.mjs` | Writes the git commit into the build. Wired to `prebuild` **and** `predev` |
+| `/api/version` | The deployment reports its own commit. No caching, the question is always what is running right now |
+| `npm run audit:deploy` | Compares the two and names what is unshipped |
+
+The stamp is **gitignored on purpose**: a stamp read out of git rather than out
+of the running deployment is the exact fiction this ends. `predev` exists
+because a gitignored file that a route imports would otherwise break
+`npm run dev` on a fresh clone. Verified by deleting it and building: it
+regenerates and the SHA lands in `dist/server/index.js`.
+
+#### The rule that keeps it alive
+
+**It compares SHIPPABLE commits, not all commits.** Comparing HEAD to the
+deployed commit would go red the instant anyone writes a LAUNCH.md line, and a
+check that is red every day is a check nobody reads. Production is fresh when
+every unshipped commit touches only paths that cannot change what a visitor
+receives. The path list is deliberately generous, so an unfamiliar path counts
+as shippable: the failure mode is a false alarm that gets one entry added,
+never a real change sliding past.
+
+Self-test 10 cases, **three of which assert a PASS is correct** (unshipped
+docs, unshipped scripts, and the stamp itself never counting as a change). The
+2026-09-17 case is in there by name.
+
+It runs **last** in `verify:all`. Every check above it fetches the live site,
+so the reader needs to learn their results were historical after seeing them,
+not before.
+
+#### The telling half
+
+The daily launch pass gained **step C2**: run it, and put any unshipped count
+into the final message to Todd as the thing he needs to do, with the command.
+
+**It cannot deploy for him.** A production deploy asks `Continue?` and an agent
+cannot answer it. That wall has not moved.
+
+#### Bootstrap state
+
+Production answers **404** on `/api/version` today, so the check currently
+reports "production does not report a build commit". That is correct and
+self-resolving: it clears on the next production deploy.
+
+Preview: https://01m2r12eden4p629qscwxmbq1v-fb73b5b73c40344d0d20.myshopify.dev
