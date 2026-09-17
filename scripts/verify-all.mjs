@@ -47,6 +47,11 @@ const CHECKS = [
   // three separate days, each time before anything here did. It is a lagging
   // indicator by design, so the same questions get asked locally now.
   ['structured data', 'scripts/audit-structured-data.mjs', {}, ['--limit', '6']],
+  // The PDP answer block. Generated from the catalogue, so a template
+  // change is a catalogue-wide change, which is exactly what a check is
+  // for. Text only here; the --live form fetches real pages and belongs in
+  // the post-deploy pass, not in a check that has to run offline.
+  ['answer blocks', 'scripts/audit-answer-blocks.mjs', {}],
 ];
 
 const results = [];

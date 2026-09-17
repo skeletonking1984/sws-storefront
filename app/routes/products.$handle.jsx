@@ -45,6 +45,14 @@ import videoMetadata from '~/data/video-metadata.json';
 // small client-safe shop-stats-only slice for anything rendered directly
 // in the component.
 import etsyReviewsData from '~/data/etsy-reviews.json';
+// Per-product delivery facts (how many archives, whether a setup doc ships),
+// generated from the real Etsy file manifest by
+// scripts/build-delivery-facts.mjs. SERVER USE ONLY: it is read in the
+// loader and only this product's one-sentence answer block is sent to the
+// client, so the whole table never reaches the browser bundle.
+import deliveryFacts from '~/data/product-delivery.json';
+import {buildAnswerBlock} from '~/lib/answerBlock';
+import {parseWorksWith} from '~/lib/platforms';
 
 /**
  * @type {Route.MetaFunction}
@@ -162,9 +170,22 @@ async function loadCriticalData({context, params, request}) {
   // bundle. Only this one product's slice is sent down to the component.
   const productReviews = etsyReviewsData.products[handle] || null;
 
+  // The quotable answer block (see app/lib/answerBlock.js). Built here
+  // rather than in the component so the delivery table stays server side,
+  // and built from the loader's own selected variant price so the sentence
+  // and the price shown next to it come from the same response.
+  const answerBlock = buildAnswerBlock({
+    name: product.seo?.title || product.title,
+    productType: product.productType,
+    platforms: parseWorksWith(product.worksWith?.value),
+    price: product.selectedOrFirstAvailableVariant?.price,
+    delivery: deliveryFacts.products[handle] || null,
+  });
+
   return {
     product,
     productReviews,
+    answerBlock,
   };
 }
 
@@ -293,7 +314,8 @@ function buildVideoJsonLd({title, videoMedia, meta}) {
 
 export default function Product() {
   /** @type {LoaderReturnData} */
-  const {product, relatedProducts, faq, productReviews} = useLoaderData();
+  const {product, relatedProducts, faq, productReviews, answerBlock} =
+    useLoaderData();
   const rootData = useRouteLoaderData('root');
   const origin = rootData?.origin || 'https://streamwidgetshop.com';
 
@@ -576,6 +598,13 @@ export default function Product() {
         </div>
       </div>
       <div className="product-description">
+        {/* The one passage on this page written to be lifted whole by an
+            answer engine: product, platforms, price, what arrives and in
+            what format, with nothing in it that depends on the page around
+            it. Visible to buyers on purpose, never crawler-only. */}
+        {answerBlock ? (
+          <p className="product-answer">{answerBlock}</p>
+        ) : null}
         <h2>Description</h2>
         <div
           className="product-description-body"

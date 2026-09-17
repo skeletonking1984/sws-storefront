@@ -3559,6 +3559,34 @@ button.reset:hover:not(:has(> *)) {
 }
 
 /*
+  The quotable answer block (app/lib/answerBlock.js). Set above the
+  Description heading, at reading size, with an accent rule down the left so
+  it reads as the short answer to the long section under it rather than as
+  another paragraph of body copy.
+
+  It is deliberately plain text in the flow of the page, not a hidden div and
+  not a visually-truncated one. A passage that an answer engine can quote but
+  a buyer cannot read is cloaking, and the sentence is what a buyer wants in
+  the first five seconds anyway.
+*/
+.product-answer {
+  border-left: 3px solid var(--sws-accent-2);
+  color: var(--sws-text);
+  font-family: var(--font-article, inherit);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  margin: 0 0 1.75rem;
+  padding: 0.15rem 0 0.15rem 1rem;
+}
+
+@media (max-width: 640px) {
+  .product-answer {
+    font-size: 0.98rem;
+    padding-left: 0.8rem;
+  }
+}
+
+/*
   Normalized description body. Markup comes from lib/productDescription.js:
   h3 section headings, ul/li for the feature lists, p for prose.
 

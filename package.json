@@ -39,7 +39,11 @@
     "audit:share-cards": "node scripts/audit-share-cards.mjs",
     "audit:share-cards:self-test": "node scripts/audit-share-cards.mjs --self-test",
     "audit:schema": "node scripts/audit-structured-data.mjs",
-    "audit:schema:self-test": "node scripts/audit-structured-data.mjs --self-test"
+    "audit:schema:self-test": "node scripts/audit-structured-data.mjs --self-test",
+    "audit:answers": "node scripts/audit-answer-blocks.mjs",
+    "audit:answers:live": "node scripts/audit-answer-blocks.mjs --live",
+    "audit:answers:self-test": "node scripts/audit-answer-blocks.mjs --self-test",
+    "build:delivery-facts": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/build-delivery-facts.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
