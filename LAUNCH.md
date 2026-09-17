@@ -4709,3 +4709,65 @@ reports "production does not report a build commit". That is correct and
 self-resolving: it clears on the next production deploy.
 
 Preview: https://01m2r12eden4p629qscwxmbq1v-fb73b5b73c40344d0d20.myshopify.dev
+
+### 2026-09-17 — Fully functional: 186 URLs, 0 errors, and the interactions driven by hand
+
+Todd: "please just make sure the site is fully functional, that is highest
+priority, aesthetic is secondary."
+
+#### Delivery proved itself on the current build
+
+Order **#1049**, Todd's own test checkout: PAID, **FULFILLED 8 seconds later**,
+fulfillment SUCCESS, carrying `_ga_client_id`. That was the one link in the
+chain nothing here could test. It works on the build that is live now.
+
+#### Every page
+
+New **`npm run audit:site`** walks the sitemap index and every sub-sitemap,
+then crawls internal links on eight entry pages to catch what is linked but
+not listed. **186 unique URLs, 0 errors.** One warning: `/account` redirects to
+`/account/orders`, which is Hydrogen's own account routing.
+
+**It was wrong twice before it was right, and both times it was the
+instrument, not the site:**
+
+| Run | Reported | Actually |
+|---|---|---|
+| 1 | `/account` **406** | It 302s to Shopify's hosted OAuth login, which refuses `Accept: */*` |
+| 2 | `/account` **429** | Six workers following that redirect were rate limiting somebody else's auth endpoint |
+
+Both fixed the same way: **judge the site's OWN response.** `redirect: 'manual'`,
+a 3xx the site issued counts as a working page, and never follow a redirect off
+this domain.
+
+**That is the third time today a surprising failure was the crawler** (checkout
+403, `/account` 406, `/account` 429). The rule is now written into two files:
+a crawler that does not look like a visitor cannot answer a question about
+visitors.
+
+#### Loading is not working, so these were driven by hand on production
+
+| Flow | Result |
+|---|---|
+| Search | typed "moon jar", Moon Jar came back |
+| Nav and mega menu | every collection link resolves, counts render |
+| Collection filter | Chat widgets goes to `/collections/frontpage`, 24 cards, **0 goal-only titles** |
+| FAQ accordion | expands, answer text appears |
+| Newsletter | POST returned `{"ok":true}`, customer created **SUBSCRIBED**, SINGLE_OPT_IN |
+| Homepage | 0 console errors, 0 failing resources, no horizontal overflow |
+| Add to cart, cart, checkout | 3 items, correct arithmetic, payment step, no shipping step |
+
+Probe customer tagged `test-record-safe-to-delete`.
+
+**A trap for anyone testing this site in a browser:** the cart drawer is in the
+DOM on every page, so a bare `querySelectorAll('a[href*="/products/"]')`
+returns whatever is in the cart and reads exactly like a collection showing the
+wrong products. It fooled this pass twice. Scope to the grid.
+
+#### verify:all is now 17 of 20
+
+Three reds, all known and none of them a site fault: **policy claims** (the 60
+description rewrite queue, BAT-172), **channel prices** (3 products awaiting
+Todd's pricing decision), and **deploy freshness**, which reports that
+production answers 404 on `/api/version` because that route has not been
+deployed yet. It clears on the next production deploy.
