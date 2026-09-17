@@ -3149,3 +3149,48 @@ should not have been stated as a direction.
 
 Commit: LAUNCH.md only. No deploy from this pass, and none is owed: reviews did
 not drift.
+
+### 2026-09-17 — The popup collects emails and none of them reach the list
+
+Todd asked whether the Shopify site is capturing emails properly. It is not, and
+it has not been since the popup shipped.
+
+**Proof, not inference.** A live `POST https://streamwidgetshop.com/api/newsletter`
+returned `200 {"ok":true}` and set `sws_he`/`sws_cid`, and the matching
+`customers(query:"email:…")` came back with **0 nodes**. Every one of the 8
+notification emails since 2026-09-16 carries the same line: `Shopify marketing
+list: **skipped**`. `skipped` is one branch only, `subscribe.server.js:90`: no
+`PRIVATE_ADMIN_API_TOKEN`, no call, no error. **No customer in the shop has ever
+carried the `site-signup` tag the code writes**, so that path has never once
+succeeded in production.
+
+So the form, honeypot, fallback code and hashed-email cookie all work. The
+marketing-consent half has been dead the whole time, and the only reason any
+signup is recoverable is the Resend notification.
+
+**Backfilled 2026-09-17** (tags `newsletter, site-signup, launch-popup,
+backfill-2026-09-17`, `consentUpdatedAt` set to each person's real signup time):
+
+- `hexeddreamsvt@gmail.com` created, SUBSCRIBED (`10478242463934`)
+- `crayon.zombie@yahoo.com` created, SUBSCRIBED (`10478242529470`)
+- `sciants.media@gmail.com` existing customer flipped NOT_SUBSCRIBED to
+  SUBSCRIBED (`10476367872190`)
+- `marielys.g.2012@gmail.com` was already recovered by hand on 2026-09-16
+- `annlovano@gmail.com` was already a subscribed customer from 2026-09-13
+- `sws-*` probe addresses deliberately left alone, they are Todd's tests
+
+**Still open, and it is Todd's to do because it needs the admin UI:** create a
+custom app (Settings, Apps and sales channels, Develop apps) with Admin API
+scopes `write_customers` and `read_customers`, install it, then set the
+`shpat_` token as `PRIVATE_ADMIN_API_TOKEN` on the **Production** Oxygen
+environment. Do NOT use `shopify hydrogen env push` for this: it pushes the
+whole local `.env`, which holds only 5 of the 22 variables and would flatten
+the rest. Re-probe after setting it and confirm a `site-signup` tagged customer
+appears.
+
+Two changes shipped with this so the failure can never be invisible again: the
+notification subject now reads `SWS newsletter signup (NOT ON LIST: skipped)`
+when the list write did not happen, and `/admin/config` now describes
+`PRIVATE_ADMIN_API_TOKEN` by what it actually costs (its old text mentioned
+only catalogue reads, which is why a page built to expose exactly this gap did
+not expose it).

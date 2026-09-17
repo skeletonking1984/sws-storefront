@@ -45,7 +45,15 @@ export async function handleNewsletterSignup({formData, env, origin, source}) {
   const sent = await sendNotificationEmail({
     env,
     origin,
-    subject: `SWS newsletter signup: ${email}`,
+    // The list state is in the SUBJECT, not only the body. Every signup
+    // between 2026-09-16 and 2026-09-17 came back `skipped` (no
+    // PRIVATE_ADMIN_API_TOKEN on Oxygen production) and every notification
+    // looked exactly like a working one in the inbox, so nobody saw it for a
+    // day. A subject that says NOT ON LIST cannot be skimmed past.
+    subject:
+      subscribed.ok
+        ? `SWS newsletter signup: ${email}`
+        : `SWS newsletter signup (NOT ON LIST: ${subscribed.state}): ${email}`,
     text: [
       `New newsletter signup (${source}).`,
       '',

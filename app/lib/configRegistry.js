@@ -29,7 +29,7 @@ export const CONFIG_GROUPS = [
       {key: 'PUBLIC_STOREFRONT_API_TOKEN', required: true, impact: 'No catalogue. Every product query fails.'},
       {key: 'PUBLIC_STOREFRONT_ID', impact: 'Shopify analytics cannot attribute sessions to this storefront.'},
       {key: 'PUBLIC_CHECKOUT_DOMAIN', impact: 'Checkout may leave the registrable domain, which breaks ad attribution across the cart to checkout hop.'},
-      {key: 'PRIVATE_ADMIN_API_TOKEN', impact: 'Server side catalogue reads that need Admin scope fail. Storefront reads are unaffected.'},
+      {key: 'PRIVATE_ADMIN_API_TOKEN', required: true, impact: 'Newsletter signups are NEVER added to the Shopify marketing list: app/lib/subscribe.server.js returns `skipped` and the form still answers ok. Also breaks server side catalogue reads that need Admin scope. Needs write_customers and read_customers.'},
     ],
   },
   {
