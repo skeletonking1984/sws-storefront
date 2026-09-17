@@ -4553,3 +4553,52 @@ answers, in order of strength:
 authorisation itself and whether the file is delivered. The last proof of both
 is order **#1048**, a real stranger, PAID and FULFILLED, 2026-09-17 04:43Z, on
 the pre-deploy build.
+
+### 2026-09-17 — The rating warning is a demand problem wearing a markup problem's clothes
+
+Search Console Product snippets: **0 critical, 43 valid**, two non-critical
+warnings at 22 items each, `aggregateRating` and `review`. Todd: "make what you
+can work now, and backlog todo to fix this with a solid plan."
+
+#### Shipped now
+
+**One of the 29 was a real bug and it is fixed** (`b533cb4`). The frog emote
+pack has a genuine **5 star rating with an empty comment**.
+`build-etsy-reviews.mjs` was already correct, counting every rating and putting
+only the ones with text in `reviews`. Both render gates then keyed off
+`reviews.length`, so a rating with no words was hidden on the page AND
+suppressed from `aggregateRating`. Both now gate on `count`, and the section
+renders an honest line rather than a quote that does not exist, which also
+satisfies Google's rule that an aggregate rating must be visible to a person.
+
+Preview: https://01m2r0eefdpey2xvpt5eg8yste-fb73b5b73c40344d0d20.myshopify.dev
+
+#### Backlogged: BAT-177, with the finding that reframes it
+
+The other 28 are not a markup problem. Split against real Etsy sales for
+2026-07-31 to 09-14, a window carrying **504 orders and $4,414.98**:
+
+| Group | Count | Fixable by collecting reviews |
+|---|---|---|
+| Sold **zero units** in the window | 15 | No, there is no buyer to ask |
+| Sold exactly **1 unit** | 5 | Marginally |
+| **Unmapped**, no Etsy listing at all | 9 | No |
+
+**Twenty of twenty-nine have no reviews because almost nobody bought them.**
+
+And Shopify cannot carry it: orders by month are **Mar 1, Apr 2, May 1, Jun 0,
+Jul 0, Aug 0, Sep 6**. Six a month yields about one review a month, which
+renders an empty widget beside 998 real Etsy reviews. BAT-131 already set the
+gate at 20 to 30 Shopify orders a month; **this confirms that call with
+numbers rather than overturning it.**
+
+One trap caught while writing the list: **Etsy units is the wrong measure for
+anything the storefront sells.** The Multistream Chat Widget Pack shows zero
+Etsy units in the window and sold **twice on Shopify in September** (#1045,
+#1047). Four others are seasonal (Santa x2, Christmas, Thanksgiving) in an
+August to September window, and Demon Samurai was listed 2026-09-06. So the
+"15 with zero units" is **not** an archive list, and BAT-177 says so.
+
+The genuinely dormant set is ten, and the two most interesting are Spooky
+Halloween and Sakura Butterfly, both $14.99 chat-and-goal sets priced like the
+sellers and selling nothing.
