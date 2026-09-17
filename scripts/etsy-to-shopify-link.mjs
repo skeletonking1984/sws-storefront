@@ -120,6 +120,10 @@ const byListing = new Map(rows.map((r) => [String(r.etsy_listing_id), r.handle])
 /** Only a handle the Storefront API actually serves is offered. */
 async function liveHandles(handles) {
   const unique = [...new Set(handles)];
+  // An empty aliased query is not a query: Shopify rejects it with
+  // "Field must have selections", which reads like a bug in the query
+  // builder rather than like "none of these listings are mapped yet".
+  if (!unique.length) return new Map();
   const fields = unique
     .map((h, i) => `p${i}: product(handle: ${JSON.stringify(h)}) { handle title }`)
     .join('\n');
