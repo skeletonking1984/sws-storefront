@@ -4851,3 +4851,61 @@ no console errors, no failing resources.
 Recorded in CLAUDE.md so the next description pass measures at 360, not 390.
 
 **Needs a production deploy to reach visitors.**
+
+### 2026-09-17 — Flicker: fixed the worst offender, could not reproduce it, two suspects left
+
+Todd: "screen is flickering bad on my laptop and see these errors."
+
+#### The errors are not ours
+
+Dozens of `(blocked:csp)` woff2 requests for **Figtree** and **Roboto**.
+Neither is a font this site uses. Our faces are **Baloo 2, Nunito and Space
+Grotesk**, all reporting `loaded`, `document.fonts.status: loaded`, served from
+origins `font-src 'self' https://cdn.shopify.com` already allows.
+
+**A clean browser makes ZERO requests to fonts.gstatic.com on this site.**
+Something in that browser is injecting Google Fonts into the page and CSP is
+refusing it. Widening `font-src` to silence someone else's injection would
+weaken our policy for no benefit, so it was not done.
+
+#### The flicker: could not reproduce, fixed the likeliest cause anyway
+
+Measured on the live site: **100fps with the star drift on, 100fps with it
+off, zero long frames either way.** So this is not "found it", it is "found a
+genuinely bad pattern that is the most likely cause".
+
+**What was wrong:** each of the three star layers animated
+**`background-position`**, a PAINT property that cannot be composited. Every
+frame repainted a full-viewport layer of six to ten radial gradients, three
+deep, forever. And `will-change: transform` had already promoted each layer, so
+it paid for its own compositor layer AND the repaint.
+
+**Fixed** by splitting each layer in two: the outer keeps the pointer parallax
+transform, a new inner `.sws-star-drift` carries the tile and drifts by
+**transform**, which is compositor-only. Nested transforms compose so both
+motions survive. The drift element is oversized by exactly one tile so the loop
+never uncovers an edge.
+
+**Caught before shipping:** `prefers-reduced-motion` killed
+`.sws-star-layer { animation: none }`, and the drift moving to a new element
+would have escaped it silently, because nobody testing has that preference set.
+`.sws-star-drift` is in that rule now.
+
+#### If it still flickers, these two are next
+
+Both animate `background-position` continuously and neither can be composited:
+
+| Animation | Where | Why it was not touched blind |
+|---|---|---|
+| `sws-holo-shift` | `.sws-holo`, the shop name in the **sticky header**, so always on screen | Small element, but permanently visible |
+| `sws-shimmer-sweep` | `.shimmer` | Smaller still |
+
+Todd can settle it in his own console without a deploy:
+
+```js
+document.head.insertAdjacentHTML('beforeend','<style>.sws-holo,.shimmer{animation:none!important}</style>')
+```
+
+If the flicker stops, it is one of those two and they get the same treatment.
+
+**Needs a production deploy to reach visitors.**
