@@ -239,10 +239,30 @@ export function buildPinterestCsv(nodes, origin) {
     // title cannot fail the whole row.
     const title = p.title.length > 500 ? `${p.title.slice(0, 499)}…` : p.title;
 
+    /*
+     * FOUR additional images, not ten, and the limit is about rate limiting
+     * rather than taste.
+     *
+     * Pinterest creates a separate Pin for every additional_image_link, so
+     * more looks strictly better. It is not: on the first successful ingest
+     * (2026-09-16, 121 of 122) it asked Shopify's CDN for roughly 1,200
+     * images in one burst and the CDN began answering 429. Result was
+     * Warning 1306 on 9 products and Error 1300 on one, whose PRIMARY image
+     * was refused. All 122 image_link URLs return 200 when fetched at a sane
+     * rate, so nothing was broken; there were simply too many requests at
+     * once.
+     *
+     * Four cuts the burst by well over half and still gives each product
+     * several Pins. An image that 429s produces no Pin at all, so fewer
+     * requests that succeed beat more that get refused.
+     *
+     * Pinterest only. Google and X ingest the same catalogue without
+     * complaint, so their builders are untouched.
+     */
     const extra = (p.images?.nodes || [])
       .map((i) => i.url)
       .filter((u) => u && u !== p.featuredImage?.url)
-      .slice(0, 10)
+      .slice(0, 4)
       .join(', ');
 
     const productId = String(p.id || '').split('/').pop();
