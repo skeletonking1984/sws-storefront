@@ -21,6 +21,7 @@ import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
 import {PixelBus} from './components/pixels/PixelBus';
+import {Starfield} from './components/Starfield';
 import {buildAnalyticsConfig} from '~/lib/analytics/registry';
 
 /**
@@ -274,6 +275,9 @@ export function Layout({children}) {
         <Links />
       </head>
       <body>
+        {/* Behind everything, painted server side, never in the layout. See
+            app/components/Starfield.jsx. */}
+        <Starfield />
         {children}
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />

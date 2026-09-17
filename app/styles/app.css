@@ -272,13 +272,51 @@ body::before {
   animation: sws-aurora-drift 40s ease-in-out infinite alternate;
 }
 
-/* Twinkling star field, CSS only, layered sizes for depth. */
-body::after {
-  content: '';
+/* Star field: three parallax layers, drifting on their own and leaning toward
+   the pointer. Markup and behaviour: app/components/Starfield.jsx.
+
+   This replaced a single `body::after` tile that only twinkled. One tile has
+   no depth, so any movement applied to it read as the whole page sliding
+   rather than as stars.
+
+   --sws-star-x / --sws-star-y are -1..1 from the centre of the viewport,
+   written by the component's rAF. Every layer multiplies them by its own
+   depth, which IS the parallax: the near layer travels roughly five times the
+   far one. Untouched (no JS, no pointer, reduced motion) they are 0 and each
+   layer simply sits where its drift puts it. */
+.sws-starfield {
+  --sws-star-x: 0;
+  --sws-star-y: 0;
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  /* Contains the layers' paint so a transform here can never invalidate the
+     page behind it. */
+  contain: strict;
+}
+
+.sws-star-layer {
+  position: absolute;
+  /* Oversized on purpose. The layers translate by up to 30px and the tile
+     repeats, but an inset of 0 would still show a hard edge at the moment a
+     layer leans past the viewport. */
+  inset: -60px;
+  background-repeat: repeat;
+  will-change: transform;
+  transform: translate3d(
+    calc(var(--sws-star-x) * var(--sws-star-depth)),
+    calc(var(--sws-star-y) * var(--sws-star-depth)),
+    0
+  );
+  /* Snaps to the pointer would look mechanical. This is the lag that makes it
+     feel like distance. */
+  transition: transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Far: dense, small, dim, barely moves. This is the backdrop. */
+.sws-star-layer-far {
+  --sws-star-depth: 6px;
   background-image:
     radial-gradient(1px 1px at 6% 12%, #fff, transparent),
     radial-gradient(1px 1px at 24% 34%, #fff, transparent),
@@ -289,21 +327,67 @@ body::after {
     radial-gradient(1px 1px at 14% 68%, #fff, transparent),
     radial-gradient(1px 1px at 33% 88%, #fff, transparent),
     radial-gradient(1px 1px at 52% 62%, #fff, transparent),
-    radial-gradient(1px 1px at 96% 74%, #fff, transparent),
+    radial-gradient(1px 1px at 96% 74%, #fff, transparent);
+  background-size: 260px 260px;
+  opacity: 0.5;
+  animation:
+    sws-twinkle 6s ease-in-out infinite alternate,
+    sws-star-drift-far 240s linear infinite;
+}
+
+/* Mid: the layer you actually read as "stars". */
+.sws-star-layer-mid {
+  --sws-star-depth: 16px;
+  background-image:
     radial-gradient(1.6px 1.6px at 12% 44%, #fff, transparent),
     radial-gradient(1.6px 1.6px at 46% 20%, #fff, transparent),
     radial-gradient(1.6px 1.6px at 67% 8%, #fff, transparent),
     radial-gradient(1.6px 1.6px at 82% 82%, #fff, transparent),
     radial-gradient(1.6px 1.6px at 8% 90%, #fff, transparent),
-    radial-gradient(1.6px 1.6px at 62% 70%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 62% 70%, #fff, transparent);
+  background-size: 340px 340px;
+  opacity: 0.72;
+  animation:
+    sws-twinkle 7.5s ease-in-out -2s infinite alternate,
+    sws-star-drift-mid 170s linear infinite;
+}
+
+/* Near: few, large, brightest, moves most. Sparse on purpose, because this is
+   the layer that would turn into snow if there were many of them. */
+.sws-star-layer-near {
+  --sws-star-depth: 30px;
+  background-image:
     radial-gradient(2.2px 2.2px at 28% 56%, #fff, transparent),
     radial-gradient(2.2px 2.2px at 91% 42%, #fff, transparent),
     radial-gradient(2.2px 2.2px at 38% 8%, #fff, transparent),
     radial-gradient(2.2px 2.2px at 75% 30%, #fff, transparent);
-  background-repeat: repeat;
-  background-size: 260px 260px;
-  opacity: 0.7;
-  animation: sws-twinkle 6s ease-in-out infinite alternate;
+  background-size: 520px 520px;
+  opacity: 0.85;
+  animation:
+    sws-twinkle 9s ease-in-out -4s infinite alternate,
+    sws-star-drift-near 110s linear infinite;
+}
+
+/* The constant drift, so the field is alive on a phone and before any pointer
+   has moved. Each layer scrolls exactly one tile, so the loop is seamless, and
+   each runs at its own speed and angle. It animates background-position rather
+   than transform because transform is already spoken for by the parallax. */
+@keyframes sws-star-drift-far {
+  to {
+    background-position: 260px -260px;
+  }
+}
+
+@keyframes sws-star-drift-mid {
+  to {
+    background-position: -340px -340px;
+  }
+}
+
+@keyframes sws-star-drift-near {
+  to {
+    background-position: 520px -260px;
+  }
 }
 
 @keyframes sws-aurora-drift {
@@ -326,8 +410,15 @@ body::after {
 
 @media (prefers-reduced-motion: reduce) {
   body::before,
-  body::after {
+  .sws-star-layer {
     animation: none;
+  }
+
+  /* The component never attaches its listener under this preference, so the
+     layers cannot move. Belt and braces: kill the easing too, so nothing can
+     animate here even if a custom property is set some other way. */
+  .sws-star-layer {
+    transition: none;
   }
 }
 

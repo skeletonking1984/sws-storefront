@@ -3259,3 +3259,35 @@ Test records `sws-sf-probe`, `sws-code-probe`, `sws-instant-probe3` and
 `sws-instant-probe4` are tagged `test-record-safe-to-delete`. A stale dev server
 from 2026-09-15 10:03 was holding port 3000 and was killed before testing, which
 is the trap already recorded further up this file.
+
+### 2026-09-17 — The star field moves now, and leans toward the pointer
+
+Todd asked for the background particles to move and react to the mouse.
+
+Was: one `body::after` tile of 20 radial gradients that only twinkled opacity.
+One tile cannot read as depth, so moving it would have looked like the page
+sliding, not like stars.
+
+Now: `app/components/Starfield.jsx`, three fixed layers at `z-index:-1` behind
+everything. Far is dense, small and dim and barely moves; near is sparse, large,
+bright and moves most. Each has its own slow `background-position` drift so the
+field is alive on a phone and before any pointer moves, and each multiplies a
+shared `--sws-star-x/y` by its own depth, which is the parallax.
+
+Measured in a real browser, hovering opposite corners: far/mid/near translate
+`4.8 / 12.8 / 24px` one way and `-4.8 / -12.8 / -24px` the other, drift running,
+`scrollWidth == clientWidth` so nothing overflows.
+
+Rules it respects, all of which this page has paid for before:
+
+- No layout. Fixed, `pointer-events:none`, `contain: strict`. It cannot
+  reopen the hero CLS fight.
+- Transform only. The handler writes two custom properties, so a frame is a GPU
+  transform, never a repaint of a twenty stop gradient.
+- One rAF, coalesced: `pointermove` outruns the display, so coordinates are
+  stored and at most one frame is scheduled.
+- `prefers-reduced-motion` kills drift AND the lean, and the listener is never
+  attached. Touch devices keep the drift and skip the listener, because there is
+  no cursor to follow.
+- Server rendered markup, so no hydration mismatch and no flash: the field
+  paints before the JS lands and the JS only adds the lean.
