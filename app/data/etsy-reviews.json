@@ -1,12 +1,12 @@
 {
   "shop": {
     "average": 4.76,
-    "count": 997,
-    "soldCount": 7542,
-    "favoriteCount": 1281,
+    "count": 998,
+    "soldCount": 7576,
+    "favoriteCount": 1287,
     "url": "https://www.etsy.com/shop/StreamWidgetShop/reviews"
   },
-  "generatedAt": "2026-09-14T02:38:26.148Z",
+  "generatedAt": "2026-09-17T13:26:04.491Z",
   "sourceNote": "Real StreamWidgetShop Etsy reviews, joined to Shopify products by etsy listing id via data/etsy-video-map.json. Only trusted-confidence matches are kept, see scripts/build-etsy-reviews.mjs. SERVER USE ONLY, contains every product review verbatim: import this from a route loader, never from a component body or module scope, or the bundler ships it to the client. Client code wanting just the shop stats should import etsy-shop-stats.json instead.",
   "products": {
     "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only": {

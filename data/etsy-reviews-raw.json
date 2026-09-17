@@ -1,15 +1,23 @@
 {
-  "fetched_at": "2026-09-14T02:38:23.515Z",
+  "fetched_at": "2026-09-17T13:26:02.847Z",
   "source": "getReviewsByShop, fully paginated via getAll (every review, not the most recent 100)",
   "shop": {
     "shop_id": 51879465,
     "shop_name": "StreamWidgetShop",
-    "review_count": 997,
+    "review_count": 998,
     "review_average": 4.76,
-    "transaction_sold_count": 7542,
-    "num_favorers": 1281
+    "transaction_sold_count": 7576,
+    "num_favorers": 1287
   },
   "reviews": [
+    {
+      "listing_id": 1771365068,
+      "transaction_id": 5216308968,
+      "rating": 5,
+      "review": "It doesn&#39;t work for charity donations like I was told but it&#39;s still a great widget for any other form of goal tracking",
+      "language": "en",
+      "date": "2026-09-16"
+    },
     {
       "listing_id": 4336744223,
       "transaction_id": 5215975688,

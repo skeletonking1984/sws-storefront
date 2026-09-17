@@ -3979,3 +3979,268 @@ Preview: https://01m2qp996eagsq5mv9p5gbny2t-fb73b5b73c40344d0d20.myshopify.dev
 **After the next production deploy**, hit VALIDATE FIX in Search Console.
 Revalidation takes a few days and only passes once Google has recrawled the 5
 items.
+
+### 2026-09-17 (second scheduled pass, QA): the URL was a claim surface nobody had audited
+
+**Purchase path: GREEN, and for once the word is earned.** Every step of
+`qa.md`'s protocol ran in this pass and can be quoted.
+
+| Step | Done |
+|---|---|
+| 360px first, then 390 and 430 | yes, all three, custom width not the `mobile` preset |
+| Pressed the control, never its href | yes, by `ref` or by a coordinate from a screenshot whose reported frame matched the viewport |
+| `elementFromPoint` at the centre returns the control | yes, `A.cart-checkout-button` every time |
+| Home, a product page AND a collection page | yes, all three |
+| The cart drawer AND `/cart` | yes, both |
+| Landed on the hosted checkout, payment rendered, no shipping step | yes, correct $17.32 total, stopped at the payment form |
+
+Measurements, all three widths: document horizontal overflow 0, no descendant
+of the open drawer exceeds the drawer's own box, checkout button on screen and
+hittable (360: x=17..344 of 360, 390: x=17..374, 430: x=47..414 of a 400 wide
+drawer at x=30). `audit-shipping` and `audit-catalog` both exit 0, 122 products.
+
+Two false findings caught and killed before they were written up, both already
+in this log as traps and both still live:
+
+- **A 12px `documentElement.scrollWidth` excess on the PDP at 360.** Not real.
+  `scrollTo(200,0)` leaves `scrollX` at 0 because `body` is `overflow-x:
+  hidden`, and no unclipped element exceeded the viewport: the two that did,
+  the gallery thumb strip and the parallax star layers, both sit inside
+  containers that clip or scroll.
+- **"The drawer is parked at x=400 and the button is off screen" at 390.**
+  Read mid animation. A screenshot showed the drawer fully open at x=0, and a
+  re-read after it settled gave x=17..374. Third time this exact trap has
+  produced a false finding.
+
+#### The finding: 76 live product URLs claim TikTok. BAT-174
+
+`works_with` is clean on all 122 products. Titles, `seo.title` and
+`seo.description` are clean on all 122 for all seven platform words. And
+**76 of 122 handles contain `tiktok-studio` while that product's own
+`works_with` denies TikTok.** Zero YouTube, Kick or Streamlabs handle residue.
+
+The handle is not cosmetic. It is the address bar, the URL line in a Google
+result, `offers.url` in the Product JSON-LD, the `item` in the BreadcrumbList
+JSON-LD, and the link in all three machine feeds.
+
+Found by accident, checking one of tonight's own rewrites. On the Celestial
+Moon page, whose visible copy is now clean, the only three places any of
+youtube/kick/tiktok appear anywhere in `<main>` are the two JSON-LD blocks,
+both carrying the handle, and the shop wide FAQ answer "It depends on the
+widget, so check the listing", which is correct. `name` and `description` in
+the JSON-LD are clean. The claim is purely the URL.
+
+**Why nothing caught it:** `audit-platform-claims.mjs` and this pass's own
+catalogue scan both read `title`, `seo.title` and `seo.description`. Neither
+has ever read `handle`. BAT-150 cleaned the titles on 2026-09-14 and left the
+URL underneath them carrying the claim.
+
+Unlike the Etsy slug residue, a Shopify handle CAN be changed, and
+`productUpdate` takes `redirectNewHandle: true` so inbound links and existing
+Google results survive. 76 rewrites is still a large catalogue write with SEO
+consequences. **Todd's call.** The audit should gain `handle` either way.
+
+#### Second finding: one new Streamlabs claim with no evidence. BAT-175
+
+`broken-heart-bar-loading-goal-widget-...` claims Streamlabs. Etsy listing
+1902602881 says **"THIS ITEM IS FOR OBS/OBS STUDIO, AND STREAMELEMENTS! :)"**,
+with Streamlabs deliberately absent where every sibling says "OBS/OBS STUDIO,
+STREAMLABS, AND STREAMELEMENTS". The word appears nowhere in that description.
+Its only appearance is the Etsy keyword title. The manifest is
+`BrokenHeartStreamElementscode.zip` plus the setup PDF, **no Streamlabs
+artifact**. Denied at both tier 1 and tier 2.
+
+**BAT-170 is now at 0, verified.** Listings 1888414230 (Octopus) and
+1849162325 (Cat Paw) no longer carry Kick; both read `Twitch, StreamElements,
+Streamlabs, OBS` and both descriptions name Streamlabs outright. Cat Paw ships
+`Streamlabscode.zip`, so its claim is tier 1 confirmed. Broken Heart is the
+only instance left after the catalogue wide rerun.
+
+Scan coverage, stated because it is a limit: 113 of 122 products map to an
+active Etsy listing. **9 are uncheckable**, they have no mapping and therefore
+no description and no manifest.
+
+#### Checkout now starts on shop.app for a stranger, not on the shop domain
+
+The 2026-09-16 disproof is stale. On that date a cookieless mobile curl of a
+checkout permalink returned `302 -> shop.streamwidgetshop.com/checkouts/cn/...
+&skip_shop_pay=true`. Today, a **brand new cart created through the Storefront
+API**, no cookies at all, returns:
+
+```
+302 -> https://shop.app/checkout/66589720766/cn/hWNGw9vtko5X7UrawAIKEAmg/en-us/shoppay
+       ...&redirect_source=checkout_universal_redirect
+```
+
+Note `checkout_universal_redirect`, not `checkout_automatic_redirect`. It fires
+on a **desktop** user agent too, so it is shop wide and not session driven.
+The `ur_back_url` carries the shop domain fallback with `skip_shop_pay=true`.
+
+Not a defect. Shop Pay universal redirect is a Shopify feature, the checkout is
+still Shopify hosted, and cart attributes travel with the cart while the
+purchase event fires server side off `orders/create`, so attribution is
+untouched. But `qa.md`'s "land on `shop.streamwidgetshop.com`" is no longer
+what a stranger sees, and **Todd should know the checkout domain changed.**
+UNCONFIRMED and stated as such: whether the shop.app checkout renders correctly
+for a buyer with **no** Shop Pay account could not be tested, because the only
+browser available carries Todd's own Shop Pay session and clearing it would
+sign him out.
+
+#### A2, conversion tracking
+
+`npm run verify:tracking` against the live deployment: **25 passed, 0 failed.**
+All seven endpoint locks (`/api/e` 405/403/400/204, `/webhooks/orders`
+405/401/401), the `sws_cid` cookie shape and flags, both GA4 cookie shapes
+parsed correctly, and the GA4 measurement id served on the page.
+
+**The QA cart carries all three GA ids**, read straight off the Storefront API:
+`_ga_client_id 915638934.1789145575`, `_ga_session_id 1789625139`,
+`_ga_session_number 32`, `_traffic_type internal`. So the relay works, and the
+#1041 class of missing session id is a blocked GA4 on the buyer's side, not a
+code defect. Unchanged from 2026-09-16.
+
+Real orders read individually, not just day totals. #1048 ($14.99, 09-17
+04:43Z) carries client id plus session id and number. #1047 ($29.99, 09-16
+17:45Z) and #1045 ($29.99, 09-16 01:31Z) both carry `_twclid`. #1046 carries
+client id only.
+
+**Escalation, unchanged and now two days old.** Two real non test orders carry
+an X click id and **X Ads reports $0 conversion revenue** for 2026-09-14 to
+2026-09-17 against $31.82 spend, 232,371 impressions, 2,769 clicks. The Ads API
+cannot distinguish "correct, the click was outside the attribution window" from
+"the CAPI purchase never landed". **Todd: check X Events Manager for
+`28y97yi349eudbgzfc9tew3a47` (#1047) and `24cukciawnn1yvvr0edz9hqdav`
+(#1045).** Not called either way from here.
+
+#### The standing signal moved, and it is not the checkout. BAT-176
+
+| Device, 7 days | Sessions | Cart additions | Reached checkout | Bounce |
+|---|---|---|---|---|
+| mobile | 528 | 9 (1.7%) | 9 | 83.1% |
+| desktop | 330 | 48 (14.5%) | 29 (8.8%) | 65.8% |
+
+Mobile is 62% of traffic this week, up from 11% on 2026-09-14, so the volume is
+real. It adds to cart at one eighth the desktop rate and bounces at 83% with
+1.87 pageviews a session. The purchase path above rules out the drawer and
+`/cart` as the cause: the loss is upstream of Add to cart.
+
+Mobile traffic is 382 direct and 125 social. X in-app browsers usually report
+as direct, so most of that 382 is likely the ad traffic. Worth one look
+alongside it: X reports 2,769 clicks over four days while Shopify recorded 142
+social sessions over seven. X `clicks` includes profile clicks and card
+expands, so they are not the same metric, but a 95% gap deserves the link click
+figure rather than the total.
+
+#### Reviews refreshed
+
+Live count 998 against 997 on disk, so they were pulled and rebuilt.
+`count` 997 to 998, `soldCount` 7542 to 7576, `favoriteCount` 1281 to 1287.
+**No product gained a review**: the one new review is on listing 1771365068
+(Crystal Butterfly), which has `confidence: reviewed_none` and no Shopify
+handle, so it is one of the 204 that cannot be attached and it renders nowhere.
+Kept 794 of 998 across 98 products, unchanged. **This needs a deploy to reach
+the site.**
+
+That new review is worth reading anyway. 5 stars, 2026-09-16: "It doesn't work
+for charity donations like I was told but it's still a great widget for any
+other form of goal tracking." The listing itself does **not** claim charity
+support, its only relevant line is "TYPES OF GOALS: DONATION FOLLOWER BITS
+SUPPORT", so this is not a listing overclaim. Someone told that buyer something
+the product does not do. Noted, not filed.
+
+#### IP
+
+`npm run audit:ip` with `ETSY_PACKAGE_ROOT`: 122 Shopify products and 186
+active Etsy listings, **no live listing on either channel carries a known IP
+term**, and no unrecognised capitalised name in any live title. The same three
+un-editable Etsy URL slugs remain (1881347726 charizard, 1741695722 among us,
+4306870352 valorant/brimstone). Unchanged, Todd's call, not re-raised.
+
+#### Shipped: BAT-172 batch 3, queue 60 to 50
+
+Ten more descriptions rewritten from each product's own Etsy body and file
+manifest, all goal widgets: Cute Owl, Celestial Moon, Cute Mango, Pastel
+Rainbow Cloud, Cute Dog, Kettle Ghost, Cute Moth, Musical Ghost, Cute Cat Paw,
+Twin Skull Berry.
+
+What the sources actually said:
+
+- **Not one of the ten names YouTube, Kick or TikTok in its `works_with`**, so
+  none of the new copy does. The generator hard fails on any of those three
+  strings appearing in a draft, and on any en or em dash.
+- **Three of ten ship a real Streamlabs build** (Celestial Moon
+  `CelestialMoonGoalStreamlabs.zip`, Cat Paw `Streamlabscode.zip`, Twin Skull
+  Berry `Streamlab.zip`). Those three say a separate Streamlabs build is
+  included. The other seven say the widget is a StreamElements custom widget
+  that can be **displayed** in Streamlabs Desktop as a browser source, and the
+  Streamlabs FAQ answer says outright that no separate Streamlabs build ships.
+  That is the 2026-09-17 distinction, applied with the manifest as the test.
+- **"ONE VIDEO INSTRUCTIONS" dropped from all ten again.** All ten Etsy bodies
+  claim a video, **no manifest contains one**.
+- Two ship `ManuallySetupGoalWidgetTutorial.pdf` rather than
+  `HowToSetupGoalWidgetTutorial.pdf` and are named accordingly. Two ship more
+  than one code zip (Pastel Cloud: gradient and plain; Musical Ghost: dancing,
+  harmonising and DJ) and say so.
+- Cute Moth ships a file named `CuteBeesCode.zip`. Named exactly as shipped,
+  not tidied, because the buyer will see that filename.
+
+The generator asserts the drafted file list is byte-identical as a set to the
+Etsy manifest before anything is sent, so a hand typo in a filename cannot
+reach a live page.
+
+**Blocked, skipped again, now 4 not 2.** Two new ones joined the two known:
+
+- `twitch-liquid-goal-bar-widget-vtuber-asset-star-alerts-streamlabs-tiktok-studio-and-streamelements`
+- `nature-portion-bottle-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-tiktok-studio-streamelements-streamlabs-obs`
+- `butterfly-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements`
+- `diamond-butterfly-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements`
+
+None has a mapped active Etsy listing, so none has a file manifest, so "What
+You Get" could only be invented. They will be skipped every night until mapped.
+These are 4 of the 9 uncheckable products named above.
+
+#### Verification
+
+`batch:check` 10/10 safe to apply. `batch:verify` **10/10 live descriptions
+match the draft**, which is the check that matters when the only route to
+Shopify is retyping into a `productUpdate`. `audit:descriptions` 60 to **50**,
+`audit:policy` 60 to **50**, `BACKLOG_HIGH_WATER` lowered 60 to 50 in the same
+commit, `audit:descriptions:gate` passes. Self tests green: descriptions 13/13,
+policy 16/16. `npm run build` passes.
+
+Live PDP spot check on Celestial Moon: all six `<h3>` sections render, the
+approved refund paragraph is present, the denial line is gone, the video claim
+is gone, `CelestialMoonGoalStreamlabs.zip` is named, page overflow 0.
+
+`verify:all` before the batch: **14 of 16**. PASS on channels, catalog,
+shipping, IP risk, test order filter, tracking, first party session, X funnel
+events, all three feeds, descriptions, share cards and structured data. Share
+cards is green again after Todd's production deploy. The two failures are both
+known and neither was caused by this pass: **policy claims 60**, which is the
+BAT-172 queue and is now 50, and **channel prices 3**, unchanged since
+yesterday and still Todd's revenue call (Gothic Bottle -3.85, Celestial Star
+Goal -5.76, Multistream Chat Widget Pack -18.39).
+
+#### Needs Todd
+
+1. **BAT-174**, 76 product URLs claiming TikTok. Rewrite the handles with
+   `redirectNewHandle: true`, or accept it. Large SEO write either way.
+2. **X Events Manager**, the two `_twclid` orders above.
+3. **A deploy**, for the refreshed reviews to reach the site.
+4. **BAT-175** Broken Heart, **BAT-160** Streamlabs badge meaning,
+   **channel prices**, all unchanged.
+
+#### What changed about the pass itself
+
+Five things added to `sws-daily-qa-pass/SKILL.md`, four of them traps hit
+tonight:
+
+- Scan the **handle**, not just title and seo. It is how BAT-174 was missed.
+- `resize_window` with `preset: "mobile"` **overrides your width to 375**. The
+  one width `qa.md` exists to forbid. Pass width and height with no preset.
+- `document.querySelector('main')` can return the **cart drawer's own
+  `<main>`**, on any page. Same trap as `.cart-main`. It silently reported a
+  correct rewrite as missing every section.
+- **`innerText` returns empty string in a hidden pane.** Use `textContent`.
+- The checkout domain expectation is now shop.app via
+  `checkout_universal_redirect`, with the 2026-09-16 note marked stale.
