@@ -54,7 +54,21 @@ export const REVIEWS_ALWAYS_IN_DOM = 8;
 export function ProductReviews({data}) {
   const [expanded, setExpanded] = useState(false);
 
-  if (!data || data.reviews.length === 0) return null;
+  /*
+   * Gated on the RATING count, not on how many reviews carry text.
+   *
+   * It used to be `data.reviews.length === 0`, and `reviews` holds only the
+   * ones with something written in them. A buyer who leaves 5 stars and no
+   * comment is a real rating, it is already in `count` and `average`, and it
+   * was being hidden here AND suppressed from the page's aggregateRating.
+   * Found 2026-09-17 from Search Console reporting 22 items missing
+   * `aggregateRating`: one of them, the frog emote pack, had a genuine
+   * 5 star rating with an empty comment.
+   *
+   * Showing it also keeps Google's rule satisfied: an aggregateRating in the
+   * markup has to be visible to a person on the page, and now it is.
+   */
+  if (!data || data.count < 1) return null;
 
   // Floor, never round. A 4.5 average rounded up paints 5 solid stars and
   // overstates the product, the exact number sits right next to it anyway.
@@ -115,8 +129,11 @@ export function ProductReviews({data}) {
       ) : null}
 
       <p className="product-reviews-note">
-        Real reviews left on this widget&apos;s Etsy listing, most recent
-        first.
+        {data.reviews.length
+          ? 'Real reviews left on this widget\u2019s Etsy listing, most recent first.'
+          : data.count === 1
+            ? 'One verified Etsy buyer rated this widget and left no written review.'
+            : `${data.count} verified Etsy buyers rated this widget and left no written review.`}
       </p>
 
       <div className="product-reviews-grid">

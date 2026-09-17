@@ -357,8 +357,12 @@ export default function Product() {
   // the summary in the review section all use it, so the structured data,
   // the buy panel and the visible page can never disagree. Below the floor
   // (zero reviews) there is nothing real to show or emit, so both stay off.
+  // Gated on the RATING count, not on how many reviews carry text. A 5 star
+  // rating with an empty comment is a real rating; it is already in `count`
+  // and `average`, and keying this off `reviews.length` suppressed the
+  // page's aggregateRating for it. See ProductReviews.jsx for the full note.
   const showsProductReviews =
-    Boolean(productReviews) && productReviews.reviews.length > 0;
+    Boolean(productReviews) && productReviews.count >= 1;
   const hasEnoughReviewsForJsonLd =
     showsProductReviews && productReviews.count >= 1;
   const reviewJsonLd = hasEnoughReviewsForJsonLd
