@@ -26,7 +26,7 @@ import {FaqAccordion} from '~/components/FaqAccordion';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {formatProductDescription} from '~/lib/productDescription';
 import {buildMeta, getOrigin} from '~/lib/seo';
-import {ogImageDimensions} from '~/lib/ogImage';
+import {SHARE_CARD, shareCardUrl} from '~/lib/ogImage';
 import {
   findVideoMedia,
   lookupVideoMetadata,
@@ -62,17 +62,15 @@ export const links = () => [articleFontPreload];
 export const meta = ({data, matches, location}) => {
   const title = data?.product.title ?? '';
   const origin = getOrigin(matches);
-  // `featuredImage` is the OG image on purpose, and it is the one field here
-  // that CANNOT be a video. The Storefront API defines it as equivalent to
+  // `featuredImage` is the share image on purpose, and it is the one field
+  // here that CANNOT be a video. The Storefront API defines it as equivalent to
   // `images(first: 1)`, and `images` excludes video media entirely, so a
   // product whose gallery leads with its demo clip still yields its first
   // real photo. Checked against the live catalogue 2026-09-17: 122 products,
   // 0 with no featured image, and 0 whose featured image is a video preview
   // URL. Never switch this to `media.nodes[0]`, which CAN be a `Video` and
   // would put a frame grab on every share card.
-  const featuredImage = data?.product.featuredImage;
-  const featuredImageUrl = featuredImage?.url;
-  const ogImageSize = ogImageDimensions(featuredImage, 1200);
+  const featuredImageUrl = data?.product.featuredImage?.url;
   // Prefer the product's own `seo.title` over its display title. Catalog
   // titles here are Etsy titles, median 122 characters of stuffed platform
   // names, and appending the shop name pushed every one of them past 140.
@@ -87,29 +85,16 @@ export const meta = ({data, matches, location}) => {
       data?.product.seo?.description ||
       `${title}: animated stream widget, instant digital download for Twitch, YouTube, and multistream.`,
     url: `${origin}${location.pathname}`,
-    image: featuredImageUrl ? withWidthParam(featuredImageUrl, 1200) : undefined,
-    imageWidth: ogImageSize?.width,
-    imageHeight: ogImageSize?.height,
+    // Every product card is rendered at the one share size, whole image
+    // inside it, brand background filling the rest. See ~/lib/ogImage: the
+    // size is a constant because a padded CDN request returns exactly the
+    // size asked for, whatever shape the source is.
+    image: featuredImageUrl ? shareCardUrl(featuredImageUrl) : undefined,
+    imageWidth: featuredImageUrl ? SHARE_CARD.width : undefined,
+    imageHeight: featuredImageUrl ? SHARE_CARD.height : undefined,
   });
 };
 
-/**
- * Appends a Shopify CDN `width` sizing param to an image URL without
- * clobbering an existing query string (the real catalog's featured image
- * URLs already carry a `?v=...` cache-busting param). Never adds `crop=`,
- * per this codebase's cropping quirk (see CLAUDE.md).
- * @param {string} url
- * @param {number} width
- */
-function withWidthParam(url, width) {
-  try {
-    const parsed = new URL(url);
-    parsed.searchParams.set('width', String(width));
-    return parsed.toString();
-  } catch {
-    return url;
-  }
-}
 
 /**
  * Some titles in this catalog mention both words (e.g. "Sakura Floral Chat

@@ -9,6 +9,7 @@ import {
 import {ArticleCarousel} from '~/components/ArticleCarousel';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {buildMeta, getOrigin} from '~/lib/seo';
+import {SHARE_CARD, shareCardUrl} from '~/lib/ogImage';
 import {articleFontPreload} from '~/lib/articleFont';
 
 /*
@@ -33,11 +34,14 @@ export const meta = ({data, matches, location}) => {
       article?.seo?.description ||
       `${title}: a Stream Widget Shop blog post on stream setup and widgets.`,
     url: `${origin}${location.pathname}`,
-    image: article?.image?.url,
-    // Article heroes are not 1.91:1 either, and the query already carries
-    // their real size. See buildMeta: a wrong size is worse than no size.
-    imageWidth: article?.image?.width,
-    imageHeight: article?.image?.height,
+    // Same one share size as every product card, padded not cropped. An
+    // article hero is a wide-ish photo more often than a product image is,
+    // but "more often" is not "always", and a blog card that is a different
+    // shape to a product card is the inconsistency this fixed. See
+    // ~/lib/ogImage.
+    image: article?.image?.url ? shareCardUrl(article.image.url) : undefined,
+    imageWidth: article?.image?.url ? SHARE_CARD.width : undefined,
+    imageHeight: article?.image?.url ? SHARE_CARD.height : undefined,
     type: 'article',
   });
 };

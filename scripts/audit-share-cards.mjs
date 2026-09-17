@@ -40,7 +40,12 @@ import path from 'node:path';
 // The SHIPPED tag logic, imported directly. app/lib/ogImage.js has no
 // imports of its own precisely so this line works in plain Node: a test that
 // reimplements the thing it is testing proves nothing.
-import {ogImageDimensions, ogImageTags} from '../app/lib/ogImage.js';
+import {
+  SHARE_CARD,
+  ogImageDimensions,
+  ogImageTags,
+  shareCardUrl,
+} from '../app/lib/ogImage.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
@@ -106,63 +111,103 @@ export function auditCard(card) {
     add('og:image is a VIDEO preview frame, not a product image');
   }
 
-  const declared =
-    card.declaredWidth != null && card.declaredHeight != null
-      ? {width: Number(card.declaredWidth), height: Number(card.declaredHeight)}
-      : null;
+  const declaredGiven = card.declaredWidth != null && card.declaredHeight != null;
+  const declared = declaredGiven
+    ? {width: Number(card.declaredWidth), height: Number(card.declaredHeight)}
+    : null;
+  const sizeKnown = card.actualWidth != null && card.actualHeight != null;
 
-  // Absent is allowed and is the deliberate fallback. Only a declaration
-  // that contradicts the served bytes is a finding.
-  if (!declared) return issues;
-
-  if (!(declared.width > 0) || !(declared.height > 0)) {
-    add(`og:image:width/height are not positive numbers (${card.declaredWidth}x${card.declaredHeight})`);
-    return issues;
-  }
-  if (card.actualWidth == null || card.actualHeight == null) return issues;
-
-  if (
-    declared.width !== card.actualWidth ||
-    declared.height !== card.actualHeight
+  if (declared && (!(declared.width > 0) || !(declared.height > 0))) {
+    add(
+      `og:image:width/height are not positive numbers (${card.declaredWidth}x${card.declaredHeight})`,
+    );
+  } else if (
+    declared &&
+    sizeKnown &&
+    (declared.width !== card.actualWidth || declared.height !== card.actualHeight)
   ) {
     add(
       `og:image:width/height say ${declared.width}x${declared.height}, the image served is ` +
         `${card.actualWidth}x${card.actualHeight}`,
     );
   }
+
+  /*
+   * Every card is the SAME size, which is the whole point of padding rather
+   * than cropping. Truthful-but-varying was the state between the two fixes
+   * on 2026-09-17, and it is exactly what Todd saw as two X cards of
+   * different heights. A card that is honest about being the wrong shape
+   * still looks wrong in a timeline beside its siblings.
+   *
+   * Checked off the SERVED bytes and independently of the declaration, so a
+   * page that simply omits the size cannot dodge it.
+   */
+  if (
+    sizeKnown &&
+    (card.actualWidth !== SHARE_CARD.width || card.actualHeight !== SHARE_CARD.height)
+  ) {
+    add(
+      `card is ${card.actualWidth}x${card.actualHeight}, not the one share size ` +
+        `${SHARE_CARD.width}x${SHARE_CARD.height}`,
+    );
+  }
+
+  /*
+   * A product card must go through the padding transform. Without this the
+   * check could only ever notice the damage after a wrong-sized image was
+   * already being served; this notices the cause.
+   */
+  if (!card.ogImage.includes(VIDEO_PREVIEW_MARKER) && card.ogImage.includes('cdn.shopify.com')) {
+    if (shareCardUrl(card.ogImage) !== card.ogImage) {
+      add('og:image is not the share card transform (missing width/height/pad_color)');
+    }
+  }
+
   return issues;
 }
 
 if (process.argv.includes('--self-test')) {
+  const PADDED =
+    'https://cdn.shopify.com/s/files/a.jpg?v=1&width=1200&height=630&pad_color=0b0713';
   const cases = [
     [
-      'a truthful square card passes',
-      {handle: 'a', ogImage: 'https://cdn/x.jpg?width=1200', declaredWidth: '1200', declaredHeight: '1200', actualWidth: 1200, actualHeight: 1200},
+      'a padded 1200x630 card, declared truthfully, passes',
+      {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 630},
       0,
     ],
     [
-      'the exact bug: square image declared as 1200x630',
-      {handle: 'a', ogImage: 'https://cdn/x.jpg?width=1200', declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 1200},
+      'the original bug: a square image declared as 1200x630',
+      {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 1200},
+      2, // the declaration disagrees AND the card is the wrong size
+    ],
+    [
+      'a TRUTHFUL 1200x1200 card is still wrong, the sizes have to match each other',
+      {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '1200', actualWidth: 1200, actualHeight: 1200},
       1,
     ],
     [
-      'a 4:3 image declared as 1200x630',
-      {handle: 'a', ogImage: 'https://cdn/x.jpg?width=1200', declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 933},
+      'a truthful 1200x1500 portrait card is wrong for the same reason',
+      {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '1500', actualWidth: 1200, actualHeight: 1500},
       1,
     ],
     [
-      'NO declared size passes, it is the deliberate fallback',
-      {handle: 'a', ogImage: 'https://cdn/x.jpg?width=1200', declaredWidth: null, declaredHeight: null, actualWidth: 1200, actualHeight: 1200},
+      'omitting the declared size does NOT dodge the size rule',
+      {handle: 'a', ogImage: PADDED, declaredWidth: null, declaredHeight: null, actualWidth: 1200, actualHeight: 1200},
+      1,
+    ],
+    [
+      'omitting the declared size on a correct card still passes',
+      {handle: 'a', ogImage: PADDED, declaredWidth: null, declaredHeight: null, actualWidth: 1200, actualHeight: 630},
       0,
+    ],
+    [
+      'a Shopify image that never went through the transform is caught',
+      {handle: 'a', ogImage: 'https://cdn.shopify.com/s/files/a.jpg?v=1&width=1200', declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 630},
+      1,
     ],
     [
       'a video preview frame as the share image is caught',
-      {handle: 'a', ogImage: 'https://cdn/files/preview_images/abc.thumbnail.0000000000.jpg', declaredWidth: '1280', declaredHeight: '1280', actualWidth: 1280, actualHeight: 1280},
-      1,
-    ],
-    [
-      'a video preview frame is caught even when its size is truthful and it is the only fault',
-      {handle: 'a', ogImage: 'https://cdn/files/preview_images/abc.jpg', declaredWidth: null, declaredHeight: null, actualWidth: null, actualHeight: null},
+      {handle: 'a', ogImage: 'https://cdn.shopify.com/s/files/preview_images/abc.thumbnail.0000000000.jpg', declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 630},
       1,
     ],
     [
@@ -171,18 +216,18 @@ if (process.argv.includes('--self-test')) {
       1,
     ],
     [
-      'the real 1200x630 default card passes',
+      'the bundled default card, not a CDN image, passes untouched',
       {handle: 'a', ogImage: 'https://streamwidgetshop.com/assets/og-image-abc.jpg', declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 630},
       0,
     ],
     [
-      'a declaration that cannot be checked (image bytes unreadable) passes rather than guesses',
-      {handle: 'a', ogImage: 'https://cdn/x.jpg', declaredWidth: '1200', declaredHeight: '630', actualWidth: null, actualHeight: null},
+      'unreadable image bytes: judged on what IS known, not guessed',
+      {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '630', actualWidth: null, actualHeight: null},
       0,
     ],
     [
       'a non-numeric declaration is caught',
-      {handle: 'a', ogImage: 'https://cdn/x.jpg', declaredWidth: 'auto', declaredHeight: '630', actualWidth: 1200, actualHeight: 1200},
+      {handle: 'a', ogImage: PADDED, declaredWidth: 'auto', declaredHeight: '630', actualWidth: 1200, actualHeight: 630},
       1,
     ],
   ];
@@ -254,6 +299,48 @@ if (process.argv.includes('--self-test')) {
     );
   }
 
+  const urlCases = [
+    [
+      'adds width, height and pad_color, and no crop',
+      'https://cdn.shopify.com/s/files/a.jpg?v=1753976083',
+      'https://cdn.shopify.com/s/files/a.jpg?v=1753976083&width=1200&height=630&pad_color=0b0713',
+    ],
+    [
+      'keeps the ?v= cache buster the catalogue URLs all carry',
+      'https://cdn.shopify.com/s/files/a.jpg?v=42',
+      'https://cdn.shopify.com/s/files/a.jpg?v=42&width=1200&height=630&pad_color=0b0713',
+    ],
+    [
+      'REPLACES an existing width rather than appending a second one',
+      'https://cdn.shopify.com/s/files/a.jpg?v=1&width=400',
+      'https://cdn.shopify.com/s/files/a.jpg?v=1&width=1200&height=630&pad_color=0b0713',
+    ],
+    [
+      'is idempotent, so running it twice cannot drift',
+      shareCardUrl('https://cdn.shopify.com/s/files/a.jpg?v=1'),
+      'https://cdn.shopify.com/s/files/a.jpg?v=1&width=1200&height=630&pad_color=0b0713',
+    ],
+    [
+      'an unparseable url comes back untouched instead of throwing in a meta function',
+      'not a url',
+      'not a url',
+    ],
+  ];
+  for (const [name, input, expected] of urlCases) {
+    const got = shareCardUrl(input);
+    const ok = got === expected;
+    if (ok) pass++;
+    console.log(
+      `${ok ? 'pass' : 'FAIL'}  ${name}` + (ok ? '' : `\n        expected ${expected}\n        got      ${got}`),
+    );
+  }
+  if (/[?&]crop=/.test(shareCardUrl('https://cdn.shopify.com/s/files/a.jpg?v=1'))) {
+    console.log('FAIL  the transform must never add crop=, that is what chops the art');
+  } else {
+    pass++;
+    console.log('pass  the transform never adds crop=, which is what would chop the art');
+  }
+
   const dimCases = [
     ['a 1589x1589 source capped at 1200 is 1200x1200', [{width: 1589, height: 1589}, 1200], {width: 1200, height: 1200}],
     ['a 1589x1236 source capped at 1200 is 1200x933', [{width: 1589, height: 1236}, 1200], {width: 1200, height: 933}],
@@ -274,7 +361,7 @@ if (process.argv.includes('--self-test')) {
     );
   }
 
-  const total = cases.length + emitCases.length + dimCases.length;
+  const total = cases.length + emitCases.length + urlCases.length + 1 + dimCases.length;
   console.log(`\n${pass}/${total} self-test cases pass.`);
   process.exit(pass === total ? 0 : 1);
 }
