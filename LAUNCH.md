@@ -4444,3 +4444,68 @@ Todd deployed since the last pass. The Moon Jar share card, which was
 `verify:all` **16 of 18**. The two reds are the known ones: policy claims (the
 60-description queue) and channel prices (the 3 products awaiting Todd's
 decision).
+
+### 2026-09-17 — Square card and the compact summary: 58% art becomes 92% art
+
+Todd, on an X compose preview next to an Etsy link: "the SEO previews need to
+be just like etsys, ours get fucked up." Then: "images are super important,
+get this right."
+
+He was right, and it was this morning's own fix that broke it. Padding to
+1200x630 gave every card the same size, which was the ask, and paid for it by
+putting square art in a 1.91:1 frame. The widget ends up small in a mostly
+empty rectangle.
+
+#### Measured, not judged by eye
+
+Across all 122 featured images, what fraction of the card is actual art:
+
+| Card shape | average | worst |
+|---|---|---|
+| 1200x630, what shipped this morning | **57.7%** | 42.0% |
+| 1200x1200, now | **92.2%** | 75.0% |
+
+**83 of 122 products have zero bars at all**, because their art is already
+exactly 1:1 and the pad is a no-op. The remaining 39 sit at 75 to 80 percent,
+which is thin bars top and bottom on a 4:3, not half the frame.
+
+#### Two changes
+
+- **`SHARE_CARD` is 1200x1200.** Square is the shape the art already is.
+  Still padded, still never cropped.
+- **`twitter:card` is computed from the image instead of hardcoded.** Square
+  and 4:3 get `summary`, the compact card with a square thumbnail, which is
+  the shape an Etsy link unfurls as. Only a genuinely wide image, ratio 1.5 or
+  more, gets `summary_large_image`, so the bundled default card, the one image
+  that really is a banner, keeps the big treatment.
+
+**This keeps the previous round's requirement instead of trading it away.** A
+`summary` card is a fixed size whatever the source art is, so cards are still
+uniform, now without the dead space that bought it.
+
+#### Verified by looking, not only by tags
+
+Rendered the real `og:image` for each shape in the catalogue and viewed it:
+the square Y2K card fills edge to edge with no bars, the portrait Moon Jar
+(ratio 0.80) keeps "MOON JAR" and every event row with thin side bars that
+disappear into its own dark background, and the 4:3 kit hero keeps "10
+widgets. One sky." and the platform line.
+
+#### Audit
+
+Self-test 31 to **33 cases**, with Todd's bug as a named fixture ("a SQUARE
+card declared summary_large_image is the empty-banner bug") and its mirror.
+The size rule is now scoped to product images, because the default banner is
+the one card that is meant to be a different shape and an unscoped rule would
+have demanded the site's own OG image be square. The URL fixtures derive their
+expected values from `SHARE_CARD` rather than hardcoding a number, which is
+exactly how they went stale when the shape changed under them.
+
+**Could not read Etsy's own tags to copy them directly**: Etsy answers 403 to
+curl AND to the in-app browser. The conclusion comes from their rendered
+unfurl plus this repo's existing note that Etsy serves its listing hero at
+`il_1080xN`, its natural near-square size.
+
+Expected red until deploy: `audit:share-cards` reports production at 1200x630.
+
+Preview: https://01m2qw5zk8fkb732r4es7gt26c-fb73b5b73c40344d0d20.myshopify.dev
