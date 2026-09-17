@@ -67,9 +67,32 @@ export function Starfield() {
 
   return (
     <div className="sws-starfield" ref={rootRef} aria-hidden="true">
-      <div className="sws-star-layer sws-star-layer-far" />
-      <div className="sws-star-layer sws-star-layer-mid" />
-      <div className="sws-star-layer sws-star-layer-near" />
+      {/*
+        Two elements per layer, and the split is the whole point.
+
+        The OUTER element carries the pointer parallax: a transform driven by
+        --sws-star-x/y with an easing transition. The INNER element carries the
+        endless drift, also a transform. Nested transforms compose, so both
+        motions run at once without either overwriting the other.
+
+        Before 2026-09-17 the drift animated `background-position` on the same
+        element instead. `background-position` is a PAINT property: it cannot
+        be composited, so every frame repainted a full-viewport layer carrying
+        six to ten radial gradients, three layers deep, forever, on an element
+        that `will-change: transform` had already promoted. A promoted layer
+        repainting every frame is the worst of both worlds. Todd reported bad
+        flickering on his laptop. Transform drift is compositor-only and costs
+        nothing to repaint.
+      */}
+      <div className="sws-star-layer sws-star-layer-far">
+        <div className="sws-star-drift sws-star-drift-far" />
+      </div>
+      <div className="sws-star-layer sws-star-layer-mid">
+        <div className="sws-star-drift sws-star-drift-mid" />
+      </div>
+      <div className="sws-star-layer sws-star-layer-near">
+        <div className="sws-star-drift sws-star-drift-near" />
+      </div>
     </div>
   );
 }

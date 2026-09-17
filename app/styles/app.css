@@ -302,7 +302,6 @@ body::before {
      repeats, but an inset of 0 would still show a hard edge at the moment a
      layer leans past the viewport. */
   inset: -60px;
-  background-repeat: repeat;
   will-change: transform;
   transform: translate3d(
     calc(var(--sws-star-x) * var(--sws-star-depth)),
@@ -314,9 +313,31 @@ body::before {
   transition: transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
+/*
+ * The drift element. It holds the repeating tile and moves by TRANSFORM, which
+ * the compositor handles without repainting. It is oversized by one tile in
+ * each direction so a translate of one full tile can loop seamlessly.
+ *
+ * This replaced an animation on `background-position`, which is a paint
+ * property: three promoted full-viewport layers were repainting every frame
+ * forever. See Starfield.jsx for the whole story.
+ */
+.sws-star-drift {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  will-change: transform;
+}
+
 /* Far: dense, small, dim, barely moves. This is the backdrop. */
 .sws-star-layer-far {
   --sws-star-depth: 6px;
+  opacity: 0.5;
+  /* Twinkle stays here: opacity is composited, so it is free. */
+  animation: sws-twinkle 6s ease-in-out infinite alternate;
+}
+
+.sws-star-drift-far {
   background-image:
     radial-gradient(1px 1px at 6% 12%, #fff, transparent),
     radial-gradient(1px 1px at 24% 34%, #fff, transparent),
@@ -329,15 +350,21 @@ body::before {
     radial-gradient(1px 1px at 52% 62%, #fff, transparent),
     radial-gradient(1px 1px at 96% 74%, #fff, transparent);
   background-size: 260px 260px;
-  opacity: 0.5;
-  animation:
-    sws-twinkle 6s ease-in-out infinite alternate,
-    sws-star-drift-far 240s linear infinite;
+  /* Oversized by exactly one tile, so a translate of one full tile
+     never uncovers a trailing edge. */
+  inset: -260px;
+  animation: sws-star-drift-far 240s linear infinite;
 }
 
 /* Mid: the layer you actually read as "stars". */
 .sws-star-layer-mid {
   --sws-star-depth: 16px;
+  opacity: 0.72;
+  /* Twinkle stays here: opacity is composited, so it is free. */
+  animation: sws-twinkle 7.5s ease-in-out -2s infinite alternate;
+}
+
+.sws-star-drift-mid {
   background-image:
     radial-gradient(1.6px 1.6px at 12% 44%, #fff, transparent),
     radial-gradient(1.6px 1.6px at 46% 20%, #fff, transparent),
@@ -346,26 +373,32 @@ body::before {
     radial-gradient(1.6px 1.6px at 8% 90%, #fff, transparent),
     radial-gradient(1.6px 1.6px at 62% 70%, #fff, transparent);
   background-size: 340px 340px;
-  opacity: 0.72;
-  animation:
-    sws-twinkle 7.5s ease-in-out -2s infinite alternate,
-    sws-star-drift-mid 170s linear infinite;
+  /* Oversized by exactly one tile, so a translate of one full tile
+     never uncovers a trailing edge. */
+  inset: -340px;
+  animation: sws-star-drift-mid 170s linear infinite;
 }
 
 /* Near: few, large, brightest, moves most. Sparse on purpose, because this is
    the layer that would turn into snow if there were many of them. */
 .sws-star-layer-near {
   --sws-star-depth: 30px;
+  opacity: 0.85;
+  /* Twinkle stays here: opacity is composited, so it is free. */
+  animation: sws-twinkle 9s ease-in-out -4s infinite alternate;
+}
+
+.sws-star-drift-near {
   background-image:
     radial-gradient(2.2px 2.2px at 28% 56%, #fff, transparent),
     radial-gradient(2.2px 2.2px at 91% 42%, #fff, transparent),
     radial-gradient(2.2px 2.2px at 38% 8%, #fff, transparent),
     radial-gradient(2.2px 2.2px at 75% 30%, #fff, transparent);
   background-size: 520px 520px;
-  opacity: 0.85;
-  animation:
-    sws-twinkle 9s ease-in-out -4s infinite alternate,
-    sws-star-drift-near 110s linear infinite;
+  /* Oversized by exactly one tile, so a translate of one full tile
+     never uncovers a trailing edge. */
+  inset: -520px;
+  animation: sws-star-drift-near 110s linear infinite;
 }
 
 /* The constant drift, so the field is alive on a phone and before any pointer
@@ -374,19 +407,19 @@ body::before {
    than transform because transform is already spoken for by the parallax. */
 @keyframes sws-star-drift-far {
   to {
-    background-position: 260px -260px;
+    transform: translate3d(260px, -260px, 0);
   }
 }
 
 @keyframes sws-star-drift-mid {
   to {
-    background-position: -340px -340px;
+    transform: translate3d(-340px, -340px, 0);
   }
 }
 
 @keyframes sws-star-drift-near {
   to {
-    background-position: 520px -260px;
+    transform: translate3d(520px, -520px, 0);
   }
 }
 
@@ -410,7 +443,12 @@ body::before {
 
 @media (prefers-reduced-motion: reduce) {
   body::before,
-  .sws-star-layer {
+  .sws-star-layer,
+  /* The drift moved onto its own element on 2026-09-17. Without this line it
+     would have escaped the reduced-motion kill switch entirely, which is the
+     kind of regression that ships silently because nobody testing has the
+     preference set. */
+  .sws-star-drift {
     animation: none;
   }
 
