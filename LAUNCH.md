@@ -4244,3 +4244,63 @@ tonight:
 - **`innerText` returns empty string in a hidden pane.** Use `textContent`.
 - The checkout domain expectation is now shop.app via
   `checkout_universal_redirect`, with the 2026-09-16 note marked stale.
+
+### 2026-09-17 — The X queue now sends people here, not to Etsy
+
+Todd: "for all typefully posts with products, switch to using the shopify site
+link, not etsy. you can do both, but shopify links are priority."
+
+Relevant to this file because the storefront is now the destination for the
+shop's organic social traffic, which is the first time any of it has been
+measurable.
+
+**Why it matters more than a preference.** Etsy exposes no traffic source data
+to sellers at all. Every product post in the queue was carefully UTM tagged and
+pointed at a channel that reports nothing back, so **every one of them was
+unmeasurable by construction**. The storefront carries the whole click-id and
+conversion chain, so a Shopify link is the only version of those posts that can
+ever be tied to a sale.
+
+**Swept the whole scheduled queue**, 42 drafts, 2026-09-17 to 09-30. 22 carry a
+product link. **13 now point at streamwidgetshop.com. 9 keep Etsy because they
+have no Shopify equivalent at all.**
+
+`scripts/etsy-to-shopify-link.mjs` does the resolution and fails closed: NO MAP
+means keep the Etsy link, because a 404 mid scroll costs more than the wrong
+channel.
+
+**The 9 misses were checked twice, and the first method lied.** Title
+similarity offered a match for every one of them: Spooky Mushroom to Y2K
+Sticker Chat at 0.40, Halloween Skull Ghost **CHAT** to Spooky Skull Ghost
+**GOAL** at 0.67. That is the method CLAUDE.md already records as having
+mispaired four rows. Re-run on the Etsy CDN image id proof
+(`il_fullxfull.<ID>`), **all 9 share zero image ids with any live product**.
+They are Etsy-only stock. A tenth, Sci-Fi Neon, resolves to a handle that is
+DRAFT for IP reasons and is correctly refused as NOT LIVE.
+
+**That is the finding worth acting on: 9 of the 22 products being promoted on X
+cannot be bought on this site.**
+
+#### Three price claims moved with the links, two were already wrong
+
+| Post | Said | Actually | Action |
+|---|---|---|---|
+| Butterfly Galaxy, Sep 19 | "six dollars" twice | **$15.99 on Etsy AND Shopify** | corrected |
+| Moon Cloud, Sep 27 | "Under twelve dollars" | **$14.35 on both** | corrected |
+| Star Goal, Sep 18 | "$13.75" | $13.75 Etsy, **$7.99 Shopify** | price REMOVED |
+
+The first two would have gone out advertising a $15.99 set at $6 and a $14.35
+goal at "under twelve", on both channels, independent of this change. Star Goal
+is one of the three products whose channel prices are **still Todd's open
+decision**, so that post now names no number rather than committing marketing
+to the lower one.
+
+The shop-wide post moved too, and its count with it: "178 widgets" is the Etsy
+catalogue, this site has 122.
+
+**Verified:** all 13 product URLs plus the shop root return **200** on the live
+site with the UTM string attached.
+
+Rule updated in all four files that state it (`routines/` plus both
+`~/.claude/scheduled-tasks/` copies, which had drifted). The image rule is
+untouched: post art still comes from the live Etsy listing, only the link moved.
