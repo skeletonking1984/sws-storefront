@@ -4393,3 +4393,54 @@ once Todd deploys.
 **Next:** FAQPage JSON-LD on the PDP and `pages/faq`, sourced from the same
 `PRODUCT_FAQ_PAGE_QUERY` body the PDP already renders so the two cannot
 drift. Then the alt text defect, which is the only measured SEO finding.
+
+### 2026-09-17 — "all products buyable now?" 122 yes, 8 no
+
+Todd: "test and make sure it works. all products buyable now?"
+
+**122 of 122 live products: buyable, tested end to end. The 8 prepared earlier
+today are NOT, and cannot be until their files are attached.**
+
+#### The test
+
+New `npm run audit:buyable` walks the path a buyer walks rather than checking
+one field: PDP answers 200 on the live domain, Storefront API returns a variant
+with a price above zero, `availableForSale` true, `requiresShipping` false, and
+**a real cart is created** whose checkout URL exists and sits on the shop
+domain. 122 tested, **0 issues**.
+
+This is the gap the eight fell through. Every existing check looks at a single
+field, so a product can pass all of them and still be unbuyable.
+
+#### The false alarm, and why it matters
+
+The first version followed the checkout URL and reported **all 122 as having a
+broken checkout**. That was the instrument. Shopify's bot protection answers
+**403 to every scripted request** on the checkout domain, with or without a
+browser User-Agent, and a real customer had bought twelve hours earlier.
+
+Settled in a real browser: the same cart URL loads a complete checkout,
+**$16.49, a payment step, and NO shipping step**, which incidentally confirms
+the `requiresShipping` fix end to end rather than as a field value.
+
+The check now asserts the URL exists and is on the shop domain, and treats 403
+as unmeasurable. A self-test case asserts a 403 PASSES. **A uniform failure
+across an entire catalogue is nearly always the instrument, not the subject.**
+
+#### What this cannot answer
+
+Whether a downloadable file is attached. The Digital Products connector
+refuses to authorize from an agent session. "Buyable" means the money can be
+taken. Whether a file is delivered is per product in
+`docs/EIGHT-PRODUCTS-TO-ACTIVATE.md`. Stated in the output rather than papered
+over, because a green run implying delivery works is worse than no run.
+
+#### Confirmed live on production
+
+Todd deployed since the last pass. The Moon Jar share card, which was
+1200x1500, now serves **1200x630 padded**, and the return policy carries
+`KeepProduct` and `FullRefund`.
+
+`verify:all` **16 of 18**. The two reds are the known ones: policy claims (the
+60-description queue) and channel prices (the 3 products awaiting Todd's
+decision).
