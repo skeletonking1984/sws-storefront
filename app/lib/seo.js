@@ -112,7 +112,6 @@ export function buildMeta({
     ...imageTags.filter((t) => t.property),
     {property: 'og:site_name', content: SITE_NAME},
     {property: 'og:locale', content: 'en_US'},
-    {name: 'twitter:card', content: 'summary_large_image'},
     {name: 'twitter:title', content: title},
     {name: 'twitter:description', content: description},
     ...imageTags.filter((t) => t.name),

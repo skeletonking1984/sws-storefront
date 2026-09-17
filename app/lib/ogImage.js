@@ -28,15 +28,33 @@
  */
 
 /**
- * The one size every share card is rendered at, and the brand background the
- * spare area is filled with.
+ * The one size every product share card is rendered at, and the brand
+ * background the spare area is filled with.
  *
- * 1200x630 is the Open Graph standard and what X, Discord, Slack, Facebook
- * and LinkedIn all lay a large card out at. `padColor` is `--sws-bg` from
- * app.css, so the fill reads as the page the link leads to rather than as a
- * black bar.
+ * **Square, not 1.91:1.** It was 1200x630 for a few hours on 2026-09-17 and
+ * Todd killed it on sight: "the SEO previews need to be just like etsys, ours
+ * get fucked up". He was right. Padding this catalogue's art into a wide
+ * banner leaves the widget small in the middle of a mostly empty rectangle,
+ * which is what an X compose preview showed.
+ *
+ * Square is the shape the art already is. 83 of 122 product images are
+ * exactly 1:1, so for most of the catalogue this pads nothing at all, and a
+ * 4:3 gets thin bars top and bottom rather than half its width in dead space.
+ * Nothing is ever cropped, which is still the rule (see `shareCardUrl`).
+ *
+ * Etsy does the same thing by simply serving its listing hero at its natural
+ * near-square size, and their unfurl is the one Todd pointed at as correct.
+ *
+ * `padColor` is `--sws-bg` from app.css, so the fill reads as the page the
+ * link leads to rather than as a black bar.
  */
-export const SHARE_CARD = {width: 1200, height: 630, padColor: '0b0713'};
+export const SHARE_CARD = {width: 1200, height: 1200, padColor: '0b0713'};
+
+/**
+ * The bundled default card genuinely IS a 1.91:1 banner, so it keeps its own
+ * size and its own card type. Only product and article images go square.
+ */
+export const DEFAULT_CARD = {width: 1200, height: 630};
 
 /**
  * A Shopify CDN URL rendered as a share card: exactly SHARE_CARD.width by
@@ -130,11 +148,26 @@ export function ogImageTags({image, imageWidth, imageHeight, defaultImage}) {
   const usingDefault = !image;
   const src = image || defaultImage;
 
-  // The bundled default card genuinely is 1200x630, so it keeps its size. A
-  // caller-supplied image only gets a size when the caller supplied one.
   const size = usingDefault
-    ? {width: 1200, height: 630}
+    ? {...DEFAULT_CARD}
     : ogImageDimensions({width: imageWidth, height: imageHeight}, Infinity);
+
+  /*
+   * `twitter:card` is decided here rather than hardcoded, because the right
+   * answer depends on the image.
+   *
+   * `summary_large_image` renders a wide banner and is correct for the
+   * default card, which really is 1.91:1. On a square product image X pads
+   * it into that banner shape, and the result is a small widget adrift in
+   * empty space, which is the thing Todd flagged.
+   *
+   * `summary` renders the compact card with a square thumbnail: the same
+   * shape Etsy's links unfurl as, the same size every time regardless of the
+   * source art, and with the art filling the thumbnail instead of floating
+   * in it. Fixed size was the ask on the previous round and this keeps it,
+   * by a better route than padding to a shape the art is not.
+   */
+  const isWide = size ? size.width / size.height >= 1.5 : false;
 
   return [
     {property: 'og:image', content: src},
@@ -144,6 +177,7 @@ export function ogImageTags({image, imageWidth, imageHeight, defaultImage}) {
           {property: 'og:image:height', content: String(size.height)},
         ]
       : []),
+    {name: 'twitter:card', content: isWide ? 'summary_large_image' : 'summary'},
     {name: 'twitter:image', content: src},
   ];
 }

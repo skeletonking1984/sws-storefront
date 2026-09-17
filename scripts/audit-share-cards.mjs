@@ -142,7 +142,11 @@ export function auditCard(card) {
    * Checked off the SERVED bytes and independently of the declaration, so a
    * page that simply omits the size cannot dodge it.
    */
+  /* Scoped to PRODUCT cards. The bundled default card is a real 1.91:1
+   * banner and is the one image that is supposed to be a different shape. */
+  const isProductImage = card.ogImage.includes('cdn.shopify.com');
   if (
+    isProductImage &&
     sizeKnown &&
     (card.actualWidth !== SHARE_CARD.width || card.actualHeight !== SHARE_CARD.height)
   ) {
@@ -150,6 +154,24 @@ export function auditCard(card) {
       `card is ${card.actualWidth}x${card.actualHeight}, not the one share size ` +
         `${SHARE_CARD.width}x${SHARE_CARD.height}`,
     );
+  }
+
+  /*
+   * A square card must not be declared `summary_large_image`. X pads it into
+   * a 1.91:1 banner and the widget ends up small in a mostly empty rectangle,
+   * which is exactly what Todd saw in an X compose preview on 2026-09-17:
+   * "the SEO previews need to be just like etsys, ours get fucked up".
+   * `summary` is the compact card with a square thumbnail, the shape an Etsy
+   * link unfurls as.
+   */
+  if (card.twitterCard && sizeKnown) {
+    const wide = card.actualWidth / card.actualHeight >= 1.5;
+    if (!wide && card.twitterCard === 'summary_large_image') {
+      add('a square card declared summary_large_image, which X pads into an empty banner');
+    }
+    if (wide && card.twitterCard === 'summary') {
+      add('a wide banner declared summary, which throws away the banner');
+    }
   }
 
   /*
@@ -168,46 +190,56 @@ export function auditCard(card) {
 
 if (process.argv.includes('--self-test')) {
   const PADDED =
-    'https://cdn.shopify.com/s/files/a.jpg?v=1&width=1200&height=630&pad_color=0b0713';
+    'https://cdn.shopify.com/s/files/a.jpg?v=1&width=1200&height=1200&pad_color=0b0713';
   const cases = [
     [
-      'a padded 1200x630 card, declared truthfully, passes',
-      {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 630},
+      'a padded 1200x1200 card, declared truthfully, passes',
+      {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '1200', actualWidth: 1200, actualHeight: 1200, twitterCard: 'summary'},
       0,
+    ],
+    [
+      'Todd 2026-09-17: a SQUARE card declared summary_large_image is the empty-banner bug',
+      {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '1200', actualWidth: 1200, actualHeight: 1200, twitterCard: 'summary_large_image'},
+      1,
+    ],
+    [
+      'the default 1.91:1 banner still gets summary_large_image',
+      {handle: 'a', ogImage: 'https://streamwidgetshop.com/assets/og-image-abc.jpg', declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 630, twitterCard: 'summary_large_image'},
+      0,
+    ],
+    [
+      'a wide banner declared summary throws the banner away',
+      {handle: 'a', ogImage: 'https://streamwidgetshop.com/assets/og-image-abc.jpg', declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 630, twitterCard: 'summary'},
+      1,
     ],
     [
       'the original bug: a square image declared as 1200x630',
       {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 1200},
-      2, // the declaration disagrees AND the card is the wrong size
+      1, // the declaration disagrees with the bytes
     ],
     [
-      'a TRUTHFUL 1200x1200 card is still wrong, the sizes have to match each other',
-      {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '1200', actualWidth: 1200, actualHeight: 1200},
-      1,
-    ],
-    [
-      'a truthful 1200x1500 portrait card is wrong for the same reason',
+      'a truthful 1200x1500 portrait card is still the wrong shape',
       {handle: 'a', ogImage: PADDED, declaredWidth: '1200', declaredHeight: '1500', actualWidth: 1200, actualHeight: 1500},
       1,
     ],
     [
       'omitting the declared size does NOT dodge the size rule',
-      {handle: 'a', ogImage: PADDED, declaredWidth: null, declaredHeight: null, actualWidth: 1200, actualHeight: 1200},
+      {handle: 'a', ogImage: PADDED, declaredWidth: null, declaredHeight: null, actualWidth: 1200, actualHeight: 900},
       1,
     ],
     [
       'omitting the declared size on a correct card still passes',
-      {handle: 'a', ogImage: PADDED, declaredWidth: null, declaredHeight: null, actualWidth: 1200, actualHeight: 630},
+      {handle: 'a', ogImage: PADDED, declaredWidth: null, declaredHeight: null, actualWidth: 1200, actualHeight: 1200},
       0,
     ],
     [
       'a Shopify image that never went through the transform is caught',
-      {handle: 'a', ogImage: 'https://cdn.shopify.com/s/files/a.jpg?v=1&width=1200', declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 630},
+      {handle: 'a', ogImage: 'https://cdn.shopify.com/s/files/a.jpg?v=1&width=1200', declaredWidth: '1200', declaredHeight: '1200', actualWidth: 1200, actualHeight: 1200, twitterCard: 'summary'},
       1,
     ],
     [
       'a video preview frame as the share image is caught',
-      {handle: 'a', ogImage: 'https://cdn.shopify.com/s/files/preview_images/abc.thumbnail.0000000000.jpg', declaredWidth: '1200', declaredHeight: '630', actualWidth: 1200, actualHeight: 630},
+      {handle: 'a', ogImage: `https://cdn.shopify.com/s/files/preview_images/abc.jpg?width=${SHARE_CARD.width}&height=${SHARE_CARD.height}&pad_color=${SHARE_CARD.padColor}`, declaredWidth: '1200', declaredHeight: '1200', actualWidth: 1200, actualHeight: 1200, twitterCard: 'summary'},
       1,
     ],
     [
@@ -227,7 +259,7 @@ if (process.argv.includes('--self-test')) {
     ],
     [
       'a non-numeric declaration is caught',
-      {handle: 'a', ogImage: PADDED, declaredWidth: 'auto', declaredHeight: '630', actualWidth: 1200, actualHeight: 630},
+      {handle: 'a', ogImage: PADDED, declaredWidth: 'auto', declaredHeight: '1200', actualWidth: 1200, actualHeight: 1200, twitterCard: 'summary'},
       1,
     ],
   ];
@@ -255,37 +287,35 @@ if (process.argv.includes('--self-test')) {
       width: find('og:image:width', 'property'),
       height: find('og:image:height', 'property'),
       twitter: find('twitter:image', 'name'),
+      card: find('twitter:card', 'name'),
     };
   };
 
   const emitCases = [
     [
-      'no image: the default card keeps its real 1200x630',
+      'no image: the default card keeps its real 1200x630 AND stays a large card',
       () => tagFor({}),
-      {image: DEFAULT, width: '1200', height: '630', twitter: DEFAULT},
+      {image: DEFAULT, width: '1200', height: '630', twitter: DEFAULT, card: 'summary_large_image'},
     ],
     [
-      'a square product image is declared square, not 1200x630',
-      () => tagFor({image: 'https://cdn/x.jpg?width=1200', imageWidth: 1200, imageHeight: 1200}),
-      {image: 'https://cdn/x.jpg?width=1200', width: '1200', height: '1200', twitter: 'https://cdn/x.jpg?width=1200'},
+      'a SQUARE product image gets the compact summary card, not the empty banner',
+      () => tagFor({image: 'https://cdn/x.jpg', imageWidth: 1200, imageHeight: 1200}),
+      {image: 'https://cdn/x.jpg', width: '1200', height: '1200', twitter: 'https://cdn/x.jpg', card: 'summary'},
     ],
     [
-      'a 4:3 product image is declared 4:3',
-      () => tagFor({image: 'https://cdn/x.jpg', imageWidth: 1200, imageHeight: 933}),
-      {image: 'https://cdn/x.jpg', width: '1200', height: '933', twitter: 'https://cdn/x.jpg'},
+      'a 4:3 image is also compact, 1.33 is not a banner',
+      () => tagFor({image: 'https://cdn/x.jpg', imageWidth: 1200, imageHeight: 900}),
+      {image: 'https://cdn/x.jpg', width: '1200', height: '900', twitter: 'https://cdn/x.jpg', card: 'summary'},
     ],
     [
-      'an image with UNKNOWN size emits no size rather than a guess',
+      'a genuinely wide image still gets the large card',
+      () => tagFor({image: 'https://cdn/x.jpg', imageWidth: 1200, imageHeight: 630}),
+      {image: 'https://cdn/x.jpg', width: '1200', height: '630', twitter: 'https://cdn/x.jpg', card: 'summary_large_image'},
+    ],
+    [
+      'an image with UNKNOWN size emits no size, and falls back to the compact card',
       () => tagFor({image: 'https://cdn/x.jpg'}),
-      {image: 'https://cdn/x.jpg', width: null, height: null, twitter: 'https://cdn/x.jpg'},
-    ],
-    [
-      'twitter:image always matches og:image',
-      () => {
-        const t = tagFor({image: 'https://cdn/y.jpg', imageWidth: 800, imageHeight: 800});
-        return {image: t.image, width: t.width, height: t.height, twitter: t.twitter};
-      },
-      {image: 'https://cdn/y.jpg', width: '800', height: '800', twitter: 'https://cdn/y.jpg'},
+      {image: 'https://cdn/x.jpg', width: null, height: null, twitter: 'https://cdn/x.jpg', card: 'summary'},
     ],
   ];
 
@@ -303,22 +333,22 @@ if (process.argv.includes('--self-test')) {
     [
       'adds width, height and pad_color, and no crop',
       'https://cdn.shopify.com/s/files/a.jpg?v=1753976083',
-      'https://cdn.shopify.com/s/files/a.jpg?v=1753976083&width=1200&height=630&pad_color=0b0713',
+      `https://cdn.shopify.com/s/files/a.jpg?v=1753976083&width=${SHARE_CARD.width}&height=${SHARE_CARD.height}&pad_color=${SHARE_CARD.padColor}`,
     ],
     [
       'keeps the ?v= cache buster the catalogue URLs all carry',
       'https://cdn.shopify.com/s/files/a.jpg?v=42',
-      'https://cdn.shopify.com/s/files/a.jpg?v=42&width=1200&height=630&pad_color=0b0713',
+      `https://cdn.shopify.com/s/files/a.jpg?v=42&width=${SHARE_CARD.width}&height=${SHARE_CARD.height}&pad_color=${SHARE_CARD.padColor}`,
     ],
     [
       'REPLACES an existing width rather than appending a second one',
       'https://cdn.shopify.com/s/files/a.jpg?v=1&width=400',
-      'https://cdn.shopify.com/s/files/a.jpg?v=1&width=1200&height=630&pad_color=0b0713',
+      `https://cdn.shopify.com/s/files/a.jpg?v=1&width=${SHARE_CARD.width}&height=${SHARE_CARD.height}&pad_color=${SHARE_CARD.padColor}`,
     ],
     [
       'is idempotent, so running it twice cannot drift',
       shareCardUrl('https://cdn.shopify.com/s/files/a.jpg?v=1'),
-      'https://cdn.shopify.com/s/files/a.jpg?v=1&width=1200&height=630&pad_color=0b0713',
+      `https://cdn.shopify.com/s/files/a.jpg?v=1&width=${SHARE_CARD.width}&height=${SHARE_CARD.height}&pad_color=${SHARE_CARD.padColor}`,
     ],
     [
       'an unparseable url comes back untouched instead of throwing in a meta function',
@@ -437,6 +467,7 @@ for (const handle of sample) {
     ogImage,
     declaredWidth: META(html, 'og:image:width', 'property'),
     declaredHeight: META(html, 'og:image:height', 'property'),
+    twitterCard: META(html, 'twitter:card', 'name'),
     actualWidth: null,
     actualHeight: null,
   };
