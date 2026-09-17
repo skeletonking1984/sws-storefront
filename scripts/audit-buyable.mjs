@@ -171,6 +171,7 @@ async function sf(query, variables) {
 
 const PRODUCTS = `query($c:String){products(first:100,after:$c){pageInfo{hasNextPage endCursor}
   nodes{ handle title
+    media(first:25){nodes{ __typename }}
     variants(first:1){nodes{ id availableForSale requiresShipping price{amount} }}
   }}}`;
 
@@ -242,6 +243,34 @@ for (const product of sample) {
 }
 
 console.log(`\n${checked} product(s) tested, ${issues.length} issue(s).`);
+/*
+ * Coverage, reported every run rather than left to be noticed.
+ *
+ * Todd, 2026-09-17, on a product page with no demo clip: "missing a video.
+ * wtf? QA?" Fair. 9 of 122 products have no video and nothing ever said so,
+ * because the Etsy join file records those rows as `state: unmatched`, and
+ * every consumer of that file, videos and reviews and social links alike,
+ * skips an unmatched row in silence. **An unmatched row is a GAP and it was
+ * being stored as if it were a fact.** The same root cause hid eight products
+ * that were being advertised while unbuyable.
+ *
+ * Not a failure: a missing clip does not stop a sale, and failing the build
+ * on it would make the build red forever, which is how a guard dies. Counted
+ * and named, so it is a number somebody can decide about.
+ */
+const noVideo = sample.filter(
+  (p) => !(p.media?.nodes ?? []).some((m) => m.__typename === 'Video'),
+);
+const mapRows = JSON.parse(fs.readFileSync(`${ROOT}/data/etsy-video-map.json`, 'utf8')).rows;
+const mapped = new Set(mapRows.filter((r) => r.handle).map((r) => r.handle));
+const unmapped = sample.filter((p) => !mapped.has(p.handle));
+
+console.log('\nCOVERAGE (reported, never a failure):');
+console.log(`  demo video:        ${sample.length - noVideo.length}/${sample.length} have one, ${noVideo.length} do not`);
+console.log(`  Etsy listing join: ${sample.length - unmapped.length}/${sample.length} mapped, ${unmapped.length} unmapped`);
+for (const p of noVideo) console.log(`    no video   ${p.handle}`);
+for (const p of unmapped) console.log(`    no mapping ${p.handle}`);
+
 console.log(
   'NOT CHECKED, and not checkable from here: whether each product has its\n' +
     'downloadable file attached. The Digital Products connector refuses to\n' +
