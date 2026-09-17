@@ -62,6 +62,12 @@ const CHECKS = [
    * fails their results describe older code than the repo contains, and the
    * reader needs to know that after seeing them, not before.
    */
+  /*
+   * Does every page load at all. Every other check asks a narrow question of
+   * a product; the site is also collections, policies, pages, a blog, a cart
+   * and an account area, and a dead one of those was invisible to all of them.
+   */
+  ['site health', 'scripts/audit-site-health.mjs', {}],
   ['deploy freshness', 'scripts/audit-deploy-freshness.mjs', {}],
 ];
 

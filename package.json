@@ -49,7 +49,9 @@
     "prebuild": "node scripts/stamp-build.mjs",
     "audit:deploy": "node scripts/audit-deploy-freshness.mjs",
     "audit:deploy:self-test": "node scripts/audit-deploy-freshness.mjs --self-test",
-    "predev": "node scripts/stamp-build.mjs"
+    "predev": "node scripts/stamp-build.mjs",
+    "audit:site": "node scripts/audit-site-health.mjs",
+    "audit:site:self-test": "node scripts/audit-site-health.mjs --self-test"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
