@@ -34,13 +34,18 @@ const CHECKS = [
   ['feed', 'scripts/verify-feed.mjs', {}],
   ['feed csv (X spec)', 'scripts/verify-feed-csv.mjs', {}],
   ['feed csv (Pinterest spec)', 'scripts/verify-feed-pinterest.mjs', {}],
+  // --gate, not the bare run. See the BACKLOG_HIGH_WATER comment in that
+  // file: 70 descriptions are a counted rewrite queue being worked off a
+  // batch a night, and the gate fails if that queue GROWS or if anything is
+  // wrong with a product outside it.
+  ['descriptions', 'scripts/audit-descriptions.mjs', {}, ['--gate']],
 ];
 
 const results = [];
 
-for (const [name, script, extraEnv] of CHECKS) {
+for (const [name, script, extraEnv, args = []] of CHECKS) {
   console.log(`\n${'='.repeat(64)}\n${name}\n${'='.repeat(64)}`);
-  const run = spawnSync(process.execPath, [script], {
+  const run = spawnSync(process.execPath, [script, ...args], {
     stdio: 'inherit',
     env: {...process.env, ...extraEnv},
   });

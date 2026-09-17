@@ -29,7 +29,10 @@
     "verify:feed:csv": "node scripts/verify-feed-csv.mjs",
     "verify:session": "node scripts/verify-first-party-session.mjs",
     "verify:feed:pinterest": "node scripts/verify-feed-pinterest.mjs",
-    "verify:channels": "node scripts/verify-channels.mjs --live"
+    "verify:channels": "node scripts/verify-channels.mjs --live",
+    "audit:descriptions": "node scripts/audit-descriptions.mjs",
+    "audit:descriptions:gate": "node scripts/audit-descriptions.mjs --gate",
+    "audit:descriptions:self-test": "node scripts/audit-descriptions.mjs --self-test"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

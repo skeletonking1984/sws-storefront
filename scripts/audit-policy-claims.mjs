@@ -66,6 +66,17 @@ const DENIES_REFUNDS = new RegExp(
     'no exchanges?\\b',
     'all sales (?:are )?final',
     '(?:items?|products?|purchases?|downloads?|sales?|orders?) (?:is|are) not refundable',
+    // Added 2026-09-17. The list above was written from the twelve wordings
+    // that had already been seen, so it only ever caught those twelve. A
+    // catalogue rescan found SEVENTY live products carrying the shop's
+    // original Etsy policy line, "I am unable to offer exchanges, refunds, or
+    // cancellations", and this audit exited 0 on every one of them. A denial
+    // is a denial however it is phrased: match the ACT of refusing, not the
+    // one sentence that happened to be in front of us.
+    '(?:unable|not able) to (?:offer|provide|issue|give|process)[^.]{0,40}\\b(?:refunds?|exchanges?|cancellations?)',
+    '(?:refunds?|exchanges?|cancellations?)[^.]{0,40}(?:are|is) not (?:available|offered|possible|permitted|accepted)',
+    'we (?:do not|don\'t|cannot|can\'t) (?:offer|provide|issue|give|accept)[^.]{0,40}\\b(?:refunds?|exchanges?|returns?)',
+    '(?:no|not eligible for a) (?:refund|return|exchange)s? (?:will be|are) (?:given|issued|offered|provided)',
   ].join('|'),
   'i',
 );
@@ -231,6 +242,31 @@ if (selfTest) {
         routeSource: ROUTE_OK.replace('MerchantReturnFiniteReturnWindow', 'MerchantReturnNotPermitted'),
         products: [{handle: 'x', title: 'X', description: 'This item is non-refundable.'}],
       },
+      expect: 0,
+    },
+    {
+      name: 'live wording "unable to offer exchanges, refunds, or cancellations" is caught (70 products, 2026-09-17)',
+      input: {policyText: POLICY_30, routeSource: ROUTE_OK, products: [{handle: 'x', title: 'X', description: 'If you need help setting up, please get in touch. I am unable to offer exchanges, refunds, or cancellations.'}]},
+      expect: 1,
+    },
+    {
+      name: 'live wording "refunds or exchanges are not available" is caught',
+      input: {policyText: POLICY_30, routeSource: ROUTE_OK, products: [{handle: 'x', title: 'X', description: 'Due to the nature of digital products, refunds or exchanges are not available.'}]},
+      expect: 1,
+    },
+    {
+      name: 'the plain "we do not offer refunds" form is caught',
+      input: {policyText: POLICY_30, routeSource: ROUTE_OK, products: [{handle: 'x', title: 'X', description: 'Sorry, we do not offer refunds on digital downloads.'}]},
+      expect: 1,
+    },
+    {
+      name: 'offering HELP rather than refusing a refund is NOT a violation',
+      input: {policyText: POLICY_30, routeSource: ROUTE_OK, products: [{handle: 'x', title: 'X', description: 'If you need help setting up, get in touch and we will do everything we can. Refunds within 30 days if the download never arrived.'}]},
+      expect: 0,
+    },
+    {
+      name: 'the approved copy block that mentions refunds positively still passes',
+      input: {policyText: POLICY_30, routeSource: ROUTE_OK, products: [{handle: 'x', title: 'X', description: 'Refunds within 30 days if the download never arrived, the files are corrupt or incomplete, the item is not what this listing described, you were charged twice, or we cannot get it running on a platform this listing claims. A working file you downloaded and then changed your mind about is not refundable. Full detail is on our Refund Policy page.'}]},
       expect: 0,
     },
     {

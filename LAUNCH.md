@@ -3291,3 +3291,176 @@ Rules it respects, all of which this page has paid for before:
   no cursor to follow.
 - Server rendered markup, so no hydration mismatch and no flash: the field
   paints before the JS lands and the JS only adds the lean.
+
+### 2026-09-17 (Todd present): one question about the Celestial kit opened the description surface
+
+Todd: "the celestial is multistream, but really only the moonjar (i think, am I
+right or wrong?)" then "all products need to be reviewed and cleaned up as
+needed."
+
+**He was right about the kit and wrong about which piece, and the question
+turned up a claim surface nobody had ever audited.**
+
+#### The celestial answer, from the shipped zip
+
+`Celestial-Stream-Kit.zip`, counting platform references in the actual widget
+code, per component:
+
+| Component | YouTube | Kick | TikTok |
+|---|---|---|---|
+| 10 Celestial Multistream Chat Widget, kit exclusive | 63 | 106 | 51 |
+| 1 Moon Jar, 2 Star Goal, 3 Moon Cloud, 4 Celestial Moon | 0 | 0 | 0 |
+| 5 Neon Moon Glow, 6 Cosmic Galaxy, 7 Moon Star, 8 Pastel Moon, 9 Cloudy Moon | 0 | 0 | 0 |
+
+**One of ten components is multistream, and it is the kit-exclusive chat
+widget, not the Moon Jar.** The Moon Jar is multistream as a standalone product
+(`kickAll`, `kickHue`, `youtubeHue` in its own code, tier 1 verified
+2026-09-16), but inside the kit it ships no code at all, just a one-click
+StreamElements install link and a PDF. Same shape in the Spooky Kit: only
+component 8 (67 / 109 / 53), plus component 3 at 14 / 10. Everything else
+Twitch only.
+
+So the kit openers were selling ten widgets on the strength of one.
+
+#### The thing the question uncovered
+
+Title, `seo.title`, `seo.description` and `works_with` have all been audited.
+**The description never had been, and it is the longest copy on the page.**
+Scanning all 122:
+
+**Nine descriptions opened with a platform claim that is fabricated.** Live
+example: "🪷 Lotus Butterfly Chat & Goal Widgets for **Twitch, Kick, and
+YouTube**" on a product whose `works_with` reads Twitch / StreamElements / OBS.
+Pulled all nine Etsy sources:
+
+| Listing | Kick in title or body | YouTube in title or body |
+|---|---|---|
+| 4310437865, 4328622333, 4322607453, 4339042019, 4336747713, 4333466716, 1892198146, 4315451056, 1712229820 | **no on all 9** | **no on all 9** |
+
+Neither platform appears anywhere in the source. They were invented in the
+Shopify rewrite. That makes BAT-160 the smaller half of this: the title claims
+one wrong word, the description headline claimed two wrong platforms.
+
+**One description contained ChatGPT's own page markup, pasted in whole.** The
+Boba Drink goal widget, live at $14.25, carried
+`data-testid="conversation-turn-8"`, `data-message-author-role="assistant"`,
+`data-message-model-slug="gpt-5-3"` and a `<article class="text-token-text-primary ...">`
+wrapper. Roughly 2 KB of somebody else's DOM inside a product page.
+
+**Seventy descriptions deny refunds.** See below, it is the big one.
+
+#### Batch 1, applied tonight
+
+Twelve products written, each from its own Etsy listing body and file manifest.
+
+| What | Products |
+|---|---|
+| Fabricated Kick and YouTube removed from the opener, the "Works for streams on" block and the Features list | 9 |
+| ChatGPT DOM stripped, description rewritten clean | 1 (boba-drink) |
+| Raw Etsy dump rewritten | 1 (twitch-liquid-combo-goal-bar) |
+| Kit opener rescoped so multistream attaches to the kit-exclusive widget | 2 (celestial, spooky) |
+| `works_with` corrected | 4 |
+
+The nine also had two sentences that were false under any reading and are now
+precise: "Compatible with StreamElements, **Streamlabs**, and OBS" and
+"1️⃣ Upload the widget files to **StreamElements or Streamlabs**". None of the
+nine ships a Streamlabs artifact, so there was nothing to upload. They now read
+"Set up as a StreamElements custom widget, then shown in OBS Studio or
+Streamlabs Desktop as a browser source", which separates where it installs from
+where it displays.
+
+Metafields: Celestial Stream Kit gained YouTube, Kick and TikTok (its
+kit-exclusive widget genuinely does them, and Spooky already had all seven, so
+this is consistency not inflation). BAT-170's two goal widgets lost Kick.
+BAT-171's Saber Neon lost TikTok.
+
+**Verified after:** fabricated openers 11 to **1**, and that 1 is a false
+positive (Celestial Star Goal's opener says "for Twitch and Kick" and its
+`works_with` has Kick; the check wants both YouTube and Kick). Pasted markup
+1 to **0**.
+
+#### Streamlabs, settled with evidence rather than a policy call
+
+Todd: "idc, I want accuracy." Pulled the file manifest for all 113 mapped
+listings:
+
+| | count |
+|---|---|
+| Claims Streamlabs **and** ships a Streamlabs file | 22 |
+| Claims Streamlabs, ships **no** Streamlabs file | 57 |
+| Ships a Streamlabs file but does not claim it | **0** |
+
+So the badge means two different things today. The accurate resolution is not a
+vote, it is to stop compressing two sentences into one word: a product either
+ships a Streamlabs version (22) or merely displays in Streamlabs Desktop like
+every other browser source (all 122). The descriptions written tonight say
+which. **The badge itself is still ambiguous and that is BAT-160, still open
+and still Todd's**, but no copy written from now on depends on the answer.
+
+Worth recording for that decision: 7 of the 8 BAT-160 products have
+"streamelement-only" or "obs-and-streamelement-only" in their own handle,
+inherited from their Etsy titles, and listing 4339042019's body says "OBS and
+Streamelement **Only**" in as many words.
+
+#### THE BIG ONE. 70 live products deny refunds. BAT-172
+
+**70 of 122 descriptions** carry the shop's original Etsy line verbatim:
+
+> I will do everything in my power to help, but **I am unable to offer
+> exchanges, refunds, or cancellations.**
+
+The same page emits `merchantReturnDays: 30` in its JSON-LD, and
+`/policies/refund-policy` and the FAQ both grant refunds. Google reads the
+markup, the buyer reads the prose, and the prose says no.
+
+**`npm run audit:policy` exited 0 on all 70**, and its own 11-case self-test
+passed. `DENIES_REFUNDS` was built on 2026-09-15 from the twelve wordings that
+had already been seen, so it only ever caught those twelve. A pattern list
+built from the defects you already found finds exactly the defects you already
+found.
+
+Fixed the guard, not just the list: it now matches the ACT of refusing
+("unable to offer refunds", "refunds are not available", "we do not offer
+refunds", "no refunds will be given") rather than four specific sentences.
+**Self-test 11 to 16 cases**, including two that assert correct copy still
+passes, because offering help is not refusing a refund and the approved 30-day
+paragraph mentions refunds positively. `npm run audit:policy` now **exits 1
+with 70 issues**, which is the correct state.
+
+The 70 rewrites are queued as nightly batches per Todd, not written tonight.
+
+#### Made permanent, so this cannot come back
+
+New: **`scripts/audit-descriptions.mjs`**, `npm run audit:descriptions`. Audits
+every live description for a fabricated platform in the opener, another app's
+markup pasted in, a description that is still the raw Etsy body, and an install
+claim for software the listing ships nothing for.
+
+**Its self-test is 13 cases and five of them assert that CORRECT copy passes.**
+That was not decoration: the first draft flagged 13 false positives, including
+the honest FAQ answer ("Does this widget support YouTube or Kick chat? No, this
+listing reads Twitch chat through StreamElements only"), which is the check
+accusing the fix. It also flagged this pass's own new sentence about Streamlabs
+Desktop. Both are now explicit exemptions with a test each.
+
+`npm run verify:all` runs it as `--gate`. The gate treats the 70 raw dumps as a
+counted queue with a `BACKLOG_HIGH_WATER` ratchet, fails on any finding for a
+product OUTSIDE that queue, and **fails if the queue grows**, so a newly
+published raw dump goes red immediately instead of joining the backlog quietly.
+
+`sws-launch-listing` skill gained the Shopify description standard: platforms
+come from the listing BODY never the keyword title, say what the manifest
+actually ships, separate installed-in from displayed-in, one approved refund
+paragraph copied exactly, never paste from a chat window, and run both audits
+before setting a product ACTIVE.
+
+The QA task file gained check 3b (the nightly batch loop, 8 to 12 a night, with
+the ratchet step) and check 3c (what keeps new products in line).
+
+#### Still open, queued
+- **70 description rewrites**, BAT-172. Six or seven nights at this rate.
+- **BAT-160**, the Streamlabs badge meaning. Evidence above, decision Todd's.
+- The Celestial kit's Moon Jar folder ships `Quick Start.txt` whose Option B
+  tells the buyer to paste `1-html.txt` through `5-data.txt`, and **those five
+  files are not in that folder**. Option A, the one-click link, does work. A
+  delivery defect in the zip, not a copy defect, so it is not in the audits.
