@@ -4602,3 +4602,52 @@ August to September window, and Demon Samurai was listed 2026-09-06. So the
 The genuinely dormant set is ten, and the two most interesting are Spooky
 Halloween and Sakura Butterfly, both $14.99 chat-and-goal sets priced like the
 sellers and selling nothing.
+
+### 2026-09-17 — The merchant listing warnings are real history, already fixed, and waiting on a click
+
+Search Console, Merchant listings, "Improve item appearance":
+
+| Issue | Items | Validation |
+|---|---|---|
+| Missing `applicableCountry` | 27 | Not Started |
+| Missing `shippingDestination` | 27 | Not Started |
+| Missing `deliveryTime` | 27 | Not Started |
+| Missing `hasMerchantReturnPolicy` | 13 | Not Started |
+| Missing `shippingDetails` | 13 | Not Started |
+| Missing `returnMethod` | 5 | **Started** |
+| No global identifier | 0 | N/A |
+
+**Every one of these is already fixed, and not one of them was a false alarm.**
+
+`npm run audit:schema` run against **all 122 live product pages**, not a
+sample: **0 errors, 0 warnings. Every page carries every required and
+recommended field.**
+
+#### Why Google still shows them
+
+The fields were added in `e48156b` on **2026-09-16**. Production was last
+deployed at `0bf52ea` on **2026-09-14**, and stayed there until Todd deployed
+today. Verified by ancestry: that commit is in HEAD and is NOT in `0bf52ea`.
+
+So Google spent two full days crawling a build that genuinely did not have
+those fields. The counts are accurate history. The fix has been live for
+hours.
+
+`returnMethod` reading **Started** while the rest read Not Started is the tell:
+that one has been clicked, the others have not.
+
+#### The lesson worth keeping
+
+**A fix that is committed is not a fix that is live.** The same shape as the
+newsletter sweep note from this morning: the sweep being wired is not the
+sweep having run. Three days of commits sat unshipped while a checker ran
+happily against production and reported on code nobody was serving.
+
+Nothing in this repo currently notices that production is behind HEAD. Worth a
+check that compares the deployed build to the current commit, so "verified
+against production" can never quietly mean "verified against last week".
+
+#### Todd's action
+
+Click **VALIDATE FIX** on the five rows reading Not Started. Revalidation takes
+days and only passes once Google recrawls those items.
