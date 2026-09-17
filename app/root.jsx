@@ -243,6 +243,23 @@ export function Layout({children}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        {/*
+          Pinterest domain claim for streamwidgetshop.com.
+
+          Pinterest rejected all 122 items of /feed.pinterest.csv with Error
+          139, "the item link values don't match the verified domain
+          associated with this account". The account had already claimed
+          shop.streamwidgetshop.com, the Oxygen URL and the myshopify domain,
+          but never the apex, and every feed link points at the apex.
+
+          Pinterest treats each domain as separate, so claiming the checkout
+          host does nothing for links to the storefront.
+
+          Their docs say the tag can be removed once claimed. It stays: it is
+          one line, and re-claiming later is avoidable work. The value is a
+          public verification string, not a credential.
+        */}
+        <meta name="p:domain_verify" content="0ae66c7f1313ebf7092aea3bc2e447df" />
         {/* Opts real visitors into the WebMCP origin trial, which is what
             makes document.modelContext exist for them at all. Must be in the
             head and must be present on the first response, so it cannot be
