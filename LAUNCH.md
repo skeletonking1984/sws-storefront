@@ -3905,3 +3905,77 @@ again now, reporting "card is 1200x1200, not the one share size 1200x630".
 production deploy, which is Todd's.
 
 Preview: https://01m2qmhyr5btmyfd61zexb2nb3-fb73b5b73c40344d0d20.myshopify.dev
+
+### 2026-09-17 — returnMethod can be stated truthfully after all: KeepProduct
+
+Search Console, 5 items, first detected 2026-09-15: `Missing field
+"returnMethod" (in "offers.hasMerchantReturnPolicy")`. Todd: "fix all these."
+
+#### The field was omitted on purpose, and the reason was incomplete
+
+The route said so in as many words: "nothing is ever sent back, so every
+schema.org value for it would be a lie." That was written against **Google's**
+documented list, which has three physical values: `ReturnAtKiosk`,
+`ReturnByMail`, `ReturnInStore`. **schema.org has a fourth.**
+
+> `https://schema.org/KeepProduct`
+> "Specifies that the consumer can keep the product, even when receiving a
+> refund or store credit."
+
+That is exactly this shop: a qualifying refund is issued and the buyer keeps
+the files they already downloaded. So the field is filled in now.
+
+Google does not document `KeepProduct`, and `returnMethod` is a RECOMMENDED
+field, so **the worst case is that Google ignores a value it has no use for
+and the non-critical warning stays exactly where it is today.** `ReturnByMail`
+would clear the warning and would be a lie about the refund process. Not a
+trade this shop makes.
+
+Also added, both recommended, both true:
+
+- **`refundType: FullRefund`.** Money back, not store credit, not an exchange.
+  Search Console had not flagged this one yet. It would have.
+- **`itemCondition: NewCondition`** on the return policy, matching the Offer.
+
+`merchantReturnLink` stays deliberately unset, and that is now written down:
+Google treats it as an ALTERNATIVE to `applicableCountry` plus
+`returnPolicyCategory`, so supplying both invites Google to follow the link
+and ignore the detail, losing the 30 day window and the free-return signal.
+
+#### "All these" is now measured, not guessed
+
+New **`npm run audit:schema`** parses the Product JSON-LD off live pages and
+checks every field Google documents as required or recommended, plus every
+enum value.
+
+**Run against production BEFORE this change: 0 errors, and exactly two
+recommended fields missing catalogue wide, `returnMethod` and `refundType`.
+Nothing else was absent.** Both are fixed here, so the list is closed.
+
+It prints a DELIBERATE list every run, never counted as a failure, so the
+three fields missing on purpose say so out loud rather than nagging forever:
+
+| Field | Why it is absent |
+|---|---|
+| `offers.priceValidUntil` | no fixed sale window, so any date would be invented |
+| `...merchantReturnLink` | Google would follow it instead of reading the detail |
+| `offers.gtin` | digital widgets have none, inventing one is worse |
+
+Self-test is 11 cases and uses **all three real Search Console findings as
+fixtures**: returnMethod missing is a WARNING, applicableCountry missing is an
+ERROR, shippingDestination plus deliveryTime is one of each. Plus the traps:
+an invented returnMethod value is caught rather than waved through, a finite
+window with no day count is caught, "returns not permitted" beside a return
+window is caught, an empty image array counts as missing, and a price of "0"
+counts as PRESENT.
+
+In `verify:all` at `--limit 6`. **Search Console found three different missing
+fields in this markup on three separate days, each time before anything here
+did**, because it reports on pages it has already recrawled. That lag is the
+reason this check exists locally now.
+
+Preview: https://01m2qp996eagsq5mv9p5gbny2t-fb73b5b73c40344d0d20.myshopify.dev
+
+**After the next production deploy**, hit VALIDATE FIX in Search Console.
+Revalidation takes a few days and only passes once Google has recrawled the 5
+items.
