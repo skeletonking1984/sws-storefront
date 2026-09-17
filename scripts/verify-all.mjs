@@ -52,6 +52,11 @@ const CHECKS = [
   // for. Text only here; the --live form fetches real pages and belongs in
   // the post-deploy pass, not in a check that has to run offline.
   ['answer blocks', 'scripts/audit-answer-blocks.mjs', {}],
+  // Walks the path a buyer walks, ending in a REAL cart. A sample, because
+  // each product costs a page fetch plus a cart creation. Run
+  // `npm run audit:buyable` with no limit before anything that touches the
+  // catalogue at scale.
+  ['buyable', 'scripts/audit-buyable.mjs', {}, ['--limit', '20']],
 ];
 
 const results = [];
