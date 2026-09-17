@@ -4771,3 +4771,20 @@ description rewrite queue, BAT-172), **channel prices** (3 products awaiting
 Todd's pricing decision), and **deploy freshness**, which reports that
 production answers 404 on `/api/version` because that route has not been
 deployed yet. It clears on the next production deploy.
+
+#### Account page confirmed signed in, 2026-09-17
+
+Todd: "acct page works for me." That closes the one flow the sweep could not
+reach. An agent can only ever see the logged-out side of `/account`, which is
+a 302 to Shopify's hosted OAuth login, so "it redirects correctly" was the
+most that could be verified from here.
+
+Signed in it renders: Welcome header, Orders / Profile / Addresses / Sign out,
+the order-number and confirmation-number filters, and real order history back
+to **#1003 from 2024-07-23**, with #1049 at the top showing PAID and SUCCESS.
+
+So the Customer Account API config is right on this domain, which is the trap
+recorded in CLAUDE.md (two similar-looking configs in Admin, only the Hydrogen
+one matters, and both ship with empty callback URLs). **If the production URL
+or domain ever changes, that needs redoing and this is the page that proves
+it.**
