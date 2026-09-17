@@ -151,7 +151,7 @@ export function ContactPage() {
         </Link>
         <Link to="/" className="contact-link-card">
           <h3>Premium Overlays + Widgets Custom Design</h3>
-          <p>We build fully custom chat and goal widgets, starting at $300.</p>
+          <p>We build fully custom chat and goal widgets, $300 flat.</p>
         </Link>
       </div>
     </div>

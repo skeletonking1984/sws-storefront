@@ -40,11 +40,45 @@ export const meta = ({matches, location}) => {
     // the multistream chat widgets are the highest priced products in the
     // shop and nothing else in the title reached that buyer.
     title: 'Stream Widget Shop | Twitch, Multistream Chat + Goal Widgets',
-    description:
-      'Chunky, holographic, animated chat and goal widgets for Twitch, YouTube, Kick, and multistream. Instant download, drop into OBS in minutes.',
+    description: HOME_DESCRIPTION,
     url: `${origin}${location.pathname}`,
   });
 };
+
+/**
+ * The homepage meta description, built from the SAME shop numbers the page
+ * renders, so the SERP snippet can never drift from what a visitor lands on.
+ *
+ * Rewritten 2026-09-17, after Todd pointed at the Google result for "stream
+ * widget shop". Three things were wrong with the old line, "Chunky,
+ * holographic, animated chat and goal widgets for Twitch, YouTube, Kick, and
+ * multistream. Instant download, drop into OBS in minutes.":
+ *
+ * - It opened on two adjectives nobody searches, "Chunky, holographic",
+ *   spending the only part of the snippet a scanner reads on decoration.
+ * - "widgets for Twitch, YouTube, Kick" reads as a blanket claim that the
+ *   catalogue supports all three. It does not: Twitch is the baseline on all
+ *   122 products, and YouTube and Kick exist on the multistream products
+ *   specifically. That is the exact overclaim purged from all 122 product
+ *   pages on 2026-09-14 and 2026-09-17, and leaving it on the homepage let
+ *   the front door contradict the standard every page behind it now meets.
+ *   "plus multistream versions for YouTube and Kick" is the true sentence
+ *   and sells the higher priced products rather than the cheap ones.
+ * - It carried no reason to click over the Etsy result sitting above it.
+ *   The shop's own real numbers are the strongest thing available and they
+ *   were nowhere in the snippet.
+ *
+ * Google may still write its own snippet; on the day this was looked at it
+ * had stitched one out of page fragments and ended it with a bare
+ * "$139.82 $39.99 ... starting at $300". Nothing here can force Google's
+ * hand. An accurate, specific, in-length description is the part that is
+ * ours, and the stray price text is addressed separately below.
+ */
+const soldFloor = Math.floor(SHOP_STATS.soldCount / 500) * 500;
+export const HOME_DESCRIPTION =
+  `Animated chat and goal widgets for Twitch, plus multistream versions for ` +
+  `YouTube and Kick. Instant download, drop into OBS. ` +
+  `${soldFloor.toLocaleString('en-US')}+ sold, rated ${SHOP_RATING.average}/5.`;
 
 /**
  * @param {Route.LoaderArgs} args
@@ -440,12 +474,25 @@ function KitCard({product}) {
         {hook && <p className="kit-card-hook">{hook}</p>}
         <div className="kit-card-footer">
           {price && (
+            /*
+             * The two prices are labelled, and not only for screen readers.
+             * Stripped of markup this pill used to read as two bare numbers,
+             * "$139.82 $39.99", and on 2026-09-17 Google had lifted exactly
+             * that pair into the homepage search snippet, where it looks like
+             * a broken price widget. A strikethrough carries its meaning in
+             * CSS, so anything reading the text alone (a crawler, a screen
+             * reader, an answer engine) sees a discount as a price rise.
+             */
             <span className="kit-card-price-pill">
               {compareAtPrice && (
                 <s className="kit-card-compare-price">
+                  <span className="sr-only">Regular price </span>
                   <Money data={compareAtPrice} />
                 </s>
               )}
+              <span className="sr-only">
+                {compareAtPrice ? 'Sale price ' : 'Price '}
+              </span>
               <Money data={price} />
             </span>
           )}
@@ -591,7 +638,7 @@ function CustomCommissionCallout() {
         </p>
         <div className="commission-callout-cta-row">
           <Link className="sws-btn sws-btn-primary" to="/pages/contact">
-            Get a custom setup, starting at $300
+            Get a custom setup, $300
           </Link>
         </div>
       </div>
