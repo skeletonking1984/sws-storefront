@@ -3473,3 +3473,127 @@ the ratchet step) and check 3c (what keeps new products in line).
   tells the buyer to paste `1-html.txt` through `5-data.txt`, and **those five
   files are not in that folder**. Option A, the one-click link, does work. A
   delivery defect in the zip, not a copy defect, so it is not in the audits.
+
+### 2026-09-17 (scheduled pass) — Batch 2 of the refund-denial queue, and the one-day metric that reads zero
+
+**Metrics, 2026-09-16.** 327 sessions, 6 add to cart, 4 reached checkout, 2
+completed. 2 orders, $69.98 gross, $0 discounts, $69.98 net. Today so far: 42
+sessions, 1 order, $14.99.
+
+**A ShopifyQL trap, found while fetching them.** This routine's step A says
+`SINCE -1d`. `FROM sessions SHOW ... SINCE -1d UNTIL -1d` returns a single row
+of **zeros**, and so does the sales form. The same query as
+`TIMESERIES day SINCE -8d UNTIL today` returns 327 sessions for that exact
+date. A zero row is indistinguishable from a real quiet day, so any past entry
+in this log claiming a flat zero for "yesterday" while the store was in fact
+trading should be read as the query, not the traffic. **Use the timeseries form
+and read the row for yesterday.**
+
+#### A2, conversion tracking health
+
+| # | Check | Result |
+|---|---|---|
+| 1 | Endpoint alive and locked | **PASS.** `GET /webhooks/orders` 405, unsigned POST 401, bogus `X-Shopify-Hmac-Sha256` 401 |
+| 2 | Storefront events fire | **PASS**, on a real PDP in a real browser: `gtag` is a function, `_ga` and `_ga_X0978HDVTK` set, and `analytics.google.com/g/collect` carried `tid=G-X0978HDVTK` for `view_item`, `page_view` and, after a real click on Add to cart, `add_to_cart`. Three `/api/e` same-origin relays alongside them. Session correctly tagged `traffic_type: internal` |
+| 3 | Attribution attaching | **PASS.** Last order **#1048**, 2026-09-17 04:43Z, $14.99, carries `_ga_client_id` plus session id and number. #1047 and #1045 also carry `_twclid` |
+| 4 | No double counting | **NOT AGENT VERIFIABLE**, unchanged and now for the sixth pass: `webPixel` returns "Access denied ... Required access: `read_pixels`". Todd DELETED the "GA4 Purchases" pixel on 2026-09-13, which is stronger than disconnected, so this is only at risk if it were recreated |
+| 5 | Env vars | **Inferred, consistent.** A bogus HMAC is rejected rather than 500ing, so the webhook secret is present; the GA4 measurement id is serving on the live page |
+
+None of the four `analytics-debugging-traps` false alarms apply: this was a
+real browser, Realtime-equivalent evidence (the outbound `/g/collect` request
+itself, not an exploration), and the Add to cart button was clicked by ref and
+produced its event.
+
+#### Shipped: BAT-172 batch 2, queue 70 to 60
+
+Ten descriptions rewritten to `docs/COPY-STANDARD.md`, each from its own Etsy
+listing body and file manifest. All ten are goal widgets:
+
+Cute Love Ghost, Spooky Skull Ghost, Mushroom, Butterfly Vibe Combo, Cute
+Chicken, Halloween Spider, Goth Spell Book, Cute Spooky Bat, Cute Peach Glass,
+Cute Octopus.
+
+What the sources actually said, which is the part worth keeping:
+
+- **Not one of the ten names YouTube, Kick or TikTok in its `works_with`**, so
+  none of the new copy does either, even where the Etsy keyword title says
+  "TikTok Studio". Live check of the finished page: zero occurrences of
+  YouTube, Kick or TikTok anywhere in `<main>`.
+- **Three of ten ship a real Streamlabs zip** (Love Ghost, Halloween Spider,
+  Spooky Bat). Those three say a separate Streamlabs build is included. The
+  other seven name Streamlabs Desktop only as a place the browser source is
+  displayed. This is the distinction settled on 2026-09-17 and it now has a
+  check behind it rather than a policy.
+- **"ONE VIDEO INSTRUCTIONS" was dropped from all ten.** Every one of those
+  Etsy bodies claims a video and **no manifest contains one**; they ship one or
+  two zips plus a setup PDF. The old copy was promising a file that is not in
+  the download.
+- Two ship `ManuallySetupGoalWidgetTutorial.pdf` rather than the usual
+  `HowToSetupGoalWidgetTutorial.pdf`, and are named accordingly.
+
+#### The batch is tooling now, not a hand pass
+
+Three scripts, `npm run batch:prep` / `batch:check` / `batch:verify`:
+
+- **`prep-description-batch.mjs`** builds one JSON file per batch: current
+  copy, audited `works_with`, Etsy body, real file manifest. It **walks past**
+  a handle with no mapped active listing instead of stalling the queue behind
+  it, because "What You Get" comes from the manifest and nothing else, so with
+  no manifest the only way to fill that section is to invent it. Two are
+  blocked that way today and are recorded below.
+- **`check-description-batch.mjs`** runs the live audits' rules against the
+  DRAFT, plus the two things only checkable before publishing: every platform
+  named must trace to that product's own listing AND its metafield, and a
+  claimed Streamlabs VERSION must match a Streamlabs file in the manifest.
+- **`verify-description-batch.mjs`** compares the LIVE description to the draft
+  afterwards. This one earns its place: there is no admin token in this repo,
+  so a rewrite reaches Shopify by being **retyped into a `productUpdate`
+  call**, and a truncation would pass every existing audit, because they assert
+  the absence of bad wording and half a description has none. **10/10 matched.**
+
+Three traps the tooling hit and now documents: the audit exits 1 whenever it
+finds anything, so reading its output with `execFileSync` throws unless the
+error's `stdout` is used; `.env` values here are quoted, and an unstripped
+quote turns the shop domain into a hostname DNS cannot resolve; and the Etsy
+files API field is `filename`, not `name`, so reading the wrong key yields a
+manifest of nulls that looks like a listing with unnamed files rather than a
+bug, on the exact data "What You Get" is written from.
+
+#### Also shipped, uncommitted work found in the tree and finished
+
+- **`server.js` returns before the analytics cookie layer for `/feed.xml`,
+  `/feed.csv`, `/feed.pinterest.csv`.** A plain curl of `/feed.csv` came back
+  carrying `sws_cid` and `sws_ses`, so every ingestion attempt by Google, X and
+  Pinterest was minting a brand new visitor and a brand new session against a
+  file no person ever opens. Exact path set rather than a prefix, so a future
+  `/feedback` route cannot opt itself out of analytics by matching a
+  `startsWith`.
+- **`audit-ip-risk.mjs` now reports an IP name left in a permanent Etsy URL.**
+  Listing 1881347726 reads "Fire Dragon Animated Twitch Goal Widget" today and
+  still lives at `/listing/1881347726/charizard-animated-twitch-goal-widget`.
+  Reported at its own severity and never failing the run: Etsy slugs cannot be
+  edited, so the only remedy is relisting, which loses that item's reviews and
+  favourites. **Todd's call.**
+
+#### Verification
+
+`audit:policy` 70 to **60**. `audit:descriptions` 71 findings to **60**, and
+the one non-queued "unconfirmed opener claim" is gone with them.
+`BACKLOG_HIGH_WATER` lowered 70 to 60 and `audit:descriptions:gate` passes.
+Self-tests green: descriptions 13/13, policy 16/16. `npm run build` passes.
+Live PDP spot check on Cute Love Ghost: `<h3>` sections render, the denial line
+is gone, the approved refund paragraph is present, no page overflow.
+
+Preview: https://01m2pzykxqwj22aktwzqf8h5yz-fb73b5b73c40344d0d20.myshopify.dev
+
+#### Next
+- **Batch 3, ten more.** `npm run batch:prep` then the same loop. Six more
+  nights at this rate.
+- **Two handles are blocked** and will be skipped every night until mapped:
+  `twitch-liquid-goal-bar-widget-vtuber-asset-star-alerts-streamlabs-tiktok-studio-and-streamelements`
+  and
+  `nature-portion-bottle-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-tiktok-studio-streamelements-streamlabs-obs`.
+  Neither has a mapped active Etsy listing, so neither has a file manifest.
+- Still Todd's: **BAT-160** (Streamlabs badge meaning), the **Celestial kit
+  Moon Jar zip** missing its five Option B files, and one look at
+  **Settings > Customer events**.
