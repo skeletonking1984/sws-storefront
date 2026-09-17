@@ -45,7 +45,11 @@ for (let i = 0; i < 10; i++) {
   after = j.data.products.pageInfo.endCursor;
 }
 
-const {csv, items, skippedIp} = buildPinterestCsv(nodes, 'https://streamwidgetshop.com');
+// Must match PINTEREST_LINK_ORIGIN in the route. Pinterest refuses any link on
+// a domain the account has not claimed, and the apex is held by a deactivated
+// account, so links point at the claimed shop subdomain instead.
+const PINTEREST_LINK_ORIGIN = 'https://shop.streamwidgetshop.com';
+const {csv, items, skippedIp} = buildPinterestCsv(nodes, PINTEREST_LINK_ORIGIN);
 const fail = [];
 
 function parseCsv(text) {
@@ -91,6 +95,13 @@ const caps = [['id', 127], ['title', 500], ['description', 10000], ['link', 511]
 for (const [name, max] of caps) {
   const over = body.filter((r) => (col(r, name) || '').length > max);
   if (over.length) fail.push(`${over.length} ${name}(s) over Pinterest's ${max} char cap`);
+}
+
+// Every link must be on the CLAIMED domain. This is the check that would have
+// caught Error 139 before an ingest instead of after it.
+const offDomain = body.filter((r) => !col(r, 'link').startsWith(`${PINTEREST_LINK_ORIGIN}/`));
+if (offDomain.length) {
+  fail.push(`${offDomain.length} link(s) not on the claimed domain ${PINTEREST_LINK_ORIGIN}, e.g. ${col(offDomain[0], 'link')}`);
 }
 
 const badLink = body.filter((r) => !/^https?:\/\//.test(col(r, 'link')));

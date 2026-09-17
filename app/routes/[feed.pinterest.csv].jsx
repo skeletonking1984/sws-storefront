@@ -13,7 +13,40 @@ import {FEED_QUERY, PAGE_SIZE} from '~/lib/productFeed';
 import {buildPinterestCsv} from '~/lib/productFeedCsv';
 
 export async function loader({context, request}) {
-  const origin = new URL(request.url).origin;
+  /*
+   * PINTEREST LINKS DO NOT USE THIS SITE'S OWN ORIGIN, and that is not a bug.
+   *
+   * Pinterest rejects any item whose link is on a domain the account has not
+   * claimed (Error 139, which failed all 122 items on 2026-09-16). The apex,
+   * streamwidgetshop.com, cannot be claimed: a different Pinterest account was
+   * deactivated for spam in April 2024 and still holds the claim, and its
+   * appeal window closed in 2024.
+   *
+   * Of the domains this account HAS claimed, only one serves product pages a
+   * buyer can use:
+   *
+   *   shop.streamwidgetshop.com    claimed, crawlable, redirects to the real
+   *                                Hydrogen product page with the path intact
+   *                                (verified in a real browser: lands on the
+   *                                correct PDP with add to cart and prices)
+   *   sws-storefront-....o2...dev  claimed, but Oxygen serves
+   *                                "Disallow: /" and "x-robots-tag: none" on
+   *                                preview domains, above the app, so nothing
+   *                                can crawl it
+   *   streamwidgetshop.myshopify   admin domain, not a storefront
+   *
+   * KNOWN RISK, not yet settled: the redirect page carries
+   * <meta name="robots" content="noindex">. If Pinterest honours it, these
+   * items are refused for a second reason and this whole approach is dead. If
+   * it only checks the domain claim, it works. There is no way to find out
+   * short of an ingest.
+   *
+   * REVERT THIS the day streamwidgetshop.com is claimed on the Pinterest
+   * account: change PINTEREST_LINK_ORIGIN back to the request origin. The apex
+   * is the real storefront, it is indexable, and it needs no redirect hop.
+   */
+  const PINTEREST_LINK_ORIGIN = 'https://shop.streamwidgetshop.com';
+  const origin = PINTEREST_LINK_ORIGIN;
 
   const nodes = [];
   let after = null;
