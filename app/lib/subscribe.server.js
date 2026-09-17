@@ -155,3 +155,113 @@ export async function subscribeToMarketing({email, env}) {
     return {ok: false, state: 'failed', reason: String(error).slice(0, 120)};
   }
 }
+
+/**
+ * The INSTANT path, and the one that actually runs.
+ *
+ * `subscribeToMarketing` above needs an Admin token. That token has no
+ * obtainable source: Shopify closed admin-created custom apps to new creation
+ * ("You can no longer create new admin-created custom apps"), and a Dev
+ * Dashboard app authenticates by OAuth and never issues a static one. Todd was
+ * walked through four admin screens on 2026-09-16 before that was established.
+ * Do not go looking for it again.
+ *
+ * So use the credential the storefront already holds. The PUBLIC Storefront
+ * token can run `customerCreate`, because this is not an app writing an
+ * arbitrary customer record, it is a person signing themselves up. That is
+ * also why it demands a password: Shopify treats it as account creation, not
+ * list management.
+ *
+ * Verified live against the real shop on 2026-09-17 with the public token from
+ * `.env`: customer `10478258946238` came back `acceptsMarketing: true`, and the
+ * Admin API reads it as `SUBSCRIBED` / `SINGLE_OPT_IN` / `ENABLED`. Same list,
+ * same consent level, no credential to configure and nothing to rotate.
+ *
+ * WHAT THIS COSTS, and it is the honest tradeoff:
+ *
+ * - The subscriber gets a real customer ACCOUNT, with a random password nobody
+ *   holds. If they ever want in, they use the reset link like anyone else. The
+ *   alternative was a day of delay, and this is the cheaper one.
+ * - The Storefront API cannot set tags, so these arrive untagged where the
+ *   sweep's records carry `newsletter` / `launch-popup`. Provenance for a
+ *   direct signup is the account's own creation date and consent timestamp.
+ * - An address that is ALREADY a customer comes back `TAKEN`. The Storefront
+ *   API cannot update someone else's consent, by design, so that case falls to
+ *   step 4b of the nightly sweep, which now handles exactly it.
+ *
+ * Never throws. A signup must not fail because Shopify did: the visitor has
+ * already been shown the code.
+ *
+ * @param {{email: string, storefront: any}} args
+ * @returns {Promise<{ok: boolean, state: 'created'|'exists'|'skipped'|'failed', reason?: string}>}
+ */
+export async function subscribeViaStorefront({email, storefront}) {
+  if (!storefront) return {ok: false, state: 'skipped'};
+
+  try {
+    const data = await storefront.mutate(STOREFRONT_SIGNUP, {
+      variables: {
+        input: {
+          email,
+          // Never used and never sent anywhere. Shopify requires a password on
+          // this mutation; the account is a side effect of subscribing, not
+          // the point of it.
+          //
+          // One UUID, not two: Shopify caps a customer password at 40
+          // characters and rejects anything longer ("Password is too long"),
+          // which is a userError, so the signup fails silently rather than
+          // throwing. 36 characters of UUID is plenty for a password nobody
+          // ever types.
+          password: crypto.randomUUID(),
+          acceptsMarketing: true,
+        },
+      },
+    });
+
+    const errors = data?.customerCreate?.customerUserErrors ?? [];
+    if (!errors.length && data?.customerCreate?.customer) {
+      return {ok: true, state: 'created'};
+    }
+
+    // Already a customer: a past buyer, or a repeat signup. Not a failure, and
+    // not something this API is allowed to fix. The nightly sweep updates
+    // their consent.
+    //
+    // The code is CUSTOMER_DISABLED, NOT `TAKEN`, and the message reads "We
+    // have sent an email to <address>, please click the link included to
+    // verify your email address" (verified against the live shop 2026-09-17).
+    // So Shopify emails that person an account verification link on every
+    // repeat signup. That is Shopify's behaviour, not something this code can
+    // suppress, and it is the reason to keep the nightly sweep: it is the only
+    // path that can subscribe an existing customer.
+    if (
+      errors.some(
+        (e) =>
+          e.code === 'CUSTOMER_DISABLED' ||
+          e.code === 'TAKEN' ||
+          /taken|already/i.test(e.message ?? ''),
+      )
+    ) {
+      return {ok: true, state: 'exists'};
+    }
+
+    return {ok: false, state: 'failed', reason: errors[0]?.message};
+  } catch (error) {
+    return {ok: false, state: 'failed', reason: String(error).slice(0, 120)};
+  }
+}
+
+const STOREFRONT_SIGNUP = `#graphql
+  mutation NewsletterSignup($input: CustomerCreateInput!) {
+    customerCreate(input: $input) {
+      customer {
+        id
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;

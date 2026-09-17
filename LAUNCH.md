@@ -3208,3 +3208,54 @@ when the list write did not happen, and `/admin/config` now describes
 `PRIVATE_ADMIN_API_TOKEN` by what it actually costs (its old text mentioned
 only catalogue reads, which is why a page built to expose exactly this gap did
 not expose it).
+
+### 2026-09-17 — Instant signup capture, using the token the site already has
+
+Todd: "why is instant so hard?" It was not. It was the wrong API.
+
+Writing a customer with marketing consent is an ADMIN write, and the storefront
+holds no admin credential (and cannot get one, see the entry above). But the
+**public Storefront token the site already carries** can run `customerCreate`
+with `acceptsMarketing: true`, because that is not an app writing an arbitrary
+customer, it is a person signing themselves up. Same list, same
+`SINGLE_OPT_IN` consent, no credential to configure and nothing to rotate.
+
+**Verified against the live shop, not assumed.** Customer `10478258946238`
+created through the public token came back `acceptsMarketing: true`, and the
+Admin API reads it `SUBSCRIBED` / `SINGLE_OPT_IN` / `ENABLED`. Then the same
+through the real route on a local build: fresh address `{"ok":true}` and a
+SUBSCRIBED customer, existing address `{"ok":true}`, honeypot absorbed, invalid
+address still `{"ok":false,"reason":"invalid"}`.
+
+`handleNewsletterSignup` now tries admin first (inert, unchanged, upgrades
+itself for free if Shopify ever reopens static tokens) and falls through to the
+storefront path. Both signup routes pass `context.storefront`.
+
+**Two things this costs, and both are real:**
+
+- **Every subscriber gets a customer ACCOUNT**, with a random password nobody
+  holds. Shopify demands a password on that mutation because it treats this as
+  account creation. Whether Shopify also emails a new subscriber a welcome or
+  activation notice is **NOT verified**: the probe accounts came back ENABLED
+  with no error, which suggests not, but nothing here proves it. Watch the next
+  real signup.
+- **An address that is already a customer gets a Shopify verification email.**
+  The error is `CUSTOMER_DISABLED`, not `TAKEN`, and its message is "We have
+  sent an email to <address>, please click the link included to verify your
+  email address". This code cannot suppress that. It is treated as success and
+  their consent is left to the nightly sweep, which is now the only path that
+  can subscribe an existing customer.
+
+Two traps worth keeping:
+
+- **A customer password is capped at 40 characters.** Two UUIDs is 77 and
+  Shopify rejects it as a userError, so the signup fails silently and answers
+  `ok:false` with the notification's reason, not the real one. One UUID.
+- A failed list write now logs `[newsletter] not subscribed: <state> (<reason>)`
+  to the Oxygen server log. That line is what found the password cap in one
+  run, after the response body had blamed the unrelated email transport.
+
+Test records `sws-sf-probe`, `sws-code-probe`, `sws-instant-probe3` and
+`sws-instant-probe4` are tagged `test-record-safe-to-delete`. A stale dev server
+from 2026-09-15 10:03 was holding port 3000 and was killed before testing, which
+is the trap already recorded further up this file.

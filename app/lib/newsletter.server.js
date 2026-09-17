@@ -7,14 +7,23 @@
  * campaign can reach), notify second.
  */
 import {sendNotificationEmail} from '~/lib/notify.server';
-import {subscribeToMarketing} from '~/lib/subscribe.server';
+import {
+  subscribeToMarketing,
+  subscribeViaStorefront,
+} from '~/lib/subscribe.server';
 import {buildHashedEmailCookie} from '~/lib/hashedEmail.server';
 
 /**
- * @param {{formData: FormData, env: Record<string, string|undefined>, origin: string, source: string}} args
+ * @param {{formData: FormData, env: Record<string, string|undefined>, origin: string, source: string, storefront?: any}} args
  * @returns {Promise<{ok: boolean, reason?: string, values?: {email: string}}>}
  */
-export async function handleNewsletterSignup({formData, env, origin, source}) {
+export async function handleNewsletterSignup({
+  formData,
+  env,
+  origin,
+  source,
+  storefront,
+}) {
   const email = (formData.get('email') || '').toString().trim();
   const company = (formData.get('company') || '').toString().trim();
 
@@ -25,7 +34,18 @@ export async function handleNewsletterSignup({formData, env, origin, source}) {
     return {ok: false, reason: 'invalid', values: {email}};
   }
 
-  const subscribed = await subscribeToMarketing({email, env});
+  /*
+   * Admin first, because it is the better write when it is available: it can
+   * tag, and it can resubscribe somebody who already exists. It is inert
+   * without PRIVATE_ADMIN_API_TOKEN, which has no obtainable source today, so
+   * in practice the storefront path below is the one that runs. If Shopify
+   * ever reopens static Admin tokens, setting that one variable silently
+   * upgrades this and nothing else changes.
+   */
+  let subscribed = await subscribeToMarketing({email, env});
+  if (!subscribed.ok && subscribed.state === 'skipped') {
+    subscribed = await subscribeViaStorefront({email, storefront});
+  }
 
   /*
    * The visitor just told us who they are. Hash it and hand the caller a
@@ -40,6 +60,16 @@ export async function handleNewsletterSignup({formData, env, origin, source}) {
    * Tying the two would mean the identifier silently depends on a token
    * that may not exist.
    */
+  // A failed list write is otherwise visible only in the notification email,
+  // which is itself a thing that can fail. Oxygen keeps server logs; use them.
+  if (!subscribed.ok) {
+    console.error(
+      `[newsletter] not subscribed: ${subscribed.state}${
+        subscribed.reason ? ` (${subscribed.reason})` : ''
+      }`,
+    );
+  }
+
   const setCookie = await buildHashedEmailCookie(email);
 
   const sent = await sendNotificationEmail({

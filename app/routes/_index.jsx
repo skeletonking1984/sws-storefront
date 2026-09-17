@@ -157,6 +157,7 @@ export async function action({request, context}) {
     env: context.env,
     origin: new URL(request.url).origin,
     source: 'homepage capture',
+    storefront: context.storefront,
   });
   return {intent: 'newsletter', ...result};
 }

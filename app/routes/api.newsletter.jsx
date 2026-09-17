@@ -18,6 +18,7 @@ export async function action({request, context}) {
     env: context.env,
     origin: new URL(request.url).origin,
     source: (formData.get('source') || 'popup').toString().slice(0, 40),
+    storefront: context.storefront,
   });
   // Always 200. The outcome lives in the body: a fetcher does not populate
   // `fetcher.data` for a non-2xx, so encoding "this email was rejected" as a
