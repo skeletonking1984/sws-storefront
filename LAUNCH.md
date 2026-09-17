@@ -4788,3 +4788,66 @@ recorded in CLAUDE.md (two similar-looking configs in Admin, only the Hydrogen
 one matters, and both ship with empty callback URLs). **If the production URL
 or domain ever changes, that needs redoing and this is the page that proves
 it.**
+
+### 2026-09-17 — Mobile is the majority now, and it had 12px of horizontal scroll
+
+Todd: "QA mobile too - what is our traffic mostly? make sure those
+browsers/devices work - look for most used, prioritize like that."
+
+#### The traffic answer inverts the old priority
+
+| Week | desktop | mobile |
+|---|---|---|
+| 2026-08-31 | 93 | 7 |
+| 2026-09-07 | 283 | 29 |
+| **2026-09-14** | **176** | **533** |
+
+Day by day since the 15th: mobile **109 / 270 / 139** against desktop
+46 / 55 / 44. That is **76 to 83 percent mobile**, and the desktop column still
+contains this routine's own QA, so the real share is higher.
+
+Of the last three days' mobile sessions, **397 are "direct" and 123 "social"**.
+App clicks strip the referrer, so that direct number is in-app browsers from X
+and Discord, not people typing the URL. **Mobile is not a secondary surface any
+more, it is the surface**, and most of it is an in-app webview.
+
+Browser breakdown is not available: ShopifyQL has no `session_browser`
+dimension, and GA4 has no API access from here. Device type is what can be
+evidenced, so device type is what this was prioritised on.
+
+#### The defect
+
+`.product-description-body li` is `display: grid` with a `1.35rem 1fr` icon
+column. A grid item defaults to `min-width: auto`, which refuses to shrink
+below its content's min-content width. The "What You Get" lists name real
+files, and `HalloweenMashroomSpookySlideGoalWidgetCode.zip` has no space or
+hyphen to break on, so the `1fr` column pushed the row past the viewport.
+
+**Measured on production at 360px: 12px of horizontal scroll**, the `li` 339px
+wide inside a 296px `ul`. Fixed with `min-width: 0` on the `li` and
+`min-width: 0; overflow-wrap: anywhere` on `.pd-item`.
+
+**Verified against real content** by injecting exactly that rule into the live
+page and re-measuring: **12px to 0**, widest row 339px to exactly 296px. The
+preview deployment could not be used, it is Oxygen-auth-gated.
+
+#### Why no previous pass saw it
+
+At **390px, iPhone 14/15 width, there is no overflow either way.** It only
+bites 360px-class Android. Every earlier pass measured desktop or 390.
+
+**And it was self-inflicted today**: those filenames went into the descriptions
+this afternoon in the BAT-172 rewrites. The CSS did not change, the copy did.
+
+#### Scope, checked rather than assumed
+
+`/`, `/collections/all`, `/blogs/news` and `/cart` all measure **0 overflow at
+360**. PDP only.
+
+Other mobile checks at 360: Add to cart is 60px tall and in view, only one
+on-screen control is under 40px in either dimension (28px tall but 134 wide),
+no console errors, no failing resources.
+
+Recorded in CLAUDE.md so the next description pass measures at 360, not 390.
+
+**Needs a production deploy to reach visitors.**
