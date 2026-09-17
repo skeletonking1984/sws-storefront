@@ -3845,3 +3845,63 @@ wrong: the deploy is done, and all three Etsy titles are clean (only their
 un-editable URL slugs still carry the name, logged earlier today). Flagged
 rather than rewritten, because that description is long and retyping it whole
 to fix two lines risks mangling the rest.
+
+### 2026-09-17 — One share size for every card, padded so nothing is cut off
+
+Todd, on two X cards rendering at different heights: "can the image be the same
+size? make sure it crops right."
+
+Both halves are the same problem. **Same size needs ONE fixed ratio**, and this
+catalogue has nothing near 1.91:1, so a fixed ratio means cropping every
+product or padding every product. This morning's fix made each card honest
+about its own shape. Honest was not enough: honest meant every card a
+different height.
+
+#### Padded, settled by rendering both rather than by preference
+
+`crop=center` on the Celestial kit hero **cuts off "10 widgets. One sky.", the
+headline, and the entire platform-and-price line**, leaving a jar and some
+thumbnails. Same trap CLAUDE.md already records for gallery images, where
+`aspectRatio` made Hydrogen append `crop=center` and silently chopped edge
+content off non-square art. This art carries its words at the top and bottom,
+exactly what a 1.91:1 crop takes.
+
+Padding keeps every pixel. Fill is the brand background `#0b0713`
+(`--sws-bg`), not black, so it reads as the page the link leads to. Checked on
+all three shapes, square Dreamy Lotus, 4:3 kit hero, portrait Moon Jar: all
+come out whole and legible, and against their own near-black art the fill is
+close to invisible.
+
+#### Two CDN behaviours this rests on, both measured
+
+| Claim | Evidence |
+|---|---|
+| `pad_color` is honoured and is genuinely not `crop` | Three requests to the same source, three different payloads: **89,885** (crop) / **67,437** (dark pad) / **71,025** (red pad) bytes, and the rendered images differ |
+| A padded request returns EXACTLY the size asked for, even upscaling the canvas | `1200x630`, `3000x1575` and `600x315` all came back exact |
+
+So the declared size is a constant that is always true, not something derived
+per product and hoped for.
+
+#### What changed
+
+`shareCardUrl()` in `app/lib/ogImage.js` is the single place the shape is
+decided. Products and blog articles both use it. **It never adds `crop=`, and
+a self-test case asserts that specifically**, because adding one would
+silently turn padding into cropping.
+
+The audit gained the rule that makes it stick: **every card must BE the one
+share size**, checked off the served bytes and independently of what the tags
+declare, so a page that omits the size cannot dodge it. Plus a rule that a
+Shopify CDN share image must have gone through the transform at all, which
+catches the cause rather than the damage. Self-test **23 to 31 cases**,
+including that a truthful 1200x1200 card is now a FAILURE, which is the state
+this replaces.
+
+#### Expected red, and it is not a regression
+
+`npm run audit:share-cards` was green on production an hour ago and is red
+again now, reporting "card is 1200x1200, not the one share size 1200x630".
+**The site did not regress, the standard moved.** It goes green on the next
+production deploy, which is Todd's.
+
+Preview: https://01m2qmhyr5btmyfd61zexb2nb3-fb73b5b73c40344d0d20.myshopify.dev
