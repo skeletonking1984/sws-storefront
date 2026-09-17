@@ -3795,3 +3795,53 @@ green on the next production deploy, and its staying red until then is the
 check working, not a regression.
 
 Preview: https://01m2qm5ragbjnbfrn71pj23bej-fb73b5b73c40344d0d20.myshopify.dev
+
+### 2026-09-17 — Production deploy, the first since 2026-09-14
+
+Todd ran `npx shopify hydrogen deploy --env=production` himself. It still has
+to be him: `--force` does NOT cover the production `Continue?` prompt (it only
+forces past uncommitted git changes), and this session was a scheduled-task
+run, so the Terminal panel and dev servers were both blocked in it for its
+whole life even with Todd sitting there. Two independent walls, both real,
+both confirming what this repo's CLAUDE.md already said.
+
+**114 commits shipped**, everything since `0bf52ea` on 2026-09-14: instant
+newsletter signup through the Storefront API, the parallax star field, the
+cart checkout-reachability fix, the machine-feed cookie fix, the channels
+manifest, the share card fix and today's homepage snippet cleanup. The ten
+description rewrites were already live, being catalogue data rather than code.
+
+#### Verified on production after the deploy
+
+**`npm run audit:share-cards`, 12 of 12 ok**, against the live site. It failed
+6 of 6 before. The proof it is real per product rather than a new hardcode:
+the declared sizes now read 1200x1200, **1200x1500**, **1200x900** and
+**1200x1202**. A stuck value would show one number everywhere.
+
+The page Todd screenshotted now declares what it actually serves:
+
+```
+og:image        .../99fa802c-il_fullxfull.7031303415_s3x1.jpg?width=1200
+og:image:width  1200
+og:image:height 1200      (was 630)
+```
+
+Homepage, live:
+
+- description: "Animated chat and goal widgets for Twitch, plus multistream
+  versions for YouTube and Kick. Instant download, drop into OBS. 7,500+ sold,
+  rated 4.76/5."
+- "Get a custom setup, $300", the flat price, not the superseded range.
+- 3 `Regular price` and 3 `Sale price` labels on the kit card pills.
+
+**Discord caches unfurls**, so the link Todd posted keeps its old card until
+that cache expires or the URL is posted fresh.
+
+#### BAT-131 now carries stale items, not yet corrected
+
+Its "Needs Todd" list still says a production deploy is waiting and names five
+specific commits, and still lists three live Etsy IP listings. Both are now
+wrong: the deploy is done, and all three Etsy titles are clean (only their
+un-editable URL slugs still carry the name, logged earlier today). Flagged
+rather than rewritten, because that description is long and retyping it whole
+to fix two lines risks mangling the rest.
