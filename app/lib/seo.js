@@ -1,4 +1,5 @@
 import ogImageAsset from '~/assets/og-image.jpg';
+import {ogImageTags} from '~/lib/ogImage';
 
 const SITE_NAME = 'Stream Widget Shop';
 const TWITTER_HANDLE = '@streamwidget';
@@ -51,11 +52,29 @@ export function absoluteAsset(origin, asset) {
  * `image`, if provided, must also be an absolute URL (e.g. a product's own
  * Shopify CDN image URL). If omitted, this falls back to the site's default
  * OG image, resolved against the same origin as `url`.
+ *
+ * `imageWidth` and `imageHeight` are the REAL pixel dimensions of `image`.
+ * Pass them whenever they are known, and leave them out when they are not.
+ *
+ * Why that matters, 2026-09-17: these two tags used to be hardcoded to
+ * 1200x630 for every page, including every product. **Not one of the 122
+ * product featured images is 1.91:1** (83 are square, 37 are 4:3, one is
+ * portrait), so every product page was telling Discord, Slack and X that a
+ * square image was a wide banner. A consumer lays the card out from the
+ * declared size before it ever fetches the bytes, which is why the Dreamy
+ * Lotus unfurl rendered as a narrow sliver of art in a wide black box. The
+ * image was correct the whole time; the measurement next to it was not.
+ *
+ * Omitting the pair is safe and is the deliberate fallback: every consumer
+ * then reads the real size off the image itself. A wrong size is strictly
+ * worse than no size.
  * @param {{
  *   title: string,
  *   description: string,
  *   url: string,
  *   image?: string,
+ *   imageWidth?: number,
+ *   imageHeight?: number,
  *   type?: string,
  *   noIndex?: boolean,
  * }} options
@@ -66,11 +85,21 @@ export function buildMeta({
   description,
   url,
   image,
+  imageWidth,
+  imageHeight,
   type = 'website',
   noIndex = false,
 }) {
   const origin = new URL(url).origin;
-  const ogImage = image || absoluteAsset(origin, ogImageAsset);
+  // Image tags live in ~/lib/ogImage so they can be imported and tested by
+  // a plain script (this file cannot: the asset import above needs Vite).
+  // See npm run audit:share-cards -- --self-test.
+  const imageTags = ogImageTags({
+    image,
+    imageWidth,
+    imageHeight,
+    defaultImage: absoluteAsset(origin, ogImageAsset),
+  });
 
   const tags = [
     {title},
@@ -80,15 +109,13 @@ export function buildMeta({
     {property: 'og:description', content: description},
     {property: 'og:url', content: url},
     {property: 'og:type', content: type},
-    {property: 'og:image', content: ogImage},
-    {property: 'og:image:width', content: '1200'},
-    {property: 'og:image:height', content: '630'},
+    ...imageTags.filter((t) => t.property),
     {property: 'og:site_name', content: SITE_NAME},
     {property: 'og:locale', content: 'en_US'},
     {name: 'twitter:card', content: 'summary_large_image'},
     {name: 'twitter:title', content: title},
     {name: 'twitter:description', content: description},
-    {name: 'twitter:image', content: ogImage},
+    ...imageTags.filter((t) => t.name),
     {name: 'twitter:site', content: TWITTER_HANDLE},
   ];
 

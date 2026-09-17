@@ -39,6 +39,10 @@ const CHECKS = [
   // batch a night, and the gate fails if that queue GROWS or if anything is
   // wrong with a product outside it.
   ['descriptions', 'scripts/audit-descriptions.mjs', {}, ['--gate']],
+  // A sample, not the whole catalogue: this one fetches the rendered page AND
+  // the image bytes for each product, so 122 of them would dominate the run.
+  // Best-selling first, because those are the links that actually get shared.
+  ['share cards', 'scripts/audit-share-cards.mjs', {}, ['--limit', '8']],
 ];
 
 const results = [];

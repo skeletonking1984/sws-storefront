@@ -34,6 +34,10 @@ export const meta = ({data, matches, location}) => {
       `${title}: a Stream Widget Shop blog post on stream setup and widgets.`,
     url: `${origin}${location.pathname}`,
     image: article?.image?.url,
+    // Article heroes are not 1.91:1 either, and the query already carries
+    // their real size. See buildMeta: a wrong size is worse than no size.
+    imageWidth: article?.image?.width,
+    imageHeight: article?.image?.height,
     type: 'article',
   });
 };
