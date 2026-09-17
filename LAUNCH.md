@@ -3723,3 +3723,75 @@ crops a square to roughly 1.91:1 and will cut the top and bottom off listing
 art. Switching to `summary` would show the whole square in a smaller card.
 That is a taste and click-rate call on the channel SWS actually posts to, so
 it is Todd's, not an agent's.
+
+### 2026-09-17 (Todd present) — the homepage snippet: decoration, an overclaim, and two loose prices
+
+Todd, on the Google result for "stream widget shop": "our SEO desc needs to be
+cleaned up."
+
+Three separate things. One was ours to write; two were feeding Google the text
+it stitched in place of it.
+
+#### 1. The meta description
+
+Was: "Chunky, holographic, animated chat and goal widgets for Twitch, YouTube,
+Kick, and multistream. Instant download, drop into OBS in minutes."
+
+- It spent the **opening**, the only part of a snippet a scanner reads, on two
+  adjectives nobody searches.
+- **"widgets for Twitch, YouTube, Kick" is a blanket catalogue claim and it is
+  not true.** Twitch is the baseline on all 122 products; YouTube and Kick live
+  on the multistream products specifically. This is the exact overclaim purged
+  from all 122 product pages on 2026-09-14 and again on 2026-09-17, so **the
+  front door was contradicting the standard every page behind it now meets.**
+- It gave nobody a reason to click it over the Etsy listing ranking above it,
+  while the shop's own real Etsy numbers sat unused.
+
+Now, 150 characters:
+
+> Animated chat and goal widgets for Twitch, plus multistream versions for
+> YouTube and Kick. Instant download, drop into OBS. 7,500+ sold, rated 4.76/5.
+
+Both numbers are **built from the same `etsy-shop-stats.json` the page
+renders**, not typed in, so the snippet cannot drift from the page a visitor
+lands on. 7,542 sold is **floored** to the nearest 500 rather than rounded, so
+the claim only ever gets safer with time; 4.76 is the live average over 997
+reviews, already shown on the site and linked to the real Etsy reviews page.
+
+#### 2. The loose prices Google appended
+
+The snippet ended "$139.82 $39.99 ... starting at $300". Both are real text on
+the page, and both were worth fixing on their own merits:
+
+- **The kit card price pill rendered two bare numbers.** A strikethrough
+  carries its meaning in CSS alone, so anything reading the text (a crawler, a
+  screen reader, an answer engine) sees a discount as a price rise. Both halves
+  are now labelled, `Regular price` and `Sale price`.
+- **"starting at $300" for commissions is stale by one revision.** That range
+  wording is from 2026-08-30. Todd settled it to a **flat $300 on 2026-09-03**,
+  specifically so quoting is simple. Homepage CTA now "Get a custom setup,
+  $300", contact page "$300 flat". **If the range is back on, this is one word
+  to change back.**
+
+#### 3. What no amount of markup controls
+
+Google wrote its own snippet here rather than using the description, and
+nothing in the page can force its hand. An accurate, specific, in-length
+description is the half that is ours. Left alone deliberately: the `<title>`,
+a considered 60 characters, and `twitter:card`.
+
+**Worth its own look, not actioned:** the Etsy shop outranks
+streamwidgetshop.com for the shop's own name. That is a domain authority and
+brand-query problem, not a snippet problem, and it is the more valuable one.
+
+#### Verification
+
+Built server bundle carries the new description, both sr-only labels and both
+price strings. "Chunky, holographic" and "starting at": **0 occurrences each**.
+`verify:all` 12 of 15, the three reds all known: policy claims (the 60 queue),
+channel prices (Todd's call, logged above), and **share cards, which is
+CORRECT: production still serves the old hardcoded 1200x630**. That one goes
+green on the next production deploy, and its staying red until then is the
+check working, not a regression.
+
+Preview: https://01m2qm5ragbjnbfrn71pj23bej-fb73b5b73c40344d0d20.myshopify.dev
