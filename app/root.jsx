@@ -261,6 +261,13 @@ export function Layout({children}) {
           public verification string, not a credential.
         */}
         <meta name="p:domain_verify" content="0ae66c7f1313ebf7092aea3bc2e447df" />
+        {/* Meta (Facebook) domain verification, added 2026-09-18. Required before
+            Meta will attribute conversions to streamwidgetshop.com, which gates
+            running ads against the Shopify-fed dataset 511838711286120. Meta's
+            own note: verification fails if the tag is outside <head> or injected
+            by JavaScript, so it is rendered server side here rather than by a
+            pixel component. Public verification string, not a credential. */}
+        <meta name="facebook-domain-verification" content="1xrp2sgk9we6sbcnmq37rm1t4i4ru8" />
         {/* Opts real visitors into the WebMCP origin trial, which is what
             makes document.modelContext exist for them at all. Must be in the
             head and must be present on the first response, so it cannot be
