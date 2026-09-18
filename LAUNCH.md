@@ -4909,3 +4909,56 @@ document.head.insertAdjacentHTML('beforeend','<style>.sws-holo,.shimmer{animatio
 If the flicker stops, it is one of those two and they get the same treatment.
 
 **Needs a production deploy to reach visitors.**
+
+### 2026-09-17 — PageSpeed 69 desktop: TBT is the whole gap, and I have not found its cause
+
+| Metric | Value | |
+|---|---|---|
+| First Contentful Paint | 0.6s | green |
+| Largest Contentful Paint | 0.8s | green |
+| Speed Index | 0.8s | green |
+| Cumulative Layout Shift | **0** | green |
+| **Total Blocking Time** | **5,110ms** | **red, and it is the entire gap** |
+
+Accessibility 96, Best Practices 92, SEO 100, Agentic Browsing 3/3.
+
+**This is not a loading problem. The page paints in 0.8s and never shifts.
+Something then jams the main thread.**
+
+#### What was ruled out, with evidence
+
+| Suspect | Verdict |
+|---|---|
+| Route prefetching | `prefetch="intent"` everywhere, hover-only. The one `"viewport"` is a single link on the empty-cart page |
+| The blocked Google Fonts | Not ours. Zero gstatic requests from a clean browser, see the entry above |
+| Third-party pixels | All genuinely in use: gtag for GA4, `uwt.js` with a real X pixel (`twq('config','q7mwb')`). Meta correctly absent, `fbq` undefined. No free win |
+| DOM size | **680 nodes, max depth 13.** Small and healthy |
+| The starfield drift | Fixed this session, but measured at 100fps both ways, so it was not costing frames here |
+
+#### What could not be measured from here
+
+**Zero long tasks** on this machine, so TBT is not reproducible locally: the CPU
+is too fast and the assets were cached. And the **PageSpeed API is out of its
+daily keyless quota** (429 on three attempts), so Google's own attribution
+could not be pulled.
+
+**So the cause is still unknown. That is the honest state.** No fix has been
+made for TBT and none should be claimed.
+
+#### Found, but not the cause
+
+At a real 1350x940 viewport with dpr 1, **21 of 49 images are 2x or more
+oversized**: the bundled pfp at 176px natural for 38 CSS px, the logo at 560
+for 158, the StreamElements icon at 48 for 13. That is Google's "371 KiB".
+
+**Partly an artifact**: those are local Vite assets sized for retina, and
+Lighthouse measures at dpr 1. A 3.5x waste at 1x is 1.75x at 2x, which is
+correct. The real improvement is `srcset` on the bundled assets so a 1x device
+gets a 1x file. Worth doing, will not move TBT.
+
+#### The two rows that would settle it
+
+The report already contains the answer in two collapsed insights, **"Forced
+reflow"** and **"3rd parties"**, plus the Treemap. Forced reflow is flagged red
+and is layout thrashing from JavaScript, which would explain both the TBT and
+the flicker on the same page. Expanding those names the exact scripts.
