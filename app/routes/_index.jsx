@@ -164,11 +164,50 @@ function loadDeferredData({context}) {
       return [];
     });
 
+  // Seasonal Halloween band. Fetched only inside the season window so the
+  // storefront never spends a Storefront API round trip on a section that
+  // cannot render, and so the band retires itself without a deploy.
+  const halloweenProducts = isHalloweenSeason()
+    ? context.storefront
+        .query(HALLOWEEN_COLLECTION_QUERY, {
+          variables: {handle: HALLOWEEN_COLLECTION_HANDLE},
+        })
+        .then((response) => response?.collection?.products?.nodes ?? null)
+        .catch((error) => {
+          console.error(error);
+          return null;
+        })
+    : null;
+
   return {
     recommendedProducts,
     topWidgets,
     kitsAndOverlayPacks,
+    halloweenProducts,
   };
+}
+
+/** Smart collection in Shopify Admin, rule: TAG EQUALS `halloween`. */
+export const HALLOWEEN_COLLECTION_HANDLE = 'halloween';
+
+/**
+ * The window the Halloween band is allowed to show in, as [month, day]
+ * inclusive, evaluated in UTC. Starts mid-September because that is when
+ * streamers start building October scenes, and runs two days past the 31st
+ * so anyone who streamed on the night still lands on it.
+ *
+ * Keeping the season here, rather than flipping a boolean by hand, means
+ * the band appears and disappears on its own every year. Widen it by
+ * editing these two pairs.
+ */
+const HALLOWEEN_SEASON = {start: [9, 15], end: [11, 2]};
+
+/** True while `date` sits inside HALLOWEEN_SEASON. */
+export function isHalloweenSeason(date = new Date()) {
+  const key = (date.getUTCMonth() + 1) * 100 + date.getUTCDate();
+  const [startMonth, startDay] = HALLOWEEN_SEASON.start;
+  const [endMonth, endDay] = HALLOWEEN_SEASON.end;
+  return key >= startMonth * 100 + startDay && key <= endMonth * 100 + endDay;
 }
 
 /**
@@ -223,6 +262,14 @@ export default function Homepage() {
       />
       <Hero />
       <ShopByVibe />
+      {/*
+        Seasonal band, above Top widgets on purpose: for the six weeks it is
+        live it IS the highest-intent shelf in the shop, and it is made of
+        products rather than decoration, so it does not cost a phone visitor
+        a screen of scrolling before reaching something buyable. Outside the
+        season window it renders nothing at all.
+      */}
+      <HalloweenBand products={data.halloweenProducts} />
       {/*
         Top widgets sits ABOVE the kits band on purpose. Measured on the
         live site at 375px on 2026-09-13: the kits band is 2372px tall and
@@ -506,6 +553,81 @@ function KitCard({product}) {
 }
 
 /**
+ * Seasonal Halloween shelf. `products` is null outside the season window
+ * (see isHalloweenSeason), and the section also hides itself if the
+ * `halloween` collection is missing or empty in Admin, so a collection
+ * rename can never leave an empty band on the homepage.
+ * @param {{products: Promise<any[] | null> | null}}
+ */
+function HalloweenBand({products}) {
+  if (!products) return null;
+  return (
+    <Suspense fallback={null}>
+      <Await resolve={products}>
+        {(nodes) => {
+          const items = (nodes || []).filter(Boolean);
+          if (!items.length) return null;
+          return (
+            <section
+              className="halloween-band"
+              id="halloween"
+              aria-labelledby="halloween-heading"
+            >
+              <div className="halloween-bats" aria-hidden="true">
+                <span className="halloween-bat" />
+                <span className="halloween-bat" />
+                <span className="halloween-bat" />
+              </div>
+              <p className="sws-section-eyebrow halloween-eyebrow">
+                Spooky season
+              </p>
+              <h2
+                id="halloween-heading"
+                className="sws-section-heading halloween-heading"
+              >
+                Halloween widgets, live before October
+              </h2>
+              <p className="halloween-sub">
+                Pumpkin, ghost, cauldron and skull goal meters that fill as
+                tips land, plus spooky chat boxes and full overlay kits.
+                Instant download, drop into OBS.
+              </p>
+              <div className="halloween-grid">
+                {items.slice(0, 8).map((product, index) => (
+                  <ProductItem
+                    key={product.id}
+                    product={product}
+                    listId="home-halloween"
+                    listName="Halloween"
+                    index={index}
+                    /* sits under the section's own <h2> */
+                    headingLevel={3}
+                  />
+                ))}
+              </div>
+              <div className="halloween-links">
+                <Link
+                  className="sws-btn sws-btn-primary"
+                  to={`/collections/${HALLOWEEN_COLLECTION_HANDLE}`}
+                >
+                  Shop all Halloween
+                </Link>
+                <Link
+                  className="sws-btn sws-btn-ghost"
+                  to="/products/spooky-stream-kit"
+                >
+                  Get the Spooky Stream Kit
+                </Link>
+              </div>
+            </section>
+          );
+        }}
+      </Await>
+    </Suspense>
+  );
+}
+
+/**
  * @param {{
  *   topWidgets: Promise<any[] | null>;
  *   fallback: Promise<RecommendedProductsQuery | null>;
@@ -741,6 +863,56 @@ const KITS_AND_OVERLAY_PACKS_QUERY = `#graphql
     product1: product(handle: $handle1) { ...KitOrOverlayPackProduct }
     product2: product(handle: $handle2) { ...KitOrOverlayPackProduct }
     product3: product(handle: $handle3) { ...KitOrOverlayPackProduct }
+  }
+`;
+
+const HALLOWEEN_COLLECTION_QUERY = `#graphql
+  query HalloweenCollection(
+    $handle: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    collection(handle: $handle) {
+      id
+      products(first: 8) {
+        nodes {
+          id
+          title
+          handle
+          productType
+          worksWith: metafield(namespace: "custom", key: "works_with") { value }
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          featuredImage {
+            id
+            url
+            altText
+          }
+          media(first: 25) {
+            nodes {
+              __typename
+              ... on Video {
+                id
+                previewImage {
+                  url
+                }
+                sources {
+                  url
+                  mimeType
+                  format
+                  width
+                  height
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 `;
 

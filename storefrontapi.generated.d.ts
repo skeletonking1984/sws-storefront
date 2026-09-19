@@ -1114,6 +1114,56 @@ export type KitsAndOverlayPacksQuery = {
   >;
 };
 
+export type HalloweenCollectionQueryVariables = StorefrontAPI.Exact<{
+  handle: StorefrontAPI.Scalars['String']['input'];
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+}>;
+
+export type HalloweenCollectionQuery = {
+  collection?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Collection, 'id'> & {
+      products: {
+        nodes: Array<
+          Pick<
+            StorefrontAPI.Product,
+            'id' | 'title' | 'handle' | 'productType'
+          > & {
+            worksWith?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Metafield, 'value'>
+            >;
+            priceRange: {
+              minVariantPrice: Pick<
+                StorefrontAPI.MoneyV2,
+                'amount' | 'currencyCode'
+              >;
+            };
+            featuredImage?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+            >;
+            media: {
+              nodes: Array<
+                | {__typename: 'ExternalVideo' | 'MediaImage' | 'Model3d'}
+                | ({__typename: 'Video'} & Pick<StorefrontAPI.Video, 'id'> & {
+                      previewImage?: StorefrontAPI.Maybe<
+                        Pick<StorefrontAPI.Image, 'url'>
+                      >;
+                      sources: Array<
+                        Pick<
+                          StorefrontAPI.VideoSource,
+                          'url' | 'mimeType' | 'format' | 'width' | 'height'
+                        >
+                      >;
+                    })
+              >;
+            };
+          }
+        >;
+      };
+    }
+  >;
+};
+
 export type TopWidgetsCollectionQueryVariables = StorefrontAPI.Exact<{
   handle: StorefrontAPI.Scalars['String']['input'];
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
@@ -2368,6 +2418,10 @@ interface GeneratedQueryTypes {
   '#graphql\n  fragment KitOrOverlayPackProduct on Product {\n    id\n    title\n    handle\n    productType\n    description\n    featuredImage {\n      id\n      url\n      altText\n    }\n    selectedOrFirstAvailableVariant {\n      price {\n        amount\n        currencyCode\n      }\n      compareAtPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n  query KitsAndOverlayPacks (\n    $country: CountryCode\n    $language: LanguageCode\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n  ) @inContext(country: $country, language: $language) {\n    product0: product(handle: $handle0) { ...KitOrOverlayPackProduct }\n    product1: product(handle: $handle1) { ...KitOrOverlayPackProduct }\n    product2: product(handle: $handle2) { ...KitOrOverlayPackProduct }\n    product3: product(handle: $handle3) { ...KitOrOverlayPackProduct }\n  }\n': {
     return: KitsAndOverlayPacksQuery;
     variables: KitsAndOverlayPacksQueryVariables;
+  };
+  '#graphql\n  query HalloweenCollection(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      products(first: 8) {\n        nodes {\n          id\n          title\n          handle\n          productType\n          worksWith: metafield(namespace: "custom", key: "works_with") { value }\n          priceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n          featuredImage {\n            id\n            url\n            altText\n          }\n          media(first: 25) {\n            nodes {\n              __typename\n              ... on Video {\n                id\n                previewImage {\n                  url\n                }\n                sources {\n                  url\n                  mimeType\n                  format\n                  width\n                  height\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: HalloweenCollectionQuery;
+    variables: HalloweenCollectionQueryVariables;
   };
   '#graphql\n  query TopWidgetsCollection(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      products(first: 6) {\n        nodes {\n          id\n          title\n          handle\n          worksWith: metafield(namespace: "custom", key: "works_with") { value }\n          priceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n          featuredImage {\n            id\n            url\n            altText\n          }\n          media(first: 25) {\n            nodes {\n              __typename\n              ... on Video {\n                id\n                previewImage {\n                  url\n                }\n                sources {\n                  url\n                  mimeType\n                  format\n                  width\n                  height\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: TopWidgetsCollectionQuery;

@@ -2362,6 +2362,165 @@ button.reset:hover:not(:has(> *)) {
 
 /*
 * --------------------------------------------------
+* routes/_index — Halloween band (seasonal)
+* --------------------------------------------------
+* Only rendered inside the season window (isHalloweenSeason in
+* routes/_index.jsx), so these rules are dead weight for ten months of the
+* year and that is fine: they are ~2kB and they mean the section needs no
+* deploy to come back next September.
+*
+* The palette is the shop's own holo ramp pushed orange, NOT a stock
+* Halloween orange-on-black. Everything behind the cards is a gradient and
+* three CSS bats, so the band costs no image bytes and no layout shift.
+*/
+.halloween-band {
+  background:
+    radial-gradient(
+      120% 90% at 50% 0%,
+      rgba(255, 138, 46, 0.18),
+      rgba(255, 138, 46, 0) 65%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(112, 44, 140, 0.28),
+      rgba(11, 7, 19, 0) 80%
+    );
+  border-top: 1px solid rgba(255, 158, 74, 0.32);
+  border-bottom: 1px solid rgba(255, 158, 74, 0.32);
+  margin: 1rem 0;
+  overflow: hidden;
+  padding: 3rem 0 3.25rem;
+  position: relative;
+  text-align: center;
+}
+
+.halloween-band .halloween-eyebrow {
+  color: #ffb066;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.halloween-band .halloween-heading {
+  font-family: var(--font-display);
+  margin: 0 auto 0.75rem;
+  max-width: 640px;
+  padding: 0 2rem;
+}
+
+.halloween-sub {
+  color: var(--sws-sub);
+  margin: 0 auto 2rem;
+  max-width: 46rem;
+  padding: 0 2rem;
+}
+
+.halloween-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  padding: 0 2rem;
+  position: relative;
+  text-align: left;
+  @media (min-width: 40em) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 65em) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.halloween-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+  padding: 0 2rem;
+  position: relative;
+}
+
+/*
+* Three bats drifting across the top of the band. Pure CSS: each is a pair
+* of wing triangles built from one element's border box, clipped to a bat
+* silhouette. Decorative and aria-hidden, and motion is dropped entirely
+* under prefers-reduced-motion below.
+*/
+.halloween-bats {
+  inset: 0 0 auto 0;
+  height: 160px;
+  pointer-events: none;
+  position: absolute;
+}
+
+.halloween-bat {
+  background: #1a0f24;
+  clip-path: polygon(
+    50% 38%,
+    64% 22%,
+    78% 34%,
+    96% 18%,
+    88% 52%,
+    64% 62%,
+    50% 74%,
+    36% 62%,
+    12% 52%,
+    4% 18%,
+    22% 34%,
+    36% 22%
+  );
+  display: block;
+  height: 18px;
+  opacity: 0.55;
+  position: absolute;
+  width: 34px;
+  animation: halloween-bat-drift 15s linear infinite;
+}
+
+.halloween-bat:nth-child(1) {
+  left: -10%;
+  top: 18px;
+}
+
+.halloween-bat:nth-child(2) {
+  animation-delay: -5s;
+  animation-duration: 19s;
+  left: -10%;
+  height: 13px;
+  opacity: 0.4;
+  top: 62px;
+  width: 24px;
+}
+
+.halloween-bat:nth-child(3) {
+  animation-delay: -11s;
+  animation-duration: 23s;
+  left: -10%;
+  height: 10px;
+  opacity: 0.3;
+  top: 108px;
+  width: 19px;
+}
+
+@keyframes halloween-bat-drift {
+  from {
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    transform: translateX(60vw) translateY(-14px);
+  }
+  to {
+    transform: translateX(125vw) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .halloween-bats {
+    display: none;
+  }
+}
+
+/*
+* --------------------------------------------------
 * routes/_index — Works with strip
 * --------------------------------------------------
 */

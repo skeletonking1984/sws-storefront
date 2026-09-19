@@ -74,6 +74,19 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-19
+#### Halloween season section + collection
+- Created smart collection **Halloween** (`gid://shopify/Collection/342728704190`, handle `halloween`), rule `TAG EQUALS halloween`, sort BEST_SELLING, image = Spooky Stream Kit hero. Published to Online Store, Stream Widget Shop Headless and SWS Storefront.
+- Tagged 30 products `halloween` (29 active + Spooky Stream Kit, which carried `halloween overlay`/`spooky chat widget` but not the bare tag the rule matches). The Spooky Mushroom Bar goal widget was already tagged and is DRAFT, so it sits in the collection but does not render on the storefront.
+- **Adding a product to the homepage band and the collection is now one action: add the `halloween` tag in Admin.** No deploy, no handle list.
+- Judgment calls worth knowing: the Demon Samurai overlay pack was included (demon/horror, $29.99, the most expensive thing that fits the season). The Mushroom Goal Widget was excluded as cottagecore despite carrying `halloween_goal`. Cute Moth was included.
+- Homepage: new `HalloweenBand` in `app/routes/_index.jsx`, rendered between Shop by vibe and Top widgets, 8 products from the collection plus CTAs to `/collections/halloween` and the Spooky Stream Kit. Styles in `app/styles/app.css` under "routes/_index - Halloween band (seasonal)": gradient band, three CSS bats, no image bytes.
+- **The band is date-gated** by `isHalloweenSeason()` (UTC, Sep 15 to Nov 2 inclusive). Outside that window the loader skips the Storefront API call and the section renders nothing, so it retires and returns on its own each year. Widen it by editing `HALLOWEEN_SEASON`.
+- Verified on the local dev server at `:3100`: band renders 8 cards, 4-up at 1280px, links resolve, `/collections/halloween` returns 24 products with the intended SEO title and meta description. Console errors on the page are the two pre-existing ones (React `fetchPriority` casing warning, doubleclick CSP block), nothing new.
+- **Not verified: a rendered screenshot.** The in-app browser pane was hidden for this session so the page never painted, and headless Chrome hangs on this page's animation loops instead of completing a capture. Everything above was checked through the DOM and computed styles.
+- Open, needs Todd: 3 Halloween products are DRAFT and therefore invisible (Skull Ghost Chat Widget, Spooky Neon Chat Widget, Spooky Mushroom Bar Goal Widget). Activating them is a publish decision, not made here.
+- Not done: no "Halloween" item in the header mega menu. That is a Shopify Admin navigation edit.
+
 ### 2026-09-07
 - Baseline audit, checklist created, agents dispatched for catalog sync + storefront commit/deploy.
 
