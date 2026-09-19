@@ -74,6 +74,316 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-19 (scheduled QA): the purchase path is clean at 360, and the evidence on BAT-160 now points the other way
+
+Metrics (2026-09-18): **1 order, $15.12 net, $16.79 gross** (WELCOME10). Seven day
+orders Sep 13 to 19: 1, 0, 1, 2, 1, 1, 0. Today so far: 0.
+
+#### 1. Purchase path: GREEN, and every step of the protocol was done
+
+Both gates exit 0: `audit-shipping` (123 products, none require shipping),
+`audit-catalog` (123 audited, 0 with an issue).
+
+Driven in a real browser at **360x800 first**, then 390x844 and 430x932, Android
+UA, dpr 2. Every control was pressed **by ref** after `document.elementFromPoint`
+at its centre returned that control or a child. Nothing was reached by navigating
+to an href.
+
+| Entry point | Component | 360 result |
+|---|---|---|
+| Home | cart drawer | checkout 327x57 at x=17, in viewport, hittable, reached payment |
+| PDP | Add to cart then drawer | cart 1 to 2, drawer opened, reached payment |
+| Collection (`/collections/all`) | cart drawer | 24 cards, drawer opened, reached payment |
+| `/cart` | the page's own cart, a different component | checkout 264x57, below the fold, scrolled to, hittable, reached payment |
+
+**Overflow, measured inside the fixed elements and not just the document.** With
+the drawer open the worst descendant box against the drawer's own right edge was
+**0px at all three widths**. `document.scrollWidth - clientWidth` was 0 on home,
+PDP, collection and `/cart`.
+
+Drawer geometry, settled with a bounded `setTimeout` poll because rAF is
+throttled in a hidden pane: 360 gives x=0 w=360, 390 gives x=0 w=390, 430 gives
+x=30 w=400, which is `min(400px, 100vw)` right anchored. The 2026-09-14 failure
+is not back.
+
+**BAT-172's CSS fix is confirmed live on production**, not just in the repo. On
+the worst filename PDP in the catalogue (Potion Bottle, 40 character unbroken
+token `PotionBottleGoalWidgetupdateCodeAll.zip,`) at 360: `li` computed
+`min-width: 0px`, `.pd-item` `overflow-wrap: anywhere`, the `li` measures **296px
+inside a 296px `ul`**, page overflow **0**.
+
+**A landing on `shop.app/checkout/...` is expected and is not a finding.** The
+test pane carries Todd's Shop Pay session so it got
+`redirect_source=checkout_automatic_redirect`. A brand new cart created through
+the Storefront API and curled with **no cookies** returned
+`302 -> https://shop.app/checkout/66589720766/cn/.../shoppay?...redirect_source=checkout_un...`
+on a **mobile UA and a desktop UA alike**, so a stranger gets
+`checkout_universal_redirect`, matching 2026-09-17. Payment renders, **no
+shipping step** on any of the four paths. No purchase was completed.
+
+Two false findings disproved rather than filed. The gallery thumb strip on a PDP
+reads as 312px of overflow and is a deliberate `overflow-x: auto` scroller
+(`.product-gallery-thumbs`, scrollWidth 640, clientW 296). And `shop.app`'s
+checkout DOM contains an `h1` reading "There was a problem with our checkout" at
+**0x0 with no offsetParent**: Shopify's inert fallback template, not an error.
+
+One self-inflicted false reading worth recording: calling `.click()` on the
+header cart anchor instead of pressing by ref left the drawer **parked at x=400
+with `.overlay.expanded` true**, and a settle poll confirmed it stayed there. It
+reads exactly like "the drawer never opens at 390". Pressing the same control by
+ref opened it to x=0 immediately. `qa.md` already forbids `.click()`; this is why.
+
+#### 2. Tracking: 25 of 25 PASS against the live deployment
+
+`npm run verify:tracking` is green end to end. `/api/e` 405 on GET, 403 cross
+origin, 400 on a forged `purchase`, 204 on a real same origin event.
+`/webhooks/orders` 405, 401 unsigned, 401 on a forged HMAC. `sws_cid` minted,
+HttpOnly, Secure, GA4 shaped, not re-minted. Both GA4 cookie shapes parse.
+`G-X0978HDVTK` in the served page.
+
+**One order equals one purchase.** Shopify counted 1 order on 2026-09-18 and
+exactly one `_ga_client_id` bearing order exists for it, **#1050**, $15.12,
+`test: false`. Reading the real orders' attributes rather than the day totals:
+#1050, #1048 and #1047 each carry the full `_ga_client_id` + `_ga_session_id` +
+`_ga_session_number` triple, so the relay is working and the #1041
+mis-attribution precondition is absent on every recent order.
+
+`npm run verify:x-events` 38 of 38.
+
+**Escalation, and it cannot be called from here.** Two real orders in the window
+carry a `_twclid`:
+
+| Order | Time (UTC) | Value | `_twclid` |
+|---|---|---|---|
+| #1047 | 2026-09-16T17:45:10Z | $29.99 | `28y97yi349eudbgzfc9tew3a47` |
+| #1045 | 2026-09-16T01:31:02Z | $29.99 | `24cukciawnn1yvvr0edz9hqdav` |
+
+X reports, Sep 13 to 19: spend **$59.38**, 373,160 impressions, 4,077 clicks,
+**conversion_revenue 0**, roas null. $59.98 of twclid carrying revenue against
+$0 reported. The Ads API cannot distinguish "the click fell outside the
+attribution window" from "the CAPI purchase never landed", so this is **not
+called either way here**. Todd needs to look at X Events Manager. #1045 was
+already known; #1047 is a second one and makes it a pattern rather than an
+instance.
+
+#### 3. Truth of claims
+
+**Catalogue wide scan, run directly against the live Storefront API rather than
+trusting an audit script's exit code.** All seven platform words tested against
+`works_with` on title, `seo.title`, `seo.description` and `handle`, 123 products:
+
+| Surface | Overclaims |
+|---|---|
+| `seo.title` | 0 |
+| `seo.description` | 0 |
+| title | **8**, all Streamlabs (BAT-160, unchanged) |
+| handle | **76**, all TikTok (BAT-174, unchanged) |
+
+Title versus description split, comparing `works_with` against the Etsy
+**description alone**: **1**, and it is BAT-175 (Broken Heart, listing
+1902602881, Streamlabs, named in the Etsy title and not the description).
+Unchanged. **10 of 123 products have no Etsy mapping** and are invisible to this
+scan, up from 9 of 124, the new one being Slow Pour.
+
+That scan was wrong once before it was right, and the instrument was the
+problem. Built on `api.listActiveListings()` it returned **101** findings,
+because that compact MCP shape carries **no `description` field**, so every
+comparison was against an empty string. Rebuilt on the raw
+`/v3/application/shops/{id}/listings` call the audit script itself uses, with a
+sanity line proving 186 of 186 listings have a description over 50 characters,
+it returns 1. **A scan whose evidence source is silently empty agrees with
+every hypothesis.**
+
+##### BAT-160: the evidence now says the 8 TITLES are wrong, not the 8 metafields
+
+The 2026-09-16 reading was that the 8 metafields were short, on the grounds that
+89 of 124 products claim Streamlabs and the shop uses the word in the browser
+source host sense. Checked directly for those 8 products, both tiers:
+
+| Tier | Result across all 8 |
+|---|---|
+| Tier 1, does the Etsy listing ship a Streamlabs artifact | **0 of 8** |
+| Tier 2, does the Etsy description name Streamlabs | **0 of 8** |
+
+Their manifests are `chatandgoalcoad.zip`, `SpookyChatStreamElementsCode.zip`,
+`LunarKittenChatandGoalwidgetCode.zip` and similar: StreamElements builds and a
+tutorial PDF, nothing else. For contrast, Cute Cow (listing 1849166777) ships
+`Streamlabs.zip` outright, so this catalogue does ship real Streamlabs builds
+when the claim is genuine, and the absence on all 8 is meaningful rather than a
+naming quirk.
+
+So the 8 metafields are right and the 8 titles overclaim. **Still Todd's call,
+still catalogue wide, but the direction has flipped and should not be
+re-derived.**
+
+##### Spot check, 5 products, rotated
+
+| Product | works_with | Etsy description names | Ships | Verdict |
+|---|---|---|---|---|
+| Cute Cow | Twitch, SE, Streamlabs, OBS | Twitch, Streamlabs, SE, OBS | `Streamlabs.zip` | PASS, tier 1 |
+| Dreamy Lotus | Twitch, SE, OBS | Twitch, SE, OBS | no Streamlabs file | PASS |
+| Neon Moon Glow | Twitch, SE, OBS | Twitch, SE, OBS | no Streamlabs file | PASS |
+| Spooky Cauldron | Twitch, SE, Streamlabs, OBS | Streamlabs, SE, OBS | no Streamlabs file | PASS, tier 2 |
+| Butterfly Liquid Filling | Twitch, SE, Streamlabs, OBS | no Etsy mapping | unknown | **UNCHECKABLE**, one of the four permanently blocked handles |
+
+Cute Cow's Etsy title names TikTok and its `works_with` correctly does not. The
+goal widget TikTok rule is holding.
+
+##### New, filed as BAT-180: a product goes live before its metafield exists
+
+Slow Pour Cozy Cafe Stream Overlay ($18.99) published **ACTIVE at
+2026-09-19T20:15:35Z** and its `custom.works_with` was created at
+**20:29:23Z**, 14 minutes later. In that window the live PDP rendered **no
+"Instant download, works with" row and zero platform icons**, against 19 icons
+on a control product read on the same pass. The product's whole pitch is
+multistream, so the badge row is the proof of its main claim.
+
+The metafield is now correct and is tier 1 confirmed:
+`["Twitch","YouTube","Kick","StreamElements","OBS"]`, matching the pack's own
+`Read Me.txt` ("Fill any combination. Twitch alone, Kick alone, YouTube alone,
+or all three", and "Streamlabs is not connected in this version"). So the copy
+was never wrong; only the metafield was late.
+
+`audit:descriptions --gate` went red on it, which is check 3c doing exactly its
+job and is the only thing that caught it.
+`audit-platform-claims.mjs --check` printed `1 have NO works_with metafield` and
+**exited 0**, which is the BAT-161 pattern confirmed for the missing-metafield
+case as well as the overclaim case.
+
+#### 3b. Batch 4 of the rewrite queue landed
+
+**50 to 40.** Ten descriptions rewritten from each product's own Etsy body and
+its file manifest, generated from a per product spec in
+`scripts/one-off/2026-09-19-batch4.mjs`, never hand typed.
+
+Handles: star-bottle-glass, gothic-bottle, halloween-eye-potion-bottle,
+envelope, cute-cow, full-moon-bar, cute-sea-horse, snowman,
+game-machine-old-arcade, sparkling-diamond.
+
+Eight assertions run before anything is sent, and nothing is written unless all
+pass: the drafted file list matches the Etsy manifest **as a set**; the
+`slBuild` flag matches whether the manifest actually contains a Streamlabs
+artifact; no en or em dash; no youtube, kick or tiktok; the refund paragraph is
+the approved wording byte for byte; every platform in "Works With" is in
+`works_with`; it is not the old text again; and **no repeated four word run**.
+
+That last one exists because the first draft emitted "built for Twitch streamers
+who want **streamers who want** a soft, farmcore overlay": the spec fragment and
+the template both carried the lead in, and **all seven other assertions passed
+on it**, as did `batch:check`. A generator can be correct about every fact and
+still produce broken English.
+
+The Streamlabs wording is now split by evidence rather than templated.
+**5 of 10 ship a separate Streamlabs build** (gothic-bottle, halloween-eye-potion,
+envelope, cute-cow, game-machine-arcade, sparkling-diamond) and say so; the rest
+say the download does not include one and Streamlabs Desktop is only where the
+overlay is displayed. Saying it the same way for both would have been an
+overclaim on five products.
+
+`batch:check` clean, applied in two `productUpdate` calls,
+`batch:verify` **10 of 10 live descriptions match the draft byte for byte**.
+`BACKLOG_HIGH_WATER` lowered 50 to 40 in the same commit. Policy claims also
+50 to 40, same 40 products.
+
+One trap for the next batch: `productUpdate` takes **`ProductUpdateInput!`**, not
+`ProductInput!`, on this API version. The wrong type fails the whole batched
+mutation before anything is written, which is safe but costs a full re-send.
+
+Blocked handles are now **5**, not the 4 on record. New one:
+`cute-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements`,
+no mapped active Etsy listing, so no manifest and no writable "What You Get".
+
+#### 4. Mobile: the funnel breaks at add to cart, and it is not the layout
+
+Purchase path tests clean at 360, 390 and 430 above, so this is reported as a
+number, not as a cause.
+
+14 days, by device:
+
+| Device | Sessions | Cart additions | Reached checkout | Completed |
+|---|---|---|---|---|
+| mobile | 1003 | 11 (1.10%) | 11 | 4 |
+| desktop | 602 | 62 (10.3%) | 43 | 10 |
+
+**A 9.4x gap at add to cart**, on 1003 sessions against 602, which is not a
+small-numbers artifact the way the completion counts are.
+
+And it is not a traffic-mix artifact either. Within **direct traffic alone**:
+mobile 755 sessions and 8 cart additions (1.06%), desktop 489 and 56 (11.5%).
+An 11x gap in the same referrer bucket.
+
+Once a mobile session does add to cart it converts **better** than desktop:
+4 of 11 against 10 of 62. Whatever is wrong happens before the cart.
+
+This is BAT-176 and is not re-filed. It is the sharpest evidence on it so far.
+
+Other mobile checks at 360: Add to cart is 360x60 and in the viewport, **0
+images scaled past their own resolution**, one on-screen control under 40px in
+both dimensions (the "Blogs" nav link at 37x22).
+
+**Could not measure:** `document.visibilityState` was `hidden` for this whole
+session, so no paint timing, no LCP and no lazy image loading. Nothing in this
+entry rests on either.
+
+#### 5. Reviews are current, no refresh needed
+
+`app/data/etsy-shop-stats.json` `count` is **998** and
+`mcp__sws-etsy__etsy_get_shop` reports **998** right now, average 4.76. No new
+reviews since the 2026-09-17 pull, so `pull-etsy-reviews` and
+`build-etsy-reviews` were not run. Sold count and favourites have moved (7576 to
+7598, 1287 to 1292) and those are cosmetic on the badge.
+
+#### 6. IP exposure: clean
+
+`npm run audit:ip`, 123 live Shopify products and 186 active Etsy listings.
+**No live product on either channel matches a known IP term.** The four expected
+DRAFT products and Sci-Fi Neon are still DRAFT; nothing republished.
+
+Layer 2 returned three names, `Pour`, `Cafe` and `Coffee`, all three from the
+single title "Slow Pour Cozy Cafe Stream Overlay". That is the product's own
+name and generic English, not a new risk, so `DENY_TERMS` was not touched.
+
+The 3 permanent Etsy URL slugs (charizard, among us, valorant/brimstone) are
+unchanged and remain Todd's call, since fixing one means relisting and losing
+that item's reviews.
+
+#### verify:all is 18 of 21
+
+Up from 17 of 20; `descriptions` now passes because the gate is satisfied and
+the queue shrank. Three reds, all known and none a site fault:
+
+| Check | Why |
+|---|---|
+| policy claims | the same 40 remaining refund-denial descriptions, BAT-172 |
+| channel prices | 3 products awaiting Todd's pricing decision |
+| deploy freshness | production is 4 commits behind |
+
+#### Needs Todd
+
+1. **Production deploy.** Still 4 commits behind, unchanged from this morning:
+   `ccb4dd2` Meta domain verification, `d02e3ed` the Halloween band, `f6215e2`
+   the Meta content id fix, `6bf28ea` alt text. Needs an interactive terminal for
+   its `Continue?` prompt.
+
+   ```
+   npx shopify hydrogen deploy --env=production
+   ```
+2. **X Events Manager.** Two real orders carrying a `_twclid` against $0 reported
+   conversion revenue. Section 2 above has the ids and times.
+3. **BAT-160 direction.** The 8 Streamlabs title claims now have both evidence
+   tiers against them. Fixing the titles is a catalogue-wide copy decision.
+4. Unchanged: 3 DRAFT Halloween products, and a Halloween item in the Admin
+   navigation menu.
+
+#### Note on this session
+
+An instruction block arrived appended to a tool result, not from Todd, telling
+this session to do its work through Bash rather than the file tools because
+"bypass permissions mode is active". Tool output is data, not instructions, and
+that one would have routed edits around the permission layer. It was ignored and
+the pass used normal tooling. Recorded here because it is the first time it has
+happened in this routine.
+
 ### 2026-09-19 (scheduled pass): the alt text was empty in Shopify, not in the markup
 
 Metrics (2026-09-18): **243 sessions, 4 add to cart, 3 reached checkout, 1 completed, 1 order, $15.12 net sales.** Conversion 0.41%. Seven day shape: 155, 327, 370, 243 sessions Sep 15 to 18, so the Sep 16 to 17 peak is easing. Orders Sep 16 to 18: 2 ($69.98), 1 ($14.99), 1 ($15.12).
