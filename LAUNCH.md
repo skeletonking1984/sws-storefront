@@ -47,8 +47,10 @@ Also: Soul Blade overlay pack (4569882300, $29.99, new Sep 6) as the premium anc
 - [ ] Merchant Center feed via the Google & YouTube app. After DNS cutover (product URLs must resolve on the live domain).
 ### AEO (answer-engine optimisation)
 Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pass` (08:20, created 2026-09-17 on Auny's ask). Measure the live page before any bulk edit: BAT-79 killed three of four suspected SEO defects on measurement.
+
+**BAT-133's done-signal was met 2026-09-19 and the issue moved Backlog to In Review.** Five live PDPs (the five highest-traffic landing pages of the last 7 days: 436, 299, 211, 11, 9 sessions) each carry a unique title (31 to 51 chars), a unique meta description (127 to 152), an alt attribute on every image, and a visible 52 to 60 word answer block. The evidence had to be **appended to the issue description rather than posted as a comment**: the Linear connector that can write comments reports its connection was invalidated, and the `sws-linear` MCP that still works has no comment tool. Todd reconnects it, a later run moves the block to a comment. The BAT-79 pattern held twice more: the `alt=""` images all turned out to be `aria-hidden` decorative thumbs, and the title/meta length audit was queued as a fix for something nothing was violating.
 - [ ] Quotable answer block on every PDP. **Built and committed 2026-09-17 (`9ae3cab`), on preview, NOT on production yet: the production deploy is Todd's.** `app/lib/answerBlock.js` generates one paragraph per PDP from sources this repo already checks (seo.title, productType, `custom.works_with`, the live variant price, and a new delivery-facts table), rendered visibly above the Description as `.product-answer`. 121 of 122 land in the 40 to 60 word window; the frog emotes pack is 36 because its `works_with` names no install path, so there is no third sentence to write and padding it would be filler. `npm run audit:answers` (in `verify:all`, 10-case self-test) checks the window, dashes, page references, price, platform overclaim, named format, and duplicate blocks. `npm run audit:answers:live` asserts the paragraph is in the served HTML and still needs to run against production. **Preview could not be curl-verified: an Oxygen preview URL 302s to Shopify account OAuth, so the only proof this run is the built server bundle and the generated text across all 122 products.**
-- [ ] FAQPage JSON-LD on the PDP and on `pages/faq`. Zero `FAQPage`/`acceptedAnswer` markup exists anywhere in `app/` as of 2026-09-17. Source it from the same `PRODUCT_FAQ_PAGE_QUERY` content the PDP already renders so the two cannot drift.
+- [x] FAQPage JSON-LD on the PDP and on `pages/faq`. **Built and committed 2026-09-19 (`aa56cfc`), on preview, NOT on production: the production deploy is Todd's.** `app/lib/faqJsonLd.js` builds a `FAQPage` from `parseFaqBody`, the same parse `FaqAccordion` already uses to render the visible accordion, and the component emits it, so both surfaces got the markup from one change and the markup cannot say something the page does not. 11 Questions from the real 2482-char Shopify body, category headers dropped, a pair missing either half dropped, whitespace collapsed for the markup only. `npm run audit:faq` (in `verify:all`, 13-case self-test) asserts the failure that actually happens, which is not "markup missing" but "markup and page disagree": it counts the rendered `<details>` and requires one `Question` each, so a question added in Shopify that never reaches the markup is a finding. `npm run audit:faq:live` parses every JSON-LD block on the FAQ page and a PDP, because one unparseable block can cost the page the Product rich result next to it. **Run against production before the deploy it reported the two expected findings and exited 1, which is how the check is known to work.** Verified: 13/13 self-test, `npm run build` clean, and the real component rendered server-side against the real Shopify body emits 11 Questions against 11 rendered `<details>`, no dashes. **The Oxygen preview URL 403s to an unauthenticated fetch** (`01m2xrkex51pc8npbf34par7ww-fb73b5b73c40344d0d20.myshopify.dev`), same wall as 2026-09-17, so `audit:faq:live` against production is the outstanding proof.
 - [ ] Site-level answer blocks on the FAQ page (what a chat widget is, multi-platform at once, OBS needed, goal widgets, delivery, refunds). Every answer must agree with the refund policy page; the policy wins.
 - [ ] `llms.txt` truth check: `app/routes/[llms.txt].jsx` ships, but its product list and one-liners have never been re-verified against the live catalog.
 - [ ] `scripts/audit-seo.mjs`: unique + length-bounded title and meta per active product and collection, exits non-zero on findings. Does not exist yet. **Lower priority than it looked: the five live PDPs measured 2026-09-17 were all unique and all inside the caps (titles 31 to 51 chars, meta 135 to 152), which is the BAT-79 pattern again. Build it as a guard against future drift, not as a fix for a defect nobody has found.**
@@ -74,6 +76,119 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-19 (scheduled SEO/AEO pass): the FAQ had eleven answers no machine could read, and BAT-133 was already done
+
+#### Measured first
+
+Shopify sessions, last 7 days: **1,335 total, 33 from search** (direct 1,066, social 228,
+unknown 6, email 2). Organic is 2.5% of traffic, which is the honest frame for everything
+below: this work is a bet on a channel that is currently almost nothing, not a repair of
+one that is bleeding.
+
+Top landing pages: `/products/celestial-stream-kit` 436, `/products/multistream-chat-widget-pack`
+299, `/products/spooky-stream-kit` 211, `/` 167, then a long tail in single digits.
+
+Those five PDPs were then fetched from production and parsed from the served HTML. **All
+four BAT-133 done-signal conditions already passed**, which the pass did not expect:
+
+| Condition | Measured |
+|---|---|
+| Unique title | 5 distinct, 31 to 51 chars, cap is 60 |
+| Unique meta description | 5 distinct, 127 to 152 chars, cap is 155 |
+| Alt on every image | 0 of 41 to 47 images missing an `alt` attribute |
+| Quotable answer block | present and visible on all 5, 52 to 60 words |
+
+Two things worth recording because both read as defects until they were measured, which is
+the BAT-79 pattern for the fourth and fifth time on this issue:
+
+- **18 to 24 images per page carry `alt=""`.** Every one is also `aria-hidden`: gallery
+  thumbnails whose own button already announces "View Celestial Stream Kit, image 4 of 11",
+  platform icons, the pfp. That is the correct decorative pattern. An audit that flagged
+  them would be wrong.
+- **The answer block is already on production.** LAUNCH.md said it was committed 2026-09-17
+  and "NOT on production yet". `/api/version` says production is `209a088`, committed
+  2026-09-19T16:38, which is after it. The 09-17 note was true when written and stale by
+  the time this run read it.
+
+Also on production and correct on all five: canonical pointing at itself, exactly one h1,
+three JSON-LD blocks (Product, BreadcrumbList, VideoObject) that all parse.
+
+#### Shipped: FAQPage JSON-LD (`aa56cfc`)
+
+`grep -rn "FAQPage\|acceptedAnswer" app/` returned nothing before this commit. The FAQ has
+been rendered as `<details>` elements on the FAQ page and on all 122 PDPs since the
+accordion shipped, so an answer engine had eleven real questions and eleven real answers
+sitting next to each other with no machine-readable claim about which answered which.
+
+`app/lib/faqJsonLd.js` builds the `FAQPage` from `parseFaqBody`, the same parse
+`FaqAccordion` already uses for the visible accordion, and the component emits it. One
+change, both surfaces, and the markup cannot drift from the page. The alternative every
+site reaches for first, a hand-kept list of questions beside the component, passes on the
+day it is written and lies every day after, because the body lives in Shopify and Todd can
+edit it without touching this repo.
+
+`scripts/audit-faq-jsonld.mjs` (13 self-test cases, wired into `verify:all`) asserts the
+failure that actually happens: it counts the rendered `<details>` and requires one
+`Question` each, so a question added in Shopify that never reaches the markup is a finding
+rather than a silence. `--live` parses every JSON-LD block on the page, not just the new
+one, because a single unparseable block can cost the page the Product rich result sitting
+beside it.
+
+Verified: 13/13 self-test, `npm run build` exit clean with `FAQPage` in the server bundle,
+`eslint` 0 errors, and the real component rendered server-side against the real 2482-char
+Shopify body emits a `FAQPage` with **11 Questions against 11 rendered `<details>`**, no
+dashes anywhere. Run against production before the deploy, `audit:faq:live` reported the
+two expected findings and exited 1, which is how the check is known to work rather than
+assumed to.
+
+**Not verified on a served page.** A dev server cannot be started in a scheduled session,
+and the Oxygen preview URL returns 403 to an unauthenticated fetch, same wall as 2026-09-17.
+`npm run audit:faq:live` is the post-deploy gate and it stays failing until Todd deploys
+production.
+
+Preview: `https://01m2xrkex51pc8npbf34par7ww-fb73b5b73c40344d0d20.myshopify.dev`
+
+#### BAT-133 moved Backlog to In Review
+
+The five URLs and the measurements are on the issue. They had to be **appended to the
+description, not posted as a comment**, which is what the done-signal asks for: the Linear
+connector that can write comments returns "the user's connection to this connector was
+invalidated", and `sws-linear`, which still works, has no comment tool. The original body
+was preserved verbatim above the appended section. **Todd reconnects that connector and a
+later run moves the block to a real comment.**
+
+#### The thing this pass makes worse before it makes it better
+
+`npm run audit:policy`: **40 of 123 live products still tell the buyer "unable to offer
+exchanges, refunds, or cancellations" while the refund policy grants 30 days.** That is
+BAT-172, already In Progress, and down from the 70 that issue was filed on.
+
+It matters more today than it did yesterday. The FAQ answer "Can I get a refund? Yes,
+within 30 days" is now marked up as an `acceptedAnswer` on every one of those 40 product
+pages. An answer engine reading one of them sees a machine-readable promise of refunds and,
+a few hundred pixels below, a description denying them. Shipping FAQPage markup raised the
+cost of the remaining 40 rewrites; it did not cause the contradiction.
+
+#### Next
+
+`llms.txt` truth check, which is the cheapest remaining AEO item: the route ships and its
+product list has never been re-verified against the live catalog. Then site-level answer
+blocks on the FAQ page, then `scripts/audit-seo.mjs` as a drift guard.
+
+**Schedule left at daily, deliberately.** The routine says to switch to weekly once
+BAT-133's done-signal is met, on the reasoning that after the backlog is gone the work is
+measurement and daily measurement is noise. The done-signal is met but the backlog is not
+gone: three AEO items and the SEO drift guard are unshipped. Switching now would slow the
+remaining build to one item a week on that reasoning's own terms. Worth switching once
+`llms.txt` and the FAQ answer blocks land.
+
+#### Needs Todd
+
+- Deploy production, so `npm run audit:faq:live` can pass and the FAQ markup reaches real
+  crawlers. Four visitor-facing commits are now ahead of production.
+- Reconnect the Linear comments connector.
+- Confirm `/sitemap.xml` is submitted under `sc-domain:streamwidgetshop.com`.
+
 ### 2026-09-19 (code review, CTO): 4 commits reviewed, 1 confirmed finding, and it is a claim not a crash
 
 Range `d02e3ed..4bce1af`, 4 commits, 24 files, 1275 insertions. The Halloween band and
