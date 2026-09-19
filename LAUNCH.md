@@ -74,6 +74,118 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-19 (code review, CTO): 4 commits reviewed, 1 confirmed finding, and it is a claim not a crash
+
+Range `d02e3ed..4bce1af`, 4 commits, 24 files, 1275 insertions. The Halloween band and
+collection, the Meta content id change, the alt text work, and the LAUNCH entry for it.
+
+#### Confirmed finding: BAT-181
+
+`f6215e2` says "Meta was matching 15.4% of content ids because they were product gids".
+`app/lib/analytics/pixels/meta.js:146` repeats it. The same file, at line 19, says the
+adapter is a complete no-op until `PUBLIC_META_PIXEL_ID` is set, that Meta saw zero
+ViewContent and zero AddToCart for the seven days before 2026-09-18, and that "the only
+events Meta saw came from the Shopify side".
+
+Both cannot be true. If the storefront sent nothing, this file's `content_ids` were never
+transmitted and cannot have produced a match rate.
+
+Checked against production rather than argued:
+
+```
+curl -s https://streamwidgetshop.com/ | grep -c 'G-X0978HDVTK'      -> 1
+curl -s https://streamwidgetshop.com/ | grep -c 'q7mwb'             -> 2
+curl -s https://streamwidgetshop.com/ | grep -c '511838711286120'   -> 0
+```
+
+GA4's id and the X pixel id are served. The Meta pixel id is not. The adapter has never
+run. The 15.4% comes from the Shopify Facebook and Instagram channel sync, which this
+commit did not touch, so it is most likely still 15.4% while the commit reads as a fix.
+
+The code change itself may still be right for the day the pixel is switched on. It is
+also UNVERIFIABLE from here: the bare numeric variant id matches this repo's own Google
+feed (`feedId()`, set 2026-09-16) but Meta's catalog is fed by the Shopify channel, not
+by that feed. No Meta access exists in this session. Do not set `PUBLIC_META_PIXEL_ID`
+until someone reads the real retailer id out of Commerce Manager.
+
+Ruled out rather than assumed: the `item.variantId || item.id` fallback cannot
+reintroduce a product gid. `products.$handle.jsx:330` calls `selectedVariant.selectedOptions`
+with no optional chaining, so a null variant crashes the PDP before any event is built,
+and cart events read `merchandise.id`, which is always a variant gid.
+
+#### Verified clean
+
+| Check | Result |
+|---|---|
+| `npm run build` | exit 0 |
+| `node scripts/audit-shipping.mjs` | exit 0, 123 products, none require shipping |
+| `node scripts/audit-catalog.mjs` | exit 0, 123 audited, 0 with issues |
+| `npm run verify:tracking` | 25 passed, 0 failed, against production |
+| `npm run verify:feed` | PASS, 123 items, 0 excluded for IP, longest g:id 14 chars |
+| `npm run audit:alt` | 123 products, 925 media, 0 issues |
+| `npm run audit:alt:self-test` | 13 of 13 |
+
+**Read `verify:tracking` as history, not as coverage of this diff.** `npm run audit:deploy`
+says production is on `0f7d552` with 4 unshipped visitor-facing commits, so that run
+exercised code from before the analytics change. The task's own rule is to run it when
+`app/lib/analytics/` is touched; it was run, and it cannot see this diff until Todd deploys.
+
+#### The alt text work, measured rather than read
+
+The risk in `app/lib/productName.js` is that it takes platform names out of Etsy keyword
+titles, which is the single most expensive recurring bug in this catalogue. Ran it over
+all 123 live titles and then checked the 925 alt strings it produced against each
+product's own `custom.works_with` metafield:
+
+- 0 empty subjects, 0 subjects under 6 characters, 1 over 70 (Demon Samurai, 85).
+- **0 alt strings claim a platform the product's own metafield does not list.** Longest
+  stored alt is 124 characters, under the 125 cap.
+- 2 subjects keep a platform word: `Twitch Liquid Goal Bar Widget` and
+  `Twitch Liquid Combo Goal Bar Widget`. The cleaner drops a trailing comma clause naming
+  a platform, and these have the word at the head of the title instead. Not a finding:
+  CLAUDE.md records that Twitch is the baseline and never an overclaim, and both
+  metafields list it. It is a latent gap if a non Twitch platform ever leads a title.
+
+#### Already filed, still open, touched by this diff and not fixed
+
+- **BAT-167**, PDP gallery renders blank after client side navigation. `ProductGallery.jsx`
+  was edited in `6bf28ea` and the lazy `useState` initialiser at line 43 is untouched, with
+  still no `key` on the gallery at `products.$handle.jsx:580`. The new `thumbLabel` and
+  `mainAlt` read `items.length`, so the same stale index now also announces a wrong count.
+- **BAT-168**, feed IP check re-declares `IP_TERMS`. `verify-feed.mjs` was edited in
+  `f6215e2` and its hardcoded regex was left alone. Measured today by running both lists
+  over the same probes rather than reading them side by side: `Disney Castle Goal Widget`,
+  `Sanrio Cute Chat Widget`, `Hello Kitty Goal Bar` and `Overwatch Chat Widget` all match
+  `IP_TERMS` and none match the verifier. **No live product exploits the gap**: across 123
+  storefront products the two lists disagree on 0 real titles, and 0 descriptions name any
+  IP term, so the feed is clean today.
+
+#### Not measured, and not claimed
+
+**The Halloween band has not been seen at 360px.** `preview_start` refuses to run a dev
+server in an unattended session, and the band is not on production, so nothing rendered it.
+What can be said statically: `.halloween-grid` is the same box model as `.top-widgets-grid`
+(grid, gap 1.5rem, `1fr`, `padding: 0 2rem`, same 40em and 65em breakpoints), it renders the
+same `ProductItem`, and `/` measured 0 overflow at 360 on 2026-09-17. The bat keyframes reach
+`translateX(125vw)` but sit inside `.halloween-band { overflow: hidden }`, which is its own
+containing block, so they cannot widen the page. That is inference. **Measure the band at
+360 on the first pass after it deploys.**
+
+#### Heads-up on uncommitted work, not a finding
+
+The working tree carries `white-space: nowrap` on a new `.product-description-body code`
+rule in `app/styles/app.css`. That is the same selector family whose `li` produced 12px of
+horizontal scroll at 360px on 2026-09-17, from content that could not break. A nowrap chip
+holding a long query string is that bug again. Measure it at 360 before committing it.
+
+#### Process change made this run
+
+Added a rule to the review's own prompt file: when a commit claims to fix a metric a live
+platform reported, check whether the changed code path is switched on in production before
+accepting the causal claim. Code behind an unset env var cannot have caused anything. That
+is the rule that turned this review's one finding from a comment nit into an open ads
+question.
+
 ### 2026-09-19 (scheduled QA): the purchase path is clean at 360, and the evidence on BAT-160 now points the other way
 
 Metrics (2026-09-18): **1 order, $15.12 net, $16.79 gross** (WELCOME10). Seven day
