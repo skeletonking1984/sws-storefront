@@ -61,6 +61,21 @@ export const SOURCES = {
  *   purchase  revenue, server side, via the adapter's sendPurchase
  *   feed      a product feed route we serve
  *   claim     the channel requires a verified/claimed domain
+ *
+ * `publicId` is the pixel/measurement id the LIVE page must serve for that
+ * destination, and it is required on every destination declaring a pixel.
+ * It is not a secret: every one of these is rendered into the HTML of every
+ * page, which is exactly why it can be asserted from outside.
+ *
+ * It is written here deliberately, and it is not a duplicate of the env var
+ * it mirrors. The env var lives on Oxygen where nothing in this repo can read
+ * it, so an adapter whose env var is unset is a complete no-op that injects no
+ * script, throws nothing and logs nothing. Meta sat in exactly that state for
+ * the seven days to 2026-09-18: zero ViewContent, zero AddToCart, a pixel
+ * adapter that was finished and registered, and every offline check green,
+ * because an unset var and a quiet day are the same bytes. Naming the expected
+ * id here is what lets `--live` tell them apart, and it catches a WRONG id too,
+ * which a presence check never would.
  */
 export const DESTINATIONS = [
   {
@@ -69,6 +84,7 @@ export const DESTINATIONS = [
     adapter: 'app/lib/conversions/ga4.server.js',
     browser: 'app/lib/analytics/pixels/ga4.js',
     envKeys: ['PUBLIC_GA4_MEASUREMENT_ID', 'PRIVATE_GA4_API_SECRET'],
+    publicId: 'G-X0978HDVTK',
     expects: {pixel: true, events: true, purchase: true, feed: null, claim: false},
     note: 'Browser first; the relay only fires when gtag was blocked.',
   },
@@ -78,6 +94,7 @@ export const DESTINATIONS = [
     adapter: 'app/lib/conversions/x.server.js',
     browser: 'app/lib/analytics/pixels/x.js',
     envKeys: ['PUBLIC_X_PIXEL_ID', 'PRIVATE_X_PURCHASE_EVENT_ID'],
+    publicId: 'q7mwb',
     expects: {pixel: true, events: true, purchase: true, feed: '/feed.csv', claim: false},
     note: 'Base tag only in the browser, for audiences. ALL events server side.',
   },
@@ -85,11 +102,22 @@ export const DESTINATIONS = [
     id: 'meta',
     label: 'Meta (Facebook & Instagram)',
     adapter: 'app/lib/conversions/meta.server.js',
-    browser: null,
+    browser: 'app/lib/analytics/pixels/meta.js',
     envKeys: ['PUBLIC_META_PIXEL_ID', 'PRIVATE_META_ACCESS_TOKEN'],
-    expects: {pixel: false, events: false, purchase: true, feed: null, claim: false},
-    note: 'NOT WIRED by choice, 2026-09-16: no Meta ads running. Adapter exists and is inert. '
-        + 'To enable: set both env keys, add a browser adapter, add sendEvent, add a feed.',
+    publicId: '511838711286120',
+    expects: {pixel: true, events: false, purchase: true, feed: null, claim: true},
+    note: 'WIRED 2026-09-19, correcting a note that said "NOT WIRED by choice, no Meta ads '
+        + 'running". Meta ads ARE running: 122 products published to Facebook & Instagram, a '
+        + 'catalog in Commerce Manager, and CAPI purchases already being sent. The browser '
+        + 'adapter (PageView, ViewContent, AddToCart, InitiateCheckout, Search, keyed on the '
+        + 'bare numeric variant id) is written, registered in analytics/registry.js and '
+        + 'allowlisted in the CSP. `events` stays false and that is correct: it means SERVER '
+        + 'side sendEvent, which meta.server.js does not have and does not need, because the '
+        + 'browser adapter carries the funnel and the webhook carries purchase. '
+        + 'STILL OFF ON PRODUCTION: PUBLIC_META_PIXEL_ID is not set on Oxygen, so the adapter '
+        + 'no-ops and the served page carries no Meta pixel. Todd sets that var. '
+        + '`claim` is true because Meta attributes no conversion until streamwidgetshop.com is '
+        + 'verified in Business Manager, so the CAPI purchases being sent today land nowhere.',
   },
   {
     id: 'google-merchant',

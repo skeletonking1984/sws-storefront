@@ -131,8 +131,12 @@ dl {
   margin: 0.5rem 0;
 }
 
+/* A background with no colour inherits whatever the surrounding prose uses. On
+   a dark page that is light text on a light chip, which is invisible. Always
+   set both. */
 code {
   background: #ddd;
+  color: #1b1430;
   border-radius: 4px;
   font-family: monospace;
   padding: 0.25rem;

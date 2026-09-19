@@ -4,8 +4,14 @@
     {
       "name": "storefront",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 3000
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3111"
+      ],
+      "port": 3111
     }
   ]
 }

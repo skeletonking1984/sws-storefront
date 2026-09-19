@@ -65,10 +65,16 @@ export const CONFIG_GROUPS = [
   {
     id: 'meta',
     title: 'Meta ads',
-    note: 'Not launched. Both blank is the expected state.',
+    note: 'LAUNCHED. Blank is no longer the expected state, corrected 2026-09-19: '
+        + '122 products are published to the Facebook & Instagram channel and the '
+        + 'Commerce Manager catalog is live, so this section describing Meta as '
+        + '"not launched" was four days stale.',
     vars: [
-      {key: 'PUBLIC_META_PIXEL_ID', impact: 'No Meta pixel. Expected until Meta ads launch.'},
-      {key: 'PRIVATE_META_ACCESS_TOKEN', impact: 'No Meta server side purchases. Expected until Meta ads launch.'},
+      {key: 'PUBLIC_META_PIXEL_ID', impact: 'No Meta pixel, and it fails SILENTLY: the adapter '
+        + 'is finished and registered but no-ops without this, so the site injects no script '
+        + 'and sends no ViewContent or AddToCart. Verified absent from the served page on '
+        + '2026-09-19. `npm run verify:channels -- --live` now fails on this.'},
+      {key: 'PRIVATE_META_ACCESS_TOKEN', impact: 'No Meta server side purchases from the orders webhook.'},
     ],
   },
   {

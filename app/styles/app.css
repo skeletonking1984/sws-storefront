@@ -3811,6 +3811,19 @@ button.reset:hover:not(:has(> *)) {
   max-width: 68ch;
 }
 
+/* Inline code in a product description is almost always a query string the
+   buyer has to type, so it has to read on the dark page rather than borrow the
+   light chip from the reset. */
+.product-description-body code {
+  background: rgba(24, 16, 44, 0.72);
+  color: #f0d9a8;
+  border: 1px solid rgba(180, 150, 220, 0.28);
+  border-radius: 5px;
+  padding: 0.1em 0.42em;
+  font-size: 0.92em;
+  white-space: nowrap;
+}
+
 .product-description-body strong,
 .product-description-body b {
   color: var(--sws-text);

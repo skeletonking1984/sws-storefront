@@ -13,8 +13,19 @@
  * So every `expects` key is verified against a fact:
  *   events    the adapter file must export sendEvent
  *   purchase  the adapter file must export sendPurchase
- *   pixel     the browser adapter must exist and inject a script
+ *   pixel     the browser adapter must exist and inject a script, AND under
+ *             --live the destination's publicId must appear in the served HTML
  *   feed      the route file must exist AND the live URL must return 200
+ *
+ * The --live half of `pixel` was added 2026-09-19 for the failure the offline
+ * half cannot see. Every pixel adapter here is a deliberate no-op while its
+ * env var is unset: no script, no events, no error. Those vars live on Oxygen,
+ * which this repo cannot read, so a finished and registered adapter whose var
+ * was never set looks EXACTLY like a healthy one on a quiet day. Meta spent
+ * the seven days to 2026-09-18 in that state, reporting zero ViewContent and
+ * zero AddToCart, and it was found by hand in Commerce Manager rather than by
+ * anything here. The ids are public and are rendered into every page, so the
+ * served HTML is the one place the question can actually be answered.
  *
  * Exit 1 on any mismatch. A channel that is deliberately off (Meta) declares
  * that in `expects` and passes; the manifest is where an intentional gap gets
@@ -57,6 +68,13 @@ for (const d of DESTINATIONS) {
   // pixel: a browser adapter that actually injects something.
   got.pixel = Boolean(d.browser) && existsSync(`${R}/${d.browser}`) &&
               (has(d.browser, 'createElement(\'script\')') || has(d.browser, 'loadScript'));
+
+  // A declared pixel with no publicId cannot be checked against the live
+  // page, and an unverifiable declaration is the state this file exists to
+  // end. Fail rather than skip.
+  if (e.pixel && !d.publicId) {
+    fail.push(`${d.id}: declares pixel but has no publicId, so --live cannot verify it`);
+  }
 
   // feed: the route must exist on disk.
   got.feed = null;
@@ -126,6 +144,37 @@ if (LIVE) {
       if (items && Number(items) === 0) fail.push(`${d.id}: live feed is empty`);
     } catch (error) {
       fail.push(`${d.id}: live feed unreachable (${error.message})`);
+    }
+  }
+
+  // Live pixels. One fetch of the homepage, then every destination that
+  // declares a pixel must have its publicId in those bytes. The ids are
+  // serialized into the page's loader data (see buildAnalyticsConfig in
+  // app/lib/analytics/registry.js), so an id that is absent means the env
+  // var behind it is unset on Oxygen and that adapter is sending nothing.
+  console.log('\nlive pixels:');
+  const wantPixel = DESTINATIONS.filter((x) => x.expects.pixel && x.publicId);
+  let html = null;
+  try {
+    const res = await fetch(`${ORIGIN}/?cb=${Date.now()}`);
+    if (!res.ok) throw new Error(`homepage returned ${res.status}`);
+    html = await res.text();
+  } catch (error) {
+    // Unreachable is a failure, not a skip. A silent skip here would restore
+    // exactly the blind spot this section was added to remove.
+    fail.push(`live pixels: could not fetch ${ORIGIN} (${error.message})`);
+  }
+  if (html) {
+    for (const d of wantPixel) {
+      const present = html.includes(d.publicId);
+      console.log(`  ${d.id.padEnd(18)} ${present ? 'served' : 'ABSENT'}  ${d.publicId}`);
+      if (!present) {
+        fail.push(
+          `${d.id}: declares a pixel but ${d.publicId} is not in the served page. ` +
+          `The adapter no-ops while ${d.envKeys[0]} is unset on Oxygen, so nothing ` +
+          `is being sent. Set it in the production environment.`,
+        );
+      }
     }
   }
 }
