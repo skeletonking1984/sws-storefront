@@ -52,7 +52,7 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [ ] Site-level answer blocks on the FAQ page (what a chat widget is, multi-platform at once, OBS needed, goal widgets, delivery, refunds). Every answer must agree with the refund policy page; the policy wins.
 - [ ] `llms.txt` truth check: `app/routes/[llms.txt].jsx` ships, but its product list and one-liners have never been re-verified against the live catalog.
 - [ ] `scripts/audit-seo.mjs`: unique + length-bounded title and meta per active product and collection, exits non-zero on findings. Does not exist yet. **Lower priority than it looked: the five live PDPs measured 2026-09-17 were all unique and all inside the caps (titles 31 to 51 chars, meta 135 to 152), which is the BAT-79 pattern again. Build it as a guard against future drift, not as a fix for a defect nobody has found.**
-- [ ] Alt text audit on every product image (empty alt, filename alt, and the title repeated on all nine images are each findings). **MEASURED 2026-09-17 and it is a real defect, unlike the title/meta suspicions: 17 to 24 `<img>` tags per PDP carry `alt=""`. Two of those per page are decorative chrome (the profile picture and the StreamElements mark) and legitimately empty, but the rest are the product's own gallery and its Etsy review thumbnails. This is now the top unshipped SEO item.**
+- [x] Alt text audit on every product image. **DONE 2026-09-19, and the cause was the DATA, not the markup: 676 of 918 media nodes in Shopify had no alt at all.** `scripts/build-alt-text.mjs` generated one per image and `fileUpdate` applied them; 918 of 918 now carry alt, 112 hero alts all distinct. `ProductGallery` stopped rendering `alt=""` on the main image and now announces "View Boba Drink Goal Widget, image 4 of 11" instead of "View media 4", with `app/lib/productName.js` as the one keyword-title cleaner both the component and the generator use. Guarded by `npm run audit:alt` (in `verify:all`, 13-case self-test) on empty, filename, placeholder, over-length, dashes and one string repeated across a gallery. **The 2026-09-17 count of 17 to 24 per PDP was right but its breakdown was wrong**: on the Boba Drink PDP 12 of the 31 were Twitter's own `adsct` pixels and 6 were platform icons already correctly `aria-hidden`, so the real defect was 11 gallery thumbs plus the main image, not "everything but two".
 
 ### Agentic
 - [ ] WebMCP live for real visitors. Code is shipped and verified: 3 imperative tools on `document.modelContext` (`search_widgets`, `get_widget_details`, `add_to_cart`, via `app/lib/agentTools.js` and `/api/agent`), 4 declarative forms carrying `toolname`/`tooldescription`, and `Layout` renders `<meta http-equiv="origin-trial">` when `PUBLIC_WEBMCP_ORIGIN_TRIAL_TOKEN` is set. **Blocked on two things only Todd can do**, and Lighthouse reports all three WebMCP audits Not Applicable until the first one is done:
@@ -74,6 +74,63 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-19 (scheduled pass): the alt text was empty in Shopify, not in the markup
+
+Metrics (2026-09-18): **243 sessions, 4 add to cart, 3 reached checkout, 1 completed, 1 order, $15.12 net sales.** Conversion 0.41%. Seven day shape: 155, 327, 370, 243 sessions Sep 15 to 18, so the Sep 16 to 17 peak is easing. Orders Sep 16 to 18: 2 ($69.98), 1 ($14.99), 1 ($15.12).
+
+Note on the query: `SINCE -1d UNTIL -1d` returns a row of zeroes on this shop. The TIMESERIES form is what gives yesterday's real numbers. Do not report the zero.
+
+#### Conversion tracking health check (A2)
+
+| # | Check | Result |
+|---|---|---|
+| 1 | Endpoint alive and locked | **PASS.** `GET /webhooks/orders` 405, unsigned POST 401, POST with a bogus `X-Shopify-Hmac-Sha256` 401 |
+| 2 | Storefront events fire | **PASS.** On a real production PDP: `gtag` is a function, `_ga` and `_ga_X0978HDVTK` set, two `/g/collect` hits with `tid=G-X0978HDVTK` (`view_item` and `page_view`), `uwt.js` loaded and `analytics.twitter.com/1/i/adsctp` fired. A real Add to cart click then produced `gtm.formSubmit` on `dataLayer` and a third `/g/collect` carrying `add_to_cart` |
+| 3 | Attribution attaching | **PASS.** Most recent order **#1050**, 2026-09-19T02:39Z, $15.12, `test: false`, carries `_ga_client_id 1041582387.1789785311`. #1048 and #1047 also carry one, #1047 additionally `_twclid` |
+| 4 | No double counting | **NOT MACHINE CHECKABLE from here.** `webPixel` needs the `read_pixels` scope and this connection does not have it. Behavioural proxy is clean: Shopify counted exactly 1 order on 2026-09-18 and one `_ga_client_id` bearing order exists for it. Someone with Admin access should still eyeball Settings > Customer events |
+| 5 | Env vars | **Inferred set on production.** `G-X0978HDVTK` renders in the served HTML (so `PUBLIC_GA4_MEASUREMENT_ID` is set) and a bogus HMAC returns 401 rather than a 500 (so `PRIVATE_SHOPIFY_WEBHOOK_SECRET` is present and compared). They cannot be read back, so this stays an inference |
+
+None of the four `analytics-debugging-traps` applies: this was Realtime-equivalent evidence read straight off `performance.getEntriesByType('resource')` in a clean pane, not an exploration, and the Add to cart button was hit by `ref`, not by coordinate.
+
+One thing worth not repeating: the first PDP handle tried, `neon-animated-twitch-chat-and-goal-widget`, **404s**. It reads like a tracking failure (no gtag, no scripts, empty title) and is just a dead URL. Pull a real handle out of `/sitemap/products/1.xml` before concluding anything about a page.
+
+#### Shipped: alt text, end to end
+
+The checklist called this "the top unshipped SEO item" and described it as a markup problem. It was a data problem.
+
+- **Measured first.** On the live Boba Drink PDP, 31 of 55 `<img>` tags had `alt=""`. **12 of those are Twitter's own `adsct` pixels** and 6 are platform icons already correctly `aria-hidden`, so the page's own defect was 11 gallery thumbnails and the main image. Querying Admin explained why: **676 of 918 media nodes had no alt in Shopify**. Only the videos mostly had one.
+- **Data.** `scripts/build-alt-text.mjs` (new) reads the live catalogue through the Storefront API, generates alt for anything empty, and writes `data/alt-text-plan.json`. Applied through Admin `fileUpdate` in 4 calls. Re-running the generator now reports **918 of 918 already have alt, 0 to set**.
+- Three rules it will not break. It never overwrites a non-empty alt, because a human's wording in Admin beats anything generated. It never takes platform names from a title, because the titles here name YouTube, Kick and TikTok on widgets that support none of them, so platforms come from `custom.works_with` or not at all. And it never stamps one string on all nine of a product's images, because that is its own finding: image 1 gets the descriptive line, the rest are numbered previews. Result: 112 hero alts, all distinct, longest 124 characters, none truncated, no dashes.
+- **Code.** `ProductGallery` now takes the product title. The main image falls back to it instead of `''`, the thumbnails are explicitly decorative inside a button that announces `View Boba Drink Goal Widget, image 4 of 11` rather than `View media 4`, and `SearchResultsPredictive` falls back to the product, collection or article title. The pfp, the empty-state logo and the platform icons are marked `aria-hidden` so their emptiness is a statement rather than an oversight.
+- **`app/lib/productName.js`** (new) holds the single keyword-title cleaner. Both the component and the generator import it, so the rendered name and the stored name cannot drift. It also handles the bullet separator, which six titles use and which had been pushing them past the 125 character cap.
+- **Guard: `npm run audit:alt`**, added to `verify:all`. Fails on empty alt, filename alt, placeholder alt, over-length alt, an em or en dash, and one string repeated across three or more of a product's images. It asks the catalogue those six questions rather than re-running the generator and diffing against itself, so a hand-written alt passes exactly like a generated one. `npm run audit:alt:self-test` is 13 cases, and 3 of them assert that GOOD input produces nothing, including a wording no generator would ever emit.
+
+Verified: `npm run build` exits 0. Lint unchanged (20 errors, all pre-existing: unused vars and a missing `tsconfig.json`, none in the files touched). `audit-alt-text` reports 122 products, 918 media, **0 issues**. Self-test 13 of 13. On a local render of two PDPs (one with a video, one without), the homepage, `/collections/all`, `/collections/halloween` and `/search?q=neon`: **0 images with an empty alt that are not explicitly `aria-hidden`**, against 11 on one PDP before. The main gallery image now renders `alt="Butterfly Liquid Filling Goal Widget, animated stream overlay for Twitch, StreamElements, Streamlabs and OBS"`.
+
+#### Also committed: work the 2026-09-18 pass left stranded
+
+`app/lib/analytics/events.js`, `pixels/meta.js`, `productFeed.js`, `verify-feed.mjs` and a CLAUDE.md section were written on 2026-09-18 and **never committed**, so the Meta fix they contain could not have shipped. Committed as `f6215e2`. The substance: every Meta `content_ids` was a PRODUCT gid, and Meta's catalogue keys on the bare numeric VARIANT id, which is what produced the 15.4% match rate and the "Some content IDs aren't matching any catalog" warning. `numericId()` strips the gid; every normalizer now carries `variantId` and `meta.js` prefers it.
+
+Worth noticing as a pattern: **two separate passes have now left finished work uncommitted.** The Halloween band from earlier today was also sitting in the working tree and was committed at 15:30 by another session. A pass is not done when the files are right.
+
+#### Deploy
+
+Preview: https://01m2xmw7kwek99578j9m8v17qb-fb73b5b73c40344d0d20.myshopify.dev
+
+**Production is 4 commits behind and every one of them is visitor-facing.** `npm run audit:deploy` says production is on `0f7d552` (committed 2026-09-17 23:31, built 2026-09-18 12:55). Unshipped: `ccb4dd2` Meta domain verification, `d02e3ed` the Halloween band and collection, `f6215e2` the Meta content id fix, `6bf28ea` alt text. **Todd has to run this; it needs an interactive terminal for its `Continue?` prompt:**
+
+```
+npx shopify hydrogen deploy --env=production
+```
+
+Until he does, the alt text is live in Shopify (so the Merchant Center feed and every channel that reads the catalogue already have it) but the storefront code fixes and the Halloween band are not.
+
+#### Next
+
+Tomorrow: **FAQPage JSON-LD on the PDP and on `pages/faq`**, the next unchecked AEO item. Zero `FAQPage` markup exists anywhere in `app/`; source it from the same `PRODUCT_FAQ_PAGE_QUERY` content the PDP already renders so the two cannot drift.
+
+Still needing Todd, unchanged: the production deploy above, the 3 DRAFT Halloween products (Skull Ghost Chat, Spooky Neon Chat, Spooky Mushroom Bar Goal) which sit in the collection and render nowhere, and a Halloween entry in the Admin navigation menu.
+
 ### 2026-09-19
 #### Halloween season section + collection
 - Created smart collection **Halloween** (`gid://shopify/Collection/342728704190`, handle `halloween`), rule `TAG EQUALS halloween`, sort BEST_SELLING, image = Spooky Stream Kit hero. Published to Online Store, Stream Widget Shop Headless and SWS Storefront.
