@@ -129,7 +129,7 @@ export default function Collection() {
       </div>
       {products.nodes.length === 0 ? (
         <div className="collection-empty">
-          <img src={logo} alt="" />
+          <img src={logo} alt="" aria-hidden="true" />
           <p>
             No widgets match that search.{' '}
             <Link to="/collections/all">Clear filters →</Link>

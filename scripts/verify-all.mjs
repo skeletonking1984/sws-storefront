@@ -52,6 +52,11 @@ const CHECKS = [
   // for. Text only here; the --live form fetches real pages and belongs in
   // the post-deploy pass, not in a check that has to run offline.
   ['answer blocks', 'scripts/audit-answer-blocks.mjs', {}],
+  // Alt text on every product image. This is catalogue DATA, not code, so it
+  // regresses the moment anyone adds a product or an image through the API:
+  // productCreate and productCreateMedia both leave alt empty, which is how
+  // 676 of 918 media nodes ended up with none.
+  ['alt text', 'scripts/audit-alt-text.mjs', {}],
   // Walks the path a buyer walks, ending in a REAL cart. A sample, because
   // each product costs a page fetch plus a cart creation. Run
   // `npm run audit:buyable` with no limit before anything that touches the

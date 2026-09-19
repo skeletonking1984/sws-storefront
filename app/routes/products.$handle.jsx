@@ -577,7 +577,7 @@ export default function Product() {
         />
       )}
       <div className="product-top">
-        <ProductGallery media={media} />
+        <ProductGallery media={media} title={title} />
         <div className="product-main sws-glass-card">
           <h1>{title}</h1>
           {hasEnoughReviewsForJsonLd ? (

@@ -56,7 +56,14 @@ function BrandMark({shopName}) {
           wordmark so shoppers arriving from either place recognise the
           shop before they read anything. Decorative next to the lockup,
           so alt is empty. Remove this when the new logo is finished. */}
-      <img className="brand-pfp" src={pfp} alt="" width="200" height="200" />
+      <img
+        className="brand-pfp"
+        src={pfp}
+        alt=""
+        aria-hidden="true"
+        width="200"
+        height="200"
+      />
       {imgFailed ? (
         <strong className="sws-holo">{shopName}</strong>
       ) : (

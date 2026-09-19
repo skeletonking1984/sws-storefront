@@ -312,6 +312,7 @@ function Hero() {
               className="brand-pfp hero-pfp"
               src={pfp}
               alt=""
+              aria-hidden="true"
               width="200"
               height="200"
             />

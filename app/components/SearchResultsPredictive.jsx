@@ -126,7 +126,7 @@ function SearchResultsPredictiveArticles({
                 <span className="predictive-search-result-item-image">
                   {article.image?.url && (
                     <Image
-                      alt={article.image.altText ?? ''}
+                      alt={article.image.altText || article.title}
                       src={article.image.url}
                       loading="eager"
                       sizes="50px"
@@ -178,7 +178,7 @@ function SearchResultsPredictiveCollections({
                 <span className="predictive-search-result-item-image">
                   {collection.image?.url && (
                     <Image
-                      alt={collection.image.altText ?? ''}
+                      alt={collection.image.altText || collection.title}
                       src={collection.image.url}
                       loading="eager"
                       sizes="50px"
@@ -280,7 +280,7 @@ function SearchResultsPredictiveProducts({
                     // never fires for images injected into the open overlay,
                     // so lazy leaves every thumbnail permanently blank.
                     <Image
-                      alt={image.altText ?? ''}
+                      alt={image.altText || product.title}
                       src={image.url}
                       loading="eager"
                       sizes="50px"

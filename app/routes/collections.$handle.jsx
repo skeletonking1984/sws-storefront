@@ -105,7 +105,7 @@ export default function Collection() {
       />
       {!hasMatches && (
         <div className="collection-empty">
-          <img src={logo} alt="" />
+          <img src={logo} alt="" aria-hidden="true" />
           <p>No widgets match &ldquo;{searchTerm}&rdquo; in this collection.</p>
         </div>
       )}

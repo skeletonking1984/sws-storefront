@@ -22,6 +22,7 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}) {
                   className="brand-pfp"
                   src={pfp}
                   alt=""
+                  aria-hidden="true"
                   width="200"
                   height="200"
                 />
