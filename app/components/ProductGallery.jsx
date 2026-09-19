@@ -115,7 +115,7 @@ export function ProductGallery({media, title}) {
             poster={active.previewImage?.url}
             className="product-gallery-video"
           >
-            {active.sources?.map((source) => (
+            {orderVideoSources(active.sources).map((source) => (
               <source
                 key={source.url}
                 src={source.url}
@@ -168,6 +168,30 @@ export function ProductGallery({media, title}) {
  * @param {number} total
  * @returns {string}
  */
+/**
+ * A browser plays the FIRST <source> it can decode, and Shopify returns its
+ * renditions with the SMALLEST first: SD-480p, then 1080p, then 720p, then the
+ * HLS manifest. Mapped in that order, every product video played at 480p on a
+ * 1080p-capable screen, which read as "the video is blurry" and was reported as
+ * exactly that on 2026-09-19 (Slow Pour).
+ *
+ * Order highest mp4 first so the sharp rendition wins, and keep the m3u8 LAST:
+ * Chrome and Firefox cannot play it natively and fall through to the next
+ * source, but Safari can, and if it sat first Safari would take the adaptive
+ * stream and start low again.
+ *
+ * @param {Array<{url: string, mimeType?: string, height?: number}> | undefined} sources
+ */
+function orderVideoSources(sources) {
+  if (!sources?.length) return [];
+  const isStream = (s) =>
+    /m3u8/i.test(s.url || '') || /mpegurl/i.test(s.mimeType || '');
+  const mp4s = sources
+    .filter((s) => !isStream(s))
+    .sort((a, b) => (b.height || 0) - (a.height || 0));
+  return [...mp4s, ...sources.filter(isStream)];
+}
+
 function thumbLabel(productName, item, index, total) {
   const name = productName || 'this widget';
   if (item?.__typename === 'Video') return `Play the ${name} demo video`;

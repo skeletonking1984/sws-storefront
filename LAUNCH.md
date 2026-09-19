@@ -5454,3 +5454,31 @@ The report already contains the answer in two collapsed insights, **"Forced
 reflow"** and **"3rd parties"**, plus the Treemap. Forced reflow is flagged red
 and is layout thrashing from JavaScript, which would explain both the TBT and
 the flicker on the same page. Expanding those names the exact scripts.
+
+## Meta ad account: decided 2026-09-19, do not re-litigate
+
+**Autopilot runs from Shopify's auto-created ad account, not Todd's own.** Decision B of two.
+
+The "Meta Pixel not shared with your ad account" error has one cause: pixel
+`511838711286120` lives in the **Shopify-created** portfolio
+(`72470e33 1721755000 business`) and is connected to exactly one ad account,
+Shopify's own. Todd's ad account lives in his own portfolio
+(`1612785872628412`). An ad account can only be OWNED by one portfolio, so it
+cannot simply be added to the other; the Connect assets dialog on that dataset
+lists exactly one option and it is already ticked.
+
+Option A was to share the dataset out via the dataset's **Partners** tab to
+business `1612785872628412`. Rejected for now, not wrong: it is the tidier long
+term arrangement but it is an hour of cross-portfolio Meta settings to unblock a
+channel that has spent **$0.00 of $100**, while the manual X campaign is
+returning about 6x on $18.76.
+
+If Meta ads ever become a real spend channel, revisit and do A, because ad
+account history and billing should sit with Todd rather than with a portfolio
+Shopify created on his behalf.
+
+Related, same day: Instagram `@streamwidgetshop` is now linked to the Facebook
+page and appears in the Shopify Facebook & Instagram channel. Share data is set
+to **Enhanced** (Meta Pixel + advanced matching + Conversions API), which is the
+correct setting and should stay.
+
