@@ -16,10 +16,13 @@
  * config (see app/lib/analytics/registry.js), keyed by this file's own
  * envKeys names, not the raw env object.
  *
- * PUBLIC_META_PIXEL_ID does not exist yet (Meta ads have not launched).
- * Until it is set this adapter is a complete no-op: isConfigured() is
- * false, so PixelBus.jsx never calls loadScript or send -- no script
- * injected, no subscription, nothing thrown.
+ * Set PUBLIC_META_PIXEL_ID to the dataset/pixel id (511838711286120) to
+ * switch this on. Until it is set this adapter is a complete no-op:
+ * isConfigured() is false, so PixelBus.jsx never calls loadScript or send
+ * -- no script injected, no subscription, nothing thrown. That no-op state
+ * is why Meta reported zero ViewContent and zero AddToCart events for the
+ * seven days before 2026-09-18: the storefront was sending nothing at all,
+ * and the only events Meta saw came from the Shopify side.
  *
  * Fires nothing until PixelBus.jsx has already checked Shopify's consent
  * API (canTrack()) -- this file does not check consent itself. There is
@@ -142,7 +145,12 @@ function sendContentEvent(metaEventName, event) {
   if (!item) return;
 
   window.fbq('track', metaEventName, {
-    content_ids: [item.id].filter(Boolean),
+    // MUST be the bare numeric variant id, which is what Shopify's catalog
+    // sync publishes as each item's Content ID. Sending the product gid
+    // here is what produced a 15.4% catalog match rate and Meta's "Some
+    // content IDs aren't matching any catalog" warning on 2026-09-18.
+    // See numericId() in app/lib/analytics/events.js.
+    content_ids: [item.variantId || item.id].filter(Boolean),
     content_name: item.name,
     content_type: 'product',
     value: event.value,
@@ -159,9 +167,9 @@ function sendCheckoutEvent(event) {
   if (!items.length) return;
 
   window.fbq('track', 'InitiateCheckout', {
-    content_ids: items.map((item) => item.id).filter(Boolean),
+    content_ids: items.map((item) => item.variantId || item.id).filter(Boolean),
     contents: items.map((item) => ({
-      id: item.id,
+      id: item.variantId || item.id,
       quantity: item.quantity || 1,
     })),
     content_type: 'product',

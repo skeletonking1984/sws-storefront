@@ -12,7 +12,7 @@
  *                  // begin_checkout | search
  *     currency,
  *     value,
- *     items: [{id, name, variant, category, price, quantity, index?, listId?, listName?}],
+ *     items: [{id, variantId?, name, variant, category, price, quantity, index?, listId?, listName?}],
  *     searchTerm?,
  *     listId?, listName?,       // top-level list context for view_item_list / select_item
  *     pageLocation?, pagePath?, pageTitle?, // page_view only, read from window
@@ -75,6 +75,26 @@ export function normalizeEvent(hydrogenEventName, payload, shop) {
  * before this file existed -- Hydrogen's page_viewed payload carries
  * nothing else worth sending.
  */
+/**
+ * Meta's catalog keys every item by the bare numeric VARIANT id (for
+ * example `45257376497854`), which is what Shopify's own catalog sync
+ * publishes as each item's Content ID. Hydrogen hands us Storefront API
+ * global ids (`gid://shopify/ProductVariant/45257376497854`), so strip the
+ * gid down to its trailing number.
+ *
+ * Added 2026-09-18 after Meta reported a 15.4% catalog match rate and
+ * "Some content IDs aren't matching any catalog": every item was being
+ * sent as a PRODUCT gid, which matches nothing in the catalog.
+ *
+ * @param {string | undefined | null} gid
+ * @returns {string | undefined}
+ */
+function numericId(gid) {
+  if (!gid) return undefined;
+  const tail = String(gid).split('/').pop();
+  return tail && /^\d+$/.test(tail) ? tail : undefined;
+}
+
 function normalizePageView() {
   if (typeof window === 'undefined') return null;
   return {
@@ -105,6 +125,7 @@ function normalizeViewItem(payload, shop) {
     items: [
       {
         id: product.id,
+        variantId: numericId(product.variantId),
         name: product.title,
         variant: product.variantTitle,
         category: product.productType,
@@ -194,6 +215,7 @@ function normalizeAddToCart(payload, shop) {
     items: [
       {
         id: merchandise.product?.id,
+        variantId: numericId(merchandise.id),
         name: merchandise.product?.title,
         variant: merchandise.title,
         category: merchandise.product?.productType,
@@ -233,6 +255,7 @@ function normalizeRemoveFromCart(payload, shop) {
     items: [
       {
         id: merchandise.product?.id,
+        variantId: numericId(merchandise.id),
         name: merchandise.product?.title,
         variant: merchandise.title,
         category: merchandise.product?.productType,
@@ -319,6 +342,7 @@ function cartLineItems(cart) {
       if (!merchandise) return null;
       return {
         id: merchandise.product?.id,
+        variantId: numericId(merchandise.id),
         name: merchandise.product?.title,
         variant: merchandise.title,
         category: merchandise.product?.productType,

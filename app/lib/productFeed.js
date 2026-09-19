@@ -159,6 +159,31 @@ export function isIpRisky(product) {
  */
 export const FEED_EXPIRY_DAYS = 25;
 
+/**
+ * SHIPPING IS DECLARED FOR THE UNITED STATES ONLY, AND THAT IS CORRECT TODAY.
+ *
+ * Read this before "fixing" the <g:shipping> block below. Three separate nights
+ * of content/channels/HEALTH.md flagged the single <g:country>US</g:country> as
+ * a latent bug, because Shopify's delivery profile carries a $0 "Express
+ * International" rate covering 27 countries that the feed names nowhere.
+ *
+ * Verified against the Admin API on 2026-09-18: the shop has exactly ONE market,
+ * "United States", ACTIVE. So `localization.availableCountries` is [US], and the
+ * International delivery zone is unreachable config, not a capability.
+ *
+ * It does not block anyone either. Every product is a download with
+ * requiresShipping false, so checkout never collects a shipping address and the
+ * delivery zones are never consulted: orders #1031 (CA), #1033 (MA), #1041 (NO)
+ * and #1048 (CO) are all paid, all `shippingAddress: null`. Non US buyers can
+ * and do buy. They just pay in USD, because a single market means no local
+ * currency.
+ *
+ * What makes this safe rather than lucky is that scripts/verify-feed.mjs now
+ * asserts the countries declared here equal the shop's sellable countries, so
+ * adding a second market turns the feed red instead of quietly advertising one
+ * country's shipping to Google while the storefront serves thirty.
+ */
+
 /** ISO date, FEED_EXPIRY_DAYS from now. Google wants YYYY-MM-DD. */
 export function feedExpiry(now = new Date()) {
   const d = new Date(now.getTime() + FEED_EXPIRY_DAYS * 86400000);

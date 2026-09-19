@@ -58,6 +58,41 @@ for (const tag of ['g:id', 'title', 'description', 'link', 'g:image_link',
 const freeShipping = (xml.match(/<g:price>0 USD<\/g:price>/g) || []).length;
 if (freeShipping < items) fail.push(`free shipping on ${freeShipping} of ${items} items`);
 
+// The feed declares shipping for the countries the shop can actually SELL to,
+// and nothing asserted that until 2026-09-18.
+//
+// The feed hardcodes <g:country>US</g:country>. Three nights of this ledger read
+// that as a latent bug, because the delivery profile carries a $0 "Express
+// International" rate for 27 countries and the feed names none of them. It is
+// not a bug. Verified 2026-09-18 against the Admin API: the shop has exactly ONE
+// market, "United States", ACTIVE, so `localization.availableCountries` is [US]
+// and that International zone is unreachable config. Everything here is a
+// download with requiresShipping false, so checkout collects no shipping address
+// at all (every order since #1031 has shippingAddress: null, including paid
+// orders from CO, NO, MA and CA) and the delivery zone never applies.
+//
+// So US-only is correct TODAY and wrong the moment a second market is added:
+// the feed would keep telling Google the shop ships to one country while the
+// storefront sold to thirty. Assert the two agree rather than trusting either.
+const declaredCountries = [...new Set(
+  [...xml.matchAll(/<g:country>([^<]*)<\/g:country>/g)].map((m) => m[1].trim()),
+)].sort();
+const MARKETS_QUERY = '{ localization { availableCountries { isoCode } } }';
+const marketsJson = await gql(MARKETS_QUERY);
+const sellableCountries = (
+  marketsJson.data?.localization?.availableCountries || []
+).map((c) => c.isoCode).sort();
+
+if (!sellableCountries.length) {
+  fail.push('could not read localization.availableCountries: shipping countries unverified');
+} else if (declaredCountries.join(',') !== sellableCountries.join(',')) {
+  fail.push(
+    `feed declares shipping for [${declaredCountries.join(', ')}] but the shop sells to ` +
+    `[${sellableCountries.join(', ')}]. Update the <g:shipping> block in app/lib/productFeed.js ` +
+    'to cover every market, or a channel will refuse the countries it is missing.',
+  );
+}
+
 // No IP anywhere in the output, not just skipped at the door.
 const IP_CHECK = /pok[eé]?-?\s?mon|pikachu|eevee|bulbasaur|charizard|star ?wars|mandalorian|grogu|yoda|valorant|genshin|fortnite|minecraft|zelda/i;
 const leaked = (xml.match(/<title>(.*?)<\/title>/g) || []).filter((t) => IP_CHECK.test(t));

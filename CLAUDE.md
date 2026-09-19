@@ -42,6 +42,20 @@ Two things it handles that are easy to get wrong by hand:
 
 ## Data quirks specific to this catalog (learned the hard way — don't re-derive)
 
+- **Every product you create through the API MUST have inventory turned ON with ~1000 units, or Meta suppresses it.** Shopify is happy with an untracked digital product and reports `availableForSale: true`, so it sells fine on the storefront. But Meta's catalog feed reads the raw quantity number, not `availableForSale`, so untracked reads as quantity 0 and the product shows **Out of stock / Not eligible** in Commerce Manager and cannot be advertised. Thirteen products sat like this from 2026-09-07 to 2026-09-18 and five of them had already SOLD while Meta advertised them as unavailable. After `productCreate`, always:
+  1. `inventoryItemUpdate(id, {tracked: true})`
+  2. `inventorySetQuantities` — `name: "available"`, `reason: "correction"`, `ignoreCompareQuantity: true`, quantity `1000`, location `gid://shopify/Location/72853848254`
+  3. Verify at VARIANT level. `inventoryQuantity` should be 1000. The product-level `totalInventory` rollup lags minutes and is not a failure signal.
+
+  **The same `productCreate` call also leaves the product with no category and publishes it to only the default channels.** On 2026-09-18 that meant 104 of 122 active products had a missing, "Uncategorized" or wrong category, and 112 of 122 were not on Facebook & Instagram, which is exactly what makes an item read as **Hidden** in Meta Commerce Manager while still showing In stock and Approved. So after every `productCreate`, on top of the inventory steps above:
+
+  4. `productUpdate(product: {id, category: "gid://shopify/TaxonomyCategory/so-2-3"})` — `Software > Digital Goods & Currency > Digital Artwork`, the house standard for every SWS product.
+  5. `publishablePublish` to **Facebook & Instagram** `gid://shopify/Publication/134184992958`, alongside the Headless and SWS Storefront publications you already do.
+
+  **Do not bulk-publish to TikTok** (`164971741374`). A goal widget must never claim TikTok, see the platform-claims rule above, so that one is a per-product decision.
+
+  **And check drafts, not just active products.** The live catalogue kept getting fixed while the drafts never did, so every activation reintroduced the bug and it looked like a fresh incident each time. Ten drafts were untracked at quantity 0 on 2026-09-18.
+
 - **Product tags are unreliable for anything except `Chat_widget`/`Goal_Widget`**, and even those needed a bulk cleanup (88 of 206 products had wrong tags, fixed via `tagsAdd`/`tagsRemove` on 2026-08-30). If tag-based filtering looks wrong again, cross-check the tag against whether the product title actually contains "Chat" or "Goal" before trusting it.
 - **`descriptionHtml` comes in two incompatible shapes and neither renders as-is.** Rewritten listings are real HTML but every section is a flat `<p>` with lists glued together by `<br>` (plus `data-start`/`data-end` attribute noise), so headings and body copy are markup-identical; older Etsy imports are **not HTML at all**, just plain text with newlines, which collapses into one unbroken paragraph. `app/lib/productDescription.js` normalizes both into `<h3>`/`<ul>`/`<p>` before the PDP renders it — don't go back to dumping `descriptionHtml` straight into `dangerouslySetInnerHTML`.
 - **Duplicate products exist.** Many items were re-imported/rebranded as "...: Customizable Stream Overlay (Digital Download)" duplicates of older active listings — the duplicates are usually **ARCHIVED with 0 inventory**. If a handle you expect to resolve returns `null` from the Storefront API, check `status` and `resourcePublications` in Admin before assuming it's a code bug — it's very likely an archived duplicate, and the real active original has a different handle/title.
