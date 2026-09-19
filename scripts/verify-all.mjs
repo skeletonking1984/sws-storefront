@@ -56,6 +56,11 @@ const CHECKS = [
   // regresses the moment anyone adds a product or an image through the API:
   // productCreate and productCreateMedia both leave alt empty, which is how
   // 676 of 918 media nodes ended up with none.
+  // FAQPage markup on the FAQ page and every PDP. Built from the Shopify page
+  // body, which Todd can edit without touching this repo, so the question
+  // count on the page and the Question count in the markup are asserted equal
+  // rather than assumed. Text form here; --live belongs in the post-deploy pass.
+  ['FAQ JSON-LD', 'scripts/audit-faq-jsonld.mjs', {}],
   ['alt text', 'scripts/audit-alt-text.mjs', {}],
   // Walks the path a buyer walks, ending in a REAL cart. A sample, because
   // each product costs a page fetch plus a cart creation. Run
