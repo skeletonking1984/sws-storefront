@@ -76,6 +76,178 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-20 (scheduled CTO code review): the 480p video fix is right and its recorded cause is not
+
+Range reviewed: `d02e3ed..374f792`, 14 commits, 38 files, +3098 / -252. The four oldest
+(`d02e3ed`, `f6215e2`, `6bf28ea`, `4bce1af`) were already covered by the 2026-09-19 review in
+`209a088`, so the new surface is `9bc9e94..374f792`.
+
+#### Gates
+
+| Check | Result |
+|---|---|
+| `npm run build` | exit 0 |
+| `node scripts/audit-shipping.mjs` | exit 0 |
+| `node scripts/audit-catalog.mjs` | exit 0 |
+| `npm run verify:tracking` (production) | exit 0, 25 passed 0 failed |
+| `npm run audit:faq` / `audit:faq:self-test` | exit 0, 13/13 |
+| `npm run audit:faq:live` | exit 0, 11 rendered questions and 11 in FAQPage on both the FAQ page and a PDP, 4 JSON-LD blocks parse |
+| `npm run audit:alt:self-test` | exit 0, 13 cases |
+| `npm run audit:alt` | **exit 1**, one real gap, see below |
+| `npm run audit:descriptions:gate` | exit 0, queue 40 at high-water 40 |
+| `npm run verify:channels` (live) | **exit 1**, Meta pixel absent, see below |
+| `npm run audit:deploy` | exit 1, 1 unshipped visitor-facing commit |
+
+The diff touched `app/lib/analytics/events.js` and `app/lib/analytics/pixels/meta.js`, so
+`verify:tracking` was run against production as the routine requires. Green, 25 of 25.
+
+#### First, a correction to the entry above this one
+
+`374f792` records production as `209a088` with 4 visitor-facing commits waiting.
+`/api/version` says production is **`4a28ddc`**, built 2026-09-20T04:51:10Z. That build landed
+**25 seconds before** `374f792` was committed, so `audit:deploy` read the pre-deploy version and
+the note was stale the moment it was written. No bug in the audit, a race with Todd's deploy.
+
+Current truth, from `npm run audit:deploy`: production `4a28ddc`, HEAD `374f792`, 3 unshipped
+commits of which **1 is visitor-facing**, `871c7fe` (the preview explainer route).
+
+This matters beyond bookkeeping. It nearly produced a wrong finding in this very review: the
+first measurement of video source order was taken from the served PDP HTML, which on `4a28ddc`
+is already the fix's OUTPUT, not its input. See the improvement note at the bottom.
+
+#### Finding: `63183e7` names a cause the raw data disproves, and the real bug was Safari only
+
+`app/components/ProductGallery.jsx:172-196`, commit `63183e7`, "Every product video on the site
+was playing at 480p".
+
+The commit, the code comment and the LAUNCH note all assert: "Shopify returns its renditions
+smallest first: SD-480p, then 1080p, then 720p, then the HLS manifest", so "the 480p rendition
+always won on a 1080p-capable screen", for "every product video, for its whole duration".
+
+Measured instead, straight from the Storefront API for all 123 active products, 114 of which
+carry a video. Two shapes, and only two:
+
+```
+  73  m3u8, HD-1080p, HD-720p, SD-480p
+  41  m3u8, HD-720p, SD-480p
+```
+
+* products whose first source is SD-480p: **0**
+* products whose mp4 list is not already descending by height: **0**
+
+Shopify returns the **m3u8 first** and the mp4s **largest first**. Every clause of the recorded
+cause is inverted. SD-480p was never first on any product, so no browser was ever choosing it,
+and "every product video was playing at 480p" did not happen.
+
+What was actually broken. A browser plays the first `<source>` whose `type` it believes it can
+decode, and the old code emitted the raw order, so the first source was
+`type="application/x-mpegURL"`. Chrome and Firefox cannot decode that, fall through, and landed
+on HD-1080p already. **Safari and iOS can**, so they took the adaptive HLS manifest and started
+on a low rung before ramping up. That is a narrow, real defect, and it is an exact match for the
+report that triggered the work, "slow pour video is blurry in the beginning". It was the
+beginning, and it was one browser family.
+
+The fix is correct and should stay: putting the m3u8 last is the right call for exactly the
+reason the second half of its own comment gives. What is wrong is the record, in three ways that
+cost something later:
+
+1. Mobile is 62 to 83 percent of sessions, and the ledger now says the video problem was
+   universal and is closed. The iOS-specific shape of it is lost.
+2. **41 products have no 1080p rendition at all** and still cap at 720p. Nothing records that,
+   and `orderVideoSources` cannot change it.
+3. Unrecorded tradeoff: with the m3u8 now last, Safari downloads a progressive 2.5 Mbps mp4
+   instead of adapting. On a slow phone connection that is strictly more bytes for a gallery
+   video that autoplays.
+
+Filed as **BAT-182**. The code is not changed by this review; the claim is.
+
+Status of the two halves: the ordering data is CONFIRMED, measured over 114 videos. The
+Safari symptom is reasoned from that measured order plus standard `<source>` selection, not
+driven in Safari, which this session cannot do.
+
+#### Also true, and not filed
+
+* **`audit:alt` exits 1 on one real gap.** `slow-pour-...-digital-download` media 2 has no alt,
+  1 of 925 media across 123 products. That makes `npm run verify:all` red until `build:alt`
+  covers it. Data, not code, and the audit already names it precisely.
+* **`verify:channels --live` exits 1: Meta pixel `511838711286120` is ABSENT from the served
+  page.** Working as designed. `4a28ddc` is the commit that made the nightly suite run this in
+  `--live`, and the first thing it caught is the thing it was built for. GA4 `G-X0978HDVTK` and
+  X `q7mwb` both served. Todd sets `PUBLIC_META_PIXEL_ID` on Oxygen.
+* **BAT-167 is still live and was reproduced today on production at 360px.** Reproduction added
+  to the issue: open `/products/neon-aesthetic-glowy-...` (15 thumbnails), click thumbnail 15,
+  then click the Multistream Chat Widget link on that same page. After the client side
+  navigation the gallery holds `activeIndex` 14 against 9 media, no thumbnail is marked active,
+  and `.product-gallery-main` contains the two arrow buttons and nothing else. The main viewer is
+  an empty box on the shop's second highest revenue product. `app/components/ProductGallery.jsx:41`
+  is unchanged, the lazy `useState` initialiser still runs once per mounted instance, and
+  `products.$handle.jsx:580` still renders the gallery with no `key`.
+* **BAT-181 is still in the tree.** `app/lib/analytics/pixels/meta.js:146-150` still states that
+  product gids "produced a 15.4% catalog match rate". Today's live check settles the premise the
+  other way: the Meta pixel is absent from the served page, so the browser adapter has never sent
+  a content id and cannot have produced any match rate.
+* **`63183e7` claims a unit test that is not in the tree.** "Unit tested against the real source
+  list Shopify returns for Slow Pour, plus undefined and empty." There is no test file naming
+  `orderVideoSources`, no `test` script in `package.json`, and no test runner in
+  `devDependencies`. Whatever was run was ad hoc and nobody can re-run it. Recorded, not filed.
+* **`scripts/verify-all.mjs:70-80`**: the alt text comment block sits above the FAQ JSON-LD entry
+  and the FAQ comment sits above the alt text entry. Comments only, no behaviour change.
+* **`app/routes/products_preview.jsx`** renders internal theme editing instructions on the public
+  customer domain. `noindex` is set so there is no SEO cost, but it is a developer note on a
+  buyer facing URL.
+
+#### Checked and clean
+
+* Homepage at 360px on production: `scrollWidth` 360, `clientWidth` 360, **overflow 0**. The
+  Halloween section from `d02e3ed` is clean at the floor width. The 118 elements outside the
+  viewport box are the decorative star layers, clipped by an ancestor, and the off canvas cart
+  aside.
+* CSS added across the range carries no `calc()` re-deriving a container width and no `100vh` on
+  a fixed element, the two rules `cto.md` says to flag on sight. `min-width: 0` is present where
+  the grid `li` needs it.
+* `numericId()` and the `variantId` plumbing in `app/lib/analytics/events.js` are sound.
+  `Analytics.ProductView` at `products.$handle.jsx:672` really does pass
+  `variantId: selectedVariant?.id`, and `normalizeAddToCart` and `cartLineItems` read
+  `merchandise.id`, which is the variant gid. `normalizeViewItemList` carries no `variantId`, but
+  `meta.js` maps no event to it, so nothing leaks a product gid.
+* The `height` field `orderVideoSources` sorts on **is** in both Video fragments
+  (`products.$handle.jsx:768` and `:857`), so the sort is not reading an absent field. That was
+  checked before trusting the function, per the fragment rule.
+* `app/lib/faqJsonLd.js` builds the markup from `parseFaqBody`, the same parse the visible
+  accordion uses, so the two cannot drift. `<` is escaped to `<` before injection.
+* `app/lib/video.js`'s `pickBestMp4Source` and `ProductGallery`'s `orderVideoSources` are two
+  copies of "which rendition is highest". They agree on all 114 real source lists, because every
+  rendition shares one aspect ratio, so ordering by height and by area cannot disagree. Worth
+  knowing they are two copies; not a defect today.
+* No secret, token or path-token URL appears anywhere in the range.
+
+#### Escalations for Todd
+
+1. **Deploy.** Production is `4a28ddc`, one visitor-facing commit behind (`871c7fe`).
+   `npx shopify hydrogen deploy --env=production` still needs a real terminal.
+2. **Set `PUBLIC_META_PIXEL_ID` on Oxygen.** Until then the Meta browser adapter injects nothing
+   and `verify:channels --live` stays red.
+3. **BAT-167 has been open since 2026-09-16 and is still shipping a blank gallery** on client
+   side navigation between products of different media counts.
+
+Nothing in this range blocks or breaks a purchase. The purchase path was not re-driven today;
+the 2026-09-19 pass drove it green at 360, 390 and 430, and no commit in this range touched
+`cart.jsx`, `context.js` or any checkout control.
+
+#### What changed about the review process
+
+One rule added to the task prompt, from the mistake this run nearly shipped.
+
+The first measurement of video source order was taken from the served PDP HTML, on the belief
+that production was `209a088` because LAUNCH.md said so. Production was `4a28ddc`, which already
+contains the fix, so that HTML was the fix's output. The numbers looked like a clean disproof of
+the commit and were meaningless. Reading `/api/version` first, then going to the Storefront API
+for the raw order, produced the opposite and correct result.
+
+The rule: read `/api/version` before any live measurement, never LAUNCH.md, and when the claim
+under review is about an ordering or a transformation, measure the INPUT at its source rather
+than the rendered output, which is the thing the fix already changed.
+
 ### 2026-09-20 (Todd present): the draft preview loop is the redirect theme
 
 Todd hit Preview on a draft product and landed on this app's `/products_preview` explainer. The draft was fine. Every hop measured with curl and a preview key minted seconds earlier:
