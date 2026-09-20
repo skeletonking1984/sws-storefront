@@ -21,7 +21,22 @@
 import {spawnSync} from 'node:child_process';
 
 const CHECKS = [
-  ['channels', 'scripts/verify-channels.mjs', {}],
+  /*
+   * --live, not the bare run, and that flag is the whole point of the check.
+   *
+   * The Meta pixel assertion was added to verify-channels on 2026-09-19 for
+   * exactly one failure mode: PUBLIC_META_PIXEL_ID is unset on Oxygen, the
+   * adapter no-ops, and a missing pixel and a quiet day are byte-for-byte the
+   * same page. It only runs behind --live, because it has to fetch the served
+   * HTML to see what is actually in it. This list called the script with no
+   * arguments, so the nightly suite ran the offline half and printed
+   * PASS channels on 2026-09-19 while `npm run verify:channels` failed on the
+   * same repo, in the same minute, on the same missing pixel.
+   *
+   * A check built so a fault cannot go quiet, invoked in the one place that
+   * runs every night, in the mode that cannot see the fault.
+   */
+  ['channels', 'scripts/verify-channels.mjs', {}, ['--live']],
   ['catalog', 'scripts/audit-catalog.mjs', {}],
   ['shipping', 'scripts/audit-shipping.mjs', {}],
   ['policy claims', 'scripts/audit-policy-claims.mjs', {}],
