@@ -99,7 +99,7 @@ Shipped (`871c7fe`): the route stops forwarding, names the cause, carries the th
 
 `onlineStorePreviewUrl` is on every draft in the Admin API, which is where these links come from. **10 products are DRAFT**, including the 3 Halloween ones still waiting on a publish decision.
 
-**Production is now 6 commits behind**, all visitor-facing. Same command as yesterday, still Todd's:
+**Production is on `209a088` and 4 unshipped commits are visitor-facing**: this one, the FAQ answer work, the pixel id assert and the 480p video fix. Still Todd's:
 
 ```
 npx shopify hydrogen deploy --env=production
