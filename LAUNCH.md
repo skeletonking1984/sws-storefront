@@ -76,6 +76,35 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-20 (Todd present): the draft preview loop is the redirect theme
+
+Todd hit Preview on a draft product and landed on this app's `/products_preview` explainer. The draft was fine. Every hop measured with curl and a preview key minted seconds earlier:
+
+1. `nrexo0v3u7oga9x3-*.shopifypreview.com/products_preview?preview_key=K` returns **200 and renders the draft correctly** (title read back: "Spooky Mushroom Bar Goal Widget for Twitch").
+2. The **Hydrogen Redirect Theme** (role MAIN, `layout/theme.liquid`) runs on that page. Its guard exempts only `designMode`, `/checkpoint`, `/throttle/queue` and `/challenge`, so on any other hostname it fires `window.location.replace(href.replace(currentHostname, 'streamwidgetshop.com'))`. The rendered draft is thrown away client side.
+3. That lands on this app's route, which **used to forward to the myshopify domain**. That 301s to `shop.streamwidgetshop.com`, which **404s**. A preview key is only valid on the `shopifypreview.com` session host, never on the store's own domain, so the forward could not have worked for anyone, ever.
+4. The 404 page is served by the same theme, so its script fires again and sends the browser back to the apex with the loop guard set. That is the screenshot.
+
+**The fix is one line and it is Todd's**, because MAIN theme writes are blocked from here and it is a live storefront edit. Online Store > Themes > `hydrogen-redirect-theme-main` > Edit code > `layout/theme.liquid`, add a fourth condition beside the `/checkpoint` exemption:
+
+```
+window.location.hostname.indexOf('.shopifypreview.com') === -1 &&
+```
+
+**Worth knowing even after that lands:** `/products_preview` renders the **Online Store theme**, not this app. On a headless shop it shows a Liquid page for a product whose real page is built here, so it proves copy and images and nothing about the actual PDP. Seeing the real page means setting the product Active and publishing it to Stream Widget Shop Headless and SWS Storefront.
+
+**Tested and useless, so nobody re-derives it:** `preview_theme_id=<an unpublished theme>` on the preview URL. Shopify 302s back to the plain preview URL and serves MAIN anyway, redirect script included. Verified with a cookie jar so a session theme would have stuck if it were going to.
+
+Shipped (`871c7fe`): the route stops forwarding, names the cause, carries the theme one-liner, and got styles. It had **zero CSS**, which is why the screenshot is unbulleted text with links that do not look like links. 0 horizontal overflow at 360 and 375. Build 0.
+
+`onlineStorePreviewUrl` is on every draft in the Admin API, which is where these links come from. **10 products are DRAFT**, including the 3 Halloween ones still waiting on a publish decision.
+
+**Production is now 6 commits behind**, all visitor-facing. Same command as yesterday, still Todd's:
+
+```
+npx shopify hydrogen deploy --env=production
+```
+
 ### 2026-09-19 (scheduled SEO/AEO pass): the FAQ had eleven answers no machine could read, and BAT-133 was already done
 
 #### Measured first
