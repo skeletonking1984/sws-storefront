@@ -6441,3 +6441,62 @@ button.reset:hover:not(:has(> *)) {
     white-space: nowrap;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   routes/products_preview
+
+   This page had no styles at all, which is why it rendered as a wall of
+   unbulleted text with links that did not look like links (screenshot,
+   2026-09-20). It is an internal page nobody should reach on purpose, so it
+   borrows the brand card and button rather than inventing anything.
+--------------------------------------------------------------------------- */
+.products-preview {
+  max-width: 62ch;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.products-preview h2 {
+  margin-top: 2.25rem;
+}
+
+.products-preview__lead {
+  font-size: 1.05rem;
+}
+
+.products-preview__chain {
+  /* reset.css strips list markers globally, and an unnumbered list of three
+     ordered steps is what made the old page read as a wall of text. */
+  list-style: decimal;
+  margin: 1rem 0 0;
+  padding-left: 1.5rem;
+  line-height: 1.7;
+}
+
+.products-preview code {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 0.3rem;
+  padding: 0.1em 0.35em;
+  /* Handles and hostnames have no break opportunity, and this page is read on
+     a phone as often as not. Same trap as the PDP "What You Get" list. */
+  overflow-wrap: anywhere;
+}
+
+.products-preview__code {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+  margin: 0.75rem 0 0;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  min-width: 0;
+}
+
+.products-preview__key {
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+.products-preview .sws-btn-primary {
+  margin-top: 1rem;
+}
