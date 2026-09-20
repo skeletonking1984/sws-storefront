@@ -22,3 +22,7 @@ blog-hero/out/
 # read out of git rather than out of the running deployment is the fiction it
 # exists to end.
 app/data/build-info.json
+
+# Intermediate PNG frames from hero/record.mjs. 510 of them, ~600MB, and
+# regenerable by rerunning the script. The encoded mp4/webm are the artifact.
+hero/.frames/

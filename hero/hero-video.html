@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SWS hero composite, live jar</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  * { box-sizing: border-box; }
+
+  #canvas {
+    width: 1600px;
+    height: 1000px;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(1100px 620px at 78% 18%, rgba(242, 166, 216, 0.16), transparent 60%),
+      radial-gradient(900px 700px at 12% 82%, rgba(127, 230, 255, 0.14), transparent 60%),
+      linear-gradient(165deg, #0b0713 0%, #140b23 55%, #180f28 100%);
+  }
+
+  /* sparse stars */
+  .stars {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1.6px 1.6px at 6% 12%, #fff, transparent 100%),
+      radial-gradient(1.4px 1.4px at 15% 68%, #fff, transparent 100%),
+      radial-gradient(2px 2px at 24% 30%, #f2e9ff, transparent 100%),
+      radial-gradient(1.3px 1.3px at 33% 85%, #fff, transparent 100%),
+      radial-gradient(1.8px 1.8px at 44% 8%, #fff, transparent 100%),
+      radial-gradient(1.4px 1.4px at 58% 92%, #fff, transparent 100%),
+      radial-gradient(2px 2px at 68% 22%, #f2e9ff, transparent 100%),
+      radial-gradient(1.3px 1.3px at 80% 6%, #fff, transparent 100%),
+      radial-gradient(1.6px 1.6px at 88% 78%, #fff, transparent 100%),
+      radial-gradient(1.4px 1.4px at 93% 40%, #fff, transparent 100%),
+      radial-gradient(1.3px 1.3px at 4% 45%, #fff, transparent 100%),
+      radial-gradient(1.5px 1.5px at 52% 55%, #fff, transparent 100%),
+      radial-gradient(1.3px 1.3px at 72% 60%, #fff, transparent 100%),
+      radial-gradient(1.7px 1.7px at 38% 46%, #fff, transparent 100%),
+      radial-gradient(1.3px 1.3px at 21% 6%, #fff, transparent 100%);
+    opacity: 0.55;
+  }
+
+  /* faint 16:9 "gameplay" panel so the scene reads as a stream, not a poster */
+  .gameplay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1360px;
+    height: 765px; /* 16:9 */
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(183, 157, 242, 0.18);
+    border-radius: 22px;
+    background: linear-gradient(155deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 60%);
+    opacity: 1;
+    overflow: hidden;
+  }
+  .gameplay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.10) 0,
+      rgba(255, 255, 255, 0.10) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    opacity: 0.10;
+  }
+
+  .widget {
+    position: absolute;
+    filter: drop-shadow(0 0 1px rgba(0,0,0,0));
+  }
+  .widget img { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+  /* The live jar replaces jar-goal.png, which was captured from this same
+     widget at 1085x1374. Rendering the iframe at that exact size and scaling
+     it down means the running widget lands in the same box the still occupied,
+     so the composition does not move. */
+  #jarframe {
+    width: 1085px;
+    height: 1374px;
+    border: 0;
+    display: block;
+    transform-origin: top left;
+    transform: scale(0.41475);
+    background: transparent;
+  }
+
+  /* neon chat + goal — star of the image, full-height left column, hot pink/cyan glow */
+  #neon {
+    left: 80px;
+    top: 50px;
+    width: 604px;
+    height: 900px;
+    filter:
+      drop-shadow(0 0 34px rgba(240, 80, 154, 0.45))
+      drop-shadow(0 0 70px rgba(127, 230, 255, 0.22));
+  }
+
+  /* star goal bar — spans the top right, above the jar */
+  #star {
+    left: 760px;
+    top: 161px;
+    width: 760px;
+    height: 44px;
+    filter:
+      drop-shadow(0 0 22px rgba(243, 199, 82, 0.55))
+      drop-shadow(0 0 46px rgba(243, 199, 82, 0.25));
+  }
+
+  /* moon jar goal — right of center, vertically centered, glow behind it */
+  #jar {
+    left: 975px;
+    top: 215px;
+    width: 450px;
+    height: 570px;
+    filter:
+      drop-shadow(0 0 46px rgba(153, 153, 255, 0.5))
+      drop-shadow(0 0 90px rgba(242, 166, 216, 0.26));
+  }
+
+  /* y2k chat — bottom-right corner, slightly overlapping the jar */
+  #y2k {
+    left: 1100px;
+    top: 687px;
+    width: 420px;
+    height: 263px;
+    filter:
+      drop-shadow(0 0 20px rgba(200, 170, 255, 0.4));
+  }
+</style>
+</head>
+<body>
+  <div id="canvas">
+    <div class="stars"></div>
+    <div class="gameplay"></div>
+    <div class="widget" id="neon"><img src="neon-chat-goal-v.png" alt=""></div>
+    <div class="widget" id="star"><img src="star-goal.png" alt=""></div>
+    <div class="widget" id="jar"><iframe id="jarframe" scrolling="no" frameborder="0"></iframe></div>
+    <div class="widget" id="y2k"><img src="y2k-chat-h.png" alt=""></div>
+  </div>
+<script>
+/* Boots the REAL Moon Jar Goal widget in place of jar-goal.png.
+ *
+ * The srcdoc is assembled exactly the way public/stage.js assembles it in the
+ * Widget Stage, and for the same reason: the widget's html.txt carries its own
+ * `<script src>` for matter-js, and a script inserted through innerHTML never
+ * executes. Writing the html into the document body of a fresh srcdoc is what
+ * makes the physics engine load, which is what makes the jar fill.
+ *
+ * html, css, js and fieldData are the shipped product files, pulled live from
+ * the stage bundle so this cannot drift from what customers buy.
+ *
+ * One field is overridden for recording: autoResetDelay drops from 15s to 2s,
+ * so a clip can fill, celebrate and reset inside a loopable length. */
+(async function () {
+  const bundle = await fetch('/stage/bundles/moon-jar-goal.json').then((r) => r.json());
+  /* Two kinds of override, and the difference matters.
+   *
+   * autoResetDelay, resetOnLoad and persist are RECORDING concerns. The shipped
+   * default is a 15s hold after the goal is hit, which is right on a real stream
+   * and far too long for a loop.
+   *
+   * icon_tip is a CORRECTION back to the widget's own default. The field
+   * declares `value: "moon"`, but the stage's saved fieldData overrides it to
+   * "froggy", which renders green. That is why the first render's jar filled
+   * with green frogs while jar-goal.png, the still this replaces, is full of
+   * cream moons: the still was captured on the default. Putting it back makes
+   * the video match the art it is replacing, and cream moons with the gold
+   * stars from subs and pink hearts from cheers are the hero palette already.
+   * This is a dropdown any buyer sets, not a hack. */
+  const fieldData = Object.assign({}, bundle.fieldData, {
+    autoResetDelay: 2,
+    resetOnLoad: true,
+    persist: false,
+    icon_tip: 'moon',
+  });
+  const boot = {
+    id: 'moon-jar-goal',
+    fieldData: fieldData,
+    channel: 'streamwidget',
+    currency: '$',
+    session: {},
+  };
+  const esc = (t) => String(t || '').replace(/<\/script>/gi, '<\\/script>');
+  document.getElementById('jarframe').srcdoc =
+    /* srcdoc documents resolve relative URLs against about:srcdoc in some
+       engines, which 404s the shim and jquery. A <base> pinned to the parent
+       origin is the fix, and it has to come first in <head>. */
+    '<!doctype html><html><head><meta charset="utf-8">' +
+    '<base href="' + location.origin + '/">' +
+    '<style>html,body{margin:0;padding:0;background:transparent;overflow:hidden;width:100%;height:100%}</style>' +
+    '<style>' + (bundle.css || '') + '</style></head><body>' +
+    (bundle.html || '') +
+    '<scr' + 'ipt>window.__SWS_BOOT__=' + JSON.stringify(boot).replace(/</g, '\\u003c') + ';</scr' + 'ipt>' +
+    '<scr' + 'ipt src="stage/jquery.min.js"></scr' + 'ipt>' +
+    '<scr' + 'ipt>' + esc(bundle.js) + '</scr' + 'ipt>' +
+    '<scr' + 'ipt src="stage/se-shim.js"></scr' + 'ipt>' +
+    '</body></html>';
+})();
+</script>
+</body>
+</html>

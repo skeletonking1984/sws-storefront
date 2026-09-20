@@ -1,6 +1,6 @@
 import {Await, useLoaderData, useRouteLoaderData, Link} from 'react-router';
 import {ResponsiveImage} from '~/components/ResponsiveImage';
-import {Suspense} from 'react';
+import {Suspense, useEffect, useState} from 'react';
 import {Money} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge, SHOP_STATS} from '~/components/EtsyRating';
@@ -27,6 +27,8 @@ import logo from '~/assets/logo.webp';
 import logoStacked from '~/assets/logo.webp';
 import pfp from '~/assets/pfp.webp';
 import heroWidgets from '~/assets/hero-widgets-opt.webp';
+import heroClipMp4 from '~/assets/hero-widgets.mp4';
+import heroClipWebm from '~/assets/hero-widgets.webm';
 
 /**
  * @type {Route.MetaFunction}
@@ -374,6 +376,7 @@ function Hero() {
             loading="eager"
             fetchPriority="high"
           />
+          <HeroStreamClip />
           <Link
             to="/collections/top-widgets"
             className="hero-stream-label sws-chip"
@@ -383,6 +386,64 @@ function Hero() {
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * The moon jar, running, layered over the still.
+ *
+ * These are animated products and a photograph of one says nothing about what
+ * it does, so the hero plays a 17 second clip of the real Moon Jar Goal widget
+ * filling from real tip, sub, follow and cheer events. Built by
+ * `hero/record.mjs`; `hero/hero-video.html` is the same 1600x1000 composite the
+ * still comes from, with the jar swapped for the live widget.
+ *
+ * Three deliberate choices, all about not making the hero worse:
+ *
+ * 1. The <img> above stays exactly as it was and keeps rendering first. It is
+ *    the LCP element on this page and PageSpeed is already tight, so the clip
+ *    layers ON TOP rather than replacing it. If the video 404s, is blocked, or
+ *    never decodes, the page looks precisely as it did before.
+ * 2. Nothing is rendered on the server. The video element only mounts after
+ *    hydration, so it cannot compete with the poster for the first paint and it
+ *    adds no bytes to the critical path.
+ * 3. `prefers-reduced-motion` is checked before mounting rather than after, so
+ *    a reader who asked for stillness never downloads the clip at all. Pausing
+ *    it afterwards would still have cost them the megabyte.
+ *
+ * The tilt is not baked into the video. `.hero-stream-frame` carries
+ * `transform: rotate(3deg)` and the clip inherits it, along with the scanline
+ * and the rounded border.
+ */
+function HeroStreamClip() {
+  const [motionOk, setMotionOk] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setMotionOk(!mq.matches);
+    const onChange = (e) => setMotionOk(!e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  if (!motionOk) return null;
+
+  return (
+    <video
+      className={`hero-stream-clip${ready ? ' is-ready' : ''}`}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      aria-hidden="true"
+      tabIndex={-1}
+      onCanPlay={() => setReady(true)}
+    >
+      <source src={heroClipWebm} type="video/webm" />
+      <source src={heroClipMp4} type="video/mp4" />
+    </video>
   );
 }
 
