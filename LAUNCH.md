@@ -76,6 +76,30 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-20 (Todd present): the hero plays the widget instead of photographing it
+
+The homepage hero was a still built from four captured widget PNGs. These are animated products, and a picture of one says nothing about what it does. The moon jar is now the real widget, running.
+
+- `hero/hero-video.html` is the same 1600x1000 composite as `hero.html`, with `#jar` swapped from `jar-goal.png` to a live iframe of the Moon Jar Goal widget, pulled from the Widget Stage bundle (`html`, `css`, `js`, `fieldData`, the shipped product files) and driven with real tip, sub, follow and cheer events through the same StreamElements shim the stage uses. It renders at 1085x1374, exactly the size the still was captured at, so nothing in the composition moves. The other three widgets stay stills.
+- **The tilt was never in the image.** `.hero-stream-frame` carries `transform: rotate(3deg)`, so the clip inherits it along with the scanline and the rounded border. Worth knowing before anyone tries to bake a rotation into a render.
+- `hero/record.mjs` captures and encodes. **1600x1000, 17.000s, 510 frames, mp4 818 KB, webm 754 KB.**
+
+**Three traps, all of which look like a broken widget and are not:**
+
+1. **`innerHTML` does not execute `<script src>`.** The jar loads matter-js from its own `html.txt`, so the widget booted with no physics engine and never filled. `public/stage.js` builds a full `srcdoc` document for exactly this reason. So does this now.
+2. **Wall-clock capture silently ruins the clip.** An element screenshot of this canvas costs about 500ms, so 12s of animation was being sampled across three real minutes: played back at 30fps the jar filled in half a second and then sat there. Capture runs on `Emulation.setVirtualTimePolicy`, which advances the page clock exactly 1/30s per frame. rAF, CSS animations, `setTimeout` and Matter's physics step all follow it, so it is frame exact and reruns identically.
+3. **Virtual time deadlocks `elementHandle.screenshot()`**, which measures the box with an `evaluate` first, and evaluate needs the renderer to run JS. It dies in `CallbackRegistry`. Capture goes through `Page.captureScreenshot`, which is browser side and needs no page JS.
+
+**Two things the first render got wrong.** The jar filled with GREEN frogs: the `icon_tip` field declares `"moon"` as its default and the stage's saved `fieldData` overrides it to `"froggy"`, which is why `jar-goal.png` is full of cream moons and the video was not. And 12s ended mid-celebration with the lid still in the air, so the loop jumped full to empty. At 17s the goal hits at 7.4s and **frame 509 is identical to frame 0**.
+
+**On the page the clip layers OVER the still rather than replacing it.** The `<img>` is untouched and still paints first, because it is the LCP element and PageSpeed is at 69. Nothing renders server side: the video mounts after hydration and fades in on `canplay`, so it never competes for first paint. `prefers-reduced-motion` is checked BEFORE mounting, so a reader who asked for stillness never downloads the 818 KB at all. If the video 404s or is blocked, the page looks exactly as it did before.
+
+Verified: clean `rm -rf dist` build exits 0. Lint 20 errors, identical to the pre-existing count, none in the touched files. Both assets serve from the dev server at the right MIME types and full byte counts, and land in `dist/client/assets/` content hashed. Rendered at 1440x900: video mounted, ready, playing, `scrollWidth == clientWidth`, and the frame transform still reads as the 3deg rotation.
+
+Also shipping in this deploy: `871c7fe`, the draft-preview route (see the 2026-09-20 entry below).
+
+**Deploy: Todd is running it.** Production was on `4a28ddc`.
+
 ### 2026-09-20 (scheduled CTO code review): the 480p video fix is right and its recorded cause is not
 
 Range reviewed: `d02e3ed..374f792`, 14 commits, 38 files, +3098 / -252. The four oldest
