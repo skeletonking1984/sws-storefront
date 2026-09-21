@@ -1025,7 +1025,7 @@ export type RecommendedProductsQuery = {
 
 export type KitOrOverlayPackProductFragment = Pick<
   StorefrontAPI.Product,
-  'id' | 'title' | 'handle' | 'productType' | 'description'
+  'id' | 'title' | 'handle' | 'productType' | 'description' | 'createdAt'
 > & {
   featuredImage?: StorefrontAPI.Maybe<
     Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
@@ -1041,77 +1041,109 @@ export type KitOrOverlayPackProductFragment = Pick<
 export type KitsAndOverlayPacksQueryVariables = StorefrontAPI.Exact<{
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
-  handle0: StorefrontAPI.Scalars['String']['input'];
-  handle1: StorefrontAPI.Scalars['String']['input'];
-  handle2: StorefrontAPI.Scalars['String']['input'];
-  handle3: StorefrontAPI.Scalars['String']['input'];
 }>;
 
 export type KitsAndOverlayPacksQuery = {
-  product0?: StorefrontAPI.Maybe<
-    Pick<
-      StorefrontAPI.Product,
-      'id' | 'title' | 'handle' | 'productType' | 'description'
-    > & {
-      featuredImage?: StorefrontAPI.Maybe<
-        Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+  bundlesNewest?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<
+          StorefrontAPI.Product,
+          | 'id'
+          | 'title'
+          | 'handle'
+          | 'productType'
+          | 'description'
+          | 'createdAt'
+        > & {
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+          >;
+          selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+            price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+            compareAtPrice?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+            >;
+          }>;
+        }
       >;
-      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
-        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-        compareAtPrice?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
-        >;
-      }>;
-    }
-  >;
-  product1?: StorefrontAPI.Maybe<
-    Pick<
-      StorefrontAPI.Product,
-      'id' | 'title' | 'handle' | 'productType' | 'description'
-    > & {
-      featuredImage?: StorefrontAPI.Maybe<
-        Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+    };
+  }>;
+  bundlesBest?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<
+          StorefrontAPI.Product,
+          | 'id'
+          | 'title'
+          | 'handle'
+          | 'productType'
+          | 'description'
+          | 'createdAt'
+        > & {
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+          >;
+          selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+            price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+            compareAtPrice?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+            >;
+          }>;
+        }
       >;
-      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
-        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-        compareAtPrice?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
-        >;
-      }>;
-    }
-  >;
-  product2?: StorefrontAPI.Maybe<
-    Pick<
-      StorefrontAPI.Product,
-      'id' | 'title' | 'handle' | 'productType' | 'description'
-    > & {
-      featuredImage?: StorefrontAPI.Maybe<
-        Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+    };
+  }>;
+  overlaysNewest?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<
+          StorefrontAPI.Product,
+          | 'id'
+          | 'title'
+          | 'handle'
+          | 'productType'
+          | 'description'
+          | 'createdAt'
+        > & {
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+          >;
+          selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+            price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+            compareAtPrice?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+            >;
+          }>;
+        }
       >;
-      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
-        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-        compareAtPrice?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
-        >;
-      }>;
-    }
-  >;
-  product3?: StorefrontAPI.Maybe<
-    Pick<
-      StorefrontAPI.Product,
-      'id' | 'title' | 'handle' | 'productType' | 'description'
-    > & {
-      featuredImage?: StorefrontAPI.Maybe<
-        Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+    };
+  }>;
+  overlaysBest?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<
+          StorefrontAPI.Product,
+          | 'id'
+          | 'title'
+          | 'handle'
+          | 'productType'
+          | 'description'
+          | 'createdAt'
+        > & {
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+          >;
+          selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
+            price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+            compareAtPrice?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+            >;
+          }>;
+        }
       >;
-      selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<{
-        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-        compareAtPrice?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
-        >;
-      }>;
-    }
-  >;
+    };
+  }>;
 };
 
 export type HalloweenCollectionQueryVariables = StorefrontAPI.Exact<{
@@ -2415,7 +2447,7 @@ interface GeneratedQueryTypes {
     return: RecommendedProductsQuery;
     variables: RecommendedProductsQueryVariables;
   };
-  '#graphql\n  fragment KitOrOverlayPackProduct on Product {\n    id\n    title\n    handle\n    productType\n    description\n    featuredImage {\n      id\n      url\n      altText\n    }\n    selectedOrFirstAvailableVariant {\n      price {\n        amount\n        currencyCode\n      }\n      compareAtPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n  query KitsAndOverlayPacks (\n    $country: CountryCode\n    $language: LanguageCode\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n  ) @inContext(country: $country, language: $language) {\n    product0: product(handle: $handle0) { ...KitOrOverlayPackProduct }\n    product1: product(handle: $handle1) { ...KitOrOverlayPackProduct }\n    product2: product(handle: $handle2) { ...KitOrOverlayPackProduct }\n    product3: product(handle: $handle3) { ...KitOrOverlayPackProduct }\n  }\n': {
+  '#graphql\n  fragment KitOrOverlayPackProduct on Product {\n    id\n    title\n    handle\n    productType\n    description\n    createdAt\n    featuredImage {\n      id\n      url\n      altText\n    }\n    selectedOrFirstAvailableVariant {\n      price {\n        amount\n        currencyCode\n      }\n      compareAtPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n  query KitsAndOverlayPacks (\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    bundlesNewest: collection(handle: "bundles") {\n      products(first: 4, sortKey: CREATED, reverse: true) {\n        nodes { ...KitOrOverlayPackProduct }\n      }\n    }\n    bundlesBest: collection(handle: "bundles") {\n      products(first: 6, sortKey: BEST_SELLING) {\n        nodes { ...KitOrOverlayPackProduct }\n      }\n    }\n    overlaysNewest: collection(handle: "overlays") {\n      products(first: 4, sortKey: CREATED, reverse: true) {\n        nodes { ...KitOrOverlayPackProduct }\n      }\n    }\n    overlaysBest: collection(handle: "overlays") {\n      products(first: 6, sortKey: BEST_SELLING) {\n        nodes { ...KitOrOverlayPackProduct }\n      }\n    }\n  }\n': {
     return: KitsAndOverlayPacksQuery;
     variables: KitsAndOverlayPacksQueryVariables;
   };

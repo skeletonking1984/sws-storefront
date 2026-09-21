@@ -17,12 +17,7 @@ import {SOCIALS} from '~/components/SocialLinks';
 import {useVariantUrl} from '~/lib/variants';
 import {absoluteAsset, buildMeta, getOrigin} from '~/lib/seo';
 import {handleNewsletterSignup} from '~/lib/newsletter.server';
-import {
-  FAN_FAVORITE_HANDLES,
-  OVERLAY_FEATURED_HANDLES,
-  VIBES,
-  WORKS_WITH_PLATFORMS,
-} from '~/lib/nav';
+import {FAN_FAVORITE_HANDLES, VIBES, WORKS_WITH_PLATFORMS} from '~/lib/nav';
 import logo from '~/assets/logo.webp';
 import logoStacked from '~/assets/logo.webp';
 import pfp from '~/assets/pfp.webp';
@@ -145,22 +140,22 @@ function loadDeferredData({context}) {
     .then((response) => response?.collection?.products?.nodes ?? null)
     .catch(() => null);
 
-  // "Kits and overlay packs" fetches four specific products by handle, same
-  // aliased product(handle:) pattern as RECOMMENDED_PRODUCTS_QUERY. Some of
-  // these may be brand new listings that resolve to null for a while after
-  // creation in Shopify Admin, so the section below skips nulls and hides
-  // itself entirely if nothing resolves. This never blocks the page.
+  /*
+   * "Kits and overlay packs" reads the two collections rather than a handle
+   * list, so a new pack reaches the homepage by existing, not by a deploy.
+   *
+   * It used to be four hardcoded handles. Slow Pour went live on 2026-09-14
+   * and was still missing from this band a week later, because nothing about
+   * publishing a product touches a constant in a source file. Todd asked for
+   * new ones to show up on their own, and this is that.
+   *
+   * See pickKitsBand for the ordering. Nulls and a missing collection are both
+   * survivable: the section hides itself if nothing resolves, and never blocks
+   * the page.
+   */
   const kitsAndOverlayPacks = context.storefront
-    .query(KITS_AND_OVERLAY_PACKS_QUERY, {
-      variables: Object.fromEntries(
-        KITS_AND_OVERLAY_PACKS_HANDLES.map((h, i) => [`handle${i}`, h]),
-      ),
-    })
-    .then((response) =>
-      KITS_AND_OVERLAY_PACKS_HANDLES.map((_, i) => response[`product${i}`]).filter(
-        Boolean,
-      ),
-    )
+    .query(KITS_AND_OVERLAY_PACKS_QUERY)
+    .then((response) => pickKitsBand(response))
     .catch((error) => {
       console.error(error);
       return [];
@@ -212,12 +207,51 @@ export function isHalloweenSeason(date = new Date()) {
   return key >= startMonth * 100 + startDay && key <= endMonth * 100 + endDay;
 }
 
+/** How many cards the kits band shows. The grid is 2 across, so 4 is two rows. */
+const KITS_BAND_SIZE = 4;
+
 /**
- * Handles for the "Kits and overlay packs" homepage band. Two of these
- * (the two "stream kit" bundles) are being created in Shopify Admin
- * alongside this change and may resolve to null for a few minutes.
+ * Which four products the kits band shows, given the collection query.
+ *
+ * SLOT 1 IS ALWAYS THE NEWEST PACK. The rest are best sellers. That split is
+ * the whole point: sorting purely by recency would have dropped the Spooky
+ * Stream Kit mid-Halloween, which is the band's best earner right now, and
+ * sorting purely by sales means a new pack never surfaces until it has already
+ * sold, which it cannot do while it is invisible.
+ *
+ * Both collections are merged before sorting, because a kit and an overlay
+ * pack compete for the same slot and Shopify keeps them apart (`bundles` is
+ * productType Bundle, `overlays` is Overlay Pack).
+ *
+ * Exported so it can be reasoned about and tested without a network call.
+ *
+ * @param {any} response
+ * @param {number} limit
+ * @returns {any[]}
  */
-const KITS_AND_OVERLAY_PACKS_HANDLES = OVERLAY_FEATURED_HANDLES;
+export function pickKitsBand(response, limit = KITS_BAND_SIZE) {
+  const nodes = (key) => response?.[key]?.products?.nodes ?? [];
+
+  const newest = [...nodes('overlaysNewest'), ...nodes('bundlesNewest')]
+    .filter(Boolean)
+    .sort((a, b) => Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0));
+  const best = [...nodes('bundlesBest'), ...nodes('overlaysBest')].filter(Boolean);
+
+  const out = [];
+  const seen = new Set();
+  const push = (product) => {
+    if (!product || out.length >= limit || seen.has(product.id)) return;
+    seen.add(product.id);
+    out.push(product);
+  };
+
+  push(newest[0]);
+  best.forEach(push);
+  // Backfill, for the case where best sellers are thin or a collection is
+  // empty. Without this a young catalogue would render a one-card band.
+  newest.forEach(push);
+  return out;
+}
 
 /**
  * Newsletter signup from the homepage email capture. Returns `intent` on
@@ -897,6 +931,7 @@ const KITS_AND_OVERLAY_PACKS_QUERY = `#graphql
     handle
     productType
     description
+    createdAt
     featuredImage {
       id
       url
@@ -916,15 +951,27 @@ const KITS_AND_OVERLAY_PACKS_QUERY = `#graphql
   query KitsAndOverlayPacks (
     $country: CountryCode
     $language: LanguageCode
-    $handle0: String!
-    $handle1: String!
-    $handle2: String!
-    $handle3: String!
   ) @inContext(country: $country, language: $language) {
-    product0: product(handle: $handle0) { ...KitOrOverlayPackProduct }
-    product1: product(handle: $handle1) { ...KitOrOverlayPackProduct }
-    product2: product(handle: $handle2) { ...KitOrOverlayPackProduct }
-    product3: product(handle: $handle3) { ...KitOrOverlayPackProduct }
+    bundlesNewest: collection(handle: "bundles") {
+      products(first: 4, sortKey: CREATED, reverse: true) {
+        nodes { ...KitOrOverlayPackProduct }
+      }
+    }
+    bundlesBest: collection(handle: "bundles") {
+      products(first: 6, sortKey: BEST_SELLING) {
+        nodes { ...KitOrOverlayPackProduct }
+      }
+    }
+    overlaysNewest: collection(handle: "overlays") {
+      products(first: 4, sortKey: CREATED, reverse: true) {
+        nodes { ...KitOrOverlayPackProduct }
+      }
+    }
+    overlaysBest: collection(handle: "overlays") {
+      products(first: 6, sortKey: BEST_SELLING) {
+        nodes { ...KitOrOverlayPackProduct }
+      }
+    }
   }
 `;
 
