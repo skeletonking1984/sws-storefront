@@ -12,6 +12,8 @@
     "codegen": "shopify hydrogen codegen && react-router typegen",
     "logo": "node og/make-logo.mjs",
     "verify:tracking": "node scripts/verify-tracking.mjs",
+    "smoke:pdp": "node scripts/smoke-pdp-mobile.mjs",
+    "smoke:pdp:self-test": "node scripts/smoke-pdp-mobile.mjs --self-test",
     "verify:all": "node scripts/verify-all.mjs",
     "audit:ip": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/audit-ip-risk.mjs",
     "audit:prices": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/audit-channel-prices.mjs",

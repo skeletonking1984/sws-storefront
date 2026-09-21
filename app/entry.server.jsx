@@ -109,10 +109,16 @@ export default async function handleRequest(
   /*
     The PDP picks its video rendition from `Sec-CH-UA-Mobile` (see the
     product loader), so a cache in front of this must not hand a phone's
-    HTML to a desktop or the other way round. Costs one cache key split on
-    a header that has exactly two values.
+    HTML to a desktop or the other way round.
+
+    Scoped to product routes rather than set globally: the product page is
+    the only response whose body depends on that header, and splitting the
+    cache key for the homepage, collections and the cart would cost hit rate
+    to protect a difference that does not exist there.
   */
-  responseHeaders.append('Vary', 'Sec-CH-UA-Mobile');
+  if (new URL(request.url).pathname.startsWith('/products/')) {
+    responseHeaders.append('Vary', 'Sec-CH-UA-Mobile');
+  }
 
   return new Response(body, {
     headers: responseHeaders,

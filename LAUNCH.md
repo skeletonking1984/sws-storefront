@@ -157,7 +157,87 @@ currentTime advancing. The real video defect was the rendition, nothing else.
 | `npm run verify:all` | 18/23. The 5 failures (channels, policy claims, channel prices, alt text, deploy freshness) **all reproduce on a clean tree with these changes stashed**, so none of them is this work |
 
 `Mobile QA` stays unchecked: this is the PDP and the homepage hero, not the
-whole surface. **Not deployed. Production deploy is Todd's.**
+whole surface.
+
+#### Deployed, and the build stamp is lying
+
+**Todd deployed while this work was still uncommitted, so production is
+running it and `/api/version` reports the wrong commit.** The deployed bundle
+answers `commit: 9e84fd1`, `builtAt: 2026-09-21T15:32:26Z`, but 9e84fd1 is the
+PARENT of the commit that holds these changes. Oxygen deploys the working
+tree, and the version stamp is taken from HEAD at build time, so a deploy of
+uncommitted work records the commit BEFORE it. Confirmed by reading the live
+HTML: production serves `<h1>Celestial Stream Kit</h1>`, a
+`.product-title-full`, both the `.product-buybox` and `.product-heading`
+wrappers, and 720p-first sources under `Sec-CH-UA-Mobile: ?1`, none of which
+exist in 9e84fd1.
+
+**Consequence for the next agent: `audit:deploy` (deploy freshness) is
+comparing production against the wrong commit, and so is every "deploy, or
+read those results as history" line in `verify:all`.** A redeploy from the
+committed tree fixes the stamp.
+
+One change is genuinely NOT live: `Vary: Sec-CH-UA-Mobile` was scoped to
+`/products/` paths after the deploy, so production still sends it on every
+HTML response. Harmless (a cache key split on pages whose body does not
+depend on it), fixed in the repo, ships with the next deploy.
+
+#### How this gets tested, and what testing cannot reach
+
+`npm run smoke:pdp` (`scripts/smoke-pdp-mobile.mjs`) fetches each product
+twice, once under each value of `Sec-CH-UA-Mobile`, and asserts BOTH halves:
+the four things that changed, and the things that must not have. It reads
+served HTML only, never adds to a cart and never starts a checkout, so it is
+safe against production as often as you like, and it exits 1 so it can gate a
+deploy. `npm run smoke:pdp:self-test` runs 15 known-bad fixtures.
+
+**Its first two rules were wrong, and the live site is what corrected them**,
+which is the BAT-79 pattern for the third time:
+
+- It looked for `name="merchandiseId"` and reported all four live products as
+  unbuyable. Hydrogen's CartForm does not emit that input. It serialises the
+  whole action into one hidden `cartFormInput` field as HTML-escaped JSON, so
+  the variant sits inside `&quot;merchandiseId&quot;:&quot;gid://...&quot;`.
+- It asserted a literal 1080p as the desktop rendition and flagged the Star
+  Goal widget as the "blurry" regression. That product's tallest rendition
+  simply IS 720p. It now compares each product against its own ladder, and
+  compares the phone's file SET against the desktop's, because demoting the
+  tallest rendition is the change and dropping it would be a bug.
+
+**Live results, production, 2026-09-21 after the deploy:**
+
+| Check | Result |
+|---|---|
+| `npm run smoke:pdp` | **4/4 products clean**, 0 failures, 0 warnings |
+| `npm run smoke:pdp:self-test` | 15/15 |
+| `node scripts/audit-shipping.mjs` | exit 0, 123 products, none require shipping |
+| `npm run audit:buyable` | exit 0 |
+| `npm run verify:cart-attributes` | exit 0 |
+| `npm run verify:tracking` | exit 0 |
+| `npm run verify:test-orders` | exit 0 |
+| `npm run audit:schema` | exit 0 |
+| `npm run audit:answers:live` | exit 0 |
+| `npm run audit:faq:live` | exit 0 |
+| `npm run audit:site` | exit 0, **188 URLs, 0 errors**, 1 pre-existing redirect warning (`/account` to `/account/orders`) |
+| Live PDP at 375x812 | video playing, rating y=524, price y=584, name y=652, full title y=687, 0 horizontal overflow |
+
+**The buy path was walked on the live site at 375x812**, by hand, in a real
+browser: Add to cart, cart drawer opens, the line renders the **full** product
+title (so the shortened h1 did not leak into the cart), `$39.99`, subtotal
+`$73.23` against the two items already in that session plus this one, and
+`Continue to Checkout` points at
+`shop.streamwidgetshop.com/cart/c/<token>` carrying the `_cs` attribution
+parameter. Checkout was NOT started. The added line was then removed and the
+subtotal returned to `$33.24`, so the session was left as it was found.
+
+**What none of this reaches: money actually moving.** Every check above reads
+HTML or the Admin API. The only proof that a buyer can pay and receive a file
+is a real order, and the safe way to make one is a `SWSTEST`-prefixed 100%
+discount code, because `app/lib/conversions/testOrders.js` filters exactly
+that prefix out of the conversion pipeline (a bare "TEST" code would be
+reported to X and GA4 as real revenue). That is Todd's call to make, not an
+agent's.
+
 
 ### 2026-09-20 (Todd present): the hero plays the widget instead of photographing it
 
