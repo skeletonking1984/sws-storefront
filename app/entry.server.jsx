@@ -106,6 +106,13 @@ export default async function handleRequest(
 
   responseHeaders.set('Content-Type', 'text/html');
   responseHeaders.set('Content-Security-Policy', header);
+  /*
+    The PDP picks its video rendition from `Sec-CH-UA-Mobile` (see the
+    product loader), so a cache in front of this must not hand a phone's
+    HTML to a desktop or the other way round. Costs one cache key split on
+    a header that has exactly two values.
+  */
+  responseHeaders.append('Vary', 'Sec-CH-UA-Mobile');
 
   return new Response(body, {
     headers: responseHeaders,

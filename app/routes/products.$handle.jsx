@@ -53,6 +53,7 @@ import etsyReviewsData from '~/data/etsy-reviews.json';
 import deliveryFacts from '~/data/product-delivery.json';
 import {buildAnswerBlock} from '~/lib/answerBlock';
 import {parseWorksWith} from '~/lib/platforms';
+import {subjectFromTitle} from '~/lib/productName';
 
 /**
  * @type {Route.MetaFunction}
@@ -186,6 +187,23 @@ async function loadCriticalData({context, params, request}) {
     product,
     productReviews,
     answerBlock,
+    /*
+      Which video rendition this request gets, decided here because it
+      cannot be decided in the browser.
+
+      Chrome sends `Sec-CH-UA-Mobile: ?1` on every request from a phone by
+      default, no opt-in and no extra round trip. The alternative, checking
+      the viewport after hydration, needs the `<video>` to have no `autoPlay`
+      attribute (or the 1080p file is already downloading before any JS
+      runs), and without that attribute Chrome's autoplay policy killed the
+      clip 84ms in: measured 2026-09-21, play at 199ms, pause at 283ms,
+      currentTime never left 0.
+
+      Browsers that send no hint (Safari, Firefox) fall through to false and
+      get exactly what they get today, so this can only ever remove bytes
+      from a phone, never degrade a desktop.
+    */
+    smallScreen: request.headers.get('Sec-CH-UA-Mobile') === '?1',
   };
 }
 
@@ -314,8 +332,14 @@ function buildVideoJsonLd({title, videoMedia, meta}) {
 
 export default function Product() {
   /** @type {LoaderReturnData} */
-  const {product, relatedProducts, faq, productReviews, answerBlock} =
-    useLoaderData();
+  const {
+    product,
+    relatedProducts,
+    faq,
+    productReviews,
+    answerBlock,
+    smallScreen,
+  } = useLoaderData();
   const rootData = useRouteLoaderData('root');
   const origin = rootData?.origin || 'https://streamwidgetshop.com';
 
@@ -336,6 +360,10 @@ export default function Product() {
   });
 
   const {title, description, descriptionHtml, worksWith} = product;
+  // The name a person would say, cut out of the Etsy keyword title. Falls
+  // back to the full title so a product whose title is nothing but keywords
+  // still has a heading.
+  const shortTitle = subjectFromTitle(title) || title;
   const media = product.media?.nodes ?? [];
   const formattedDescription = formatProductDescription(descriptionHtml, title);
   const kindLabel = widgetKindFromTitle(title);
@@ -577,18 +605,46 @@ export default function Product() {
         />
       )}
       <div className="product-top">
-        <ProductGallery media={media} title={title} />
+        <ProductGallery media={media} title={title} smallScreen={smallScreen} />
         <div className="product-main sws-glass-card">
-          <h1>{title}</h1>
-          {hasEnoughReviewsForJsonLd ? (
-            <ProductRatingBadge data={productReviews} />
-          ) : (
-            <EtsyRatingBadge compact />
-          )}
-          <ProductPrice
-            price={selectedVariant?.price}
-            compareAtPrice={selectedVariant?.compareAtPrice}
-          />
+          {/*
+            The buy box sits ABOVE the name on a phone, and the name is the
+            name rather than the search string.
+
+            Measured on the live PDP at 375x812 on 2026-09-21: the h1 was the
+            raw Etsy title (139 chars on the Celestial kit, 99 chars on
+            average across all 123 products), 168px tall, and it pushed the
+            price to y=811 of an 812px viewport. A phone buyer reached the
+            end of the first screen without ever seeing what the thing cost.
+            Mobile added to cart 1.30% against desktop 6.86% in the same
+            period.
+
+            The full keyword title is still on the page, under the name, and
+            still carries every word it did: the meta title, the OG tags, the
+            Product JSON-LD `name` and the answer block are all untouched, so
+            nothing that a crawler reads lost a keyword. `subjectFromTitle` is
+            the same cleaner the gallery and the alt-text generator use, so
+            the three cannot drift. Across the catalog it yields 36 chars on
+            average, 0 empty, 0 collisions between products (checked against
+            the live feed, 123 products, 2026-09-21).
+          */}
+          <div className="product-heading">
+            <h1>{shortTitle}</h1>
+            {shortTitle !== title ? (
+              <p className="product-title-full">{title}</p>
+            ) : null}
+          </div>
+          <div className="product-buybox">
+            {hasEnoughReviewsForJsonLd ? (
+              <ProductRatingBadge data={productReviews} />
+            ) : (
+              <EtsyRatingBadge compact />
+            )}
+            <ProductPrice
+              price={selectedVariant?.price}
+              compareAtPrice={selectedVariant?.compareAtPrice}
+            />
+          </div>
           <ProductHighlights
             description={description}
             worksWith={worksWith?.value}

@@ -76,6 +76,89 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-21 (Todd present): the phone never saw the price
+
+Analytics for the period put mobile at **1.30% added to cart against 6.86% on
+desktop**, with an **83.20% mobile bounce**, and paid X traffic at **0.47%
+added to cart across 641 sessions**. Measured the live pages at 375x812 in a
+real browser rather than guessing at copy, and the mobile leak turned out to
+be physical.
+
+**What was measured on the live site, before any change:**
+
+| Surface | Finding |
+|---|---|
+| PDP `/products/celestial-stream-kit` | the price `$39.99` rendered at **y=811 of an 812px viewport** |
+| PDP `<h1>` | the raw Etsy title, **139 chars, 168px tall**, starting at y=524, so it filled the whole above-fold text column |
+| Catalog-wide | full titles average **99 chars** across all 123 products in the live feed |
+| PDP video | the rendition served to a 375px screen was **HD-1080p-2.5Mbps** |
+| Homepage | the hero lockup sat at y=168 under a header carrying the same pfp and wordmark, and `.hero-stream-frame`, the only product on the page, ran **y=709 to 895** against an 812px viewport |
+| Sticky Add to cart | present and correct on mobile, the one thing already right |
+
+**Fixed, all three:**
+
+1. **The buy box comes before the name on a phone.** `.product-buybox` (rating
+   + price) and `.product-heading` carry negative flex `order` below 45em and
+   reset to source order above it. Negative on purpose: every other child of
+   `.product-main` is order 0, and the first attempt used `order: 1/2`, which
+   sent both blocks BELOW the highlights and the share row. Caught by
+   measuring, not by looking.
+2. **The h1 is the product name, the keyword title stays under it.**
+   `subjectFromTitle` (the same cleaner the gallery alt and
+   `scripts/build-alt-text.mjs` already share, so the three cannot drift)
+   gives "Celestial Stream Kit" out of the 139-char string. Across the live
+   feed: **123 products, 99 chars average in, 36 average out, 0 empty, 0
+   collisions between products, 1 over 70 chars.** The full title renders
+   below it as `.product-title-full`, so no word left the page, and the meta
+   title, OG tags, Product JSON-LD `name` and the answer block are untouched.
+3. **A phone is offered 720p first.** `orderVideoSources` takes a
+   `smallScreen` flag and puts the largest rendition at or under 720p in
+   front; 1080p stays in the list as a fallback and the m3u8 stays last for
+   the Safari reason already documented in that file. The JSON-LD
+   `contentUrl` still points at 1080p.
+4. **The homepage hero lockup is desktop only**, the CTA buttons no longer
+   stack unconditionally, and the hero's phone padding drops from 2.5rem to
+   1.5rem. The header lockup stays, so the brand is still on the first screen
+   once.
+
+**The rendition flag is resolved on the SERVER, from `Sec-CH-UA-Mobile`, and
+that is not a stylistic choice.** The obvious version checks the viewport
+after hydration, which forces the `<video>` to drop its `autoPlay` attribute
+(otherwise the 1080p file is downloading before any JS runs). Built that way
+first and it broke playback: with `preload="none"` and a scripted `play()`,
+**Chrome fired play at 199ms and pause at 283ms with currentTime still 0**, so
+the clip died 84ms in and the page showed a poster. Todd's 2026-09-15 call is
+that the clip plays on landing, so the attribute stays and the server decides.
+Chrome sends the hint on every phone request by default; Safari and Firefox
+send nothing, fall through to false, and get exactly today's behaviour, so
+this can only remove bytes from a phone and never degrade a desktop.
+`entry.server.jsx` appends `Vary: Sec-CH-UA-Mobile` so a cache cannot hand one
+form factor's HTML to the other.
+
+**One earlier claim in this log was wrong and is corrected here: the PDP video
+was NOT failing to autoplay on mobile.** It plays. The first reading was taken
+in a pane whose emulation had not settled; a clean load at 375x812 showed
+currentTime advancing. The real video defect was the rendition, nothing else.
+
+**Verified:**
+
+| Check | Result |
+|---|---|
+| `npm run build` | exit 0 |
+| `npm run lint` | 20 errors, **identical to the pre-existing count**, none in the four touched files |
+| Source order, `Sec-CH-UA-Mobile: ?1` | 720p, 480p, 1080p, m3u8 |
+| Source order, `?0` | 1080p, 720p, 480p, m3u8 (unchanged from today) |
+| `Vary` response header | `Sec-CH-UA-Mobile` present |
+| PDP at 375x812 | video playing, rating y=524, **price y=584**, name y=652, full title y=687, all above the fold, 0 horizontal overflow |
+| PDP at 360x780 | price y=569, **0 horizontal overflow** (the 360-class width that bit on 2026-09-17) |
+| PDP at 1024 wide | name, full title, rating, price, highlights in source order, video playing at 1080p, 0 overflow |
+| Homepage at 375x812 | hero frame **y=615 to 801, inside the fold** (was 709 to 895), 0 overflow |
+| Homepage at 360x780 | frame y=604 to 780, 0 overflow |
+| `npm run verify:all` | 18/23. The 5 failures (channels, policy claims, channel prices, alt text, deploy freshness) **all reproduce on a clean tree with these changes stashed**, so none of them is this work |
+
+`Mobile QA` stays unchecked: this is the PDP and the homepage hero, not the
+whole surface. **Not deployed. Production deploy is Todd's.**
+
 ### 2026-09-20 (Todd present): the hero plays the widget instead of photographing it
 
 The homepage hero was a still built from four captured widget PNGs. These are animated products, and a picture of one says nothing about what it does. The moon jar is now the real widget, running.

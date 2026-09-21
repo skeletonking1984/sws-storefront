@@ -1959,7 +1959,9 @@ button.reset:hover:not(:has(> *)) {
   align-items: center;
   display: flex;
   min-height: calc(100vh - var(--header-height));
-  padding: 2.5rem 1.25rem 3rem;
+  /* 1.5rem of top padding on a phone, not 2.5: every 16px above the fold is
+     16px the product frame does not get. */
+  padding: 1.5rem 1.25rem 2.5rem;
   position: relative;
   @media (min-width: 45em) {
     padding: 3rem 2rem;
@@ -1969,7 +1971,9 @@ button.reset:hover:not(:has(> *)) {
 .hero-grid {
   align-items: center;
   display: grid;
-  gap: 2.5rem;
+  /* 1.5rem between the copy and the stream frame on a phone (2.5 pushed the
+     frame 16px further down for no gain), 3.5 once the hero is two column. */
+  gap: 1.5rem;
   margin: 0 auto;
   max-width: 1320px;
   position: relative;
@@ -2012,6 +2016,28 @@ button.reset:hover:not(:has(> *)) {
   }
 }
 
+/*
+  The hero lockup is desktop only.
+
+  Measured on the live homepage at 375x812 on 2026-09-21: the lockup sat at
+  y=168 costing 64px plus a 24px margin, and directly under a header that
+  already carries the same pfp and the same wordmark at y=0. The first screen
+  of a phone was the brand twice, a slogan and two buttons, and the stream
+  frame, which is the only thing on the page that shows a product, started at
+  y=709 and ran to 895. A phone visitor left without seeing a widget. Mobile
+  bounce was 83.20%.
+
+  The header lockup stays, so the brand is still on the first screen once.
+  `display: none` rather than a render branch on purpose: the image is in the
+  markup either way, and on a phone the LCP element becomes the stream frame
+  art, which is already eager with fetchPriority high.
+*/
+@media (max-width: 54.99em) {
+  .hero-brand {
+    display: none;
+  }
+}
+
 .hero-brand img.hero-pfp {
   border: 2px solid rgba(242, 166, 216, 0.5);
   border-radius: 50%;
@@ -2047,16 +2073,27 @@ button.reset:hover:not(:has(> *)) {
   }
 }
 
+/*
+  Buttons side by side on a phone, stacked only below 380px where two of
+  them will not fit. Stacked at every width they cost 127px of the first
+  screen (measured 375x812, 2026-09-21) to say two words.
+*/
 .hero-cta-row {
   align-items: center;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   justify-content: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
+  @media (max-width: 23.75em) {
+    flex-direction: column;
+  }
   @media (min-width: 55em) {
     flex-direction: row;
+    gap: 1rem;
     justify-content: flex-start;
+    margin-bottom: 1.25rem;
   }
 }
 
@@ -3478,12 +3515,16 @@ button.reset:hover:not(:has(> *)) {
 
 .product h1 {
   margin-top: 0;
-  font-size: 1.3rem;
+  /* The heading is the product NAME now (36 chars on average across the
+     catalog, 85 at the longest), not the 99-character Etsy search string,
+     so it can be read at a size a phone buyer registers as a title. */
+  font-size: 1.45rem;
   font-weight: 800;
-  line-height: 1.35;
+  line-height: 1.25;
+  margin-bottom: 0;
   overflow-wrap: break-word;
   @media (min-width: 45em) {
-    font-size: 1.6rem;
+    font-size: 1.7rem;
   }
 }
 
@@ -3505,6 +3546,59 @@ button.reset:hover:not(:has(> *)) {
     position: sticky;
     top: 6rem;
   }
+}
+
+/*
+  Buy box first on a phone.
+
+  Measured on the live PDP at 375x812 on 2026-09-21: the price rendered at
+  y=811 of an 812px viewport, so it was never on the first screen, and the
+  raw Etsy h1 above it was 168px tall on its own. Mobile added to cart was
+  1.30% against 6.86% on desktop.
+
+  Flex `order` rather than a DOM move on purpose: the h1 stays first in the
+  document, so the reading order a screen reader and a crawler get is
+  unchanged, and only the two non-interactive blocks (rating, price) move
+  visually. Above 45em the sticky column has room for both and the source
+  order is what renders.
+*/
+.product-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+  /* Negative, not 2. Every other child of .product-main is order 0, so a
+     positive order sends the name and the price BELOW the highlights and the
+     share row instead of above them. */
+  order: -1;
+  @media (min-width: 45em) {
+    order: 0;
+  }
+}
+
+.product-buybox {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  order: -2;
+  @media (min-width: 45em) {
+    order: 0;
+  }
+}
+
+/*
+  The full keyword title, kept on the page under the name. It is the string
+  buyers recognise from Etsy search and it holds the words the h1 gave up,
+  so it stays visible rather than being dropped or hidden from crawlers.
+*/
+.product-title-full {
+  color: var(--sws-sub);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin: 0;
+  overflow-wrap: break-word;
 }
 
 /*

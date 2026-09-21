@@ -14,9 +14,17 @@ import {subjectFromTitle} from '~/lib/productName';
  * literal alt="" on the largest image of the page. This component is the only
  * place that can repair that at render time, and it needs the title to do it.
  *
- * @param {{media: Array<any>, title?: string}}
+ * `smallScreen` decides which mp4 rendition the browser is offered, and it
+ * is resolved on the SERVER from the request's `Sec-CH-UA-Mobile` client
+ * hint, never here. Deciding it on the client needs the `autoPlay` attribute
+ * gone, and without that attribute Chrome's autoplay policy stopped the clip
+ * 84ms after `play()` (measured 2026-09-21: play at 199ms, pause at 283ms,
+ * currentTime still 0). The clip playing on landing is Todd's 2026-09-15
+ * call, so it wins over a tidier client-side check.
+ *
+ * @param {{media: Array<any>, title?: string, smallScreen?: boolean}}
  */
-export function ProductGallery({media, title}) {
+export function ProductGallery({media, title, smallScreen = false}) {
   // The raw title is an Etsy keyword string. Announcing "Boba Drink Goal
   // Widget for Twitch | Cute Progress Bar | StreamElements Streamlabs OBS,
   // image 4 of 11" eleven times is not usable, so the gallery says the name
@@ -115,7 +123,7 @@ export function ProductGallery({media, title}) {
             poster={active.previewImage?.url}
             className="product-gallery-video"
           >
-            {orderVideoSources(active.sources).map((source) => (
+            {orderVideoSources(active.sources, smallScreen).map((source) => (
               <source
                 key={source.url}
                 src={source.url}
@@ -180,17 +188,35 @@ export function ProductGallery({media, title}) {
  * source, but Safari can, and if it sat first Safari would take the adaptive
  * stream and start low again.
  *
+ * `smallScreen` puts the largest rendition at or under 720p in front instead.
+ * A 375px viewport shows no detail a 1080p file has and a 720p one does not,
+ * and 1080p costs about 0.9Mbps more of a phone's data before the buyer has
+ * decided anything. 1080p stays in the list as a fallback, so a phone whose
+ * browser cannot decode 720p still has something to play.
+ *
  * @param {Array<{url: string, mimeType?: string, height?: number}> | undefined} sources
+ * @param {boolean} [smallScreen]
  */
-function orderVideoSources(sources) {
+function orderVideoSources(sources, smallScreen = false) {
   if (!sources?.length) return [];
   const isStream = (s) =>
     /m3u8/i.test(s.url || '') || /mpegurl/i.test(s.mimeType || '');
   const mp4s = sources
     .filter((s) => !isStream(s))
     .sort((a, b) => (b.height || 0) - (a.height || 0));
-  return [...mp4s, ...sources.filter(isStream)];
+  const streams = sources.filter(isStream);
+  if (!smallScreen) return [...mp4s, ...streams];
+  const fits = mp4s.filter((s) => (s.height || 0) <= MOBILE_MAX_HEIGHT);
+  const rest = mp4s.filter((s) => (s.height || 0) > MOBILE_MAX_HEIGHT);
+  return [...fits, ...rest, ...streams];
 }
+
+/**
+ * Tallest rendition worth sending to a phone. 720p, because Shopify's own
+ * ladder for these videos is 480p / 720p / 1080p and 480p is the height that
+ * was reported as blurry.
+ */
+const MOBILE_MAX_HEIGHT = 720;
 
 function thumbLabel(productName, item, index, total) {
   const name = productName || 'this widget';
