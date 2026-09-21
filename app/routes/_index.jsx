@@ -10,6 +10,9 @@ import {SHOP_RATING} from '~/components/EtsyReviews';
 // pickHomeReviews(), which is only called from loadCriticalData below, so
 // the homepage's client bundle never ships every product's review text.
 import etsyReviews from '~/data/etsy-reviews.json';
+// Ranked by REAL sales. Small (12 entries), unlike etsyReviews, but still only
+// ever read in the loader. Rebuilt by scripts/build-top-sellers.mjs.
+import topSellers from '~/data/top-sellers.json';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {EmailCapture} from '~/components/EmailCapture';
 import {HappyClients} from '~/components/HappyClients';
@@ -130,15 +133,38 @@ function loadDeferredData({context}) {
       return null;
     });
 
-  // "Top widgets" should come from the real Top Widgets collection when it
-  // exists in Admin. If it's missing or empty, the section below falls
-  // back to the curated fan-favorites list above.
+  /*
+   * "Top widgets" is ordered by WHAT ACTUALLY SELLS, refreshed by
+   * scripts/build-top-sellers.mjs into data/top-sellers.json.
+   *
+   * It used to read the top-widgets collection, which is MANUAL sort: a
+   * revenue order frozen by hand on 2026-09-13 that could only move when
+   * someone remembered to reorder it in Admin.
+   *
+   * The obvious alternative, sortKey: BEST_SELLING, is worse and it is worth
+   * saying why so nobody "simplifies" this back. Shopify's best-selling signal
+   * counts SHOPIFY orders, and this shop took 7 of those in 90 days against
+   * 769 on Etsy. Measured 2026-09-21, BEST_SELLING drops the Multistream Chat
+   * Widget out of the top 6 entirely, and that is Etsy's number one by a wide
+   * margin: 80 units, $1,171, 16.6% of all revenue. An ordering that hides the
+   * best seller is not better than a frozen one.
+   *
+   * Falls through to the curated fan-favourites list below if the handles stop
+   * resolving, which they will if a product is drafted between refreshes.
+   */
   const topWidgets = context.storefront
-    .query(TOP_WIDGETS_COLLECTION_QUERY, {
-      variables: {handle: 'top-widgets'},
+    .query(RECOMMENDED_PRODUCTS_QUERY, {
+      variables: Object.fromEntries(
+        TOP_SELLER_HANDLES.map((h, i) => [`handle${i}`, h]),
+      ),
     })
-    .then((response) => response?.collection?.products?.nodes ?? null)
-    .catch(() => null);
+    .then((response) =>
+      TOP_SELLER_HANDLES.map((_, i) => response[`product${i}`]).filter(Boolean),
+    )
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
 
   /*
    * "Kits and overlay packs" reads the two collections rather than a handle
@@ -206,6 +232,27 @@ export function isHalloweenSeason(date = new Date()) {
   const [endMonth, endDay] = HALLOWEEN_SEASON.end;
   return key >= startMonth * 100 + startDay && key <= endMonth * 100 + endDay;
 }
+
+/**
+ * The eight handles the "Top widgets" band asks for, highest earning first.
+ *
+ * RECOMMENDED_PRODUCTS_QUERY declares handle0 through handle7 as non-null, so
+ * this has to be exactly eight even on a thin week. Short lists are padded from
+ * the curated fan favourites rather than by repeating a handle, so a padded
+ * slot still renders a real product instead of a duplicate card.
+ */
+const TOP_SELLER_HANDLES = (() => {
+  const ranked = (topSellers?.handles ?? []).slice(0, 8);
+  const seen = new Set(ranked);
+  for (const handle of FAN_FAVORITE_HANDLES) {
+    if (ranked.length >= 8) break;
+    if (!seen.has(handle)) {
+      seen.add(handle);
+      ranked.push(handle);
+    }
+  }
+  return ranked;
+})();
 
 /** How many cards the kits band shows. The grid is 2 across, so 4 is two rows. */
 const KITS_BAND_SIZE = 4;
@@ -1025,54 +1072,6 @@ const HALLOWEEN_COLLECTION_QUERY = `#graphql
   }
 `;
 
-const TOP_WIDGETS_COLLECTION_QUERY = `#graphql
-  query TopWidgetsCollection(
-    $handle: String!
-    $country: CountryCode
-    $language: LanguageCode
-  ) @inContext(country: $country, language: $language) {
-    collection(handle: $handle) {
-      id
-      products(first: 6) {
-        nodes {
-          id
-          title
-          handle
-          worksWith: metafield(namespace: "custom", key: "works_with") { value }
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          featuredImage {
-            id
-            url
-            altText
-          }
-          media(first: 25) {
-            nodes {
-              __typename
-              ... on Video {
-                id
-                previewImage {
-                  url
-                }
-                sources {
-                  url
-                  mimeType
-                  format
-                  width
-                  height
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
 
 /** @typedef {import('./+types/_index').Route} Route */
 /** @typedef {import('storefrontapi.generated').RecommendedProductsQuery} RecommendedProductsQuery */

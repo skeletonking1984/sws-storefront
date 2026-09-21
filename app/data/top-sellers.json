@@ -1,0 +1,113 @@
+{
+  "generatedAt": "2026-09-21T04:11:14.282Z",
+  "window": {
+    "since": "2026-08-07",
+    "until": "2026-09-21",
+    "days": 45
+  },
+  "source": "etsy productRevenue, joined through data/etsy-video-map.json",
+  "etsyOrders": 502,
+  "etsyRevenue": 4520.97,
+  "mappedProducts": 75,
+  "unmappedProducts": 32,
+  "handles": [
+    "multistream-chat-widget-twitch-youtube-kick-overlay-digital-download-easy-setup-one-click-installation",
+    "animated-moon-jar-goal-widget-twitch-sub-goal-overlay-falling-stars-tracker-instant-download",
+    "y2k-sticker-chat-widget-retro-alerts-multistream-obs-ready-digital-download",
+    "neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
+    "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
+    "neon-animated-multistream-chat-widget-twitch-youtube-kick-overlay-digital-download",
+    "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only",
+    "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only",
+    "moon-glow-neon-aesthetic-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
+    "cute-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+    "rosa-chick-multistream-chat-widget-for-twitch-youtube-kick-tiktok",
+    "butterfly-galaxy-theme-glassy-transparent-chat-and-goal-stream-widgets-minimal-starry-elegant-glass-theme-clean-vibe-streamelement-only"
+  ],
+  "detail": [
+    {
+      "handle": "multistream-chat-widget-twitch-youtube-kick-overlay-digital-download-easy-setup-one-click-installation",
+      "listing_id": 4536576701,
+      "title": "Multistream Chat Widget • Twitch, YouTube, Kick Overlay (Digital Download)  Easy Setup - One Click Installation",
+      "revenue": 785.85,
+      "units": 54
+    },
+    {
+      "handle": "animated-moon-jar-goal-widget-twitch-sub-goal-overlay-falling-stars-tracker-instant-download",
+      "listing_id": 4551047317,
+      "title": "Animated Moon Jar Goal Widget • Twitch Sub Goal Overlay, Falling Stars Tracker (Instant Download)",
+      "revenue": 607.23,
+      "units": 45
+    },
+    {
+      "handle": "y2k-sticker-chat-widget-retro-alerts-multistream-obs-ready-digital-download",
+      "listing_id": 4543765531,
+      "title": "Y2K Sticker Chat Widget • Retro Alerts, Multistream OBS Ready (Digital Download)",
+      "revenue": 441.1,
+      "units": 33
+    },
+    {
+      "handle": "neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
+      "listing_id": 4333471272,
+      "title": "Neon Twitch Chat & Goal Widget | Multistream Glow Overlay (Digital Download)",
+      "revenue": 277.31,
+      "units": 30
+    },
+    {
+      "handle": "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
+      "listing_id": 1790018033,
+      "title": "Animated Star Goal Widget for Twitch, Kick OBS, Celestial Stream Overlay (Digital Download)",
+      "revenue": 221.21,
+      "units": 40
+    },
+    {
+      "handle": "neon-animated-multistream-chat-widget-twitch-youtube-kick-overlay-digital-download",
+      "listing_id": 4539065835,
+      "title": "Neon Animated Multistream Chat Widget • Twitch, YouTube, Kick Overlay (Digital Download)",
+      "revenue": 212.33,
+      "units": 19
+    },
+    {
+      "handle": "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only",
+      "listing_id": 4322617816,
+      "title": "Cosmic Galaxy Chat Widget | Twitch StreamElements Animated Chat Goal Stream Overlay | VTuber Streamer",
+      "revenue": 110.87,
+      "units": 13
+    },
+    {
+      "handle": "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only",
+      "listing_id": 4336744223,
+      "title": "Cloudy Moon Overlay for Twitch | Dreamy Starry Night StreamElements Theme for VTubers",
+      "revenue": 89.77,
+      "units": 8
+    },
+    {
+      "handle": "moon-glow-neon-aesthetic-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
+      "listing_id": 4336740821,
+      "title": "Neon Moon Glow Chat Widget | Twitch StreamElements Animated Overlay (Digital Download)",
+      "revenue": 56.75,
+      "units": 5
+    },
+    {
+      "handle": "cute-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "listing_id": 1758361648,
+      "title": "Pumpkin Goal Widget | Twitch Streamlabs StreamElements Halloween Animated Sub Goal Tracker | VTuber Streamer",
+      "revenue": 45.8,
+      "units": 14
+    },
+    {
+      "handle": "rosa-chick-multistream-chat-widget-for-twitch-youtube-kick-tiktok",
+      "listing_id": 4563217939,
+      "title": "Multistream Chat Widget • Rosa Chick Overlay, 3D Chat (Digital Download)",
+      "revenue": 45.46,
+      "units": 4
+    },
+    {
+      "handle": "butterfly-galaxy-theme-glassy-transparent-chat-and-goal-stream-widgets-minimal-starry-elegant-glass-theme-clean-vibe-streamelement-only",
+      "listing_id": 4322607453,
+      "title": "Butterfly Galaxy Chat Widget | Twitch StreamElements Animated Chat Goal Overlay | VTuber Streamer",
+      "revenue": 45.3,
+      "units": 12
+    }
+  ]
+}

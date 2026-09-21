@@ -48,6 +48,8 @@
     "audit:faq:self-test": "node scripts/audit-faq-jsonld.mjs --self-test",
     "audit:alt": "node scripts/audit-alt-text.mjs",
     "audit:alt:self-test": "node scripts/audit-alt-text.mjs --self-test",
+    "build:top-sellers": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/build-top-sellers.mjs",
+    "audit:top-sellers": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/build-top-sellers.mjs --check",
     "build:alt": "node scripts/build-alt-text.mjs",
     "build:delivery-facts": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/build-delivery-facts.mjs",
     "audit:buyable": "node scripts/audit-buyable.mjs",

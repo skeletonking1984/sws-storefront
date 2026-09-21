@@ -77,6 +77,17 @@ const CHECKS = [
   // rather than assumed. Text form here; --live belongs in the post-deploy pass.
   ['FAQ JSON-LD', 'scripts/audit-faq-jsonld.mjs', {}],
   ['alt text', 'scripts/audit-alt-text.mjs', {}],
+  /*
+   * Has the homepage's "Top widgets" order gone stale? This one is expected to
+   * fail sometimes and that is the point: it exits 1 when the real sales
+   * ranking has moved away from app/data/top-sellers.json, which is the signal
+   * to run `npm run build:top-sellers` and commit. The homepage cannot notice
+   * on its own, because the ranking ships as a committed file.
+   *
+   * ETSY_PACKAGE_ROOT is mandatory. The Etsy client resolves its .env from
+   * cwd, so without it this fails closed with a misleading auth error.
+   */
+  ['top sellers', 'scripts/build-top-sellers.mjs', {ETSY_PACKAGE_ROOT: '../sws-etsy-mcp'}, ['--check']],
   // Walks the path a buyer walks, ending in a REAL cart. A sample, because
   // each product costs a page fetch plus a cart creation. Run
   // `npm run audit:buyable` with no limit before anything that touches the
