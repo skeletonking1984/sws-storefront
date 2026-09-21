@@ -159,7 +159,16 @@ function loadDeferredData({context}) {
       ),
     })
     .then((response) =>
-      TOP_SELLER_HANDLES.map((_, i) => response[`product${i}`]).filter(Boolean),
+      TOP_SELLER_HANDLES.map((_, i) => response[`product${i}`])
+        .filter(Boolean)
+        /* Carry the real unit count onto the node so the card can show it.
+         * Attached here rather than threaded through as a prop because the
+         * band already passes whole product objects down two Await layers. */
+        .map((product) => ({
+          ...product,
+          soldUnits: SOLD_UNITS.get(product.handle) ?? null,
+          soldWindowDays: topSellers?.window?.days ?? null,
+        })),
     )
     .catch((error) => {
       console.error(error);
@@ -253,6 +262,19 @@ const TOP_SELLER_HANDLES = (() => {
   }
   return ranked;
 })();
+
+/**
+ * handle -> units sold in the ranking window, for the proof line on a card.
+ *
+ * These are ETSY units. That is not a sleight of hand: the hero has always
+ * shown the Etsy lifetime count as "7,576+ widgets sold", and the widget
+ * genuinely sold that many. Nothing here claims they were Shopify orders, and
+ * the number is never rounded, invented or padded, per the no-fake-social-proof
+ * rule. If the join loses a product it shows nothing rather than a zero.
+ */
+const SOLD_UNITS = new Map(
+  (topSellers?.detail ?? []).map((row) => [row.handle, row.units]),
+);
 
 /** How many cards the kits band shows. The grid is 2 across, so 4 is two rows. */
 const KITS_BAND_SIZE = 4;

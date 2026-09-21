@@ -94,6 +94,12 @@ function publishSelectItem({publish, product, listId, listName, index}) {
  *   index?: number;
  * }}
  */
+/**
+ * Below this many units the proof line is hidden. A low number is worse than
+ * no number: it tells a shopper the thing does not sell.
+ */
+const SOLD_PROOF_FLOOR = 10;
+
 export function ProductItem({
   product,
   loading,
@@ -272,6 +278,15 @@ export function ProductItem({
       <CardHeading level={headingLevel} className="product-item-title">
         {product.title}
       </CardHeading>
+      {/* Real units, real window, or nothing. Shown only above a floor because
+          "3 sold" reads as nobody buys this, which is the opposite of proof,
+          and a card that stays silent is never wrong. */}
+      {product.soldUnits >= SOLD_PROOF_FLOOR && product.soldWindowDays ? (
+        <p className="product-item-sold">
+          <strong>{product.soldUnits}</strong> sold in {product.soldWindowDays}{' '}
+          days
+        </p>
+      ) : null}
       <div className="product-item-footer">
         <span className="product-item-price-pill">
           <Money data={product.priceRange.minVariantPrice} />

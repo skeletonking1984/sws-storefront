@@ -6533,3 +6533,26 @@ button.reset:hover:not(:has(> *)) {
     display: none;
   }
 }
+
+/*
+* --------------------------------------------------
+* components/ProductItem — sales proof line
+*
+* Real Etsy units over the ranking window, on the homepage "Top widgets" cards
+* only. Quiet on purpose: it is corroboration under the title, not a claim
+* competing with it. Hidden below SOLD_PROOF_FLOOR, see ProductItem.jsx.
+* --------------------------------------------------
+*/
+.product-item-sold {
+  color: var(--sws-text-muted, #b9aee0);
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+  margin: 0.15rem 0 0;
+  /* Digits line up between stacked cards. */
+  font-variant-numeric: tabular-nums;
+}
+
+.product-item-sold strong {
+  color: var(--sws-text, #f4efff);
+  font-weight: 600;
+}
