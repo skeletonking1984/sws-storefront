@@ -5985,3 +5985,28 @@ page and appears in the Shopify Facebook & Instagram channel. Share data is set
 to **Enhanced** (Meta Pixel + advanced matching + Conversions API), which is the
 correct setting and should stay.
 
+
+## Three new chat widget drafts: 2026-09-21
+
+Four themed multistream chat widgets built and staged as **Shopify DRAFTS**, hero
+image only. Graveyard Shift is the Halloween one and is the seasonal bet for October. Source, build scripts and full notes: `products/chat-widgets/README.md`.
+
+| Product | Product ID | Price |
+|---|---|---|
+| Holo Deck Multistream Chat Widget | 9016484790462 | $16.79 |
+| After Hours Multistream Chat Widget | 9016484921534 | $16.79 |
+| Desktop 2000 Multistream Chat Widget | 9016484954302 | $16.79 |
+| Graveyard Shift Halloween Multistream Chat Widget | 9016524538046 | $16.79 |
+
+Price matches the live Neon Multistream Chat Widget (Shopify and Etsy both $16.79).
+All four: category set to `Software > Digital Goods & Currency > Digital Artwork`,
+inventory tracked and set to 1000 at `1905 Plum Pt Drive`, one 2000x2000 hero image.
+
+**Blocked until someone flips them to ACTIVE:** `publishablePublish` to
+`Stream Widget Shop Headless` and `SWS Storefront` returned no errors but did not
+stick, because a DRAFT product cannot hold a sales-channel assignment. Publish them
+to both channels at the moment they go active, or Hydrogen returns null for them.
+
+**Still missing before any of them can go live:** the digital file is not attached
+(the zips are built at `products/chat-widgets/dist/`), there is no second or third
+listing image, no demo video, and no Etsy listing.
