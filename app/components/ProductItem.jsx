@@ -225,11 +225,16 @@ export function ProductItem({
         // contain instead, so the full image stays visible.
         <div className="product-item-image">
           {kind && <span className={`product-item-tag tag-${kind.toLowerCase()}`}>{kind}</span>}
+          {/* The label used to read "reads chat from more than one platform",
+              which was false on every goal widget wearing it: a goal widget
+              counts tips and subs through StreamElements and reads no chat
+              anywhere. Multistream here means the product WORKS on all three
+              (Todd, 2026-09-22), so the label says that instead. */}
           {multistream && (
             <span
               className="product-item-ribbon"
               role="img"
-              aria-label="Multistream: reads chat from more than one platform"
+              aria-label="Multistream: works on Twitch, YouTube and Kick"
             >
               <span className="product-item-ribbon-star" aria-hidden="true">
                 ✦

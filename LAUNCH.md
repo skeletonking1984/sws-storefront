@@ -6010,3 +6010,10 @@ to both channels at the moment they go active, or Hydrogen returns null for them
 **Still missing before any of them can go live:** the digital file is not attached
 (the zips are built at `products/chat-widgets/dist/`), there is no second or third
 listing image, no demo video, and no Etsy listing.
+
+Refactored 2026-09-22 onto a layered architecture: the engine quirks are killed once
+in `_engine/normalize.css`, the six alert kinds are standardized in
+`_engine/events.css`, and a theme is now one token file. Contract and gotchas:
+`products/chat-widgets/THEMING.md`. Hero images were re-rendered and replaced on all
+four products so the CDN matches disk. A live demo runs on port 8832
+(`chat-widget-demo` in `.claude/launch.json`).

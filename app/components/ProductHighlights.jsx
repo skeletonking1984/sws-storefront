@@ -1,4 +1,4 @@
-import {parseWorksWith, shipsChat, chatPlatforms} from '~/lib/platforms';
+import {parseWorksWith, shipsChat, chatPlatforms, isMultistream} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
 
 /** Platforms a chat widget can read FROM, as opposed to where it runs. */
@@ -64,35 +64,35 @@ export function ProductHighlights({description, worksWith, productType}) {
       : null;
 
   // The multistream question, answered in words on every product rather than
-  // left to a badge row. Todd, 2026-09-22: "product must be multistream
-  // enabled or its not multistream." A badge row cannot say that, because
-  // the platforms in it mean two different things depending on what the
-  // product is, and a buyer has no way to tell which:
+  // left to a badge row. Multistream means the product WORKS on Twitch,
+  // YouTube and Kick (Todd, 2026-09-22), and that is true of goal widgets and
+  // chat widgets alike. What differs is WHY, and a badge row cannot say it:
   //
-  //   on a CHAT widget  a platform is a chat source the widget reads
-  //   on a GOAL widget  a platform is somewhere the streamer can be live
-  //                     while the widget counts events through
-  //                     StreamElements, which reads no chat at all
+  //   a CHAT widget  reads all three chats at once into one overlay
+  //   a GOAL widget  reads no chat at all. It counts tips and subs through
+  //                  StreamElements, so it runs wherever you are live
   //
-  // So the sentence is chosen by what the product actually ships, and the
-  // three cases are exhaustive: multistream chat, single platform chat, no
-  // chat at all.
+  // Both are multistream. Only one of them reads chat, and saying so is the
+  // difference between a buyer who knows what arrives and a refund.
+  const multistream = isMultistream({worksWith});
   const sources = chatPlatforms({worksWith, productType});
-  // A chatless product only needs this sentence when its own badge row names
-  // more than one streaming platform, because that row is the thing that
-  // looks like a multistream claim. Measured 2026-09-22: that is 3 products.
-  // The other 82 goal widgets name Twitch alone and have nothing to clear up,
-  // and "it runs the same whether you stream on Twitch" is noise.
-  const chatlessSources = platforms.filter((p) => CHAT_SOURCES.includes(p));
-  const chatNote = !shipsChat({productType})
-    ? chatlessSources.length > 1
-      ? `Not a chat widget, so it reads no chat. It works the same whether you stream on ${listPlatforms(chatlessSources, 'or')}.`
-      : null
-    : sources.length > 1
+  const carriesChat = shipsChat({productType});
+  // A chatless product still names streaming platforms in its badge row, and
+  // that row is what looks like a chat claim. Measured 2026-09-22: 3 goal
+  // widgets name more than one. The other 82 name Twitch alone, have nothing
+  // to clear up, and "it works whether you stream on Twitch" is noise.
+  const chatlessOn = platforms.filter((p) => CHAT_SOURCES.includes(p));
+
+  const chatNote = carriesChat
+    ? multistream && sources.length > 1
       ? `Multistream: reads ${listPlatforms(sources)} chat at once, in one overlay.`
       : sources.length === 1
         ? `Reads ${sources[0]} chat only. Not multistream.`
-        : null;
+        : null
+    : chatlessOn.length > 1
+      ? `${multistream ? 'Multistream: works' : 'Works'} whether you stream on ${listPlatforms(chatlessOn, 'or')}. Not a chat widget, so it reads no chat.`
+      : null;
+
   const customizable = /customi[sz]/i.test(description);
 
   return (

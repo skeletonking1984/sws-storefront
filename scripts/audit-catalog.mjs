@@ -55,6 +55,15 @@ const KNOWN_TYPES = new Set([
   'Overlay Pack',
   'Bundle',
   'Emotes',
+  /*
+   * Decoration is a separate class from a widget and it matters that it stays
+   * separate. A decoration is a cheap transparent layer that reads no chat and
+   * tracks no goal: Autumn Leaves is $7.82 against Soul Blade's overlay pack at
+   * $29.99. Typing one as an Overlay Pack would drop it into the `overlays`
+   * smart collection, which feeds the homepage kits band, and put a $7.82
+   * seasonal layer beside $40 kits. Added 2026-09-22 with the first one.
+   */
+  'Decoration',
 ]);
 
 /**
