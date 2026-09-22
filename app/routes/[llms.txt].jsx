@@ -1,4 +1,5 @@
 import {FAN_FAVORITE_HANDLES} from '~/lib/nav';
+import {isMultistream} from '~/lib/platforms';
 
 const MAX_PRODUCTS = 30;
 
@@ -74,11 +75,35 @@ function buildLlmsTxt({baseUrl, products, collections}) {
   );
   lines.push('');
 
+  // The single most-confused thing about this catalogue, stated plainly
+  // because this file exists to be quoted by something answering a stranger's
+  // question. A platform name on a product means two different things
+  // depending on what the product is, and an answer engine reading a title
+  // like "Froggy Goal Widget for Twitch, Kick, YouTube" will otherwise
+  // conclude it merges chat, which it does not.
+  lines.push('## What multistream means here');
+  lines.push('');
+  lines.push(
+    'Multistream means one chat widget reads chat from more than one ' +
+      'platform at the same time and shows it in a single overlay. Only a ' +
+      'product that ships a chat widget can be multistream, and it is marked ' +
+      '**Multistream** in the product list below. Everything else is not ' +
+      'multistream, whatever platforms its title names. A goal widget in ' +
+      'particular reads no chat at all: it counts tips, subs, follows and ' +
+      'bits through StreamElements or Streamlabs, so it works the same ' +
+      'whichever platform you are live on, and that is compatibility rather ' +
+      'than multistream.',
+  );
+  lines.push('');
+
   if (products.length) {
     lines.push('## Products');
     lines.push('');
     for (const product of products.slice(0, MAX_PRODUCTS)) {
-      lines.push(`- [${product.title}](${baseUrl}/products/${product.handle})`);
+      const tag = isMultistream(product) ? ' **Multistream**' : '';
+      lines.push(
+        `- [${product.title}](${baseUrl}/products/${product.handle})${tag}`,
+      );
     }
     lines.push('');
   }
@@ -118,6 +143,8 @@ const TOP_WIDGETS_QUERY = `#graphql
         nodes {
           title
           handle
+          productType
+          worksWith: metafield(namespace: "custom", key: "works_with") { value }
         }
       }
     }
@@ -140,14 +167,14 @@ const FALLBACK_PRODUCTS_QUERY = `#graphql
     $handle6: String!
     $handle7: String!
   ) {
-    product0: product(handle: $handle0) { title handle }
-    product1: product(handle: $handle1) { title handle }
-    product2: product(handle: $handle2) { title handle }
-    product3: product(handle: $handle3) { title handle }
-    product4: product(handle: $handle4) { title handle }
-    product5: product(handle: $handle5) { title handle }
-    product6: product(handle: $handle6) { title handle }
-    product7: product(handle: $handle7) { title handle }
+    product0: product(handle: $handle0) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }
+    product1: product(handle: $handle1) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }
+    product2: product(handle: $handle2) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }
+    product3: product(handle: $handle3) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }
+    product4: product(handle: $handle4) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }
+    product5: product(handle: $handle5) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }
+    product6: product(handle: $handle6) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }
+    product7: product(handle: $handle7) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }
   }
 `;
 

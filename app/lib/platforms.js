@@ -89,24 +89,69 @@ export function parseWorksWith(raw) {
 }
 
 /**
- * Whether a product earns the "Multistream" ribbon: its `works_with`
- * metafield lists BOTH YouTube and Kick (case-insensitively). That is the
- * honest definition of "reads chat from more than one platform" for this
- * catalog, ground-truthed against `data/widget-code-signals.json`, which
- * records what each product's actually shipped widget code references.
+ * Product types that ship no chat widget at all, so no product of that type
+ * can be multistream no matter what its platform list says.
  *
- * Never derive this from the title or description. Titles here are SEO
+ * Measured 2026-09-22: the Froggy Goal Widget and the Moon Jar Goal Widget
+ * both list Twitch, YouTube and Kick in `works_with` and both therefore wore
+ * a ribbon whose own aria-label said "reads chat from more than one
+ * platform". Neither reads chat from anywhere. A goal widget counts events
+ * through StreamElements or Streamlabs, which is why its platform list
+ * legitimately names three platforms: the streamer can be live on any of
+ * them. That is cross-platform compatibility, and it is not multistream.
+ *
+ * The comment this replaces claimed "a goal bar does not read chat from
+ * anywhere, so requiring both platforms already excludes it correctly". That
+ * was wrong, and had been wrong since the ribbon shipped, because the
+ * platform list describes where the STREAMER can be live, not where the
+ * WIDGET reads from.
+ *
+ * A denylist of two types, not an allowlist of chat-carrying ones, because
+ * productType is curated data while a pack's contents are only described in
+ * prose, and app/lib/platforms.js exists because prose is the thing being
+ * checked rather than a source to check against.
+ */
+const CHATLESS_PRODUCT_TYPES = ['Goal Widget', 'Emotes'];
+
+/**
+ * Whether the product ships something that reads chat at all. An unknown
+ * product type returns false: a missing badge costs a little scannability, a
+ * wrong one costs a refund and a one star review saying it does not work.
+ * @param {{productType?: string | null}} product
+ * @returns {boolean}
+ */
+export function shipsChat(product) {
+  const type = product?.productType;
+  if (!type) return false;
+  return !CHATLESS_PRODUCT_TYPES.includes(type);
+}
+
+/**
+ * Whether a product earns the "Multistream" ribbon. Two conditions, and Todd
+ * stated the second one on 2026-09-22: "product must be multistream enabled
+ * or its not multistream".
+ *
+ *   1. It ships a widget that reads chat (see `shipsChat`).
+ *   2. Its `works_with` metafield lists BOTH YouTube and Kick.
+ *
+ * Together those mean "this product reads chat from more than one platform",
+ * which is what the ribbon says out loud. Condition 1 was missing until
+ * 2026-09-22 and 2 of the 10 ribbons on the site were false because of it.
+ *
+ * Never derive either half from the title or description. Titles here are SEO
  * stuffed with platform names the widget does not read (see the
- * `detectPlatforms` warning above), and a goal widget can reference Kick in
- * its own code with no YouTube, and a goal bar does not read chat from
- * anywhere, so requiring both platforms already excludes it correctly.
+ * `detectPlatforms` warning above), and every pack in the catalogue has the
+ * word "chat" somewhere in its title whether or not that is the part being
+ * sold.
  *
- * No metafield, or a single platform, means no ribbon.
+ * No metafield, a single platform, or a chatless product type means no
+ * ribbon.
  *
- * @param {{worksWith?: {value?: string | null} | string | null}} product
+ * @param {{worksWith?: {value?: string | null} | string | null, productType?: string | null}} product
  * @returns {boolean}
  */
 export function isMultistream(product) {
+  if (!shipsChat(product)) return false;
   const raw =
     typeof product?.worksWith === 'string'
       ? product.worksWith
@@ -115,4 +160,29 @@ export function isMultistream(product) {
   if (!platforms) return false;
   const lower = platforms.map((p) => String(p).toLowerCase());
   return lower.includes('youtube') && lower.includes('kick');
+}
+
+/**
+ * The chat platforms a product's chat widget actually reads, for saying in
+ * words what the ribbon says as a label. Empty for anything that ships no
+ * chat, so a goal widget never produces a sentence about chat.
+ *
+ * StreamElements, Streamlabs and OBS are deliberately not in here: they are
+ * where the widget RUNS, not a place chat comes from, and conflating the two
+ * is how a StreamElements-only widget ended up badged for YouTube.
+ *
+ * @param {{worksWith?: {value?: string | null} | string | null, productType?: string | null}} product
+ * @returns {string[]}
+ */
+export function chatPlatforms(product) {
+  if (!shipsChat(product)) return [];
+  const raw =
+    typeof product?.worksWith === 'string'
+      ? product.worksWith
+      : product?.worksWith?.value;
+  const platforms = parseWorksWith(raw) ?? [];
+  const chatSources = ['Twitch', 'YouTube', 'Kick', 'TikTok'];
+  return chatSources.filter((source) =>
+    platforms.some((p) => String(p).toLowerCase() === source.toLowerCase()),
+  );
 }

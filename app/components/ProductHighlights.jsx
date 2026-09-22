@@ -1,5 +1,22 @@
-import {parseWorksWith} from '~/lib/platforms';
+import {parseWorksWith, shipsChat, chatPlatforms} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
+
+/** Platforms a chat widget can read FROM, as opposed to where it runs. */
+const CHAT_SOURCES = ['Twitch', 'YouTube', 'Kick', 'TikTok'];
+
+/**
+ * "Twitch, YouTube and Kick". Oxford comma omitted deliberately: this string
+ * lands mid-sentence in a product page, not in a list. `conjunction` is "and"
+ * for things that happen together and "or" for things that are alternatives,
+ * which is the whole difference between a multistream chat widget and a goal
+ * widget that works on any one platform at a time.
+ * @param {string[]} items
+ * @param {string} [conjunction]
+ */
+function listPlatforms(items, conjunction = 'and') {
+  if (items.length <= 1) return items[0] ?? '';
+  return `${items.slice(0, -1).join(', ')} ${conjunction} ${items[items.length - 1]}`;
+}
 
 /**
  * Etsy-style "Highlights" block: platform badges + scannable digital-good
@@ -46,14 +63,36 @@ export function ProductHighlights({description, worksWith, productType}) {
       ? 'a free Streamlabs account'
       : null;
 
-  // Only say this on chat widgets. A goal widget does not read chat at all,
-  // so "does not pull YouTube chat" would answer a question nobody asked.
-  const isChat = /chat/i.test(productType || '');
-  const missing = ['YouTube', 'Kick'].filter((p) => !platforms.includes(p));
-  const chatNote =
-    isChat && missing.length === 2 && platforms.includes('Twitch')
-      ? 'Reads Twitch chat only. It does not pull YouTube or Kick chat.'
-      : null;
+  // The multistream question, answered in words on every product rather than
+  // left to a badge row. Todd, 2026-09-22: "product must be multistream
+  // enabled or its not multistream." A badge row cannot say that, because
+  // the platforms in it mean two different things depending on what the
+  // product is, and a buyer has no way to tell which:
+  //
+  //   on a CHAT widget  a platform is a chat source the widget reads
+  //   on a GOAL widget  a platform is somewhere the streamer can be live
+  //                     while the widget counts events through
+  //                     StreamElements, which reads no chat at all
+  //
+  // So the sentence is chosen by what the product actually ships, and the
+  // three cases are exhaustive: multistream chat, single platform chat, no
+  // chat at all.
+  const sources = chatPlatforms({worksWith, productType});
+  // A chatless product only needs this sentence when its own badge row names
+  // more than one streaming platform, because that row is the thing that
+  // looks like a multistream claim. Measured 2026-09-22: that is 3 products.
+  // The other 82 goal widgets name Twitch alone and have nothing to clear up,
+  // and "it runs the same whether you stream on Twitch" is noise.
+  const chatlessSources = platforms.filter((p) => CHAT_SOURCES.includes(p));
+  const chatNote = !shipsChat({productType})
+    ? chatlessSources.length > 1
+      ? `Not a chat widget, so it reads no chat. It works the same whether you stream on ${listPlatforms(chatlessSources, 'or')}.`
+      : null
+    : sources.length > 1
+      ? `Multistream: reads ${listPlatforms(sources)} chat at once, in one overlay.`
+      : sources.length === 1
+        ? `Reads ${sources[0]} chat only. Not multistream.`
+        : null;
   const customizable = /customi[sz]/i.test(description);
 
   return (

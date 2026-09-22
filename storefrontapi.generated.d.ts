@@ -710,7 +710,15 @@ export type LlmsTxtTopWidgetsQueryVariables = StorefrontAPI.Exact<{
 
 export type LlmsTxtTopWidgetsQuery = {
   collection?: StorefrontAPI.Maybe<{
-    products: {nodes: Array<Pick<StorefrontAPI.Product, 'title' | 'handle'>>};
+    products: {
+      nodes: Array<
+        Pick<StorefrontAPI.Product, 'title' | 'handle' | 'productType'> & {
+          worksWith?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Metafield, 'value'>
+          >;
+        }
+      >;
+    };
   }>;
 };
 
@@ -727,28 +735,44 @@ export type LlmsTxtFallbackProductsQueryVariables = StorefrontAPI.Exact<{
 
 export type LlmsTxtFallbackProductsQuery = {
   product0?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+    Pick<StorefrontAPI.Product, 'title' | 'handle' | 'productType'> & {
+      worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    }
   >;
   product1?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+    Pick<StorefrontAPI.Product, 'title' | 'handle' | 'productType'> & {
+      worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    }
   >;
   product2?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+    Pick<StorefrontAPI.Product, 'title' | 'handle' | 'productType'> & {
+      worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    }
   >;
   product3?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+    Pick<StorefrontAPI.Product, 'title' | 'handle' | 'productType'> & {
+      worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    }
   >;
   product4?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+    Pick<StorefrontAPI.Product, 'title' | 'handle' | 'productType'> & {
+      worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    }
   >;
   product5?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+    Pick<StorefrontAPI.Product, 'title' | 'handle' | 'productType'> & {
+      worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    }
   >;
   product6?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+    Pick<StorefrontAPI.Product, 'title' | 'handle' | 'productType'> & {
+      worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    }
   >;
   product7?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Product, 'title' | 'handle'>
+    Pick<StorefrontAPI.Product, 'title' | 'handle' | 'productType'> & {
+      worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    }
   >;
 };
 
@@ -2384,11 +2408,11 @@ interface GeneratedQueryTypes {
     return: SitemapVideoProductsQuery;
     variables: SitemapVideoProductsQueryVariables;
   };
-  '#graphql\n  query LlmsTxtTopWidgets($handle: String!) {\n    collection(handle: $handle) {\n      products(first: 30) {\n        nodes {\n          title\n          handle\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query LlmsTxtTopWidgets($handle: String!) {\n    collection(handle: $handle) {\n      products(first: 30) {\n        nodes {\n          title\n          handle\n          productType\n          worksWith: metafield(namespace: "custom", key: "works_with") { value }\n        }\n      }\n    }\n  }\n': {
     return: LlmsTxtTopWidgetsQuery;
     variables: LlmsTxtTopWidgetsQueryVariables;
   };
-  '#graphql\n  query LlmsTxtFallbackProducts(\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n    $handle5: String!\n    $handle6: String!\n    $handle7: String!\n  ) {\n    product0: product(handle: $handle0) { title handle }\n    product1: product(handle: $handle1) { title handle }\n    product2: product(handle: $handle2) { title handle }\n    product3: product(handle: $handle3) { title handle }\n    product4: product(handle: $handle4) { title handle }\n    product5: product(handle: $handle5) { title handle }\n    product6: product(handle: $handle6) { title handle }\n    product7: product(handle: $handle7) { title handle }\n  }\n': {
+  '#graphql\n  query LlmsTxtFallbackProducts(\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n    $handle5: String!\n    $handle6: String!\n    $handle7: String!\n  ) {\n    product0: product(handle: $handle0) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }\n    product1: product(handle: $handle1) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }\n    product2: product(handle: $handle2) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }\n    product3: product(handle: $handle3) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }\n    product4: product(handle: $handle4) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }\n    product5: product(handle: $handle5) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }\n    product6: product(handle: $handle6) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }\n    product7: product(handle: $handle7) { title handle productType worksWith: metafield(namespace: "custom", key: "works_with") { value } }\n  }\n': {
     return: LlmsTxtFallbackProductsQuery;
     variables: LlmsTxtFallbackProductsQueryVariables;
   };

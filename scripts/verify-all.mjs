@@ -75,6 +75,13 @@ const CHECKS = [
   // body, which Todd can edit without touching this repo, so the question
   // count on the page and the Question count in the markup are asserted equal
   // rather than assumed. Text form here; --live belongs in the post-deploy pass.
+  // Multistream claims. A platform name in works_with means "a chat source
+  // this widget reads" on a chat widget and "somewhere the streamer can be
+  // live" on a goal widget, and conflating the two put a ribbon reading
+  // "reads chat from more than one platform" on two widgets that read none.
+  // Catalogue DATA, so it regresses whenever a metafield or a product type
+  // is edited in Admin.
+  ['multistream claims', 'scripts/audit-multistream.mjs', {}],
   ['FAQ JSON-LD', 'scripts/audit-faq-jsonld.mjs', {}],
   ['alt text', 'scripts/audit-alt-text.mjs', {}],
   /*

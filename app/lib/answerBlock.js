@@ -1,3 +1,5 @@
+import {isMultistream} from './platforms.js';
+
 /**
  * The PDP "answer block": one short paragraph an answer engine can lift
  * whole and still be correct.
@@ -132,7 +134,19 @@ export function buildAnswerBlock({name, productType, platforms, price, delivery}
   const destinations = DESTINATIONS.filter((p) => list.includes(p));
   const hosts = HOSTS.filter((p) => list.includes(p));
   const hasObs = list.includes('OBS');
-  const kind = KIND_PHRASE[productType] || DEFAULT_KIND;
+  // "for Twitch, YouTube and Kick streamers" is true of a goal widget and of
+  // a multistream chat widget, and it is the same words for two different
+  // facts: one works wherever you are live, the other reads all of them at
+  // once. An answer engine quoting this block cannot tell them apart, and
+  // neither can a buyer. The multistream ones say so, in the noun, and only
+  // when the product can back it (app/lib/platforms.js, Todd 2026-09-22:
+  // "product must be multistream enabled or its not multistream").
+  const multistream = isMultistream({productType, worksWith: JSON.stringify(list)});
+  const baseKind = KIND_PHRASE[productType] || DEFAULT_KIND;
+  // Swapped into the noun rather than added as a sentence: the block has a 40
+  // to 60 word window and 121 of 122 products already sit inside it, so a new
+  // sentence would push the long ones out and cost more than it buys.
+  const kind = multistream ? `multistream ${baseKind}` : baseKind;
   const money = formatPrice(price);
   const {phrase: arrival, plural} = deliveryClause(delivery, productType);
 
@@ -140,9 +154,11 @@ export function buildAnswerBlock({name, productType, platforms, price, delivery}
    * @param {{brand: boolean, noSub: boolean}} opts
    */
   function assemble({brand, noSub}) {
-    const audience = destinations.length
-      ? `for ${joinList(destinations)} streamers`
-      : 'for streamers';
+    const audience = !destinations.length
+      ? 'for streamers'
+      : multistream
+        ? `that reads ${joinList(destinations)} chat at once`
+        : `for ${joinList(destinations)} streamers`;
     const sentences = [
       `${name} is ${article(kind)} ${kind}${brand ? ' from Stream Widget Shop' : ''} ${audience}.`,
     ];
