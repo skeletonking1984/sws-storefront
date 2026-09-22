@@ -235,6 +235,18 @@ running live on stream", `fileUpdate` applied it, `npm run audit:alt` **exit 0,
 **Today's catalogue work needs no deploy.** Descriptions and alt text are
 Shopify data and are live now. The `llms.txt` and audit changes do need one.
 
+#### Preview
+
+```
+https://01m35p9x63sg46nryz9xjyqmhv-fb73b5b73c40344d0d20.myshopify.dev
+```
+
+Deployed from `bb3b554`. **It cannot be curl-verified**: an Oxygen preview URL
+302s to Shopify account OAuth for an unauthenticated fetch, the same wall as
+2026-09-17 and 2026-09-19. Probed today: HTTP 302. The proof for this deploy is
+the clean build, 22/25 on `verify:all`, and the live catalogue checks, which
+read production and Shopify directly rather than the preview.
+
 #### Next
 
 `llms.txt` truth check, the rest of it: today's pass corrected the multistream
