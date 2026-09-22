@@ -76,6 +76,183 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-22 (scheduled pass): forty product pages refused the refund the site promises
+
+**Metrics, 2026-09-21:** 502 sessions, 3 added to cart, 2 reached checkout, 0
+completed checkout in-session, 1 order, $29.99 net. Today so far (09-22, partial):
+375 sessions, 4 orders, $56.49 net. Sessions are up sharply on the week
+(146 on the 20th, 502 on the 21st) and add-to-cart has not followed: 3 of 502
+is 0.60%, against 10 of 370 on the 17th. Note the shape, do not act on one day.
+
+`FROM sessions ... SINCE -1d UNTIL -1d` returns all zeros. The TIMESERIES form
+returns the real numbers for the same date. Use `TIMESERIES day SINCE -8d` and
+read the row, not the range form, or a pass will report a dead store.
+
+#### Conversion tracking health check
+
+| Check | Result |
+|---|---|
+| `GET /webhooks/orders` | 405 |
+| unsigned `POST` | 401 |
+| `POST` with a bogus `X-Shopify-Hmac-Sha256` | 401 |
+| `npm run verify:tracking` (production) | 25 passed, 0 failed, GA4 `G-X0978HDVTK` in the served page |
+| Attribution on the newest order | **#1057, 2026-09-22T19:57Z, $11.51, carries `_ga_client_id` 2146862927.1790106477 and `_twclid`** |
+| Last 5 orders | all five carry `_ga_client_id`, three of five carry `_twclid` |
+| Double counting | **not verifiable from here.** `webPixel` needs the `read_pixels` scope and this connector does not have it |
+| Env vars | inferred present from behaviour: GA4 id is served, the webhook rejects unsigned posts, `sws_cid` is minted HttpOnly and Secure |
+
+The one thing this run could NOT check is whether the Admin custom pixel "GA4
+Purchases" is still disconnected. `{ webPixel { id settings } }` returns
+`Access denied for webPixel field. Required access: read_pixels`. Recording it
+as unknown rather than passing it: if that pixel is ever reconnected while the
+webhook is live, every order counts twice and nothing in this repo would see
+it. **Todd either grants `read_pixels` to the Shopify connector or eyeballs
+Settings > Customer events once.**
+
+#### The item: 40 of 123 live products told the buyer there are no refunds
+
+`npm run audit:policy` had been exiting 1 since 2026-09-17 on the same 40
+products. This is BAT-172, and yesterday's pass logged it as "the thing this
+pass makes worse before it makes it better", because shipping FAQPage markup
+put a machine-readable "Can I get a refund? Yes, within 30 days" on every one
+of those 40 pages, a few hundred pixels above a description saying:
+
+> I will do everything in my power to help, but I am unable to offer exchanges,
+> refunds, or cancellations.
+
+Google and an answer engine read the markup. The buyer reads the prose. On 32%
+of the catalogue they said opposite things, and the prose is the half a buyer
+acts on.
+
+**All 40 are fixed.** They carried that sentence **byte for byte, once each**,
+which turns forty rewrites into one substitution. The offer of help stays and
+only the refusal is replaced, with the same sentence the other 83 products have
+carried since 2026-09-15, so the catalogue speaks with one voice rather than two
+near-miss paraphrases.
+
+`scripts/one-off/2026-09-22-fix-refund-copy-40.mjs` does it under the same
+contract as the 2026-09-15 script: it emits nothing unless, for every product,
+the denial is gone, the new sentence is present, no `..` was spliced in, and
+**the plain text of the old description with the same rule applied equals the
+plain text of the new one, character for character.** Anything else moving is a
+hard stop. All 40 passed, every one exactly +284 characters, which is the
+length of the substitution and nothing else.
+
+| Check | Result |
+|---|---|
+| `productUpdate` x 40 | 40 products, **0 `userErrors`** |
+| `npm run audit:policy` | **exit 0**, all three sources agree, 123 products |
+| Live PDP, cache-busted | new copy present, `unable to offer exchanges` absent |
+| Live PDP, cached URL | still the old text at the moment of writing; Hydrogen's product cache is SWR and turns on its own |
+| `npm run audit:descriptions --gate` | PASS, queue unchanged |
+| `npm run audit:answers` / `audit:structured-data` | PASS, the answer blocks derive from these descriptions and did not move |
+
+#### Found while verifying: the multistream audit was failing two pages that are correct
+
+`npm run audit:multistream` was reporting the Froggy Goal Widget and the Moon
+Jar Goal Widget as "ribbon on a chatless product type". Both had just been
+fixed, in `600271d`, earlier the same day.
+
+The audit and its fixtures still described the definition that commit
+**replaced**. `isMultistream()` ignores `productType` and means "works on
+Twitch, YouTube and Kick" (Todd, 2026-09-22). The ribbon's own aria-label now
+reads `Multistream: works on Twitch, YouTube and Kick`, and
+`ProductHighlights` prints "Not a chat widget, so it reads no chat" underneath
+it. The audit's rule 1 still tested the OLD label, so it failed a page whose
+words are right.
+
+**The evidence that the check itself was wrong was sitting behind an npm script
+nothing ran: `audit:multistream:self-test` was at 9/13, red, and `verify:all`
+only ran the live half.** An audit that cannot pass its own fixtures cannot be
+used to judge the catalogue.
+
+Corrected:
+
+1. **Rule 1 now tests the thing that was actually wrong.** Not "a ribbon on a
+   chatless product" but "copy on a chatless product that says it READS chat",
+   with a `READS_CHAT` pattern kept deliberately separate from the multistream
+   word. "Works on Kick" is fine on a goal widget. "Reads Kick chat" is a
+   refund. Live result: **0 findings**, so no product's description makes that
+   claim.
+2. **Four self-test cases rewritten** to the settled definition (a goal widget,
+   an emotes pack and an untyped product on all three ARE multistream), plus
+   the "title says multistream on a goal widget" case, which was the old
+   definition again: the word is only a lie when the product is not on all
+   three. Four new cases lock the distinction, including the original defect as
+   a fixture rather than a memory. **18/18.**
+3. **`multistream rules` added to `verify:all`, before the live check**, so the
+   fixtures can never go red unnoticed again.
+
+**And the same contradiction was live on a public file.**
+`app/routes/[llms.txt].jsx` still said "Multistream means one chat widget reads
+chat from more than one platform... **Only a product that ships a chat widget
+can be multistream**", and then tagged the product list with `isMultistream()`,
+which tags goal widgets. So the file an answer engine is meant to quote told it
+the Froggy Goal Widget merges chat, which is the exact error the comment above
+that paragraph says the section exists to prevent. Rewritten to the settled
+definition, with the chat/goal split stated explicitly and "Never read a
+multistream mark on a goal widget as a claim that it merges chat" said in
+words.
+
+#### Also closed
+
+**Alt text, the last gap.** `slow-pour-...-digital-download` media 2 (a Video)
+had no alt, 1 of 925. `build:alt` generated "Slow Pour Cozy Cafe Stream Overlay
+running live on stream", `fileUpdate` applied it, `npm run audit:alt` **exit 0,
+925 of 925**.
+
+#### Verified
+
+| Check | Result |
+|---|---|
+| `npm run build` | exit 0 |
+| `npm run lint` | 22 errors. **Identical on a clean tree with these changes stashed**, so none of them is this work. The 20 recorded on 2026-09-21 is stale, earlier commits today moved it |
+| `npm run audit:multistream:self-test` | 18/18 |
+| `npm run verify:all` | **22/25**, up from 18/24. Newly green: policy claims, multistream claims, alt text, plus the new multistream rules entry |
+
+#### Still failing, and both are Todd's
+
+- **`channels`**: Meta pixel `511838711286120` is declared but ABSENT from the
+  served page. The adapter no-ops while `PUBLIC_META_PIXEL_ID` is unset on
+  Oxygen. GA4 and X both serve. Same finding as 2026-09-20.
+- **`channel prices`**: 4 products cost less on Shopify than on Etsy, and two
+  of them are the shop's #2 and #3 by revenue.
+
+  | Product | Etsy | Shopify | Delta |
+  |---|---|---|---|
+  | Multistream Chat Widget Pack | $48.38 | $29.99 | -18.39 |
+  | Animated Star Goal Widget | $13.75 | $7.99 | -5.76 |
+  | Multistream Chat Widget | $23.56 | $18.99 | -4.57 |
+  | Gothic Bottle Goal Widget | $10.35 | $6.50 | -3.85 |
+
+  Left alone: a price is Todd's call, and undercutting Etsy on the two best
+  sellers may well be deliberate. Flagging it because nothing says it is.
+- **`deploy freshness`**: production is on `9e84fd1` (built 2026-09-21T15:32Z)
+  with **4 visitor-facing commits** ahead of it. Note that stamp is one behind
+  reality for the reason logged on 2026-09-21 (Todd deployed an uncommitted
+  tree), so `20c782f` IS live and `fb528b0`, `600271d`, `d2427d5` are not.
+
+**Today's catalogue work needs no deploy.** Descriptions and alt text are
+Shopify data and are live now. The `llms.txt` and audit changes do need one.
+
+#### Next
+
+`llms.txt` truth check, the rest of it: today's pass corrected the multistream
+paragraph because it was a live false claim, but the product list and the
+one-liners have still never been re-verified against the catalogue. Then
+site-level answer blocks on the FAQ page, then `scripts/audit-seo.mjs`.
+
+#### Needs Todd
+
+- **Deploy production.** Four visitor-facing commits are waiting, now five.
+- `PUBLIC_META_PIXEL_ID` on the Oxygen production environment.
+- Decide the 4 cross-channel prices above, or say they are intentional so the
+  audit can record it.
+- Grant `read_pixels` to the Shopify connector, or confirm once by eye that the
+  "GA4 Purchases" custom pixel is still disconnected. Until then the
+  double-counting half of the daily tracking check is unverifiable, not passing.
+- Reconnect the Linear comments connector (carried from 2026-09-19).
+
 ### 2026-09-21 (Todd present): the phone never saw the price
 
 Analytics for the period put mobile at **1.30% added to cart against 6.86% on

@@ -20,9 +20,20 @@
  *   chat widget   a platform is a chat source the widget reads
  *   goal widget   a platform is somewhere the streamer can be live
  *
- * It fails on a claim the product cannot back, in either direction: a ribbon
- * on something chatless, and the word "multistream" in a title or description
- * on something that is not.
+ * It fails on a claim the product cannot back, in either direction: copy on a
+ * chatless product that says it READS chat, and the word "multistream" in a
+ * title or description on something that is not.
+ *
+ * Corrected 2026-09-22, same day it was written. Its first rule and four of
+ * its self-test cases still described the definition the same commit had just
+ * replaced: they asserted that a ribbon means "merges chat" and therefore
+ * cannot appear on a Goal Widget. isMultistream() ignores productType and
+ * means "works on Twitch, YouTube and Kick" (Todd, 2026-09-22), the ribbon's
+ * own aria-label says exactly that, and ProductHighlights spells out "Not a
+ * chat widget, so it reads no chat" underneath it. So the audit was failing
+ * two goal widgets whose pages were already correct, while its own self-test
+ * sat at 9/13 and nothing in verify:all ran it. An audit that cannot pass its
+ * own fixtures cannot be used to judge the catalogue.
  *
  * Usage:
  *   node scripts/audit-multistream.mjs [--json]
@@ -48,6 +59,11 @@ const MULTISTREAM_WORD = /multi\s?-?stream/i;
 // filename is still worth knowing about, so it becomes a note below rather
 // than disappearing.
 const FILENAME = /\S+\.(zip|html|pdf|txt|json|png|jpe?g)\b/gi;
+// A claim to READ chat, which a goal widget cannot back on any platform. Kept
+// separate from the multistream word: "works on Kick" is fine on a goal
+// widget, "reads Kick chat" is not, and only the second is a refund.
+const READS_CHAT =
+  /(?:reads?|merges?|combines?|pulls?|shows?)\s+(?:\w+\s+){0,3}chat|chat\s+from\s+(?:more than one|multiple|several)/i;
 const withoutFilenames = (text) => (text ?? '').replace(FILENAME, ' ');
 
 const findings = [];
@@ -65,11 +81,18 @@ export function auditProduct(product) {
   const platforms = parseWorksWith(product.worksWith) ?? [];
   const sources = chatPlatforms(product);
 
-  // 1. The ribbon must never appear on something that ships no chat. This is
-  //    the defect that was live: the label says "reads chat from more than
-  //    one platform" and a goal widget reads none.
-  if (ribbon && !shipsChat(product)) {
-    fail(handle, `ribbon on a chatless product type "${product.productType}"`);
+  // 1. A product that ships no chat must never have COPY saying it reads any.
+  //    This is the defect that was live, stated as the thing that was
+  //    actually wrong: a goal widget carried a label reading "reads chat from
+  //    more than one platform" and it reads none. The ribbon itself is not
+  //    the defect and never was. It now says "works on Twitch, YouTube and
+  //    Kick", which is true of a goal widget, so failing on its presence
+  //    fails a correct page.
+  if (!shipsChat(product) && READS_CHAT.test(withoutFilenames(description))) {
+    fail(
+      handle,
+      `copy says it reads chat but the product type "${product.productType}" ships none`,
+    );
   }
 
   // 2. The word in the copy must match the product. A title saying
@@ -130,23 +153,39 @@ if (selfTest) {
   };
 
   const cases = [
-    ['a goal widget with YouTube and Kick earns no ribbon', () =>
-      isMultistream(p({productType: 'Goal Widget'})) === false],
-    ['a chat widget with YouTube and Kick does', () => isMultistream(p()) === true],
-    ['a chat widget on Twitch alone does not', () =>
+    // Multistream is about where the product WORKS, so productType does not
+    // enter into it. These four cases asserted the opposite until 2026-09-22
+    // and were the reason two correct goal widgets were being failed.
+    ['a goal widget on all three IS multistream, it just reads no chat', () =>
+      isMultistream(p({productType: 'Goal Widget'})) === true],
+    ['a chat widget with YouTube and Kick is', () => isMultistream(p()) === true],
+    ['a chat widget on Twitch alone is not', () =>
       isMultistream(p({worksWith: JSON.stringify(['Twitch', 'OBS'])})) === false],
-    ['an emotes pack never does', () =>
-      isMultistream(p({productType: 'Emotes'})) === false],
-    ['a missing product type never does', () =>
-      isMultistream(p({productType: null})) === false],
+    ['an emotes pack on all three is', () =>
+      isMultistream(p({productType: 'Emotes'})) === true],
+    ['a missing product type on all three is', () =>
+      isMultistream(p({productType: null})) === true],
+    ['YouTube without Kick is not', () =>
+      isMultistream(p({worksWith: JSON.stringify(['Twitch', 'YouTube'])})) === false],
     ['a bundle can', () => isMultistream(p({productType: 'Bundle'})) === true],
     ['StreamElements is not a chat source', () =>
       chatPlatforms(p({worksWith: JSON.stringify(['Twitch', 'StreamElements', 'OBS'])}))
         .join() === 'Twitch'],
     ['a goal widget reports no chat sources at all', () =>
       chatPlatforms(p({productType: 'Goal Widget'})).length === 0],
-    ['a title claiming multistream on a goal widget is a finding', () =>
-      caught(p({productType: 'Goal Widget', title: 'Multistream Goal Widget'}))],
+    // Was "a title claiming multistream on a goal widget is a finding", which
+    // is the old definition again: a goal widget that runs on all three may
+    // say so. The word is only a lie when the product is not on all three.
+    ['a Twitch-only goal widget titled multistream is a finding', () =>
+      caught(
+        p({
+          productType: 'Goal Widget',
+          worksWith: JSON.stringify(['Twitch', 'StreamElements']),
+          title: 'Multistream Goal Widget',
+        }),
+      )],
+    ['a goal widget on all three titled multistream is NOT a finding', () =>
+      !caught(p({productType: 'Goal Widget', title: 'Multistream Goal Widget'}))],
     ['a description claiming multistream on a Twitch-only chat widget is a finding', () =>
       caught(
         p({
@@ -160,6 +199,23 @@ if (selfTest) {
       caught(p({worksWith: JSON.stringify(['StreamElements', 'OBS'])}))],
     ['a goal widget saying nothing about multistream is NOT a finding', () =>
       !caught(p({productType: 'Goal Widget'}))],
+    // The defect this file was written for, as a fixture rather than a memory.
+    ['a goal widget whose copy says it reads chat IS a finding', () =>
+      caught(
+        p({
+          productType: 'Goal Widget',
+          description: 'Reads chat from more than one platform.',
+        }),
+      )],
+    ['a goal widget whose copy only says where it WORKS is NOT a finding', () =>
+      !caught(
+        p({
+          productType: 'Goal Widget',
+          description: 'Works whether you stream on Twitch, YouTube or Kick.',
+        }),
+      )],
+    ['a chat widget saying it reads chat is NOT a finding', () =>
+      !caught(p({description: 'Reads Twitch, YouTube and Kick chat at once.'}))],
   ];
 
   let pass = 0;

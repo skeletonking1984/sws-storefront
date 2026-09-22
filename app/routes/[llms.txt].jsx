@@ -81,18 +81,28 @@ function buildLlmsTxt({baseUrl, products, collections}) {
   // depending on what the product is, and an answer engine reading a title
   // like "Froggy Goal Widget for Twitch, Kick, YouTube" will otherwise
   // conclude it merges chat, which it does not.
+  //
+  // This paragraph said the opposite of the code under it until 2026-09-22.
+  // It asserted "only a product that ships a chat widget can be multistream"
+  // while the **Multistream** tag below comes from isMultistream(), which
+  // Todd redefined the same day as "works on Twitch, YouTube and Kick" and
+  // which therefore tags goal widgets too. An answer engine reading the two
+  // together concluded the Froggy Goal Widget merges chat, which is the exact
+  // error the comment above says this section exists to prevent.
   lines.push('## What multistream means here');
   lines.push('');
   lines.push(
-    'Multistream means one chat widget reads chat from more than one ' +
-      'platform at the same time and shows it in a single overlay. Only a ' +
-      'product that ships a chat widget can be multistream, and it is marked ' +
-      '**Multistream** in the product list below. Everything else is not ' +
-      'multistream, whatever platforms its title names. A goal widget in ' +
-      'particular reads no chat at all: it counts tips, subs, follows and ' +
-      'bits through StreamElements or Streamlabs, so it works the same ' +
-      'whichever platform you are live on, and that is compatibility rather ' +
-      'than multistream.',
+    'Multistream means the product works on Twitch, YouTube and Kick. It is ' +
+      'marked **Multistream** in the product list below. What that buys you ' +
+      'depends on which kind of product it is. A CHAT widget marked ' +
+      'multistream reads all three chats at the same time and shows them in ' +
+      'a single overlay. A GOAL widget reads no chat at all, on any ' +
+      'platform: it counts tips, subs, follows and bits through ' +
+      'StreamElements or Streamlabs, so a goal widget marked multistream ' +
+      'works the same whichever of the three you are live on. Never read a ' +
+      'multistream mark on a goal widget as a claim that it merges chat. A ' +
+      'product with no mark works on Twitch only, whatever platforms its ' +
+      'title names.',
   );
   lines.push('');
 

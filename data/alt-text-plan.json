@@ -1,8 +1,16 @@
 {
-  "generatedAt": "2026-09-19T20:12:36.466Z",
-  "products": 122,
-  "mediaSeen": 918,
-  "alreadySet": 918,
-  "toSet": 0,
-  "plan": []
+  "generatedAt": "2026-09-22T23:09:50.339Z",
+  "products": 123,
+  "mediaSeen": 925,
+  "alreadySet": 924,
+  "toSet": 1,
+  "plan": [
+    {
+      "id": "gid://shopify/Video/34342514688190",
+      "handle": "slow-pour-cozy-cafe-stream-overlay-animated-twitch-coffee-tip-goal-chat-and-alerts-digital-download",
+      "index": 1,
+      "type": "Video",
+      "alt": "Slow Pour Cozy Cafe Stream Overlay running live on stream"
+    }
+  ]
 }

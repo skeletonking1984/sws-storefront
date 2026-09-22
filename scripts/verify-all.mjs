@@ -81,6 +81,13 @@ const CHECKS = [
   // "reads chat from more than one platform" on two widgets that read none.
   // Catalogue DATA, so it regresses whenever a metafield or a product type
   // is edited in Admin.
+  // The self-test runs FIRST, and it is here because on 2026-09-22 this audit
+  // shipped with its own fixtures at 9/13 and nothing in this list ran them.
+  // Four of its cases and its first rule still described the definition of
+  // isMultistream that the same commit had replaced, so the live check failed
+  // two goal widgets whose pages were already correct and the only evidence
+  // that the check itself was wrong sat behind an npm script nobody ran.
+  ['multistream rules', 'scripts/audit-multistream.mjs', {}, ['--self-test']],
   ['multistream claims', 'scripts/audit-multistream.mjs', {}],
   ['FAQ JSON-LD', 'scripts/audit-faq-jsonld.mjs', {}],
   ['alt text', 'scripts/audit-alt-text.mjs', {}],
