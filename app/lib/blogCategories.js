@@ -8,12 +8,49 @@
  * categories (news, spotlights, trends) are checked before the broad
  * "tutorials" catch-all, since generic words like "setup" appear in almost
  * every title.
+ *
+ * `multistream` and `goals` sit above `tutorials` for that reason: "Best
+ * Multistream Chat Widget ... for OBS" contains "obs", so tutorials would
+ * swallow it, and every goal article says "widget".
+ *
+ * Measured 2026-09-23, before these two were added: 7 of 31 live articles
+ * matched NO keyword at all and fell silently to the default, which was
+ * Trends & Seasonal. Among them were both multistream articles, the entire
+ * current content strategy, and all three goal widget articles. More than
+ * half the blog, 17 of 31, was filed as a seasonal trend piece, which makes
+ * the filter chip meaningless. Only 4 articles carry real Shopify tags, so
+ * this keyword table is doing nearly all the work and a gap in it is not
+ * cosmetic.
  */
 export const BLOG_CATEGORIES = [
   {
     key: 'news',
     label: 'Platform News',
     keywords: ['shutting down', 'shutdown', 'is closing', 'closing?', 'alternatives'],
+  },
+  {
+    key: 'multistream',
+    label: 'Multistream',
+    keywords: [
+      'multistream',
+      'multi-stream',
+      'simulcast',
+      'twitch and kick',
+      'twitch, youtube',
+      'youtube and kick',
+    ],
+  },
+  {
+    key: 'goals',
+    label: 'Goals & Engagement',
+    keywords: [
+      'goal widget',
+      'goal widgets',
+      'goal bar',
+      'sub goal',
+      'donation goal',
+      'viewer engagement',
+    ],
   },
   {
     key: 'trends',
