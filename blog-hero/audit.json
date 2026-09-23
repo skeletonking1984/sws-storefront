@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T02:18:52.592Z",
+  "generatedAt": "2026-09-23T08:53:23.443Z",
   "articles": [
     {
       "handle": "best-vtuber-overlays-2026-kawaii-celestial-guide",
@@ -538,10 +538,10 @@
       "handle": "best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide",
       "title": "Best Multistream Chat Widget for Twitch, YouTube & Kick (2026 Guide)",
       "tags": [],
-      "words": 912,
+      "words": 1403,
       "seo": {
-        "title": "Best Multistream Chat Widget for Twitch, YouTube, Kick",
-        "description": "One chat box for Twitch, YouTube and Kick. How multistream chat widgets work, what they need to connect, and how to set one up in OBS."
+        "title": "Best Multistream Chat Widgets for Twitch, YouTube, Kick",
+        "description": "Multistream chat widgets and dashboards compared for Twitch, YouTube and Kick: Social Stream Ninja, Restream, Streamlabs, StreamElements and OBS overlays."
       },
       "image": {
         "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide.jpg?v=1789518646",
@@ -550,7 +550,10 @@
         "altText": "Multistream: Every platform in one chat box - Stream Widget Shop"
       },
       "publishedAt": "2026-07-16T17:40:32Z",
-      "productLinks": []
+      "productLinks": [
+        "/products/multistream-chat-widget-pack",
+        "/products/multistream-chat-widget-twitch-youtube-kick-overlay-digital-download-easy-setup-one-click-installation"
+      ]
     },
     {
       "handle": "5-custom-obs-widgets-every-streamer-needs-to-stand-out-in-2026",
@@ -811,14 +814,6 @@
       "detail": "cross-sell row still renders",
       "handles": [
         "where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide"
       ]
     },
     {

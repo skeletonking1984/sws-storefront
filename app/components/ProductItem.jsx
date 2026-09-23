@@ -137,6 +137,14 @@ export function ProductItem({
     const el = videoRef.current;
     if (!el) return;
 
+    // First hover on this card: promote `data-src` to `src`. See the element
+    // below for why the URL is not in the markup. Nothing is fetched by the
+    // assignment alone, because `preload="none"` still applies; the `el.load()`
+    // at the bottom is what asks for bytes, exactly as before.
+    if (!el.getAttribute('src') && el.dataset.src) {
+      el.setAttribute('src', el.dataset.src);
+    }
+
     // The preview never actually played before this. These elements carry
     // `preload="none"`, so on the first hover there is no data at all: the
     // seek is a no-op, `.play()` rejects, and the old `.catch(() => {})`
@@ -257,7 +265,26 @@ export function ProductItem({
             <video
               ref={videoRef}
               className={`product-item-video${videoActive ? ' is-active' : ''}`}
-              src={videoSource.url}
+              /*
+                The URL is in `data-src`, NOT `src`, and playPreview() copies it
+                across on the first hover. This is the whole fix for Search
+                Console's "Video isn't on a watch page", which covered 66 of the
+                113 videos in `/sitemap/video/1.xml` on 2026-09-21.
+                A crawlable `src` here put every product clip on collection,
+                search, home and blog cross-sell pages, none of which are watch
+                pages: the clip is decorative, aria-hidden and preload="none",
+                and the product is not what the page is about. Google then
+                indexed the file against the page it first saw it on rather than
+                against the PDP the video sitemap nominates. `preload="none"`
+                does not help, because the attribute is in the served HTML
+                whether or not a byte is ever fetched. Googlebot renders JS but
+                does not hover, so moving the assignment into the hover handler
+                removes the file from those pages entirely while the visitor
+                sees no change at all.
+                The one watch page is the PDP, and ProductGallery.jsx keeps its
+                real `src` for exactly that reason. Do not "tidy" this back.
+              */
+              data-src={videoSource.url}
               poster={videoMedia.previewImage?.url}
               muted
               loop

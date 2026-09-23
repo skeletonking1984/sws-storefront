@@ -1,4 +1,4 @@
-import {isMultistream} from './platforms.js';
+import {isMultistream, shipsChat} from './platforms.js';
 
 /**
  * The PDP "answer block": one short paragraph an answer engine can lift
@@ -142,6 +142,14 @@ export function buildAnswerBlock({name, productType, platforms, price, delivery}
   // when the product can back it (app/lib/platforms.js, Todd 2026-09-22:
   // "product must be multistream enabled or its not multistream").
   const multistream = isMultistream({productType, worksWith: JSON.stringify(list)});
+  // Multistream and "reads chat" are two different claims and this block used
+  // to spend one word on both. A Goal Widget counts tips and subs through
+  // StreamElements or Streamlabs, so it is multistream in the sense that
+  // matters (it works whichever of the three you are live on) and reads no
+  // chat at all. Saying "reads Twitch, YouTube and Kick chat at once" on the
+  // Moon Jar and Froggy goal widgets was false on the one passage in the repo
+  // built to be quoted away from the page that could correct it.
+  const readsChat = multistream && shipsChat({productType});
   const baseKind = KIND_PHRASE[productType] || DEFAULT_KIND;
   // Swapped into the noun rather than added as a sentence: the block has a 40
   // to 60 word window and 121 of 122 products already sit inside it, so a new
@@ -154,11 +162,17 @@ export function buildAnswerBlock({name, productType, platforms, price, delivery}
    * @param {{brand: boolean, noSub: boolean}} opts
    */
   function assemble({brand, noSub}) {
+    // Three audiences, not two. The middle one is the multistream product
+    // that ships no chat widget, and it gets the same words
+    // ProductHighlights already uses for that case so the paragraph and the
+    // highlight above it cannot say different things about one product.
     const audience = !destinations.length
       ? 'for streamers'
-      : multistream
+      : readsChat
         ? `that reads ${joinList(destinations)} chat at once`
-        : `for ${joinList(destinations)} streamers`;
+        : multistream
+          ? `that works whether you stream on ${joinList(destinations, 'or')}`
+          : `for ${joinList(destinations)} streamers`;
     const sentences = [
       `${name} is ${article(kind)} ${kind}${brand ? ' from Stream Widget Shop' : ''} ${audience}.`,
     ];

@@ -37,9 +37,17 @@ const selfTest = process.argv.includes('--self-test');
 
 const {buildAnswerBlock, wordCount, ANSWER_BLOCK_MIN_WORDS, ANSWER_BLOCK_MAX_WORDS} =
   await import(pathToFileURL(path.join(ROOT, 'app/lib/answerBlock.js')));
-const {parseWorksWith} = await import(
+const {parseWorksWith, shipsChat} = await import(
   pathToFileURL(path.join(ROOT, 'app/lib/platforms.js'))
 );
+
+/**
+ * A product that ships no chat widget may not say it reads chat, however
+ * many platforms it works on. Matches the verb, not the word "chat": a chat
+ * widget's own NAME contains "Chat" and a goal widget's title can too, so a
+ * bare /chat/ test is both noisy and blind.
+ */
+const CHAT_CLAIM = /\b(reads?|read|reading|merges?|merging|pulls?|shows?|displays?)\b[^.]{0,60}\bchat\b/i;
 
 const DASHES = /[—–]/;
 const PAGE_REFERENCE = /\b(above|below|this page|see the|as mentioned|the gallery)\b/i;
@@ -57,7 +65,7 @@ function fail(handle, message) {
  * pointed at fabricated bad input by --self-test.
  * @param {string} handle
  * @param {string} text
- * @param {{platforms: string[], delivery: object | null}} facts
+ * @param {{platforms: string[], delivery: object | null, productType?: string | null}} facts
  */
 function checkText(handle, text, facts) {
   const before = findings.length;
@@ -106,13 +114,34 @@ function checkText(handle, text, facts) {
   if (facts.delivery && !/\bZIPs?\b/.test(text)) {
     fail(handle, 'has a proven manifest but names no file format');
   }
+  // The defect this check exists for: `isMultistream` was read as a chat
+  // claim, so every multistream GOAL widget's block said it reads chat. The
+  // platform loop above could not see it, because every platform named was
+  // genuinely in the metafield. The lie was the verb.
+  if (!shipsChat({productType: facts.productType}) && CHAT_CLAIM.test(text)) {
+    fail(
+      handle,
+      `productType ${facts.productType} ships no chat widget, but the block claims it reads chat: "${text.match(CHAT_CLAIM)[0]}"`,
+    );
+  }
   return findings.length === before;
 }
 
 if (selfTest) {
   // A check that only recognises good text cannot see text that went wrong
   // in a new way, so feed it known-bad input and fail if any of it passes.
-  const facts = {platforms: ['Twitch', 'OBS', 'StreamElements'], delivery: {archives: 1}};
+  const facts = {
+    platforms: ['Twitch', 'OBS', 'StreamElements'],
+    delivery: {archives: 1},
+    productType: 'Goal Widget',
+  };
+  // The multistream goal widget the chat-claim rule exists for. Every
+  // platform it names IS in its metafield, so the platform loop passes it.
+  const msGoal = {
+    platforms: ['Twitch', 'YouTube', 'Kick', 'StreamElements', 'Streamlabs', 'OBS'],
+    delivery: {archives: 1},
+    productType: 'Goal Widget',
+  };
   const cases = [
     ['empty', '', facts],
     ['too-short', 'A widget for Twitch, $9.99, a ZIP downloads instantly.', facts],
@@ -156,6 +185,25 @@ if (selfTest) {
       'Padding Widget is an animated goal widget from Stream Widget Shop for Twitch streamers. The files download instantly after checkout, for a one-time $9.99, with no subscription at all. Setup needs a free StreamElements account, and the overlay loads into OBS as a browser source.',
       facts,
     ],
+    // The live defect, verbatim from production on 2026-09-23.
+    [
+      'goal-widget-reads-chat',
+      'Moon Jar Goal Widget, Falling Physics Tracker is a multistream animated goal widget from Stream Widget Shop that reads Twitch, YouTube and Kick chat at once. A ZIP of widget code downloads instantly after checkout, for a one-time $18.99, with no subscription. Setup needs a free StreamElements or Streamlabs account, and the overlay loads into OBS as a browser source.',
+      msGoal,
+    ],
+    // Same lie, different verb, so the rule cannot be satisfied by banning
+    // one word.
+    [
+      'goal-widget-merges-chat',
+      'Padding Goal Widget is an animated goal widget from Stream Widget Shop that merges your Twitch and Kick chat into one overlay. A ZIP of widget code downloads instantly after checkout, for a one-time $9.99, with no subscription. Setup needs a free StreamElements account and OBS.',
+      {...msGoal, platforms: ['Twitch', 'Kick', 'StreamElements', 'OBS']},
+    ],
+    // An Emotes pack is the other chatless type.
+    [
+      'emotes-reads-chat',
+      'Padding Emote Pack is a pack of stream emotes from Stream Widget Shop that reads Twitch and Kick chat at once. A ZIP of emote files downloads instantly after checkout, for a one-time $9.99, with no subscription. Setup needs a free StreamElements account and OBS.',
+      {...msGoal, productType: 'Emotes', platforms: ['Twitch', 'Kick', 'StreamElements', 'OBS']},
+    ],
   ];
   let escaped = 0;
   for (const [name, text, f] of cases) {
@@ -166,22 +214,66 @@ if (selfTest) {
       escaped++;
     }
   }
-  findings.length = 0;
-  // And one that MUST pass, so the checks cannot be "fixed" by rejecting
-  // everything.
-  const good = buildAnswerBlock({
-    name: 'Padding Goal Widget for Twitch',
-    productType: 'Goal Widget',
-    platforms: ['Twitch', 'OBS', 'StreamElements'],
-    price: {amount: '9.99', currencyCode: 'USD'},
-    delivery: {archives: 1, setupDoc: 'PDF'},
-  });
-  if (!checkText('known-good', good, facts)) {
-    console.error('SELF-TEST FAILURE: the known-good block was rejected:');
-    for (const f of findings) console.error(`  ${f}`);
-    escaped++;
+  // And blocks that MUST pass, so the checks cannot be "fixed" by rejecting
+  // everything. All three are generated by the real builder, not hand typed,
+  // so a wording change that breaks one is caught here rather than live.
+  const goodCases = [
+    [
+      'known-good',
+      {
+        name: 'Padding Goal Widget for Twitch',
+        productType: 'Goal Widget',
+        platforms: ['Twitch', 'OBS', 'StreamElements'],
+        price: {amount: '9.99', currencyCode: 'USD'},
+        delivery: {archives: 1, setupDoc: 'PDF'},
+      },
+      facts,
+    ],
+    // The fix's own output: a multistream goal widget, which must still say
+    // multistream and must not say chat.
+    [
+      'known-good-multistream-goal',
+      {
+        name: 'Moon Jar Goal Widget, Falling Physics Tracker',
+        productType: 'Goal Widget',
+        platforms: ['Twitch', 'YouTube', 'Kick', 'StreamElements', 'Streamlabs', 'OBS'],
+        price: {amount: '18.99', currencyCode: 'USD'},
+        delivery: {archives: 1, setupDoc: null},
+      },
+      msGoal,
+    ],
+    // A product that genuinely reads chat must keep saying so, or the rule
+    // has cost the catalogue its one true multistream claim.
+    [
+      'known-good-multistream-chat',
+      {
+        name: 'Multistream Chat Widget for Twitch, YouTube and Kick',
+        productType: 'Chat Widget',
+        platforms: ['Twitch', 'YouTube', 'Kick', 'StreamElements', 'OBS'],
+        price: {amount: '16.79', currencyCode: 'USD'},
+        delivery: {archives: 1, setupDoc: null},
+      },
+      {...msGoal, productType: 'Chat Widget', platforms: ['Twitch', 'YouTube', 'Kick', 'StreamElements', 'OBS']},
+    ],
+  ];
+  for (const [label, input, f] of goodCases) {
+    findings.length = 0;
+    const good = buildAnswerBlock(input);
+    if (!checkText(label, good, f)) {
+      console.error(`SELF-TEST FAILURE: the ${label} block was rejected:`);
+      for (const finding of findings) console.error(`  ${finding}`);
+      escaped++;
+    }
+    if (label === 'known-good-multistream-chat' && !CHAT_CLAIM.test(good)) {
+      console.error('SELF-TEST FAILURE: a real multistream chat widget stopped saying it reads chat:');
+      console.error(`  ${good}`);
+      escaped++;
+    }
   }
-  console.log(`self-test: ${cases.length} bad cases + 1 good case, ${escaped} failures`);
+  findings.length = 0;
+  console.log(
+    `self-test: ${cases.length} bad cases + ${goodCases.length} good cases, ${escaped} failures`,
+  );
   process.exit(escaped ? 1 : 0);
 }
 
@@ -235,7 +327,7 @@ for (const product of products) {
     delivery,
   });
   blocks.set(product.handle, text);
-  checkText(product.handle, text, {platforms, delivery});
+  checkText(product.handle, text, {platforms, delivery, productType: product.productType});
 }
 
 // Duplicate detection: two products sharing a word-for-word answer block

@@ -92,6 +92,17 @@ const CHECKS = [
   ['FAQ JSON-LD', 'scripts/audit-faq-jsonld.mjs', {}],
   ['alt text', 'scripts/audit-alt-text.mjs', {}],
   /*
+   * A product video may be crawlable on its PDP and nowhere else. Search
+   * Console sat at "Video isn't on a watch page" on 66 of 113 videos from
+   * 2026-09-14 to 2026-09-23 with nothing here able to see it, because the
+   * defect is not in the markup a schema audit reads: it is the same file
+   * appearing on a page that is not about it. Self-test first, same reason as
+   * multistream above. The live half fetches production, so until the fix is
+   * deployed this FAILS, and that failure is the fault, not the check.
+   */
+  ['watch pages (self-test)', 'scripts/audit-watch-pages.mjs', {}, ['--self-test']],
+  ['watch pages', 'scripts/audit-watch-pages.mjs', {}],
+  /*
    * Has the homepage's "Top widgets" order gone stale? This one is expected to
    * fail sometimes and that is the point: it exits 1 when the real sales
    * ranking has moved away from app/data/top-sellers.json, which is the signal

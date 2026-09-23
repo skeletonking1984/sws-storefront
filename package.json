@@ -52,6 +52,8 @@
     "audit:faq:self-test": "node scripts/audit-faq-jsonld.mjs --self-test",
     "audit:alt": "node scripts/audit-alt-text.mjs",
     "audit:alt:self-test": "node scripts/audit-alt-text.mjs --self-test",
+    "audit:watch-pages": "node scripts/audit-watch-pages.mjs",
+    "audit:watch-pages:self-test": "node scripts/audit-watch-pages.mjs --self-test",
     "build:top-sellers": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/build-top-sellers.mjs",
     "audit:top-sellers": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/build-top-sellers.mjs --check",
     "build:alt": "node scripts/build-alt-text.mjs",
