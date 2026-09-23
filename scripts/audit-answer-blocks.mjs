@@ -340,12 +340,26 @@ for (const [handle, text] of blocks) {
 }
 
 if (live) {
+  // Three fixed anchors plus three that rotate by day of year. The fixed
+  // three are the bundles, whose blocks are the most complex to assemble.
+  // The rotation exists because the tail used to be `slice(0, 2)`, the same
+  // two handles every run: on 2026-09-23 the answer block fix changed the
+  // Moon Jar and Froggy goal widgets and this check passed without looking
+  // at either of them. A fixed sample cannot see a product it never fetches.
+  const handles = [...blocks.keys()];
+  const dayOfYear = Math.floor(
+    (Date.now() - Date.UTC(new Date().getUTCFullYear(), 0, 0)) / 86400000,
+  );
+  const rotating = handles.length
+    ? [0, 1, 2].map((i) => handles[(dayOfYear * 3 + i) % handles.length])
+    : [];
   const sample = [
     'celestial-stream-kit',
     'multistream-chat-widget-pack',
     'spooky-stream-kit',
-    ...[...blocks.keys()].slice(0, 2),
+    ...rotating,
   ].filter((h, i, a) => blocks.has(h) && a.indexOf(h) === i);
+  console.log(`live sample (day ${dayOfYear}): ${sample.join(', ')}`);
   for (const handle of sample) {
     const res = await fetch(`${ORIGIN}/products/${handle}`);
     const html = await res.text();
