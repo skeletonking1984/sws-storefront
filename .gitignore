@@ -28,8 +28,16 @@ app/data/build-info.json
 hero/.frames/
 
 # Throwaway probe scripts. A stray one at the repo root fails the Oxygen
-# deploy's "Uncommitted changes detected" guard, which is how a production
-# deploy got refused on 2026-09-22 over a 13 line file testing buildAnswerBlock
-# against two goal widgets. Name a scratch file *.tmp.mjs and it stays out of
-# the way of a deploy.
-*.tmp.mjs
+# deploy's "Uncommitted changes detected" guard, and on 2026-09-22 that refused
+# a production deploy twice in three minutes. The author was not a person: the
+# sws-daily-code-review scheduled task runs in this same working tree and had
+# dropped SIX scratch files at the root between 20:14 and 20:17 while Todd was
+# trying to deploy.
+#
+# The pattern is `*.tmp.*`, not `*.tmp.mjs`, because the first version of this
+# rule shipped as `*.tmp.mjs` and the very next deploy attempt died on
+# `highlights-test.tmp.mjs.bak`. Match the whole class or lose the race with a
+# concurrent agent.
+#
+# Name any scratch file *.tmp.<anything> and it stays out of a deploy's way.
+*.tmp.*
