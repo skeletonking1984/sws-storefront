@@ -76,6 +76,156 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-22 (CTO daily code review): the answer block still says a goal widget reads chat
+
+**Reviewed:** `600271d..e7fa9ef`, five commits in the last 24 hours, two of them
+LAUNCH only. 17 files, +1177 / -73.
+
+| Ran | Result |
+|---|---|
+| `node scripts/audit-shipping.mjs` | exit 0, 123 products, none require shipping |
+| `node scripts/audit-catalog.mjs` | exit 0, 123 audited, 0 with an issue |
+| `npm run build` | exit 0 |
+| `node scripts/verify-all.mjs` | 22/25, failing channels, channel prices, deploy freshness, which are the three the commits already name as Todd's |
+| `node scripts/audit-multistream.mjs --self-test` | 18/18 |
+| `node scripts/audit-multistream.mjs` | exit 0, 0 findings, 1 note |
+| `node scripts/audit-answer-blocks.mjs` | exit 0, 0 findings, 1 warning |
+| `npm run verify:tracking` | NOT run and not required. The diff touches nothing under `app/lib/analytics/`, `app/lib/conversions/`, `app/lib/gaCookie.server.js`, `app/lib/clickIds.server.js`, `app/routes/api.e.jsx`, `app/routes/webhooks.orders.jsx` or `app/routes/cart.jsx` |
+
+**Production deployed in the middle of this review, and it changed the verdict.**
+`/api/version` read at the start of the pass: `9e84fd1`, committed
+2026-09-21T00:19:31-04:00. Read again at the end: `e7fa9ef`, built
+2026-09-23T00:14:57Z. Todd ran the production deploy while this was running, so
+Finding 1 went from "ships on the next deploy" to LIVE inside one session. The
+first half of this entry was written against the pre-deploy reading and the
+correction is recorded here rather than rewritten away, because the lesson is
+that a deploy can race a review the same way it races a ledger.
+
+#### Finding 1, CONFIRMED: `app/lib/answerBlock.js` was left behind when the multistream definition changed
+
+`600271d` made `isMultistream()` mean "reads chat from more than one platform"
+and taught `answerBlock.js` to use it. `d2427d5`, five hours later, changed the
+definition to Todd's settled one, "works on Twitch, YouTube and Kick", and
+updated `platforms.js`, `ProductItem.jsx` and `ProductHighlights.jsx` to match.
+`bb3b554` then found and fixed the same drift in `[llms.txt].jsx` and
+`audit-multistream.mjs`. **`answerBlock.js` was never revisited.** It still
+treats `isMultistream()` as a chat claim, at `app/lib/answerBlock.js:146` and
+`:161`:
+
+```js
+const multistream = isMultistream({productType, worksWith: JSON.stringify(list)});
+const kind = multistream ? `multistream ${baseKind}` : baseKind;
+// ...
+: multistream
+  ? `that reads ${joinList(destinations)} chat at once`
+```
+
+Reproduction, run against the real `works_with` and `productType` for all 123
+storefront products out of the Storefront API, with the same delivery facts the
+PDP loader passes:
+
+```
+FALSE CHAT CLAIM  cute-froggy-goal-widget-...-streamelements
+  productType=Goal Widget  works_with=["Twitch","YouTube","Kick","StreamElements","Streamlabs","OBS"]
+  Froggy Goal Widget for Twitch, Kick, YouTube is a multistream animated goal
+  widget that reads Twitch, YouTube and Kick chat at once. ...
+
+FALSE CHAT CLAIM  animated-moon-jar-goal-widget-...-instant-download
+  productType=Goal Widget  works_with=["Twitch","YouTube","Kick","StreamElements","Streamlabs","OBS"]
+  Moon Jar Goal Widget, Falling Physics Tracker is a multistream animated goal
+  widget from Stream Widget Shop that reads Twitch, YouTube and Kick chat at
+  once. ...
+
+2 chatless products whose answer block says it reads chat.
+```
+
+Those are the same two products the whole day's work was named after. The
+answer block is the passage the repo built specifically to be lifted whole by
+an answer engine, so the claim is worse placed than the ribbon ever was.
+
+It also contradicts itself on one page. `ProductHighlights`, rendered
+server side with the real Froggy metafield, prints:
+
+> Multistream: works whether you stream on Twitch, YouTube or Kick. Not a chat
+> widget, so it reads no chat.
+
+while the answer block a few hundred pixels above says it reads all three at
+once.
+
+**It is live.** At the start of this pass production was `9e84fd1` and served
+the pre-`600271d` sentence, "Froggy Goal Widget for Twitch, Kick, YouTube is an
+animated goal widget from Stream Widget Shop for Twitch, YouTube and Kick
+streamers", with no chat claim. Todd deployed mid-review. Re-measured against
+`e7fa9ef`, with `/api/version` read at the moment of measurement, both pages now
+serve the false sentence:
+
+```
+/products/cute-froggy-goal-widget-...-streamelements
+  ... is a multistream animated goal widget that reads Twitch, YouTube and
+  Kick chat at once. ...
+
+/products/animated-moon-jar-goal-widget-...-instant-download
+  ... is a multistream animated goal widget from Stream Widget Shop that reads
+  Twitch, YouTube and Kick chat at once. ...
+```
+
+Two live product pages each contradict themselves, and the false half is the
+passage written to be quoted by an answer engine.
+
+Filed as BAT-186.
+
+**Why no check caught it.** `audit-multistream.mjs` rule 1 is the right rule:
+copy on a chatless product that says it READS chat. It exits 0 anyway, because
+it tests `product.description`, which is the Shopify field, and the answer
+block is prose this repo GENERATES at render time and never stores.
+`audit-answer-blocks.mjs` does build the block, and asserts word count,
+uniqueness and presence in the served HTML, but never asks whether the sentence
+is true. Two guards, each correct, and the defect sat in the gap between their
+scopes. Rule added to the review prompt.
+
+#### Finding 2, CONFIRMED: six new best sellers will render with zero reviews
+
+`d2427d5` set `confidence: "created_from_listing"` on the six rows it created
+in `data/etsy-video-map.json`. That tier is not in `TRUSTED_CONFIDENCE` at
+`scripts/build-etsy-reviews.mjs:49`, which holds `manual`, `exact`, `verified`,
+`high`, `reviewed` and `image_verified`, so `build-etsy-reviews.mjs` drops the
+row and the PDP shows no reviews. Checked against `app/data/etsy-reviews.json`:
+98 products carry reviews, 0 of the 11 `created_from_listing` products do.
+
+It fails closed, which is the right direction, and all 11 are drafts today.
+But the join is certain by construction, the note in the row says so, and these
+are six of the highest earning listings in the shop. They activate with no
+social proof unless the tier is added or the rows are re-tiered. Filed as
+BAT-187.
+
+Five of those 11 rows pre-date today, so the tier gap is older than this diff.
+This diff widened it from 5 to 11.
+
+#### Checked and clean
+
+- `scripts/activate-products.mjs` is a real publish path and it is safe: dry run
+  by default, `--apply` deliberately exits 1 with no Admin token wired in, and
+  it prints the Digital Products file warning every run. The six IP products are
+  absent from `DEFAULT_HANDLES` on purpose.
+- `scripts/one-off/2026-09-22-fix-refund-copy-40.mjs` asserts, per product, that
+  the denial is gone, the new sentence is present, no `..` was spliced in, and
+  the plain text is otherwise identical character for character. That is a
+  deletion-aware check, not a presence-only one.
+- `Decoration` added to `KNOWN_TYPES` in `audit-catalog.mjs` with a reason. No
+  other consumer of `productType` needs it: `shipsChat` denylists `Goal Widget`
+  and `Emotes`, so a Decoration reads as chat-carrying, and Autumn Leaves has
+  Twitch alone in `works_with`, so it produces no chat sentence either way.
+- `verify-all.mjs` now runs the multistream self-test before the live check,
+  which is the correct ordering and exactly what was missing this morning.
+- `[llms.txt].jsx` text now matches the settled definition and states the
+  chat/goal split in words.
+
+#### Nothing was fixed in this pass
+
+Review, not rewrite. Both findings are copy claims on product pages, which is
+the class this repo has been burned by repeatedly, so they go to Todd as issues
+rather than getting patched by the reviewer that found them.
+
 ### 2026-09-22 (scheduled pass): forty product pages refused the refund the site promises
 
 **Metrics, 2026-09-21:** 502 sessions, 3 added to cart, 2 reached checkout, 0
