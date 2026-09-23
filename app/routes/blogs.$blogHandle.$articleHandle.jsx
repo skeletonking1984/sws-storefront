@@ -28,8 +28,23 @@ export const meta = ({data, matches, location}) => {
   const origin = getOrigin(matches);
   const article = data?.article;
   const title = article?.title ?? '';
+  // Prefer the article's own `seo.title` (the `global.title_tag` metafield)
+  // over its display title, exactly as products.$handle.jsx does.
+  //
+  // This route fetched `seo { title }` and then never used it, so the 30
+  // article title tags written on 2026-09-15 never reached a single live page.
+  // What Google actually saw was the display title plus " | Stream Widget Shop
+  // Blog", which runs to 92 characters on this article and past 100 on several
+  // others, well beyond the ~60 Google renders. That is why the 2026-09-15
+  // title fix produced no CTR movement and looked like a recrawl delay: the
+  // tags were correct in Shopify and the page never emitted them. Measured
+  // 2026-09-23 on the live page.
+  //
+  // The tags are written to a 60 character cap and already carry the topic, so
+  // they are used verbatim with no blog suffix appended.
+  const seoTitle = article?.seo?.title;
   return buildMeta({
-    title: `${title} | Stream Widget Shop Blog`,
+    title: seoTitle || `${title} | Stream Widget Shop Blog`,
     description:
       article?.seo?.description ||
       `${title}: a Stream Widget Shop blog post on stream setup and widgets.`,
