@@ -1,15 +1,39 @@
 {
-  "fetched_at": "2026-09-17T13:26:02.847Z",
+  "fetched_at": "2026-09-23T00:27:16.276Z",
   "source": "getReviewsByShop, fully paginated via getAll (every review, not the most recent 100)",
   "shop": {
     "shop_id": 51879465,
     "shop_name": "StreamWidgetShop",
-    "review_count": 998,
+    "review_count": 1001,
     "review_average": 4.76,
-    "transaction_sold_count": 7576,
-    "num_favorers": 1287
+    "transaction_sold_count": 7614,
+    "num_favorers": 1297
   },
   "reviews": [
+    {
+      "listing_id": 1805179619,
+      "transaction_id": 5122358085,
+      "rating": 5,
+      "review": "Really happy with the purchase, works perfectly and very user friendly instructions!",
+      "language": "en",
+      "date": "2026-09-22"
+    },
+    {
+      "listing_id": 1747633766,
+      "transaction_id": 5209597647,
+      "rating": 5,
+      "review": "Lo avevo visto da tanto e mi sono decisa di prenderlo, lo amo, e&#39; perfetto per le mie stream a tema witchy",
+      "language": "it",
+      "date": "2026-09-21"
+    },
+    {
+      "listing_id": 1892179450,
+      "transaction_id": 5222264752,
+      "rating": 5,
+      "review": "Looks AMAZING on my stream and matches my theme perfectly!",
+      "language": "en",
+      "date": "2026-09-20"
+    },
     {
       "listing_id": 1771365068,
       "transaction_id": 5216308968,
