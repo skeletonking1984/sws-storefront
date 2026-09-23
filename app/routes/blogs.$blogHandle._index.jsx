@@ -184,18 +184,24 @@ const BLOGS_QUERY = `#graphql
         title
         description
       }
+      # sortKey and reverse are NOT optional here. The Storefront API's default
+      # for blog articles is ID ascending, which is oldest first, so the index
+      # opened on a March article and buried anything new on the last page.
+      # Measured live 2026-09-23: page 2 ran June 4, June 8, June 8, July 16,
+      # July 22 top to bottom.
       articles(
         first: $first,
         last: $last,
         before: $startCursor,
-        after: $endCursor
+        after: $endCursor,
+        sortKey: PUBLISHED_AT,
+        reverse: true
       ) {
         nodes {
           ...ArticleItem
         }
         pageInfo {
           hasPreviousPage
-          hasNextPage
           hasNextPage
           endCursor
           startCursor
