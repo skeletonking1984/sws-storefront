@@ -26,3 +26,10 @@ app/data/build-info.json
 # Intermediate PNG frames from hero/record.mjs. 510 of them, ~600MB, and
 # regenerable by rerunning the script. The encoded mp4/webm are the artifact.
 hero/.frames/
+
+# Throwaway probe scripts. A stray one at the repo root fails the Oxygen
+# deploy's "Uncommitted changes detected" guard, which is how a production
+# deploy got refused on 2026-09-22 over a 13 line file testing buildAnswerBlock
+# against two goal widgets. Name a scratch file *.tmp.mjs and it stays out of
+# the way of a deploy.
+*.tmp.mjs
