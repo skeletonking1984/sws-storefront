@@ -77,6 +77,28 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-24 (CTO daily code review): the half of BAT-147 nobody shipped went live when the other half did
+Reviewed 12 commits, `00f9272` to `b833639`. Production at review time `6c87707` per `/api/version`; `fedbaef`, `82f8858`, `b833639` not yet deployed.
+
+**Range verdict: no new confirmed bug.**
+- `b833639` CSP: the added origins are real GA4 hosts, nothing loosened beyond need. Not on the wire yet, so UNCONFIRMED live.
+- `82f8858` duplicate description fix is real. Its guard for the class (BAT-191) is a checklist line in another task's prompt, not a script `verify:all` runs. Open gap, not closed.
+- `6c87707` infinite scroll: one possible double load when `isLoading` flips before the observer recomputes `inView`. UNCONFIRMED, no browser drive; UX only, no revenue risk.
+- `8e71afe` is LAUNCH.md only; its described fix landed inside `00f9272` (the message says so). Verified correct there.
+- `isMultistream` importer sweep: all six importers consistent with the current definition.
+- Checks: `audit-shipping` exit 0 (123, none ship), `audit-catalog` exit 0 (0 issues), `npm run build` exit 0, `verify:tracking` 25/25 on production, `verify:all` 24/28 with the four known Todd owned fails (Meta pixel id unset, BAT-172 policy queue, channel prices, deploy freshness).
+
+**Found outside the range, CONFIRMED on production, fixed in `1e7b9d4`: BAT-147 second half (was BAT-148).**
+`e3b3fb9` (2026-09-15) fixed the attribute wipe and left `_traffic_type` unclearable, which the 2026-09-14 entry said would turn live the moment the wipe was fixed. It did. Reproduced today: `/cart` LinesAdd with `sws_qa=1`, then again on the same cart without it, and the cart still carries `_traffic_type=internal`; `ga4.server.js:131` stamps that onto the server side purchase. Fix: `CLEARED_WHEN_ABSENT_KEYS` in `cart.jsx`, GA4 session keys deliberately excluded. New guard `npm run verify:traffic-type`: production FAIL, local build PASS; `verify-cart-attributes` PASS and `verify-tracking` 24/24 on the local build. **Needs a deploy**, then rerun `verify:traffic-type` against production. BAT-147 moved to In Review.
+
+**Backlog pass (Todd: "fix what you can"):**
+- BAT-152 tap target: already fixed (`app.css:938-961`, 44x44 under 45em). Close.
+- BAT-161 and BAT-174: `5eec187`. `audit-platform-claims.mjs` now tests software words and the `handle`; word lists moved to `scripts/lib/platform-words.mjs`, imported by it and `build-seo-fields.mjs` (same order, membership only uses). Handles are reported, never renamed. UNCONFIRMED live: the Etsy token on this Mac is unauthorized (`sws-etsy-mcp`: "Not authorized yet"), so `--check` could not run.
+- BAT-177: by design; 23 of 121 mapped products have zero Etsy reviews and no rating is invented.
+- BAT-153, BAT-188, BAT-176: Todd's call or need analytics access, unchanged.
+
+**Review process change:** a fix that is a checklist line in a prompt file, not a script, is reported as an open gap. A split issue ("fix together") is checked for its second half when the first half ships.
+
 ### 2026-09-24 (launch pass): the FAQ now answers the four questions a first time buyer asks, and checkout still serves a physical goods refund policy
 
 **Metrics.** 2026-09-23: 308 sessions, 5 cart adds, 4 reached checkout, 0 completed,
