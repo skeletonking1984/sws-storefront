@@ -52,7 +52,7 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] Quotable answer block on every PDP. **CLOSED 2026-09-23: production serves the corrected text and `npm run audit:answers:live` returned no findings against `streamwidgetshop.com`.** Read off the live Moon Jar PDP: "is a multistream animated goal widget from Stream Widget Shop that works whether you stream on Twitch, YouTube or Kick", no chat verb. One warning stands and is deliberate: the frog emotes pack is 36 words because its `works_with` names no install path. History below. **Built and committed 2026-09-17 (`9ae3cab`), on preview, NOT on production yet: the production deploy is Todd's.** `app/lib/answerBlock.js` generates one paragraph per PDP from sources this repo already checks (seo.title, productType, `custom.works_with`, the live variant price, and a new delivery-facts table), rendered visibly above the Description as `.product-answer`. 121 of 122 land in the 40 to 60 word window; the frog emotes pack is 36 because its `works_with` names no install path, so there is no third sentence to write and padding it would be filler. `npm run audit:answers` (in `verify:all`, 10-case self-test) checks the window, dashes, page references, price, platform overclaim, named format, and duplicate blocks. `npm run audit:answers:live` asserts the paragraph is in the served HTML and still needs to run against production. **Preview could not be curl-verified: an Oxygen preview URL 302s to Shopify account OAuth, so the only proof this run is the built server bundle and the generated text across all 122 products.**
   **2026-09-23: the block IS on production and was read out of the live HTML, and it was WRONG on two products.** `isMultistream()` was being read as a chat claim, so the Moon Jar (number 6 by revenue) and Cute Froggy goal widgets each said they read Twitch, YouTube and Kick chat at once, and they read no chat. Fixed with `readsChat = multistream && shipsChat(...)` plus a third audience clause worded as `ProductHighlights` words it. Across all 123 live products: false chat claims **2 to 0**, real chat claims kept **8 of 8**, none lost, 2 blocks changed, none over 60 words. `audit-answer-blocks.mjs` now takes `productType` and fails a chatless product whose block puts a chat VERB near "chat"; the old platform loop could not see it because every platform named was genuinely in `custom.works_with`, so **the lie was the verb**. Self-test 13 bad + 3 good. `audit:answers:live` **passed the fix without looking at it**: its sample was three fixed handles plus `slice(0, 2)`, the same two every run, so it now takes three that rotate by day of year. **Box stays unchecked: production is on `28d0239` and still serves the wrong text on those two PDPs until Todd deploys `00f9272`.**
 - [x] FAQPage JSON-LD on the PDP and on `pages/faq`. **Built and committed 2026-09-19 (`aa56cfc`), on preview, NOT on production: the production deploy is Todd's.** `app/lib/faqJsonLd.js` builds a `FAQPage` from `parseFaqBody`, the same parse `FaqAccordion` already uses to render the visible accordion, and the component emits it, so both surfaces got the markup from one change and the markup cannot say something the page does not. 11 Questions from the real 2482-char Shopify body, category headers dropped, a pair missing either half dropped, whitespace collapsed for the markup only. `npm run audit:faq` (in `verify:all`, 13-case self-test) asserts the failure that actually happens, which is not "markup missing" but "markup and page disagree": it counts the rendered `<details>` and requires one `Question` each, so a question added in Shopify that never reaches the markup is a finding. `npm run audit:faq:live` parses every JSON-LD block on the FAQ page and a PDP, because one unparseable block can cost the page the Product rich result next to it. **Run against production before the deploy it reported the two expected findings and exited 1, which is how the check is known to work.** Verified: 13/13 self-test, `npm run build` clean, and the real component rendered server-side against the real Shopify body emits 11 Questions against 11 rendered `<details>`, no dashes. **The Oxygen preview URL 403s to an unauthenticated fetch** (`01m2xrkex51pc8npbf34par7ww-fb73b5b73c40344d0d20.myshopify.dev`), same wall as 2026-09-17, so `audit:faq:live` against production is the outstanding proof.
-- [ ] Site-level answer blocks on the FAQ page (what a chat widget is, multi-platform at once, OBS needed, goal widgets, delivery, refunds). Every answer must agree with the refund policy page; the policy wins.
+- [x] Site-level answer blocks on the FAQ page. **DONE 2026-09-24**: four 57 to 59 word Q&As (chat widget, goal widget, multistream at once, OBS) added under THE BASICS, FAQPage JSON-LD 15 of 15 on production. Delivery and refunds were already answered and agree with the policy. Original ask: (what a chat widget is, multi-platform at once, OBS needed, goal widgets, delivery, refunds). Every answer must agree with the refund policy page; the policy wins.
 - [ ] `llms.txt` truth check: `app/routes/[llms.txt].jsx` ships, but its product list and one-liners have never been re-verified against the live catalog.
 - [x] `scripts/audit-seo.mjs`. **BUILT AND SHIPPED 2026-09-23 (`f3ae57a`), and its first run found a real defect on the one surface nobody had ever sampled.** Reads all 123 products and all 7 collections from the Storefront API and audits the RENDERED value, not the raw field: an empty `seo.title` with a working route fallback is not a finding, a fallback that renders empty is. Checks presence, the 60 and 155 caps, mid-word truncation, duplicate titles, duplicate descriptions, em and en dashes. Findings exit 1. `npm run audit:seo`, `npm run audit:seo:self-test` is 13 cases with no network, and it is wired into `verify:all`. **The 123 products measured clean. Both findings were on the `halloween` collection: title 65 over the 60 cap, meta description 173 over the 155 cap**, confirmed in the served HTML and not just the API. Trimmed to 57 and 154 with every claim kept, including the cauldron the collection really does contain, verified by paging the collection through the API rather than by reading one page of its HTML, which showed only 32 of the real 30 plus cross-links. Live page re-fetched after the Oxygen cache turned over and now serves both trimmed values. Catalogue range is now title 22 to 60, meta 76 to 155, zero duplicates, zero dashes. The prior note that this was "lower priority than it looked" was right about products and wrong about collections: the five PDPs measured 2026-09-17 were a product sample, and no collection had ever been measured at all.
 - [x] Alt text audit on every product image. **DONE 2026-09-19, and the cause was the DATA, not the markup: 676 of 918 media nodes in Shopify had no alt at all.** `scripts/build-alt-text.mjs` generated one per image and `fileUpdate` applied them; 918 of 918 now carry alt, 112 hero alts all distinct. `ProductGallery` stopped rendering `alt=""` on the main image and now announces "View Boba Drink Goal Widget, image 4 of 11" instead of "View media 4", with `app/lib/productName.js` as the one keyword-title cleaner both the component and the generator use. Guarded by `npm run audit:alt` (in `verify:all`, 13-case self-test) on empty, filename, placeholder, over-length, dashes and one string repeated across a gallery. **The 2026-09-17 count of 17 to 24 per PDP was right but its breakdown was wrong**: on the Boba Drink PDP 12 of the 31 were Twitter's own `adsct` pixels and 6 were platform icons already correctly `aria-hidden`, so the real defect was 11 gallery thumbs plus the main image, not "everything but two".
@@ -77,6 +77,91 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-24 (launch pass): the FAQ now answers the four questions a first time buyer asks, and checkout still serves a physical goods refund policy
+
+**Metrics.** 2026-09-23: 308 sessions, 5 cart adds, 4 reached checkout, 0 completed,
+**0 orders, $0 net**. Seven day orders Sep 17 to 23: 1, 1, 0, 2, 1, 3, 0. 2026-09-24 so
+far: 74 sessions, 0 cart adds. Read with `TIMESERIES day SINCE -8d`.
+
+#### Tracking health: GREEN on all four checkable legs
+
+| Leg | Result |
+|---|---|
+| Endpoints alive and locked | `npm run verify:tracking` **25/25**. `/webhooks/orders` 405, 401 unsigned, 401 forged HMAC |
+| Storefront events fire | Live Moon Jar PDP: `gtag` is a function, `_ga` and `_ga_X0978HDVTK` set, one `/g/collect` with `tid=G-X0978HDVTK`, and `view_item`, `page_view`, `add_to_cart` on `dataLayer` after pressing Add to cart. Pane was `visibilityState: hidden`, so `elementFromPoint` could not confirm the press target; the event itself did fire |
+| Attribution attaching | Last order is still **#1057** (2026-09-22, $11.51), carries `_ga_client_id` plus `_twclid`. No new order since |
+| Double counting | Still unverifiable, `read_pixels` not granted. Todd's item |
+
+Todd asked mid pass whether the X Pixel page was broken. It is not: Active, Click ID
+tracking Working, CAPI Working. The note "No hashed email or phone matches yet" is
+advice, and `hashed_email` is already sent (`app/lib/conversions/x.server.js:148`).
+
+#### The item: site level answer blocks on the FAQ page
+
+Four Q&As added to the Shopify FAQ page (`gid://shopify/Page/180184744126`) under a new
+first category, THE BASICS. Each is a self contained 57 to 59 word answer an engine can
+quote without the question:
+
+- What is a stream chat widget?
+- What is a goal widget? (says outright it does not display chat)
+- Can one chat widget show Twitch, YouTube and Kick chat at the same time? (yes for the
+  multistream chat widgets, via a free StreamElements account, TikTok via TikFinity on
+  some; others are Twitch only)
+- Do I need OBS to use these widgets? (browser source; OBS Studio or Streamlabs Desktop,
+  both free; no paid software)
+
+Facts taken from Etsy listing 4536576701 (the number 2 product) and the
+`ProductHighlights` multistream wording, not from memory. Delivery and refunds already
+had answers; the refund answer is unchanged and still agrees with `policyContent.js`.
+
+One existing answer was an overclaim and was corrected: "Setup takes under 60 seconds"
+became "Most widgets install in a few minutes". The number 2 product's own listing says
+about 2 minutes one click and about 5 minutes manual.
+
+Old body saved before the write. `pageUpdate` **0 userErrors**; the stored body read back
+from the Storefront API is **byte identical** to the draft; no dashes.
+`npm run audit:faq:live` against production: **15 rendered questions, 15 in FAQPage**,
+no findings (the PDP accordion still showed the cached 11, consistent with itself).
+
+#### Found: checkout links to a physical goods refund policy
+
+The Shopify Admin refund policy, which is what checkout's footer links to
+(`checkout.shopify.com/66589720766/policies/28383510718.html`), still reads "unworn or
+unused, with tags, and in its original packaging", a **return shipping label**, and
+`spacelabsdiy@gmail.com`. The privacy policy there still opens "Welcome to spacelabs
+shop.com". Read directly from the Storefront API today. The storefront's own
+`/policies/*` pages are correct only because `app/lib/policyContent.js` overrides them.
+The 2026-09-15 entry says Todd pasted all six rewrites; Terms, Shipping, Contact and
+Legal carry the new text, **refund and privacy do not**. Not fixed here: it is legal
+copy and the integration has no `write_legal_policies` scope.
+
+**`audit:policy` had been green on it every day.** The old text says "30-day return
+policy" and mentions refunds, so it read as a policy that grants 30 days. Added a
+`PHYSICAL_GOODS` check to `scripts/audit-policy-claims.mjs`; self-test **18/18** (two new
+cases: the live wording is caught, a digital policy mentioning a corrupt download is
+not). It now **fails**, correctly, and stays red until the Admin copy is replaced.
+
+#### Verified
+
+| Check | Result |
+|---|---|
+| `npm run build` | exit 0 |
+| `node scripts/verify-all.mjs` | **24/28**. Failed: channels, **policy claims (new, real)**, channel prices, deploy freshness |
+| `npm run verify:tracking` | 25/25 |
+| `npm run audit:faq:live` | 15/15, no findings |
+| `npm run audit:deploy` | production `6c87707`, HEAD `b833639`, **3 unshipped visitor facing commits** |
+
+#### Needs Todd
+
+- **Paste the refund and privacy policies** from `app/lib/policyContent.js` into Admin >
+  Settings > Policies. Checkout shows buyers the physical goods text until then.
+- **Deploy production.** 3 visitor facing commits unshipped (CSP fix for GA4, reviews
+  refresh, collection SEO). `npx shopify hydrogen deploy --env=production`.
+- Carried: BAT-188 X Events Manager check, `PUBLIC_META_PIXEL_ID`, 4 cross channel
+  prices, `read_pixels`, Linear comments connector.
+
+**Next item tomorrow:** `llms.txt` truth check against the live catalogue.
+
 ### 2026-09-23 (scheduled QA): a live product page described a different product
 
 **Metrics.** 2026-09-22: 476 sessions, 6 cart adds, 5 reached checkout, 3 completed,

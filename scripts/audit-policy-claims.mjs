@@ -82,6 +82,14 @@ const DENIES_REFUNDS = new RegExp(
 );
 
 /**
+ * Wording that only makes sense for something shipped in a box. SWS sells
+ * nothing but downloads, so any of this in the refund policy means the copy is
+ * the inherited physical-goods template, not SWS's policy.
+ */
+const PHYSICAL_GOODS =
+  /unworn|with tags|original packaging|return shipping label|send (?:us )?your package|same condition that you received/i;
+
+/**
  * Does this policy text grant refunds at all?
  *
  * Deliberately conservative: it must both mention refunding and NOT read as a
@@ -130,6 +138,21 @@ export function audit({policyText, routeSource, products}) {
       what: 'The refund policy page is empty. Nothing can be checked against it.',
     });
     return {issues, grants, days, sd};
+  }
+
+  // 1b. the policy itself must describe a digital store.
+  // Added 2026-09-24. The Shopify copy is the one checkout links to
+  // (checkout.shopify.com/.../policies/...), and it still carried the old
+  // physical-goods template: "unworn or unused, with tags, and in its original
+  // packaging", a return shipping label. It still says "30-day return policy"
+  // and mentions refunds, so every check below passed it. The storefront hides
+  // it behind app/lib/policyContent.js, which is why nobody saw it on the site.
+  const physical = policyText.match(PHYSICAL_GOODS);
+  if (physical) {
+    issues.push({
+      scope: 'policy',
+      what: `The Shopify refund policy describes physical goods ("${physical[0]}"). Checkout links buyers to this copy. Paste the digital policy from app/lib/policyContent.js into Admin > Settings > Policies.`,
+    });
   }
 
   // 2. structured data vs policy
@@ -267,6 +290,16 @@ if (selfTest) {
     {
       name: 'the approved copy block that mentions refunds positively still passes',
       input: {policyText: POLICY_30, routeSource: ROUTE_OK, products: [{handle: 'x', title: 'X', description: 'Refunds within 30 days if the download never arrived, the files are corrupt or incomplete, the item is not what this listing described, you were charged twice, or we cannot get it running on a platform this listing claims. A working file you downloaded and then changed your mind about is not refundable. Full detail is on our Refund Policy page.'}]},
+      expect: 0,
+    },
+    {
+      name: 'the inherited physical-goods refund policy is caught (live on checkout, 2026-09-24)',
+      input: {policyText: 'Return and Refund Policy. We have a 30-day return policy. To be eligible for a return, your item must be in the same condition that you received it, unworn or unused, with tags, and in its original packaging. If your return is accepted, we will send you a return shipping label.', routeSource: ROUTE_OK, products: []},
+      expect: 1,
+    },
+    {
+      name: 'a digital policy that mentions a corrupt download is NOT physical goods',
+      input: {policyText: 'You may request a refund within 30 days of purchase if the download never arrived or the files are corrupt. Nothing is shipped.', routeSource: ROUTE_OK, products: []},
       expect: 0,
     },
     {
