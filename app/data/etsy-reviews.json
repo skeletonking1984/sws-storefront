@@ -1,14 +1,107 @@
 {
   "shop": {
     "average": 4.76,
-    "count": 1002,
-    "soldCount": 7624,
-    "favoriteCount": 1298,
+    "count": 1003,
+    "soldCount": 7629,
+    "favoriteCount": 1299,
     "url": "https://www.etsy.com/shop/StreamWidgetShop/reviews"
   },
-  "generatedAt": "2026-09-24T00:18:28.974Z",
+  "generatedAt": "2026-09-24T14:17:04.070Z",
   "sourceNote": "Real StreamWidgetShop Etsy reviews, joined to Shopify products by etsy listing id via data/etsy-video-map.json. Only trusted-confidence matches are kept, see scripts/build-etsy-reviews.mjs. SERVER USE ONLY, contains every product review verbatim: import this from a route loader, never from a component body or module scope, or the bundler ships it to the client. Client code wanting just the shop stats should import etsy-shop-stats.json instead.",
   "products": {
+    "pastel-cloud-stream-widget-cute-rainbow-cloud-fully-customisable-goal-widget-for-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "pastel-cloud-stream-widget-cute-rainbow-cloud-fully-customisable-goal-widget-for-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1797937195,
+      "count": 13,
+      "average": 4.8,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 11
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "date": "2026-09-24",
+          "text": "love them they are  so cute",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2026-06-07",
+          "text": "I absolutely love this little moon guy so much.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-11-06",
+          "text": "Very customizable and super cute.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-07-11",
+          "text": "A video tutorial. Super easy to follow and super easy to customize!!",
+          "language": "en"
+        },
+        {
+          "rating": 4,
+          "date": "2025-06-13",
+          "text": "Alles super, sehr zu empfehlen.",
+          "language": "de"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-08",
+          "text": "Nice goal, you can use that for everything, it's so cute I love it",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-06-04",
+          "text": "The widget itself looks really amazing however in the beginning it did not work because I was using a whole different platform but she took the time to decode to make it work for me and stayed in call to fix things she's truly a star and amazing I recommend her beyond measures!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-05-23",
+          "text": "Super parfait trop mimi je les ai mis en follow etc",
+          "language": "fr"
+        },
+        {
+          "rating": 4,
+          "date": "2025-05-01",
+          "text": "wish i could move the wording to left or right- but looks really cool",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-04-09",
+          "text": "Being new to streaming it was little confusing trying to get the widget in steamlabs. But I used another video to figure it out. After I did it was an amazing new addition to my stream.",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-30",
+          "text": "Очень милый виджет, спасибо большое",
+          "language": "ru"
+        },
+        {
+          "rating": 5,
+          "date": "2025-01-21",
+          "text": "It is very nicely done and easy to set up! Let me tell you it IS fully adjustable to your needs with any color and title you want. 10 out of 10!",
+          "language": "en"
+        },
+        {
+          "rating": 5,
+          "date": "2024-10-19",
+          "text": "Cute and easy to install!",
+          "language": "en"
+        }
+      ]
+    },
     "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download": {
       "handle": "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
       "etsyListingId": 1790018033,
@@ -3329,93 +3422,6 @@
           "rating": 5,
           "date": "2025-08-13",
           "text": "Love this product, 10/10 would recommend",
-          "language": "en"
-        }
-      ]
-    },
-    "pastel-cloud-stream-widget-cute-rainbow-cloud-fully-customisable-goal-widget-for-streamlabs-tiktok-studio-and-streamelements": {
-      "handle": "pastel-cloud-stream-widget-cute-rainbow-cloud-fully-customisable-goal-widget-for-streamlabs-tiktok-studio-and-streamelements",
-      "etsyListingId": 1797937195,
-      "count": 12,
-      "average": 4.8,
-      "distribution": {
-        "1": 0,
-        "2": 0,
-        "3": 0,
-        "4": 2,
-        "5": 10
-      },
-      "reviews": [
-        {
-          "rating": 5,
-          "date": "2026-06-07",
-          "text": "I absolutely love this little moon guy so much.",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2025-11-06",
-          "text": "Very customizable and super cute.",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2025-07-11",
-          "text": "A video tutorial. Super easy to follow and super easy to customize!!",
-          "language": "en"
-        },
-        {
-          "rating": 4,
-          "date": "2025-06-13",
-          "text": "Alles super, sehr zu empfehlen.",
-          "language": "de"
-        },
-        {
-          "rating": 5,
-          "date": "2025-06-08",
-          "text": "Nice goal, you can use that for everything, it's so cute I love it",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2025-06-04",
-          "text": "The widget itself looks really amazing however in the beginning it did not work because I was using a whole different platform but she took the time to decode to make it work for me and stayed in call to fix things she's truly a star and amazing I recommend her beyond measures!",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2025-05-23",
-          "text": "Super parfait trop mimi je les ai mis en follow etc",
-          "language": "fr"
-        },
-        {
-          "rating": 4,
-          "date": "2025-05-01",
-          "text": "wish i could move the wording to left or right- but looks really cool",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2025-04-09",
-          "text": "Being new to streaming it was little confusing trying to get the widget in steamlabs. But I used another video to figure it out. After I did it was an amazing new addition to my stream.",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2025-01-30",
-          "text": "Очень милый виджет, спасибо большое",
-          "language": "ru"
-        },
-        {
-          "rating": 5,
-          "date": "2025-01-21",
-          "text": "It is very nicely done and easy to set up! Let me tell you it IS fully adjustable to your needs with any color and title you want. 10 out of 10!",
-          "language": "en"
-        },
-        {
-          "rating": 5,
-          "date": "2024-10-19",
-          "text": "Cute and easy to install!",
           "language": "en"
         }
       ]

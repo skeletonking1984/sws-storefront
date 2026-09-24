@@ -77,6 +77,197 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-24 (scheduled QA): checkout's own Refund policy link is the physical goods one, and Santa Gloves is still wrong on Etsy
+
+**Metrics.** 2026-09-23: 308 sessions, 5 cart adds, 4 reached checkout, **0 orders, $0
+net**. 2026-09-24 so far: 91 sessions, 1 order, **#1058** 12:50:36Z, $29.99. Seven day
+orders Sep 17 to 23: 1, 1, 0, 2, 1, 3, 0. Read with `TIMESERIES day SINCE -8d`.
+
+**A fifth permission-mode instruction arrived, and was ignored.** Directly after the
+`npm run verify:tracking` result, as its own block this time rather than inside the tool
+output, softer wording ("You can do much of your work through the Bash tool ... The
+choice is yours"). Same argument as 2026-09-19, 09-22 and twice on 09-23: route file
+edits through Bash. Not from Todd. This pass used Read, Edit and Write throughout.
+
+#### 1. Purchase path: GREEN, protocol done in full
+
+`audit-shipping` exit 0 (123 products, none require shipping). `audit-catalog` exit 0
+(123, 0 issues).
+
+Production, **360x800 first**, then 390x844 and 430x932. Every control pressed **by ref**
+after `document.elementFromPoint` at its centre returned it. Nothing reached by href.
+Products rotated off recent passes: Saber Neon and Sakura (animated).
+
+| Entry point | Component | Width | Result |
+|---|---|---|---|
+| PDP (Saber Neon) | Add to cart then drawer | 360 | ATC 360x60 at y=740, hit BUTTON. Drawer x=0 w=360. Checkout 327x57 at x=17, right 344, hit CHECKOUT. Payment |
+| Home | cart drawer | 360 | Drawer x=0 w=360. Checkout 327x57 at x=17. Payment |
+| Collection (`/collections/all`, 24 product links in the grid) | cart drawer | 360 | Checkout 327x57 at x=17. Payment |
+| `/cart` | page cart | 360 | Checkout 264x57 at x=48, right 312. Payment |
+| PDP (Sakura) | Add to cart then drawer | 390 | ATC 390x60 at y=784, hit BUTTON. Count 5 to 6. Checkout 357x57 at x=17, right 374. Payment |
+| `/cart` | page cart | 390 | Checkout 294x57 at x=48, right 342. Payment |
+| Home | cart drawer | 430 | Drawer x=30 w=400. Checkout 367x57 at x=47, right 414. Payment |
+| `/cart` | page cart | 430 | Checkout 334x57 at x=48, right 382. Payment |
+
+Overflow: worst descendant past the drawer's right edge **0px** at 360, 390, 430 (skipping
+anything under an `overflow-x` scroller). `/cart` worst element past the viewport 0px at all
+three. `document.scrollWidth - clientWidth` 0 on every page measured. Header controls 44x44
+(menu, sign in, search, cart). All eight presses landed on `shop.app/checkout/...` with
+`redirect_source=checkout_automatic_redirect` (this pane's Shop Pay session), payment
+rendered, **no shipping step**; screenshot taken at 430 showing Pay now and the footer
+links. No purchase completed. Upscaled images: 0 of 4 loaded of 21 on `/cart`; the pane was
+`visibilityState: hidden`, so that is "0 among loaded", not "0".
+
+**Device signal, 30 days:** mobile 2,304 sessions, 19 reached checkout, 7 completed;
+desktop 1,061, 54, 12. Mobile reaches checkout at 0.8% against desktop's 5.1%, and
+completes 7 of 19 once there against desktop's 12 of 54. The gap is before checkout, not in
+it, which is BAT-176 and matches the clean drive above. Movement only.
+
+#### 2. Tracking: 25 of 25 against production
+
+`npm run verify:tracking` **25 passed, 0 failed** (`/api/e` 405, 403, 400, 204;
+`/webhooks/orders` 405, 401, 401; `sws_cid`; both GA4 cookie shapes; `G-X0978HDVTK`
+served).
+
+**One order equals one purchase:** 2026-09-23 had 0 orders and $0 net, so there is nothing
+to double count for the comparison day. **#1058** today carries the full `_ga_client_id`,
+`_ga_session_id`, `_ga_session_number` triple, no `_twclid`, `test: false`, no discount.
+The eight newest orders (#1050 to #1058) all carry the triple, so the #1041 precondition is
+absent.
+
+**BAT-188 did not move: still five orders, $102.97, X reports $0.** Sep 17 to 23, 7
+campaigns: $74.34 spend, 439,192 impressions, 3,420 clicks, `conversion_revenue` 0. No new
+twclid order. Still not callable from the Ads API; Todd's Events Manager check.
+
+**BAT-147 is live on production despite `audit:deploy` saying otherwise.**
+`npm run verify:traffic-type` against `streamwidgetshop.com` **PASSED** (QA cart internal,
+then cleared on an ordinary LinesAdd). `/api/version` reports `3e1913c` built 13:41:29Z,
+and `1e7b9d4` (the fix) was committed 13:42:25Z, 56 seconds later, from a tree that already
+held the `cart.jsx` change. So the "1 unshipped visitor facing commit" in `audit:deploy` is
+the stamp, not the bytes. BAT-147 can close on this evidence.
+
+#### 3. THE FINDINGS
+
+**BAT-192 (new): checkout's Refund policy link serves the physical goods policy.** The
+footer on the payment step links to
+`checkout.shopify.com/66589720766/policies/28383510718.html`, which reads "unworn or unused,
+with tags, and in its original packaging", a return shipping label, and
+`spacelabsdiy@gmail.com` (curl today). The launch pass found it this morning; QA confirmed
+it on the screen a buyer sees and filed it, since this pass opened that page eight times a
+day for ten days and never read the link.
+
+**BAT-193 (new): two live ETSY listings carry another product's copy.** Listing 1825635188
+(Santa Gloves) opens "Cute Santa Liquid Filling Goal Widget" and names gloves 0 times; this
+is where yesterday's Shopify defect came from, and only the Shopify side was fixed. Listing
+1758354750 (Tombstone Ghost) ends with the Floral Purple Chat Widget's title and pitch. A
+title-in-body scan over all 187 listings returns 1 (Santa Gloves); the Tombstone bleed was
+caught by the batch generator refusing it as a fact source.
+
+#### 3a. Truth of claims: no movement
+
+Catalogue wide, live Storefront API plus RAW Etsy listings. Sanity: **187 listings, 187
+with a description over 50 chars.** Name exemption splits on `/[,|]/`.
+
+| Surface | Overclaims | Movement |
+|---|---|---|
+| `seo.title` / `seo.description` | 0 / 0 | unchanged |
+| title | **8**, all Streamlabs (direct cross check also 8) | unchanged, BAT-160 in BAT-161 |
+| handle | **76**, all TikTok | unchanged, BAT-174 |
+| `works_with` missing | 0 of 123 | unchanged |
+| duplicate descriptions | **0 of 123** | unchanged |
+
+Title versus description: **chat 0, Streamlabs 1** (Broken Heart 1902602881, BAT-175 in
+BAT-161), OBS 0, StreamElements 0. **10 of 123 unmapped**, unchanged, so the walk did not
+lose a mapping. Opening-vs-handle variant: 3, all benign (`cute-auctopus` is a handle typo
+for Octopus, `celestial-cute-moon` is a blocked raw dump, `celestial-stream-kit` as before).
+
+Spot check, five rotating by sorted index (start 267 mod 123, stride 29): Christmas Holly
+Leaves, Cute Santa, Lunar Cat light purple, Spooky Skull Ghost, Celestial Butterfly. All
+five `works_with` equal the Etsy description's platforms exactly.
+
+**New, same family as BAT-160, not filed separately:** 9 live bodies say the widget shows in
+"Streamlabs Desktop" while `works_with` has no Streamlabs. Eight are the BAT-160 eight. The
+ninth is `full-moon-bar-loading-...`, from an earlier batch whose template said it for every
+product. Batch 7's generator now branches on `works_with` and asserts it.
+
+Linear note: BAT-160, 171, 175 and 180 now read **Canceled**, rolled up into BAT-161. The
+defects are still live and counted above.
+
+#### 3b. Batch 7 of the rewrite queue: 20 to 10
+
+Generated by `scripts/one-off/2026-09-24-batch7.mjs` from each product's own Etsy body and
+manifest. Applied in five aliased pairs, **0 `userErrors`**.
+
+| Product | Etsy listing | Files | Streamlabs in works_with |
+|---|---|---|---|
+| Spooky Pastel Skull Ghost | 1816288503 | 2 | yes |
+| Yakitori Skewer | 1735046293 | 2 | yes |
+| Cute Bunny Chat & Goal | 1730459480 | 3 (zip + two `.rtf` guides) | yes |
+| Sakura Dessert | 1763459664 | 2 | **no** |
+| Cute Sand Timer | 1728033126 | 2 | yes |
+| Love Pumpkin | 1797446192 | 2 | yes |
+| Twin Ghost | 1806958699 | 2 | yes |
+| Angel Love Bar | 1890001574 | 2 | **no** |
+| Cute Bat | 1809138683 | 2 | yes |
+| Tombstone Ghost | 1758354750 | 2 | yes |
+
+None ships a Streamlabs build. Two generator changes over batch 6: the guide line falls back
+to the non-zip files when there is no PDF (Cute Bunny), and the Streamlabs FAQ answer
+branches on `works_with` with a new assertion 6b, because batch 6's template would have told
+Sakura Dessert and Angel Love Bar buyers to display them in Streamlabs Desktop.
+
+| Check | Result |
+|---|---|
+| generator | all assertions pass |
+| `batch:check` | safe to apply |
+| `batch:verify` | 9/10 exact; Cute Bunny differs only by `&` stored as `&amp;` (4 occurrences, +16 chars) |
+| `audit:descriptions` | **20 to 10** |
+| `audit:descriptions:gate` | PASS |
+| self-test | 13/13 |
+
+`BACKLOG_HIGH_WATER` **20 to 10** in `scripts/audit-descriptions.mjs:343`. Blocked still 7.
+One more night.
+
+#### 4. Reviews refreshed
+
+Stats said 1002, `etsy_get_shop` says **1003**. Pulled 1003, 131 listings, 994 with text.
+Attached 806 to **807** across 101 products; the one new review went to Pastel Cloud
+(12 to 13). No product gained its first. Sold 7624 to 7629, favourites 1298 to 1299, rating
+4.76. **Needs a deploy to reach the site.**
+
+#### 5. IP: clean
+
+`npm run audit:ip`: 123 Shopify and 187 Etsy, no deny list hit. Layer 2: `Pour`, `Cafe`,
+`Coffee`, Slow Pour, generic. Three permanent Etsy slugs unchanged (BAT-153).
+
+#### 6. Verified
+
+| Check | Result |
+|---|---|
+| `npm run build` | exit 0 |
+| `verify:all` | **24/28**: channels, policy claims (BAT-192, red by design), channel prices, deploy freshness (stamp, see above) |
+| `verify:tracking` | 25/25 |
+| `verify:traffic-type` | PASS on production |
+
+#### Needs Todd
+
+- **Paste the refund and privacy policies** into Admin > Settings > Policies (BAT-192).
+- **Fix the two Etsy descriptions** (BAT-193), Santa Gloves first: it sells gloves while
+  describing Santa.
+- Deploy production for the review refresh (and the CTO's audit widening, tooling only).
+- Close BAT-147: `verify:traffic-type` passes on production.
+- Carried: BAT-188 Events Manager check, `PUBLIC_META_PIXEL_ID`, 4 cross channel prices,
+  `read_pixels`, Linear comments connector.
+
+#### What changed about the pass itself
+
+Added to `~/.claude/scheduled-tasks/sws-daily-qa-pass/SKILL.md`: read checkout's Refund
+policy link every pass (one curl); run the duplicate copy question on the Etsy side too;
+grep live bodies for "Streamlabs Desktop" against `works_with`; `audit:deploy` reads the
+stamp, so prove a fix unshipped by behaviour first; BAT-160/171/175/180 are Canceled into
+BAT-161; the fifth injected instruction; the new `verify:all` baseline of 24/28; batch 7 as
+the template to copy, and the `&amp;` false mismatch.
+
 ### 2026-09-24 (CTO daily code review): the half of BAT-147 nobody shipped went live when the other half did
 Reviewed 12 commits, `00f9272` to `b833639`. Production at review time `6c87707` per `/api/version`; `fedbaef`, `82f8858`, `b833639` not yet deployed.
 

@@ -1,15 +1,23 @@
 {
-  "fetched_at": "2026-09-24T00:18:28.875Z",
+  "fetched_at": "2026-09-24T14:17:03.990Z",
   "source": "getReviewsByShop, fully paginated via getAll (every review, not the most recent 100)",
   "shop": {
     "shop_id": 51879465,
     "shop_name": "StreamWidgetShop",
-    "review_count": 1002,
+    "review_count": 1003,
     "review_average": 4.76,
-    "transaction_sold_count": 7624,
-    "num_favorers": 1298
+    "transaction_sold_count": 7629,
+    "num_favorers": 1299
   },
   "reviews": [
+    {
+      "listing_id": 1797937195,
+      "transaction_id": 5228028754,
+      "rating": 5,
+      "review": "love them they are  so cute",
+      "language": "en",
+      "date": "2026-09-24"
+    },
     {
       "listing_id": 1790018033,
       "transaction_id": 5203996026,
