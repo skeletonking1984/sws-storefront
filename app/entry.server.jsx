@@ -75,6 +75,26 @@ export default async function handleRequest(
       'https://www.googletagmanager.com',
       'https://www.google-analytics.com',
       'https://analytics.google.com',
+      // gtag sends a SECOND beacon per event, to stats.g.doubleclick.net,
+      // whenever Google Signals is on for the property. It carries the same
+      // tid and cid as the /g/collect above and is what feeds demographics,
+      // cross device and any Google Ads remarketing audience. Measured
+      // blocked on production 2026-09-23 on both the homepage and a
+      // collection page: "Connecting to 'https://stats.g.doubleclick.net/g/
+      // collect?...tid=G-X0978HDVTK' violates ... connect-src".
+      //
+      // It failed the way everything else in this file fails: the purchase
+      // numbers stayed right, because purchase is sent server side from the
+      // orders webhook and never touches this, so no report looked wrong.
+      // Only the audience data was missing, and a missing audience does not
+      // announce itself anywhere except the visitor's own console.
+      'https://stats.g.doubleclick.net',
+      // Not measured here, added because this machine is in the US and GA4
+      // routes some regions to a region1 endpoint instead of the global one.
+      // Same silent failure if it is ever hit and missing, and allowlisting
+      // a Google collect host this page already talks to costs nothing.
+      'https://region1.google-analytics.com',
+      'https://region1.analytics.google.com',
       'https://analytics.twitter.com',
       'https://t.co',
       'https://connect.facebook.net',
