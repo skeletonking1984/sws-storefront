@@ -65,7 +65,9 @@
     "audit:deploy:self-test": "node scripts/audit-deploy-freshness.mjs --self-test",
     "predev": "node scripts/stamp-build.mjs",
     "audit:site": "node scripts/audit-site-health.mjs",
-    "audit:site:self-test": "node scripts/audit-site-health.mjs --self-test"
+    "audit:site:self-test": "node scripts/audit-site-health.mjs --self-test",
+    "audit:seo": "node scripts/audit-seo.mjs",
+    "audit:seo:self-test": "node scripts/audit-seo.mjs --self-test"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
