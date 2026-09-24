@@ -156,7 +156,7 @@ for (const product of products) {
     // The handle IS a claim: it is the published URL and, for several of
     // these products, the ad destination. BAT-174 found 76 handles naming
     // TikTok with nothing checking it. Reported here, never rewritten here
-    // or anywhere downstream — renaming a live handle breaks the URL and is
+    // or anywhere downstream. Renaming a live handle breaks the URL and is
     // Todd's call.
     handle: names(product.handle, testable),
     seoTitle: names(product.seo?.title, testable),
