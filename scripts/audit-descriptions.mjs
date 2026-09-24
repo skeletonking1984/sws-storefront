@@ -340,7 +340,7 @@ for (const f of findings) {
  * it grows past the recorded high-water mark, because that means a raw dump
  * was newly published rather than worked off.
  */
-const BACKLOG_HIGH_WATER = 30; // 2026-09-22, batch 5 landed (was 40). Lower as batches land, never raise.
+const BACKLOG_HIGH_WATER = 20; // 2026-09-23, batch 6 landed (was 30). Lower as batches land, never raise.
 
 if (process.argv.includes('--gate')) {
   const queued = new Set(findings.filter((f) => f.kind === 'raw Etsy dump').map((f) => f.handle));
