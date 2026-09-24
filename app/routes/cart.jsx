@@ -18,6 +18,17 @@ const REFRESHED_ATTRIBUTE_KEYS = new Set([
 ]);
 
 /**
+ * Refreshed keys whose ABSENCE on the current request is itself the
+ * current value, so they are removed from the cart rather than left alone.
+ * readClickIds only emits `_traffic_type` for internal traffic and omits
+ * it for a real buyer, so without this a cart once touched by a QA run
+ * stayed flagged internal forever and its real purchase was filtered out
+ * of GA4. The GA4 session keys are deliberately NOT here: a request with
+ * no GA cookie (an ad blocker) must keep the last known session.
+ */
+const CLEARED_WHEN_ABSENT_KEYS = new Set(['_traffic_type']);
+
+/**
  * @type {Route.MetaFunction}
  */
 export const meta = ({matches, location}) => {
@@ -189,14 +200,23 @@ export async function action({request, context}) {
         return !existingKeys.has(key);
       })
       .map(([key, value]) => ({key, value}));
-    const changedKeys = new Set(changedAttributes.map((a) => a.key));
+    const clearedKeys = new Set(
+      existingAttributes
+        .map(({key}) => key)
+        .filter((key) => CLEARED_WHEN_ABSENT_KEYS.has(key) && !clickIds[key]),
+    );
+    const changedKeys = new Set([
+      ...changedAttributes.map((a) => a.key),
+      ...clearedKeys,
+    ]);
     const missingAttributes = changedAttributes;
 
-    if (missingAttributes.length > 0) {
+    if (missingAttributes.length > 0 || clearedKeys.size > 0) {
       try {
         await cart.updateAttributes([
           // Drop the stale copy of anything being refreshed, otherwise the
-          // replaced array would carry the key twice.
+          // replaced array would carry the key twice, and drop anything
+          // cleared because it is no longer true.
           ...existingAttributes
             .filter(({key}) => !changedKeys.has(key))
             .map(({key, value}) => ({key, value})),
