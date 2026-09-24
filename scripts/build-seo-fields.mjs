@@ -28,6 +28,7 @@
  *                                              product still needs fields
  */
 import fs from 'node:fs';
+import {CHAT, SOFTWARE, PLATFORM_WORDS} from './lib/platform-words.mjs';
 
 const env = Object.fromEntries(
   fs
@@ -42,10 +43,10 @@ const env = Object.fromEntries(
 
 const TITLE_MAX = 60;
 const DESC_MAX = 155;
-const PLATFORM_WORDS = ['Twitch', 'YouTube', 'TikTok', 'Kick', 'OBS', 'Streamlabs', 'StreamElements'];
-const CHAT = ['Twitch', 'YouTube', 'Kick', 'TikTok'];
-const SOFT = ['StreamElements', 'Streamlabs', 'OBS'];
-const ORDER = [...CHAT, ...SOFT];
+// CHAT, SOFTWARE and PLATFORM_WORDS now come from scripts/lib/platform-words.mjs,
+// shared with audit-platform-claims.mjs so the two scripts can never drift
+// out of sync on which words count as a platform claim (BAT-161).
+const ORDER = PLATFORM_WORDS;
 
 /**
  * Everything after these markers is the Etsy keyword tail, not the product
@@ -165,7 +166,7 @@ export function buildFields(product) {
     ? ORDER.filter((p) => confirmed.some((c) => c.toLowerCase() === p.toLowerCase()))
     : [];
   const chat = platforms.filter((p) => CHAT.includes(p));
-  const software = platforms.filter((p) => SOFT.includes(p));
+  const software = platforms.filter((p) => SOFTWARE.includes(p));
   const type = TYPE_WORD[product.productType] || 'stream widget';
 
   // Matches the convention already used by the 46 hand written seo titles:

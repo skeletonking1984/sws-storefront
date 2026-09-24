@@ -44,6 +44,16 @@
  *   badge costs a little scannability; a wrong one costs a refund and a one
  *   star review saying it does not work.
  *
+ * BAT-161: this script used to test only YouTube, Kick and TikTok, so
+ * StreamElements/Streamlabs/OBS overclaims were invisible on every surface,
+ * not just the catalog title (BAT-160, 8 live titles claiming Streamlabs
+ * against a StreamElements-only listing, `--check` exit 0). It also never
+ * read the product `handle`, so a URL itself can claim a platform (BAT-174,
+ * goal widget handles ending "...tiktok-studio-and-streamelements") with
+ * nothing checking it. Both are now tested. The handle is never renamed by
+ * this script, or by anything downstream of it: a live URL is a published
+ * link and an ad destination, renaming it is Todd's call, not a routine one.
+ *
  * Usage:
  *   node scripts/audit-platform-claims.mjs          write data/platform-claims.json
  *   node scripts/audit-platform-claims.mjs --check  report only, exit 1 on any overclaim
@@ -51,6 +61,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
+import {BASELINE, CHAT, SOFTWARE, TWITCH_ONLY} from './lib/platform-words.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url)) + '/..';
 const env = Object.fromEntries(
@@ -59,12 +70,6 @@ const env = Object.fromEntries(
     return [line.slice(0, i), line.slice(i + 1).replace(/^["']|["']$/g, '')];
   }),
 );
-
-const CHAT = ['Twitch', 'YouTube', 'Kick', 'TikTok'];
-const SOFTWARE = ['StreamElements', 'Streamlabs', 'OBS'];
-const BASELINE = 'Twitch';
-/** Twitch-only concepts. Their presence implies Twitch even when the word is absent. */
-const TWITCH_ONLY = /\bbits\b|\bsub(s|scriber)?\b/i;
 
 const word = (p) => new RegExp(p.replace(/([A-Z])/g, (m) => `[${m}${m.toLowerCase()}]`), 'i');
 const names = (text, list) => list.filter((p) => word(p).test(text || ''));
@@ -142,10 +147,18 @@ for (const product of products) {
 
   // What the page claims today, per surface. Twitch is excluded from the
   // overclaim test everywhere, it is the baseline and always true here.
-  const testable = CHAT.filter((p) => p !== BASELINE);
+  // Chat AND software words are both tested (BAT-161): a script that only
+  // ever checked chat platforms proved nothing about a Streamlabs claim.
+  const testable = [...CHAT.filter((p) => p !== BASELINE), ...SOFTWARE];
   const block = worksWithBlock(product.descriptionHtml);
   const current = {
     title: names(product.title, testable),
+    // The handle IS a claim: it is the published URL and, for several of
+    // these products, the ad destination. BAT-174 found 76 handles naming
+    // TikTok with nothing checking it. Reported here, never rewritten here
+    // or anywhere downstream — renaming a live handle breaks the URL and is
+    // Todd's call.
+    handle: names(product.handle, testable),
     seoTitle: names(product.seo?.title, testable),
     seoDescription: names(product.seo?.description, testable),
     badges: block ? names(block.block, testable) : [],
