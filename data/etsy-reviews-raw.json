@@ -1,15 +1,23 @@
 {
-  "fetched_at": "2026-09-23T00:27:16.276Z",
+  "fetched_at": "2026-09-24T00:18:28.875Z",
   "source": "getReviewsByShop, fully paginated via getAll (every review, not the most recent 100)",
   "shop": {
     "shop_id": 51879465,
     "shop_name": "StreamWidgetShop",
-    "review_count": 1001,
+    "review_count": 1002,
     "review_average": 4.76,
-    "transaction_sold_count": 7614,
-    "num_favorers": 1297
+    "transaction_sold_count": 7624,
+    "num_favorers": 1298
   },
   "reviews": [
+    {
+      "listing_id": 1790018033,
+      "transaction_id": 5203996026,
+      "rating": 4,
+      "review": "Great asset I just wish that it had come with the color codes. It seems like those colors were gonna be a preset when it’s actually color sliders. The amount of customization is fantastic, but I would’ve loved to have also have presets of the colors shown.",
+      "language": "en",
+      "date": "2026-09-23"
+    },
     {
       "listing_id": 1805179619,
       "transaction_id": 5122358085,
