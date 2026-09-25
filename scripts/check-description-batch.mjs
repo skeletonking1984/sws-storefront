@@ -79,6 +79,13 @@ for (const row of written.rows) {
     if (hit) add('denies refunds while the shop policy grants them', hit[0]);
   }
   if (!/refund/i.test(body)) add('says nothing about refunds at all');
+  // Added 2026-09-25. The refund policy changed (broken widget: fix first) and
+  // 86 live descriptions were moved to PRODUCT_REFUND_LINE in
+  // app/lib/policyContent.js. Older one-off batch scripts still hold the
+  // previous sentence as a constant, so a copied script would bring it back.
+  if (/Refunds within 30 days if the download never arrived/i.test(body)) {
+    add('carries the pre-2026-09-25 refund sentence; use PRODUCT_REFUND_LINE from app/lib/policyContent.js');
+  }
 
   // Platform claims must trace to this product's own Etsy listing AND to its
   // works_with metafield, which is the audited source the badge row reads.

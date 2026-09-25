@@ -293,6 +293,11 @@ if (selfTest) {
       expect: 0,
     },
     {
+      name: 'the 2026-09-25 product refund line (fix first, change of mind carve-out) passes',
+      input: {policyText: POLICY_30, routeSource: ROUTE_OK, products: [{handle: 'x', title: 'X', description: 'Broken widget? We fix it first, and if we cannot fix it, we refund you. If the file never arrived, the item is not what this listing described, or you were charged twice, we refund you. A working file you downloaded and then changed your mind about is not refundable, because digital files cannot be returned. Ask within 30 days of purchase by emailing us your order number. Full detail is on our Refund Policy page.'}]},
+      expect: 0,
+    },
+    {
       name: 'the inherited physical-goods refund policy is caught (live on checkout, 2026-09-24)',
       input: {policyText: 'Return and Refund Policy. We have a 30-day return policy. To be eligible for a return, your item must be in the same condition that you received it, unworn or unused, with tags, and in its original packaging. If your return is accepted, we will send you a return shipping label.', routeSource: ROUTE_OK, products: []},
       expect: 1,

@@ -7645,3 +7645,45 @@ with no Etsy listing (the 2 kits and 4 own-build chats) are now flagged on `meta
 because the audit's only truth source is Etsy, so it falls back to Twitch plus the software
 named in the description. The code supports these claims. The audit needs a second evidence
 source for own-build products that have no Etsy listing. Until then these six stay red.
+
+## Refund policy v2: 2026-09-25
+
+Todd approved a new refund policy on 2026-09-25: broken widget, we fix it first and refund if we
+cannot; file never arrived, not as described, or charged twice, we refund; a working file the
+buyer changed their mind about is not refundable; ask within 30 days by email with the order
+number; refund to the original payment method. Downloads come from the order confirmation email
+link and the account order page.
+
+**Live now (verified):**
+- **86 product descriptions** (every live description that stated a refund rule) moved from the
+  old "Refunds within 30 days if the download never arrived..." sentence to `PRODUCT_REFUND_LINE`
+  in `app/lib/policyContent.js`, via aliased `productUpdate` batches, **0 `userErrors`**.
+  Re-pulled from the Storefront API: **86/86 byte-identical to the intended HTML**, 0 other
+  products changed, 0 old sentences left. Plus the **2 active products not on the storefront
+  channel** (8998346981566 Crystal Butterfly, 8998347047102 Cyber Bear), checked by Admin
+  re-query. 49 products state no refund rule at all and were not touched.
+- **FAQ page** (`faq-frequently-asked-questions`): refund answer and delivery answer rewritten
+  via `pageUpdate`; live body equals the intended body; `audit:faq:live` clean.
+
+**BAT-192, still open:** `shopPolicyUpdate` is refused, "Access denied ... Required access:
+`write_legal_policies`". Checkout still serves the physical-goods policy. Todd pastes the body of
+`POLICY_OVERRIDES['refund-policy']` in `app/lib/policyContent.js` into Admin > Settings >
+Policies > Refund policy. Until then `npm run audit:policy` exits 1 on exactly that one issue
+(descriptions and JSON-LD agree).
+
+**Code, `feat/refund-policy-v2`, merged to main, NOT deployed:**
+- `policyContent.js`: new refund page copy (dated 25 September 2026), `PRODUCT_REFUND_LINE`.
+- `products.$handle.jsx` JSON-LD: blanket `returnFees: FreeReturn` removed (it claimed free
+  change-of-mind returns); `itemDefectReturnFees: FreeReturn` added; window stays
+  `MerchantReturnFiniteReturnWindow`, 30 days; `customerRemorse*` deliberately unset (no
+  schema.org value means "not accepted"). Source:
+  https://developers.google.com/search/docs/appearance/structured-data/return-policy (updated
+  2026-09-08, read 2026-09-25).
+- `audit-structured-data.mjs`: `returnFees` moved to DELIBERATE, `itemDefectReturnFees`
+  recommended, and a set `returnFees` or `customerRemorseReturnFees` is now an error. Self-test
+  14/14. `audit-policy-claims.mjs` self-test 19/19 (new case: the v2 product line passes).
+- `check-description-batch.mjs` rejects the pre-v2 sentence, so a copied one-off batch script
+  cannot bring it back.
+- **Live `audit:schema` fails until deploy** (live pages still carry `returnFees`). Expected.
+
+Deploy (Todd): `npx shopify hydrogen deploy --env=production`

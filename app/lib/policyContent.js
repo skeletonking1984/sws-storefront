@@ -3,25 +3,29 @@
  *
  * The policies stored in Shopify Admin were inherited from a previous store:
  * the privacy policy names a different business ("spacelabs shop.com"), and the
- * refund policy is a physical-goods returns policy (30 day returns, "unworn or
+ * refund policy was a physical-goods returns policy (30 day returns, "unworn or
  * unused, with tags, and in its original packaging", return shipping labels)
- * for a shop that only sells instant digital downloads. Both list an unrelated
- * contact address.
+ * for a shop that only sells instant digital downloads.
  *
- * Updating them at the source needs the `write_legal_policies` Admin API scope,
- * which this integration does not have, so these overrides render instead of
- * the Shopify copy. Same pattern as the contact/how-it-works/faq handling in
+ * REFUND POLICY, 2026-09-25: Todd approved a new policy (broken widget: we fix
+ * it first, refund if we cannot; never arrived, not as described or charged
+ * twice: refund; change of mind on a working file: not refundable; 30 days,
+ * email with the order number, original payment method). The same text was
+ * written to Shopify Admin > Settings > Policies through shopPolicyUpdate, so
+ * checkout's copy and this one now say the same thing. If the policy changes,
+ * change BOTH, plus PRODUCT_REFUND_LINE below, the FAQ page in Shopify, and
+ * hasMerchantReturnPolicy in products.$handle.jsx.
+ * `npm run audit:policy` compares them.
+ *
+ * The privacy override still stands in for a Shopify copy that names another
+ * business. Same pattern as the contact/how-it-works/faq handling in
  * `pages.$handle.jsx`.
- *
- * IMPORTANT: this only fixes the storefront. Shopify's checkout links to its
- * own copy of these policies at checkout.shopify.com, so the old text is still
- * live there until someone pastes this copy into
- * Admin > Settings > Policies. Delete this file once that is done.
  */
 
 export const SUPPORT_EMAIL = 'streamwidgetshop@gmail.com';
 
 const LAST_UPDATED = '9 September 2026';
+const REFUND_UPDATED = '25 September 2026';
 
 export const POLICY_OVERRIDES = {
   'privacy-policy': {
@@ -83,42 +87,54 @@ export const POLICY_OVERRIDES = {
   'refund-policy': {
     handle: 'refund-policy',
     title: 'Refund Policy',
-    updated: LAST_UPDATED,
+    updated: REFUND_UPDATED,
     summary:
-      'Everything here is an instant download, so nothing ships back. If a widget is broken or not as described, we fix it or refund you.',
+      'Everything here is an instant download. If a widget is broken, we fix it first, and if we cannot fix it, we refund you.',
     body: `
 <p>Every product in this shop is an instant digital download. Nothing ships, so there is nothing to post back to us. That does not mean you are stuck with a file that does not work.</p>
 
 <h2>The short version</h2>
-<p>If a widget is broken, never arrived, or is not what the listing described, tell us and we will fix it or refund you. If you downloaded a working file and simply changed your mind, we cannot refund it, because a digital file cannot be returned once it is on your machine.</p>
+<p>If a widget is broken, we fix it first. If we cannot fix it, we refund you. If your file never arrived, the item is not what the listing described, or you were charged twice, we refund you. If you downloaded a working file and then changed your mind, we cannot refund it, because a digital file cannot be returned once it is on your machine.</p>
 
-<h2>We will refund you if</h2>
+<h2>Broken widget? We fix it first</h2>
+<p>Most problems turn out to be one setup step, not a broken widget, and we can normally sort it out the same day. Send your order number and a screenshot or a short description of what you are seeing. Helping you get the widget running is part of what you paid for. If we cannot get it working, we refund you.</p>
+
+<h2>We refund you if</h2>
 <ul>
-  <li>Your download never arrived, or the link does not work and we cannot get you a working one.</li>
-  <li>The files are corrupted or incomplete and we cannot replace them.</li>
-  <li>The widget does not do what the listing said it does.</li>
-  <li>You were charged twice, or bought the same product twice by mistake.</li>
-  <li>We cannot get it running on a platform the listing says it supports.</li>
+  <li>Your widget is broken and we cannot fix it.</li>
+  <li>Your file never arrived.</li>
+  <li>The item is not what the listing described.</li>
+  <li>You were charged twice.</li>
 </ul>
-<p>Ask within 30 days of purchase and the refund goes back to your original payment method.</p>
 
 <h2>What we cannot refund</h2>
-<ul>
-  <li>A working file you downloaded and then changed your mind about.</li>
-  <li>A purchase for a platform the listing does not claim to support. Every listing states which platforms it works with, so check first, and ask us if you are not sure.</li>
-</ul>
-
-<h2>Try us first, it is usually faster</h2>
-<p>Most problems turn out to be one setup step, not a broken widget, and we can normally sort it out the same day. Send your order number and a screenshot or a short description of what you are seeing. Helping you get the widget running is part of what you paid for.</p>
+<p>A working file you downloaded and then changed your mind about. Digital files cannot be returned, so please check the listing, including which platforms it works with, before you buy, and ask us if you are not sure.</p>
 
 <h2>How to ask</h2>
-<p>Email <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a> with your order number and what went wrong. We aim to reply within 4 hours. Once a refund is approved it goes back to your original payment method, and your bank can take a few more days to show it.</p>
+<p>Ask within 30 days of purchase. Email <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a> with your order number and what went wrong. We aim to reply within 4 hours. Refunds go back to your original payment method, and your bank can take a few more days to show it.</p>
+
+<h2>Getting your files</h2>
+<p>Your downloads are waiting in two places: the link in your order confirmation email, and the order page in your account. If the email goes missing, sign in and open the order to download again.</p>
 
 <h2>Custom commissions</h2>
 <p>Commissioned widgets are quoted and built for one customer, so their terms are agreed in writing when you commission the piece. Those terms take precedence over this page.</p>
 `.trim(),
   },
 };
+
+/**
+ * The one refund sentence every product description carries, derived from the
+ * policy above. Written into 86 live descriptions on 2026-09-25. New
+ * description batches copy THIS, not an older one-off script's constant.
+ * `{noun}` is "item", or "kit" for bundles.
+ */
+export const PRODUCT_REFUND_LINE = (noun = 'item') =>
+  `Broken widget? We fix it first, and if we cannot fix it, we refund you. ` +
+  `If the file never arrived, the ${noun} is not what this listing described, ` +
+  `or you were charged twice, we refund you. A working file you downloaded ` +
+  `and then changed your mind about is not refundable, because digital files ` +
+  `cannot be returned. Ask within 30 days of purchase by emailing us your ` +
+  `order number. Full detail is on our Refund Policy page.`;
 
 /**
  * @param {string | undefined} handle

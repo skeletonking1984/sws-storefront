@@ -429,39 +429,44 @@ export default function Product() {
             itemCondition: 'https://schema.org/NewCondition',
             url: productUrl,
             /*
-             * Mirrors /policies/refund-policy, which is the authoritative
-             * statement and is dated 2026-09-09: a refund is given within 30
-             * days when the download never arrived, the files are corrupt or
-             * incomplete, the widget is not what the listing described, the
-             * buyer was charged twice, or it cannot be made to run on a
-             * platform the listing claims to support. Change of mind on a
-             * working file is not refundable.
+             * Mirrors /policies/refund-policy (2026-09-25, Todd approved): a
+             * broken widget is fixed first and refunded if it cannot be; a
+             * file that never arrived, an item not as described, or a double
+             * charge is refunded; a working file the buyer changed their mind
+             * about is NOT refundable. Ask within 30 days. If the policy
+             * changes, change the policy page first and bring this, the FAQ
+             * page and PRODUCT_REFUND_LINE in app/lib/policyContent.js to
+             * match, then run `npm run audit:policy`.
              *
-             * This previously said MerchantReturnNotPermitted, quoting the
-             * FAQ's older "we do not offer refunds once the file has been
-             * downloaded". That FAQ line contradicted the refund policy page
-             * and was corrected in Shopify on 2026-09-15 so all three now
-             * agree. If the policy ever changes, change it in the policy page
-             * first and bring this and the FAQ to match, not the other way
-             * round.
+             * How that maps onto Google's MerchantReturnPolicy, per
+             * https://developers.google.com/search/docs/appearance/structured-data/return-policy
+             * (read 2026-09-25, page updated 2026-09-08):
              *
-             * `returnMethod` used to be omitted here, with the note that
-             * "nothing is ever sent back, so every schema.org value for it
-             * would be a lie". That was written against GOOGLE's list, which
-             * documents three physical values (ReturnAtKiosk, ReturnByMail,
-             * ReturnInStore). **schema.org has a fourth**, KeepProduct,
-             * defined as "the consumer can keep the product, even when
-             * receiving a refund or store credit", which is precisely what
-             * happens here. So the field can be stated truthfully after all,
-             * and Search Console flagged its absence on 5 items on
-             * 2026-09-15.
+             * - returnPolicyCategory stays MerchantReturnFiniteReturnWindow
+             *   with merchantReturnDays 30. Refunds ARE granted for 30 days,
+             *   so MerchantReturnNotPermitted would be the lie in the other
+             *   direction, and audit-policy-claims.mjs rejects it for a
+             *   policy that grants refunds.
+             * - The blanket `returnFees: FreeReturn` is GONE. returnFees is
+             *   the fee for returns in general, with the customerRemorse* and
+             *   itemDefect* fields as the per-reason versions, so a bare
+             *   FreeReturn read as free change-of-mind returns, which this
+             *   shop does not give. The fee
+             *   statement now sits on `itemDefectReturnFees`, the documented
+             *   field for defective items, which is the case we refund.
+             * - The customerRemorse* fields are deliberately NOT set. Neither
+             *   Google nor schema.org has a value for "change-of-mind returns
+             *   not accepted" (ReturnFeesEnumeration is FreeReturn,
+             *   ReturnFeesCustomerResponsibility, ReturnShippingFees), and
+             *   every one of those would claim such returns exist.
              *
-             * Google does not document KeepProduct. It is valid schema.org
-             * and it is true, and `returnMethod` is a RECOMMENDED field, so
-             * the worst case is that Google ignores a value it does not use
-             * and the non-critical warning stays exactly as it is today.
-             * ReturnByMail would clear the warning and would be a lie about
-             * the refund process, which is not a trade this shop makes.
+             * `returnMethod` KeepProduct: Google documents only three
+             * physical values (ReturnAtKiosk, ReturnByMail, ReturnInStore).
+             * schema.org has a fourth, KeepProduct, "the consumer can keep
+             * the product, even when receiving a refund or store credit",
+             * which is exactly what happens with a download. It is a
+             * RECOMMENDED field, so the worst case is that Google ignores a
+             * value it does not use. ReturnByMail would be a lie.
              */
             hasMerchantReturnPolicy: {
               '@type': 'MerchantReturnPolicy',
@@ -480,7 +485,11 @@ export default function Product() {
               returnPolicyCategory:
                 'https://schema.org/MerchantReturnFiniteReturnWindow',
               merchantReturnDays: 30,
-              returnFees: 'https://schema.org/FreeReturn',
+              // Refunds are for a defect (broken and unfixable, never
+              // arrived, not as described, double charge) and cost the buyer
+              // nothing. See the note above for why this is not the blanket
+              // `returnFees`.
+              itemDefectReturnFees: 'https://schema.org/FreeReturn',
               // Nothing is posted back. A qualifying refund is issued and the
               // buyer keeps the files they already downloaded.
               returnMethod: 'https://schema.org/KeepProduct',
@@ -494,7 +503,7 @@ export default function Product() {
                * it as an ALTERNATIVE to applicableCountry plus
                * returnPolicyCategory, so supplying both invites it to follow
                * the link and ignore the detail, losing the 30 day window and
-               * the free-return signal this block exists to state. The link
+               * the defect-refund terms this block exists to state. The link
                * is one click away in the footer either way.
                */
             },

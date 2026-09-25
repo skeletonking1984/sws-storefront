@@ -67,6 +67,12 @@ const DELIBERATE = {
     'so supplying it invites Google to follow the link and ignore the 30 day window',
   'offers.gtin':
     'digital widgets have no GTIN, and inventing one is worse than omitting it',
+  'offers.hasMerchantReturnPolicy.returnFees':
+    'the general fee field reads as covering change-of-mind returns, which the 2026-09-25 ' +
+    'policy does not give; the fee is stated on itemDefectReturnFees instead',
+  'offers.hasMerchantReturnPolicy.customerRemorseReturnFees':
+    'no schema.org value means "change-of-mind returns not accepted"; every value would ' +
+    'claim such returns exist',
 };
 
 /* Google's documented enums. `returnMethod` carries a fourth value Google
@@ -100,6 +106,11 @@ const ENUMS = {
     'https://schema.org/ReturnByMail',
     'https://schema.org/ReturnInStore',
   ],
+  'offers.hasMerchantReturnPolicy.itemDefectReturnFees': [
+    'https://schema.org/FreeReturn',
+    'https://schema.org/ReturnFeesCustomerResponsibility',
+    'https://schema.org/ReturnShippingFees',
+  ],
   'offers.hasMerchantReturnPolicy.returnFees': [
     'https://schema.org/FreeReturn',
     'https://schema.org/ReturnFeesCustomerResponsibility',
@@ -132,7 +143,7 @@ const RECOMMENDED = [
   'offers.url',
   'offers.itemCondition',
   'offers.hasMerchantReturnPolicy.merchantReturnDays',
-  'offers.hasMerchantReturnPolicy.returnFees',
+  'offers.hasMerchantReturnPolicy.itemDefectReturnFees',
   'offers.hasMerchantReturnPolicy.returnMethod',
   'offers.hasMerchantReturnPolicy.refundType',
   'offers.shippingDetails.deliveryTime',
@@ -187,6 +198,19 @@ export function auditProduct({handle, product}) {
     add('error', 'returns are marked not permitted yet a return window is given');
   }
 
+  /*
+   * Added 2026-09-25 with the refund policy that refunds only defects (broken
+   * and unfixable, never arrived, not as described, double charge) and never a
+   * change of mind. A general or customer-remorse FreeReturn advertises free
+   * change-of-mind returns in Search, which is exactly what the policy refuses.
+   * The markup carried a blanket returnFees FreeReturn until this date.
+   */
+  for (const field of ['returnFees', 'customerRemorseReturnFees']) {
+    if (present(at(product, `offers.hasMerchantReturnPolicy.${field}`))) {
+      add('error', `${field} is set, which claims change-of-mind returns the refund policy does not give; use itemDefectReturnFees`);
+    }
+  }
+
   return issues;
 }
 
@@ -206,7 +230,7 @@ if (process.argv.includes('--self-test')) {
         applicableCountry: ['US'],
         returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
         merchantReturnDays: 30,
-        returnFees: 'https://schema.org/FreeReturn',
+        itemDefectReturnFees: 'https://schema.org/FreeReturn',
         returnMethod: 'https://schema.org/KeepProduct',
         refundType: 'https://schema.org/FullRefund',
       },
@@ -265,6 +289,29 @@ if (process.argv.includes('--self-test')) {
       clone((p) => {
         p.offers.hasMerchantReturnPolicy.returnPolicyCategory =
           'https://schema.org/MerchantReturnNotPermitted';
+      }),
+      {errors: 1, warnings: 0},
+    ],
+    [
+      'the pre-2026-09-25 blanket returnFees FreeReturn is caught (claims free change-of-mind returns)',
+      clone((p) => {
+        p.offers.hasMerchantReturnPolicy.returnFees = 'https://schema.org/FreeReturn';
+      }),
+      {errors: 1, warnings: 0},
+    ],
+    [
+      'the exact old live markup (returnFees, no itemDefectReturnFees) is an error plus a warning',
+      clone((p) => {
+        p.offers.hasMerchantReturnPolicy.returnFees = 'https://schema.org/FreeReturn';
+        delete p.offers.hasMerchantReturnPolicy.itemDefectReturnFees;
+      }),
+      {errors: 1, warnings: 1},
+    ],
+    [
+      'customerRemorseReturnFees of any value is caught',
+      clone((p) => {
+        p.offers.hasMerchantReturnPolicy.customerRemorseReturnFees =
+          'https://schema.org/ReturnFeesCustomerResponsibility';
       }),
       {errors: 1, warnings: 0},
     ],
