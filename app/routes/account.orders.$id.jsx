@@ -2,6 +2,10 @@ import {redirect, useLoaderData} from 'react-router';
 import {Money, Image} from '@shopify/hydrogen';
 import {CUSTOMER_ORDER_QUERY} from '~/graphql/customer-account/CustomerOrderQuery';
 
+// If the Worker hangs (not down, just slow), don't let this loader ride
+// Oxygen's platform timeout -- fail non-fatally into "no download link".
+const WORKER_FETCH_TIMEOUT_MS = 6000;
+
 /**
  * @type {Route.MetaFunction}
  */
@@ -48,6 +52,7 @@ export async function loader({params, context}) {
       const numericOrderId = order.id.split('/').pop();
       const res = await fetch(`${downloadsUrl}/api/order/${numericOrderId}/token`, {
         headers: {Authorization: `Bearer ${downloadsServiceSecret}`},
+        signal: AbortSignal.timeout(WORKER_FETCH_TIMEOUT_MS),
       });
       if (res.ok) {
         const json = await res.json();
@@ -206,7 +211,9 @@ export default function OrderRoute() {
       <br />
       {downloadToken && (
         <p>
-          <a href={`/downloads/${downloadToken}`}>Get your download</a>
+          <a href={`/downloads/${downloadToken}`} className="sws-btn sws-btn-primary">
+            Download files
+          </a>
         </p>
       )}
       <p>

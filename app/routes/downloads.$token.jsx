@@ -18,6 +18,10 @@ export const meta = () => [
   {name: 'referrer', content: 'no-referrer'},
 ];
 
+// If the Worker hangs (not down, just slow), don't let this loader ride
+// Oxygen's platform timeout -- fail fast into the existing ErrorState.
+const WORKER_FETCH_TIMEOUT_MS = 6000;
+
 /**
  * @param {Route.LoaderArgs}
  */
@@ -36,6 +40,7 @@ export async function loader({params, context, request}) {
   try {
     const res = await fetch(`${downloadsUrl}/api/entitlement/${encodeURIComponent(token)}`, {
       headers: {'Cache-Control': 'no-cache'},
+      signal: AbortSignal.timeout(WORKER_FETCH_TIMEOUT_MS),
     });
     entitlement = await res.json();
   } catch (err) {
@@ -152,8 +157,17 @@ const cardStyle = {
   maxWidth: '420px',
 };
 
+// Real filenames in this catalog run long with no spaces to break on
+// (HalloweenMashroomSpookySlideGoalWidgetCode.zip); overflow-wrap + a
+// max-width against the card keep that from pushing the 420px card past a
+// 360px viewport (see the identical li/filename issue already fixed in
+// app.css for the PDP "What You Get" list).
 const downloadLinkStyle = {
   display: 'inline-block',
+  maxWidth: '100%',
+  boxSizing: 'border-box',
+  overflowWrap: 'anywhere',
+  wordBreak: 'break-word',
   background: '#7c3aed',
   color: '#ffffff',
   textDecoration: 'none',
