@@ -45,6 +45,17 @@ type Pages = {
   "/collections": {
     params: {};
   };
+  "/downloads/:token": {
+    params: {
+      "token": string;
+    };
+  };
+  "/downloads/:token/:fileId": {
+    params: {
+      "token": string;
+      "fileId": string;
+    };
+  };
   "/policies/:handle": {
     params: {
       "handle": string;
@@ -159,7 +170,7 @@ type Pages = {
 type RouteFiles = {
   "root.jsx": {
     id: "root";
-    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/feed.pinterest.csv" | "/collections/:handle" | "/account/authorize" | "/collections" | "/policies/:handle" | "/products/:handle" | "/products_preview" | "/account/logout" | "/collections/all" | "/policies" | "/webhooks/orders" | "/account/login" | "/api/newsletter" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/admin/config" | "/blogs" | "/api/version" | "/feed.csv" | "/feed.xml" | "/llms.txt" | "/api/agent" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/api/e" | "/cart" | "/cart/:lines" | "/*";
+    page: "/" | "/blogs/:blogHandle/:articleHandle" | "/sitemap/:type/:page.xml" | "/blogs/:blogHandle" | "/feed.pinterest.csv" | "/collections/:handle" | "/account/authorize" | "/collections" | "/downloads/:token" | "/downloads/:token/:fileId" | "/policies/:handle" | "/products/:handle" | "/products_preview" | "/account/logout" | "/collections/all" | "/policies" | "/webhooks/orders" | "/account/login" | "/api/newsletter" | "/discount/:code" | "/sitemap.xml" | "/pages/:handle" | "/robots.txt" | "/admin/config" | "/blogs" | "/api/version" | "/feed.csv" | "/feed.xml" | "/llms.txt" | "/api/agent" | "/account" | "/account/orders" | "/account/orders/:id" | "/account/addresses" | "/account/profile" | "/account/*" | "/search" | "/api/e" | "/cart" | "/cart/:lines" | "/*";
   };
   "routes/blogs.$blogHandle.$articleHandle.jsx": {
     id: "routes/blogs.$blogHandle.$articleHandle";
@@ -188,6 +199,14 @@ type RouteFiles = {
   "routes/collections._index.jsx": {
     id: "routes/collections._index";
     page: "/collections";
+  };
+  "routes/downloads.$token.jsx": {
+    id: "routes/downloads.$token";
+    page: "/downloads/:token" | "/downloads/:token/:fileId";
+  };
+  "routes/downloads.$token.$fileId.jsx": {
+    id: "routes/downloads.$token.$fileId";
+    page: "/downloads/:token/:fileId";
   };
   "routes/policies.$handle.jsx": {
     id: "routes/policies.$handle";
@@ -332,6 +351,8 @@ type RouteModules = {
   "routes/collections.$handle": typeof import("./app/routes/collections.$handle.jsx");
   "routes/account_.authorize": typeof import("./app/routes/account_.authorize.jsx");
   "routes/collections._index": typeof import("./app/routes/collections._index.jsx");
+  "routes/downloads.$token": typeof import("./app/routes/downloads.$token.jsx");
+  "routes/downloads.$token.$fileId": typeof import("./app/routes/downloads.$token.$fileId.jsx");
   "routes/policies.$handle": typeof import("./app/routes/policies.$handle.jsx");
   "routes/products.$handle": typeof import("./app/routes/products.$handle.jsx");
   "routes/products_preview": typeof import("./app/routes/products_preview.jsx");

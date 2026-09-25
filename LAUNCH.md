@@ -7646,6 +7646,23 @@ because the audit's only truth source is Etsy, so it falls back to Twitch plus t
 named in the description. The code supports these claims. The audit needs a second evidence
 source for own-build products that have no Etsy listing. Until then these six stay red.
 
+## sws-downloads file audit + backfill: 2026-09-25
+
+Full audit of all **137** active products: `repos/sws-downloads/AUDIT-2026-09-25.md`.
+
+- **52 deliver via sws-downloads** (14 before, 38 new). New ones uploaded in batches of 20 + 18,
+  each re-hashed server side and matched to the local sha256 (38/38). Full `sws-dl verify`:
+  59 products, 120 files, 0 mismatches. `custom.download_files` present on 52 active products.
+- Mapping by shared Etsy CDN image id against all 187 live listings; files by exact Etsy name +
+  byte size from `content/catalog/`. SWS-built kits, chats and Slow Pour mapped to repo output.
+- **85 blocked:** 67 mapped but files missing locally (111 files, list in the audit), 11 with
+  no shared image id awaiting Todd's confirmation (contact sheet in the audit folder, 4 of them
+  publish immediately on a yes), 7 with no Etsy listing found at all.
+- `backfill-orders`: 15 scanned, 15 entitled, 0 errors (dry run and applied identical).
+- Etsy file downloads through Chrome were NOT done: needs Todd's own go-ahead in chat.
+- Slow Pour is ACTIVE while its `qa/VERDICT.md` says stay Draft; not changed.
+- Digital Products app cannot be retired yet (85 active products not on sws-downloads).
+
 ## Refund policy v2: 2026-09-25
 
 Todd approved a new refund policy on 2026-09-25: broken widget, we fix it first and refund if we
@@ -7687,3 +7704,16 @@ Policies > Refund policy. Until then `npm run audit:policy` exits 1 on exactly t
 - **Live `audit:schema` fails until deploy** (live pages still carry `returnFees`). Expected.
 
 Deploy (Todd): `npx shopify hydrogen deploy --env=production`
+
+### Update, same day: Etsy downloads done, 119 of 137 delivering
+
+- Todd approved the Etsy listing editor downloads through Chrome. All **111** missing files
+  for the 67 mapped products came down (download buttons only, nothing edited on Etsy), each
+  exact Etsy byte size + `unzip -t`, filed into `content/catalog/`. Stale Moon Jar zip replaced
+  by the exact Etsy one (5,816,526 b).
+- 67 products uploaded + published in batches of 20/20/20/7, each re-hashed server side: 67/67.
+  Full `sws-dl verify`: 124 products, 297 files, 0 mismatches. `custom.download_files` on 119
+  active products. `backfill-orders`: 15 scanned, 15 entitled, 0 errors.
+- **Still blocked: 18**, none for missing files: 11 likely Etsy matches awaiting confirmation,
+  7 with no Etsy listing. Listed for Shapla in `repos/sws-downloads/SHAPLA-UPLOAD-LIST.md`
+  (+ `.json` for the upload page). Digital Products app stays until those 18 are done.

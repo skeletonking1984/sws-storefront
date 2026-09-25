@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T08:53:23.443Z",
+  "generatedAt": "2026-09-25T13:17:42.943Z",
   "articles": [
     {
       "handle": "best-vtuber-overlays-2026-kawaii-celestial-guide",
@@ -105,42 +105,6 @@
       "productLinks": []
     },
     {
-      "handle": "nba-playoff-stream-widgets-kick",
-      "title": "NBA Playoff Stream Widgets: Kick Watch Party Setup",
-      "tags": [],
-      "words": 782,
-      "seo": {
-        "title": "NBA Playoff Stream Widgets: Kick Watch Party Setup",
-        "description": "Widgets and overlays for hosting an NBA playoff watch party on Kick, including scoreboards and interactive chat for game nights."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/nba-playoff-stream-widgets-kick.jpg?v=1789518498",
-        "width": 1600,
-        "height": 840,
-        "altText": "Watch parties: Your watch party needs a scoreboard - Stream Widget Shop"
-      },
-      "publishedAt": "2026-04-09T21:27:02Z",
-      "productLinks": []
-    },
-    {
-      "handle": "the-cozy-aesthetic-spring-collection",
-      "title": "The Cozy & Aesthetic Spring Collection",
-      "tags": [],
-      "words": 806,
-      "seo": {
-        "title": "Cozy and Aesthetic Spring Stream Overlays",
-        "description": "Kawaii alerts, sakura overlays and cozy widgets for a spring stream refresh. A calm setup that still reads clearly on camera."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/the-cozy-aesthetic-spring-collection.jpg?v=1789518499",
-        "width": 1600,
-        "height": 840,
-        "altText": "Cozy collection: Cozy is a whole aesthetic, not a filter - Stream Widget Shop"
-      },
-      "publishedAt": "2026-04-09T21:38:12Z",
-      "productLinks": []
-    },
-    {
       "handle": "best-sci-fi-stream-overlays-to-upgrade-your-setup-in-2026",
       "title": "Best Sci-Fi Stream Overlays to Upgrade Your Setup in 2026",
       "tags": [
@@ -166,7 +130,7 @@
       "handle": "hire-a-custom-stream-widget-developer-for-kick-twitch",
       "title": "Hire a Custom Stream Widget Developer for Kick & Twitch",
       "tags": [],
-      "words": 634,
+      "words": 633,
       "seo": {
         "title": "Hire a Custom Stream Widget Developer for Twitch",
         "description": "Commission a custom Twitch or Kick widget: scoreboards, animated goals and bespoke OBS overlays. What it costs and how it works."
@@ -205,42 +169,6 @@
       "productLinks": []
     },
     {
-      "handle": "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable",
-      "title": "Why Your Twitch Chat Widget Matters More Than You Think (And Why Most Streams Feel Forgettable)",
-      "tags": [],
-      "words": 898,
-      "seo": {
-        "title": "Why Your Twitch Chat Widget Matters More Than You Think",
-        "description": "Chat is the most active thing on your screen and most streamers leave it default. What upgrading it changes for immersion and branding."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable.jpg?v=1789518507",
-        "width": 1600,
-        "height": 840,
-        "altText": "Chat widgets: Most streams are forgettable. Chat is why - Stream Widget Shop"
-      },
-      "publishedAt": "2026-05-17T12:30:04Z",
-      "productLinks": []
-    },
-    {
-      "handle": "how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics",
-      "title": "How to Create a Cozy Stream Setup With Cute Frog Widgets and Cottagecore Twitch Aesthetics",
-      "tags": [],
-      "words": 913,
-      "seo": {
-        "title": "Cozy Stream Setup: Frog Widgets and Cottagecore",
-        "description": "Build a cozy Twitch setup with frog goal widgets and cottagecore overlays. Colours, layout and the widgets that hold the look together."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics.jpg?v=1789518509",
-        "width": 1600,
-        "height": 840,
-        "altText": "Cottagecore: Cute frogs, calm stream - Stream Widget Shop"
-      },
-      "publishedAt": "2026-05-17T19:44:32Z",
-      "productLinks": []
-    },
-    {
       "handle": "how-to-create-a-dreamy-celestial-stream-setup-for-twitch-and-kick",
       "title": "How to Create a Dreamy Celestial Stream Setup for Twitch and Kick",
       "tags": [],
@@ -274,7 +202,9 @@
         "altText": "Cyberpunk: Neon, chrome, and a chat box to match - Stream Widget Shop"
       },
       "publishedAt": "2026-05-20T18:29:33Z",
-      "productLinks": []
+      "productLinks": [
+        "/products/neon-circuit-stream-kit"
+      ]
     },
     {
       "handle": "best-vtuber-widgets-for-neon-and-cyberpunk-streamers",
@@ -302,7 +232,7 @@
         "OBS Optimization",
         "OBS Tutorials"
       ],
-      "words": 1698,
+      "words": 1783,
       "seo": {
         "title": "Best Twitch and Kick Chat Widgets for OBS (2026)",
         "description": "The chat widgets and stream overlays worth installing in 2026, for Twitch, Kick and OBS. Animated, transparent, and readable over gameplay."
@@ -314,7 +244,9 @@
         "altText": "Chat and overlays: Twitch and Kick, one clean setup - Stream Widget Shop"
       },
       "publishedAt": "2026-05-25T18:58:40Z",
-      "productLinks": []
+      "productLinks": [
+        "/products/neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only"
+      ]
     },
     {
       "handle": "best-desktop-widgets-for-streamers-how-to-add-widgets-to-obs-iphone-and-modern-stream-setups",
@@ -374,7 +306,7 @@
       "handle": "how-to-make-custom-twitch-widgets-in-2026-or-let-professionals-build-them-for-you",
       "title": "How to Make Custom Twitch Widgets in 2026 (Or Let Professionals Build Them for You)",
       "tags": [],
-      "words": 1155,
+      "words": 1154,
       "seo": {
         "title": "How to Make Custom Twitch Widgets in 2026",
         "description": "Build your own Twitch widgets for OBS and StreamElements, or commission them. What each route costs in time, money and maintenance."
@@ -392,7 +324,7 @@
       "handle": "why-cozy-and-celestial-stream-setups-are-trending-in-2026-and-why-streamers-are-moving-beyond-rgb",
       "title": "Why Cozy and Celestial Stream Setups Are Trending in 2026 (And Why Streamers Are Moving Beyond RGB)",
       "tags": [],
-      "words": 1162,
+      "words": 1269,
       "seo": {
         "title": "Why Cozy and Celestial Stream Setups Are Trending",
         "description": "Streamers are moving past RGB. Why moon themed overlays and calm palettes are winning, and how to build the look without going twee."
@@ -404,7 +336,9 @@
         "altText": "Cozy and celestial: Streamers are moving on from RGB - Stream Widget Shop"
       },
       "publishedAt": "2026-05-29T19:45:05Z",
-      "productLinks": []
+      "productLinks": [
+        "/products/celestial-stream-kit"
+      ]
     },
     {
       "handle": "best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more",
@@ -460,13 +394,15 @@
         "altText": "Goal widgets: A goal bar people actually want to fill - Stream Widget Shop"
       },
       "publishedAt": "2026-06-03T23:51:20Z",
-      "productLinks": []
+      "productLinks": [
+        "/products/sakura-animated-twitch-chat-widget-kawaii-cherry-blossom-stream-decor-digital-download"
+      ]
     },
     {
       "handle": "why-every-twitch-streamer-should-have-a-goal-widget-in-2026",
       "title": "Why Every Twitch Streamer Should Have a Goal Widget in 2026",
       "tags": [],
-      "words": 1179,
+      "words": 1185,
       "seo": {
         "title": "Why Every Twitch Streamer Needs a Goal Widget",
         "description": "Follower goals, sub goals and donation trackers give chat something to chase. Here is what they change, and how to set one up in OBS."
@@ -478,7 +414,9 @@
         "altText": "Goal widgets: Give the chat something to chase - Stream Widget Shop"
       },
       "publishedAt": "2026-06-04T21:59:43Z",
-      "productLinks": []
+      "productLinks": [
+        "/products/sakura-animated-twitch-chat-widget-kawaii-cherry-blossom-stream-decor-digital-download"
+      ]
     },
     {
       "handle": "moon-glow-content-sprint-why-celestial-stream-overlays-are-becoming-the-future-of-twitch-branding",
@@ -496,42 +434,6 @@
         "altText": "Celestial branding: Moon glow is a brand, not a colour - Stream Widget Shop"
       },
       "publishedAt": "2026-06-08T16:11:23Z",
-      "productLinks": []
-    },
-    {
-      "handle": "how-streamers-can-grow-during-the-fifa-world-cup-2026-content-ideas-watch-parties-twitch-growth-opportunities",
-      "title": "How Streamers Can Grow During the FIFA World Cup 2026: Content Ideas, Watch Parties & Twitch Growth Opportunities",
-      "tags": [],
-      "words": 1164,
-      "seo": {
-        "title": "Grow Your Stream During the FIFA World Cup 2026",
-        "description": "Watch party ideas, prediction content and community events that grow a Twitch channel during the World Cup, plus what you can legally stream."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/how-streamers-can-grow-during-the-fifa-world-cup-2026-content-ideas-watch-parties-twitch-growth-opportunities.jpg?v=1789518644",
-        "width": 1600,
-        "height": 840,
-        "altText": "Watch parties: The biggest watch party of the year - Stream Widget Shop"
-      },
-      "publishedAt": "2026-06-08T17:31:11Z",
-      "productLinks": []
-    },
-    {
-      "handle": "where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it",
-      "title": "Where to Watch the FIFA World Cup 2026 as a Streamer (And How to Create Content Around It)",
-      "tags": [],
-      "words": 1154,
-      "seo": {
-        "title": "Where to Watch the FIFA World Cup 2026 as a Streamer",
-        "description": "Where to watch the World Cup, what streamers can legally show on Twitch and Kick, and how to build content around every match."
-      },
-      "image": {
-        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it.jpg?v=1789518645",
-        "width": 1600,
-        "height": 840,
-        "altText": "Watch parties: Where to watch, and what to stream around it - Stream Widget Shop"
-      },
-      "publishedAt": "2026-06-08T17:53:55Z",
       "productLinks": []
     },
     {
@@ -559,7 +461,7 @@
       "handle": "5-custom-obs-widgets-every-streamer-needs-to-stand-out-in-2026",
       "title": "5 Custom OBS Widgets Every Streamer Needs to Stand Out in 2026",
       "tags": [],
-      "words": 863,
+      "words": 865,
       "seo": {
         "title": "5 Custom OBS Widgets Every Streamer Needs in 2026",
         "description": "Five OBS widgets that change how a stream feels: chat, goals, alerts, now playing and scene frames. What each one is actually for."
@@ -572,6 +474,26 @@
       },
       "publishedAt": "2026-07-22T20:50:45Z",
       "productLinks": []
+    },
+    {
+      "handle": "what-is-multistreaming-and-what-a-multistream-widget-actually-does",
+      "title": "What Is Multistreaming, and What a Multistream Widget Actually Does",
+      "tags": [],
+      "words": 1499,
+      "seo": {
+        "title": "What Is Multistreaming? And What a Chat Widget Does",
+        "description": "Multistreaming explained: one broadcast, several platforms. What a multistream chat widget does, what each platform needs, and what merged chat cannot do."
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0665/8972/0766/articles/what-is-multistreaming-and-what-a-multistream-widget-actually-does.jpg?v=1790131199",
+        "width": 1600,
+        "height": 840,
+        "altText": "Multistreaming: The widget reads chat. The tool sends the stream. - Stream Widget Shop"
+      },
+      "publishedAt": "2026-09-23T17:05:00Z",
+      "productLinks": [
+        "/products/multistream-chat-widget-pack"
+      ]
     }
   ],
   "findings": [
@@ -582,22 +504,6 @@
       "handles": [
         "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups",
         "best-twitch-and-kick-chat-widgets-and-stream-overlays-for-obs-in-2026"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "ip-risk",
-      "detail": "names \"mandalorian\"",
-      "handles": [
-        "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable"
-      ]
-    },
-    {
-      "sev": "HIGH",
-      "kind": "ip-risk",
-      "detail": "names \"Pokémon\"",
-      "handles": [
-        "5-custom-obs-widgets-every-streamer-needs-to-stand-out-in-2026"
       ]
     },
     {
@@ -645,22 +551,6 @@
       "kind": "no-inbody-product-links",
       "detail": "cross-sell row still renders",
       "handles": [
-        "nba-playoff-stream-widgets-kick"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "the-cozy-aesthetic-spring-collection"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
         "best-sci-fi-stream-overlays-to-upgrade-your-setup-in-2026"
       ]
     },
@@ -685,22 +575,6 @@
       "kind": "no-inbody-product-links",
       "detail": "cross-sell row still renders",
       "handles": [
-        "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
         "how-to-create-a-dreamy-celestial-stream-setup-for-twitch-and-kick"
       ]
     },
@@ -709,23 +583,7 @@
       "kind": "no-inbody-product-links",
       "detail": "cross-sell row still renders",
       "handles": [
-        "best-cyberpunk-twitch-overlays-and-chat-widgets-for-futuristic-stream-setups"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
         "best-vtuber-widgets-for-neon-and-cyberpunk-streamers"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "best-twitch-and-kick-chat-widgets-and-stream-overlays-for-obs-in-2026"
       ]
     },
     {
@@ -765,14 +623,6 @@
       "kind": "no-inbody-product-links",
       "detail": "cross-sell row still renders",
       "handles": [
-        "why-cozy-and-celestial-stream-setups-are-trending-in-2026-and-why-streamers-are-moving-beyond-rgb"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
         "best-streamelements-alternatives-in-2026-streamlabs-streamer-bot-botrix-more"
       ]
     },
@@ -781,39 +631,7 @@
       "kind": "no-inbody-product-links",
       "detail": "cross-sell row still renders",
       "handles": [
-        "how-twitch-goal-widgets-increase-viewer-engagement-and-help-grow-your-community-faster"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "why-every-twitch-streamer-should-have-a-goal-widget-in-2026"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
         "moon-glow-content-sprint-why-celestial-stream-overlays-are-becoming-the-future-of-twitch-branding"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "how-streamers-can-grow-during-the-fifa-world-cup-2026-content-ideas-watch-parties-twitch-growth-opportunities"
-      ]
-    },
-    {
-      "sev": "MED",
-      "kind": "no-inbody-product-links",
-      "detail": "cross-sell row still renders",
-      "handles": [
-        "where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it"
       ]
     },
     {
@@ -893,39 +711,7 @@
       "kind": "no-tags",
       "detail": "",
       "handles": [
-        "nba-playoff-stream-widgets-kick"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "the-cozy-aesthetic-spring-collection"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
         "hire-a-custom-stream-widget-developer-for-kick-twitch"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics"
       ]
     },
     {
@@ -1037,22 +823,6 @@
       "kind": "no-tags",
       "detail": "",
       "handles": [
-        "how-streamers-can-grow-during-the-fifa-world-cup-2026-content-ideas-watch-parties-twitch-growth-opportunities"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
-        "where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "no-tags",
-      "detail": "",
-      "handles": [
         "best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide"
       ]
     },
@@ -1066,18 +836,10 @@
     },
     {
       "sev": "LOW",
-      "kind": "title-too-long",
-      "detail": "95 chars",
+      "kind": "no-tags",
+      "detail": "",
       "handles": [
-        "why-your-twitch-chat-widget-matters-more-than-you-think-and-why-most-streams-feel-forgettable"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
-      "detail": "90 chars",
-      "handles": [
-        "how-to-create-a-cozy-stream-setup-with-cute-frog-widgets-and-cottagecore-twitch-aesthetics"
+        "what-is-multistreaming-and-what-a-multistream-widget-actually-does"
       ]
     },
     {
@@ -1171,22 +933,6 @@
     {
       "sev": "LOW",
       "kind": "title-too-long",
-      "detail": "113 chars",
-      "handles": [
-        "how-streamers-can-grow-during-the-fifa-world-cup-2026-content-ideas-watch-parties-twitch-growth-opportunities"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
-      "detail": "90 chars",
-      "handles": [
-        "where-to-watch-the-fifa-world-cup-2026-as-a-streamer-and-how-to-create-content-around-it"
-      ]
-    },
-    {
-      "sev": "LOW",
-      "kind": "title-too-long",
       "detail": "68 chars",
       "handles": [
         "best-multistream-chat-widget-for-twitch-youtube-kick-2026-guide"
@@ -1198,6 +944,14 @@
       "detail": "62 chars",
       "handles": [
         "5-custom-obs-widgets-every-streamer-needs-to-stand-out-in-2026"
+      ]
+    },
+    {
+      "sev": "LOW",
+      "kind": "title-too-long",
+      "detail": "67 chars",
+      "handles": [
+        "what-is-multistreaming-and-what-a-multistream-widget-actually-does"
       ]
     }
   ]
