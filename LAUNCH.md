@@ -77,6 +77,74 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-24 (Todd present): five drafts audited and given their Etsy videos, all left DRAFT on Todd's order while he attaches the zips
+
+Todd: "lets get these published. do they have videos? if not, fix, and audit for publish". Mid-pass he changed it: do not activate or publish, he is uploading the zip files first. **All 5 are still DRAFT with 0 publications**, re-queried after every write.
+
+| Product | Shopify | Etsy | Verdict |
+|---|---|---|---|
+| Spooky Mushroom Bar Goal | 8998344884414 | 4498126600 | **PASS**, ready to activate once the file is attached |
+| Cyber Bear Chat | 8998347047102 | 4511799721 | FAIL on one image: baked typo "alfa png" in `il_fullxfull.8065034260` (media position 4) |
+| Crystal Butterfly Goal | 8998346981566 | 1771365068 | FAIL on one image: baked typo "beetween" twice in `il_fullxfull.7594379234` (position 3) |
+| Rosa Chick Multistream Chat | 8998345048254 | 4563217939 | FAIL on images: em dashes baked into 8 of 9, "Tier 1000" in `8436088814` and `8483957993`, and `8436088782` + `8483957979` promise a video tutorial the zip does not ship (it ships a 20 page PDF and a one click install link) |
+| Nature Potion Bottle Goal | 8998347014334 | 1707804164 | FAIL: `naturepotioncode.zip` is NOT on disk (`content/catalog/1707804164/files` holds only the PDF, `mdfind` finds it nowhere), so no claim can be checked against code; baked typo "Inlcuded" in `7928196594` and `7976153233` |
+
+Done and verified on all 5:
+- **Video added**: the real Etsy listing video (full frame, 13.4 to 15s, h264), saved to `content/catalog/<etsy_id>/art/video_01.mp4`, 6 frames viewed and OCR'd per clip (no em dash, no "Tier 1000"), uploaded one staged target at a time, every target consumed. All 5 READY at media position 2.
+- Identity: every Shopify image id matches its Etsy listing. No IP seen in any image or frame. No testimonials.
+- Unchanged and correct: price = Etsy price, inventory tracked 1000, `requiresShipping: false`, category Digital Artwork.
+
+Text defects fixed (`descriptionHtml`, plus SEO description on Butterfly):
+- **Butterfly described a different shape**: "a gemstone with butterflies lifting off it". It is a glass butterfly with a crystal heart that the liquid fills. Rewritten, SEO description too.
+- **Goal types were the Etsy boilerplate "donation, follower, bits and support"** on three goal widgets, and no shipped code has a "support" option. Now read off `fields.txt`: Butterfly SE `follower/subscriber/tip/cheer/raid`, Mushroom `follower/subscriber/tip/cheer`. Potion now says what its own listing images say (sub, tip, cheer, follow), **still unverified against code**.
+- Rosa: "vertical and horizontal versions" is one widget with both layouts; added the PDF guide, the one click install link, and the YouTube API key / Kick / TikFinity requirements, all read off the guide and `fields.txt`.
+
+Not verified:
+- **Digital file attachment, all 5.** `test-digital-products-connection` and `get-digital-product` both return "Digital Products is not available for this store". Files each product must deliver (from `etsy_list_listing_files`): Mushroom `HalloweenMashroomSpookySlideGoalWidgetCode.zip` + `ManuallySetupGoalWidgetTutorial.pdf`; Cyber Bear `cyberbearchatfile.zip` + `NeonchatandgoalManuallpdf.pdf`; Butterfly `DiamondButterflyStreamelements.zip` + `DiamondButterflyStreamlabs.zip` + `Bluecolordata.zip` + `ManuallySetupGoalWidgetTutorial.pdf`; Rosa `RosaChic.zip` (not `RosaChicchatcode.zip`, the older file beside it); Potion `naturepotioncode.zip` + `ManuallySetupGoalWidgetTutorial.pdf`.
+- `audit:descriptions` and `audit:policy` read only live Storefront products, so they cannot see drafts. Run both, plus `audit-platform-claims.mjs --check`, right after activation.
+
+For the activation pass: status ACTIVE first, channels second (a draft holds no publications). Todd's list has 11 channels including TikTok `164971741374`, and this repo's rule is that TikTok is a per product decision and a goal widget never goes there. Mushroom, Butterfly and Potion are goal widgets; ask before putting them on TikTok.
+
+### 2026-09-24 (Todd present): the video watch page fix is live and green, and the only thing left is a button in Todd's Search Console
+
+Todd showed the Search Console drilldown: **Video isn't on a watch page, 66 affected, first detected 5/25/26**, and asked whether it was fixed.
+
+**It is.** The fix is `00f9272` "Product videos leave every page that is not their watch page", production is `3e1913c`, so it shipped. Verified against the live site today, not from memory:
+
+| Check | Result |
+|---|---|
+| `node scripts/audit-watch-pages.mjs --self-test` | 15 cases, **clean** |
+| `node scripts/audit-watch-pages.mjs --origin https://streamwidgetshop.com` | **PASS** |
+| `/` | 0 crawlable, 14 deferred |
+| `/collections/all` | 0 crawlable, 22 deferred |
+| `/search?q=goal` | 0 crawlable, 0 deferred (carries no card video at all) |
+| PDP, the one watch page | 4 crawlable URLs, all four source variants of the SAME clip, `VideoObject` JSON-LD present |
+| `/sitemap/video/1.xml` | 113 videos declared |
+
+A curl of a PDP as Googlebot shows the three cross-sell tiles now serving `data-src` and **zero** bare `src`, while the gallery `<video controls autoplay muted loop>` keeps its real `<source>` list. Both halves of the assertion hold, which is the point of the audit failing in both directions.
+
+**A stale answer was given first.** The initial read of this question fetched a PDP and found bare `src` on the tiles, and reported the cause as unfixed. That fetch was an older cached build; a clean fetch minutes later showed `data-src`. The repo also already carried the fix, with a comment naming this exact Search Console finding and the 66-of-113 number, written 2026-09-21. **Read `git log` and re-fetch before calling a deployed fix missing**, which is the same lesson as the 2026-09-23 "surprise was another session" entry.
+
+**Stale line corrected.** The 2026-09-23 launch pass entry lists "Deploy production, `00f9272` carries the answer block fix AND the video watch page fix" under Needs Todd. That deploy has happened. It is no longer a blocker and a scheduled pass should not re-file it.
+
+#### Validation is already running, nobody needs to click anything
+
+Checked in Todd's own Search Console on 2026-09-24, not from the screenshot he
+pasted: the drilldown reads **Validation started, Started: 9/23/26**, and the
+details page reads **PENDING 66, FAILED 0**. The VALIDATE FIX button in his
+screenshot was a stale render of the page.
+
+Every example row is a PDP paired with its own video, **last crawled Sep 21
+2026**, which is before the fix deployed. So the 66 are pre-fix crawls waiting
+to be re-walked, which is exactly what a running validation does.
+
+**Do not click VALIDATE FIX again.** Restarting a validation resets the walk.
+
+#### Needs Todd
+
+- Nothing here. Leave the validation alone and read the number again in about a
+  week. FAILED going above 0 is the only thing worth reacting to.
+
 ### 2026-09-24 (scheduled QA): checkout's own Refund policy link is the physical goods one, and Santa Gloves is still wrong on Etsy
 
 **Metrics.** 2026-09-23: 308 sessions, 5 cart adds, 4 reached checkout, **0 orders, $0
@@ -7491,6 +7559,12 @@ to both channels at the moment they go active, or Hydrogen returns null for them
 (the zips are built at `products/chat-widgets/dist/`), there is no second or third
 listing image, no demo video, and no Etsy listing.
 
+**2026-09-24:** the four `dist/` zips were found a revision behind source (missing the
+Fullscreen fix) and one stale zip had already gone to a designer. `products/chat-widgets/package.mjs`
+now assembles, zips and verifies in one step and exits non-zero on drift; the setup-guide PDF is
+vendored at `_engine/guide/` because the old source path was deleted by another process. All four
+rebuilt, verified, and re-gated (contrast over white, six event kinds, 40-message burst).
+
 Refactored 2026-09-22 onto a layered architecture: the engine quirks are killed once
 in `_engine/normalize.css`, the six alert kinds are standardized in
 `_engine/events.css`, and a theme is now one token file. Contract and gotchas:
@@ -7548,3 +7622,26 @@ and T2 (Shopify app + client credentials) are done. T3 (Oxygen env vars
 SWS_DOWNLOADS_URL + PRIVATE_DOWNLOADS_SERVICE_SECRET, then production deploy)
 and the Liquid paste are still Todd's. `sws-dl backfill-plan` is dry-run-only
 for step 10, never writes anything.
+
+## works_with metafield backfill: 2026-09-24
+
+`custom.works_with` (list.single_line_text_field) set via `metafieldsSet` on the 12 products
+that had none, re-queried after the write. The storefront audit now reports 0 products without
+the metafield (was 12).
+
+- Engine chats Holo Deck, After Hours, Desktop 2000, Graveyard Shift, Blueberry, and the
+  Neon Circuit and Hanami kits: all 7 (Twitch, YouTube, Kick, TikTok, StreamElements,
+  Streamlabs, OBS). Evidence: the shipped engine `js.txt` in each theme and each kit-exclusive
+  chat handles youtube/kick/tiktok; this matches the Neon Multistream precedent (8962397012158).
+- Spooky Jar, Kraft Notebook: Twitch, YouTube, Kick, StreamElements, Streamlabs, OBS (Etsy
+  listing + code fields `enableYouTube`/`enableKick`, `youtubeApiKey`/`kickChannel`; no TikTok).
+- Moon Star, Cottagecore Mushroom: Twitch, StreamElements, OBS (Etsy says StreamElements only).
+- Autumn Leaves: StreamElements, Streamlabs, OBS. First Decoration with the field, so no
+  precedent. All 18 WebMs in the local copy of its download decode with real alpha.
+- Draft Rosa Chick: Streamlabs added (its Etsy listing names it, same text as Blueberry).
+
+**Open:** `audit-platform-claims --check` still exits 1 (92 overclaims, was 91). Six products
+with no Etsy listing (the 2 kits and 4 own-build chats) are now flagged on `metafield`
+because the audit's only truth source is Etsy, so it falls back to Twitch plus the software
+named in the description. The code supports these claims. The audit needs a second evidence
+source for own-build products that have no Etsy listing. Until then these six stay red.

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T01:29:47.595Z",
+  "generated_at": "2026-09-25T01:07:22.160Z",
   "rows": [
     {
       "etsy_listing_id": 4333471272,
@@ -1875,8 +1875,8 @@
       "confidence": "created_from_listing",
       "score": null,
       "priority": -1,
-      "state": "unmatched",
-      "note": "Shopify product created 2026-09-22 from this Etsy listing: same title source, same images pulled from the listing CDN. Not an image-id match because the product was built FROM the listing, so a cross check would be circular.",
+      "state": "done",
+      "note": "2026-09-24: Etsy listing video attached to the DRAFT Shopify product, READY at media position 2. Match confirmed by il image ids. Local copy content/catalog/4361409311/art/video_01.mp4.",
       "video_url": "https://v.etsystatic.com/c/video/upload/ac_none,du_15,q_auto:good/Sparkling_Chat_Design_For_Twitch_Streamer_pluz02.mp4"
     },
     {
@@ -1966,8 +1966,8 @@
       "confidence": "created_from_listing",
       "score": null,
       "priority": -1,
-      "state": "unmatched",
-      "note": "Shopify product created 2026-09-22 from this Etsy listing: same title source, same images pulled from the listing CDN. Not an image-id match because the product was built FROM the listing, so a cross check would be circular.",
+      "state": "done",
+      "note": "2026-09-24: Etsy listing video attached to the DRAFT Shopify product, READY at media position 2. Match confirmed by il image ids. Local copy content/catalog/4378021918/art/video_01.mp4.",
       "video_url": "https://v.etsystatic.com/c/video/upload/ac_none,du_15,q_auto:good/Nature_Chat_Widget_for_Twitch_nlebdr.mp4"
     },
     {
@@ -2213,8 +2213,8 @@
       "confidence": "created_from_listing",
       "score": null,
       "priority": -1,
-      "state": "unmatched",
-      "note": "Shopify product created 2026-09-22 from this Etsy listing: same title source, same images pulled from the listing CDN. Not an image-id match because the product was built FROM the listing, so a cross check would be circular.",
+      "state": "done",
+      "note": "2026-09-24: Etsy listing video attached to the DRAFT Shopify product, READY at media position 2. Match confirmed by il image ids. Local copy content/catalog/4469342769/art/video_01.mp4.",
       "video_url": "https://v.etsystatic.com/c/video/upload/ac_none,du_15,q_auto:good/fnjgscejtsbbxesm18ut.mp4"
     },
     {
@@ -2369,8 +2369,8 @@
       "confidence": "created_from_listing",
       "score": null,
       "priority": -1,
-      "state": "unmatched",
-      "note": "Shopify product created 2026-09-22 from this Etsy listing: same title source, same images pulled from the listing CDN. Not an image-id match because the product was built FROM the listing, so a cross check would be circular.",
+      "state": "done",
+      "note": "2026-09-24: Etsy listing video attached to the DRAFT Shopify product, READY at media position 2. Match confirmed by il image ids. Local copy content/catalog/4552410694/art/video_01.mp4.",
       "video_url": "https://v.etsystatic.com/c/video/upload/ac_none,du_15,q_auto:good/eomgaqqcvzohhnwyxqzy.mp4"
     },
     {
@@ -2434,8 +2434,8 @@
       "confidence": "created_from_listing",
       "score": null,
       "priority": -1,
-      "state": "unmatched",
-      "note": "Shopify product created 2026-09-22 from this Etsy listing: same title source, same images pulled from the listing CDN. Not an image-id match because the product was built FROM the listing, so a cross check would be circular.",
+      "state": "done",
+      "note": "2026-09-24: Etsy listing video attached to the DRAFT Shopify product, READY at media position 2. Match confirmed by il image ids. Local copy content/catalog/4563220365/art/video_01.mp4.",
       "video_url": "https://v.etsystatic.com/e/videos/0403/dfda7680-709c-4075-b5b4-c8df638eee82/vid_v1.mp4"
     },
     {
@@ -2460,8 +2460,8 @@
       "confidence": "created_from_listing",
       "score": null,
       "priority": -1,
-      "state": "unmatched",
-      "note": "Shopify product created 2026-09-22 from this Etsy listing: same title source, same images pulled from the listing CDN. Not an image-id match because the product was built FROM the listing, so a cross check would be circular.",
+      "state": "done",
+      "note": "2026-09-24: Etsy listing video attached to the DRAFT Shopify product, READY at media position 2. Match confirmed by il image ids. Local copy content/catalog/4563233208/art/video_01.mp4.",
       "video_url": "https://v.etsystatic.com/e/videos/bc63/ce1d9957-8e43-48d5-b05b-cdc3fbe9c77c/vid_v1.mp4"
     }
   ]
