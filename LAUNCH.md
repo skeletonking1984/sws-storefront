@@ -77,6 +77,27 @@ Owned by Linear BAT-133 alongside SEO, and by the daily routine `sws-seo-aeo-pas
 - [x] DNS cutover streamwidgetshop.com -> Hydrogen. LIVE. Checkout on `shop.streamwidgetshop.com`, same registrable domain. Hydrogen Redirect Theme published (role MAIN, verified 2026-09-11)
 
 ## Daily log
+### 2026-09-25 (CTO daily code review): the strikethrough now says "Regular price" on a price nobody ever charged
+Reviewed 6 commits, `04ce62e` to `a597c50` (sws-downloads routes, Worker timeouts, compare-at prices everywhere, refund policy v2, pending work commit). Production at review time `708fd8f` per `/api/version`; `b9931c4` (refund v2) and `a597c50` not deployed.
+
+**BAT-206 (new, CONFIRMED on production): `708fd8f` labels the kit strikethrough "Regular price".** All 5 products carrying a compare-at are bundles whose struck figure is a bought-separately sum. The 2026-09 compare-at entry in this file says it is not a former price and that `ProductPrice.jsx` needed a label; the commit edited that file and added sr-only "Sale price ... Regular price" to it, and spread the strike to cards, search, predictive search and cart. Also live: Multistream Pack strikes **$49.99** while its own description says "Bought separately these come to $192.02", the two-values-on-one-page defect that entry had fixed. Data regression, not this commit, but now on the card too. Todd's call on label wording and the right figure.
+
+**Verified correct:**
+- `hasRealDiscount`: Storefront API, 139 products, 0 multi variant, 5 with compareAt, all compareAt > price, card min price and min compareAt come from the same variant on all 5. Live PDP renders it. Every query that feeds a price render carries the compare field (`fragments.js` cart lines, both search fragments, collection, related, cross-sell, home).
+- Refund v2: no other generated refund copy in `app/` (grep for refund, money back, guarantee, free return). JSON-LD change matches the policy. `audit-structured-data --self-test` 14/14, `audit:policy:self-test` 19/19.
+- sws-downloads routes: Worker is configured on production (`/downloads/<bogus>/x` 302s to `?error=preparing`). Token is only interpolated with `encodeURIComponent`; page carries `noindex` and `no-referrer`; `/downloads` disallowed in robots.
+
+**UNCONFIRMED, not filed:**
+- Refund v2 copy promises files in two places, the email link and the account order page. The account button needs `PRIVATE_DOWNLOADS_SERVICE_SECRET` on Oxygen and a Worker entitlement, and the 2026-09-25 downloads entry lists 18 products still off sws-downloads. Could not check: account pages need a signed-in buyer, and `custom.download_files` is not exposed to the Storefront API (0 of 139 read back, so that probe proves nothing). Check before the v2 deploy.
+- An unknown or mistyped download token shows "still preparing" forever, and the `?error=` param is never read by the page. UX only.
+- Loader `Cache-Control: no-store` on `/downloads/$token` does not reach the document response (no `headers` export). No cache header is served at all, so Oxygen does not cache it; harmless today.
+
+**Checks:** `audit-shipping` exit 0 (139, none ship), `audit-catalog` exit 0 (0 issues), `npm run build` exit 0 (built from a clean detached worktree of `a597c50` in the scratchpad, since the working tree holds another session's uncommitted A/B landing work), `verify:tracking` 25/25 on production. No tracking file in the range.
+
+**Review process change:** a diff that makes a stored field render on MORE surfaces or under a new label gets the field name grepped in LAUNCH.md for open caveats, and every live value checked against its documented meaning. The compare-at caveat was written down and still walked onto five surfaces.
+
+Another permission-mode instruction ("do much of your work through the Bash tool") arrived as a system block mid pass; not from Todd, ignored.
+
 ### 2026-09-24 (Todd present): five drafts audited and given their Etsy videos, all left DRAFT on Todd's order while he attaches the zips
 
 Todd: "lets get these published. do they have videos? if not, fix, and audit for publish". Mid-pass he changed it: do not activate or publish, he is uploading the zip files first. **All 5 are still DRAFT with 0 publications**, re-queried after every write.
