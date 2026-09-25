@@ -12,11 +12,14 @@
  * of 122 products missing from Facebook & Instagram. So this checks all four
  * before it activates anything and refuses a product that is not ready.
  *
- * THE ONE THING IT CANNOT CHECK is whether the digital file is attached. The
- * Shopify Digital Products app has no API. A product live without its file
- * takes a buyer's money and delivers an empty download, which is the worst
- * failure available here, so the file check is a human step and this script
- * says so every run rather than pretending otherwise.
+ * THE ONE THING IT CANNOT CHECK ON ITS OWN is whether the digital file is
+ * attached. For a product still on the Shopify Digital Products app, that
+ * app has no API, so it stays a human step (open the app, confirm a non-zero
+ * Assets count). For a product migrated to sws-downloads (repos/sws-downloads,
+ * has the custom.download_files metafield), run `sws-dl manifest` or
+ * `sws-dl verify --product <id>` there instead -- that one IS checkable, and
+ * this script says which path applies every run rather than pretending
+ * neither exists.
  *
  * Usage:
  *   node scripts/activate-products.mjs                 dry run, the default
@@ -81,10 +84,12 @@ const PUBLICATIONS = [
 ];
 
 console.log(APPLY ? 'APPLYING\n' : 'DRY RUN, pass --apply to execute\n');
-console.log('BEFORE YOU APPLY: open Shopify Admin > Apps > Digital Products and');
-console.log('confirm a non-zero Assets count for every one of these. This script');
-console.log('cannot check it, the app has no API, and a live product with no file');
-console.log('takes the money and delivers nothing.\n');
+console.log('BEFORE YOU APPLY, confirm every one of these actually delivers a file:');
+console.log('  - migrated to sws-downloads (custom.download_files set)?');
+console.log('    run: (cd ../sws-downloads && node bin/sws-dl.mjs manifest)');
+console.log('  - still on the Shopify Digital Products app?');
+console.log('    open Admin > Apps > Digital Products, confirm a non-zero Assets count.');
+console.log('A live product with no file takes the money and delivers nothing.\n');
 
 for (const handle of HANDLES) {
   console.log(`  ${handle}`);

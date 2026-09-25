@@ -87,6 +87,15 @@ export const CONFIG_GROUPS = [
     ],
   },
   {
+    id: 'downloads',
+    title: 'sws-downloads (own digital delivery)',
+    note: 'Replaces the Shopify Digital Products app for migrated products. Worker source: repos/sws-downloads. See PLAN.md there.',
+    vars: [
+      {key: 'SWS_DOWNLOADS_URL', impact: 'account.orders.$id.jsx cannot look up whether an order has a download token, so the "Get your download" link never appears on the account order page. The email link (Liquid snippet, no app dependency) still works.'},
+      {key: 'PRIVATE_DOWNLOADS_SERVICE_SECRET', impact: 'Same as above: the account order page\'s server-to-server call to the Worker is unauthenticated without this and the Worker returns 401, so the link is hidden. Generated with openssl, set via `wrangler secret put` on the Worker and here as the matching value.'},
+    ],
+  },
+  {
     id: 'agents',
     title: 'Agents and staging',
     vars: [

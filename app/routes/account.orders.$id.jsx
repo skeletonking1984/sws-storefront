@@ -35,6 +35,29 @@ export async function loader({params, context}) {
 
   const {order} = data;
 
+  // sws-downloads (repos/sws-downloads): ask the Worker whether this order
+  // has a granted entitlement, and if so the token to build the download
+  // link with. Non-fatal on any failure -- the rest of the order page must
+  // still render, and the buyer's email link (which doesn't depend on this
+  // call at all) still works either way.
+  let downloadToken = null;
+  const downloadsUrl = context.env?.SWS_DOWNLOADS_URL;
+  const downloadsServiceSecret = context.env?.PRIVATE_DOWNLOADS_SERVICE_SECRET;
+  if (downloadsUrl && downloadsServiceSecret) {
+    try {
+      const numericOrderId = order.id.split('/').pop();
+      const res = await fetch(`${downloadsUrl}/api/order/${numericOrderId}/token`, {
+        headers: {Authorization: `Bearer ${downloadsServiceSecret}`},
+      });
+      if (res.ok) {
+        const json = await res.json();
+        downloadToken = json.token ?? null;
+      }
+    } catch (err) {
+      console.error('sws-downloads order token lookup failed:', err);
+    }
+  }
+
   // Extract line items directly from nodes array
   const lineItems = order.lineItems.nodes;
 
@@ -63,6 +86,7 @@ export async function loader({params, context}) {
     discountValue,
     discountPercentage,
     fulfillmentStatus,
+    downloadToken,
   };
 }
 
@@ -74,6 +98,7 @@ export default function OrderRoute() {
     discountValue,
     discountPercentage,
     fulfillmentStatus,
+    downloadToken,
   } = useLoaderData();
   return (
     <div className="account-order">
@@ -179,6 +204,11 @@ export default function OrderRoute() {
         </div>
       </div>
       <br />
+      {downloadToken && (
+        <p>
+          <a href={`/downloads/${downloadToken}`}>Get your download</a>
+        </p>
+      )}
       <p>
         <a target="_blank" href={order.statusPageUrl} rel="noreferrer">
           View Order Status →

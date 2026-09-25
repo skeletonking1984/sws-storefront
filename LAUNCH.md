@@ -7497,3 +7497,54 @@ in `_engine/normalize.css`, the six alert kinds are standardized in
 `products/chat-widgets/THEMING.md`. Hero images were re-rendered and replaced on all
 four products so the CDN matches disk. A live demo runs on port 8832
 (`chat-widget-demo` in `.claude/launch.json`).
+
+## sws-downloads: own digital file delivery, built 2026-09-24
+
+Standalone Cloudflare Worker `sws-downloads` (new repo, `repos/sws-downloads`)
+replaces the Shopify Digital Products app (no API, hand uploads, the file-check
+gap `scripts/activate-products.mjs` has been printing a warning about all
+along). Owns R2 (files), D1 (entitlements) and a client-credentials Shopify
+Admin token. Shopify order webhooks (orders/create, orders/paid,
+orders/cancelled, refunds/create) go straight to the Worker. Full design in
+`repos/sws-downloads/PLAN.md`.
+
+**Built this pass (agent steps 1-7 of the plan, on branch `feat/own-downloads`
+here and on `main` in sws-downloads):**
+- Worker deployed: `https://sws-downloads.clarisai-consulting.workers.dev`
+  (R2 bucket `sws-downloads` created private, D1 database `sws-downloads`
+  migrated remotely, `id 686b7f89-4545-41d7-a808-6d15f9cad9c1`).
+- 62 unit/integration tests passing (vitest-pool-workers): HMAC verify, the
+  full grant matrix (paid, $0 SWSTEST, pending, duplicate, replay, cancel,
+  full/partial refund), signed URL expiry/tamper, download cap, sha256
+  mismatch on upload, filename/path traversal sanitising, unpublished
+  products never granting.
+- CLI (`bin/sws-dl.mjs`): upload, publish, unpublish, from-checklist, verify,
+  manifest, backfill-plan. `from-checklist` re-reads real file bytes off disk
+  and refuses on any mismatch against `products/uploads-2026-09-24/CHECKLIST.txt`
+  at run time, never cached, because that folder can change under it (Rosa
+  Chick, folder 15, was being re-fixed by another agent while this was built).
+- Storefront routes here: `app/routes/downloads.$token.jsx` (buyer-facing
+  page, ready/preparing/refunded/limit states), `downloads.$token.$fileId.jsx`
+  (302s to a fresh signed R2 URL, never proxies bytes through Oxygen),
+  a "Get your download" link on `account.orders.$id.jsx` (only renders when
+  the Worker actually confirms an entitlement, via `PRIVATE_DOWNLOADS_SERVICE_SECRET`).
+  `/downloads` added to `robots.txt` disallow. New `downloads` group in
+  `app/lib/configRegistry.js`.
+- `email/order-confirmation-snippet.liquid` in sws-downloads: one block for
+  Admin > Settings > Notifications > Order confirmation, shows only when a
+  line's product carries `custom.download_files`.
+- `npm run verify:test-orders` still 13/13 (untouched file, as required).
+
+**Blocked, needs Todd or someone with Cloudflare secret-write access (this
+session's sandbox refuses `wrangler secret put` with "ask Todd first"):**
+DL_SERVICE_SECRET, DL_ADMIN_SECRET, DL_URL_SIGNING_KEY are not set on the
+Worker yet, so every `/admin/*` endpoint 401s and the storefront's download
+lookups no-op safely. SHOPIFY_CLIENT_ID/SECRET ARE set (Todd, T2). See
+`repos/sws-downloads/README.md` for the exact commands.
+
+**Not done, per the plan's own split:** pilot product e2e (step 8), the rest
+of the 17 checklist products, the ~135-product backfill (steps 9-10). T1 (R2)
+and T2 (Shopify app + client credentials) are done. T3 (Oxygen env vars
+SWS_DOWNLOADS_URL + PRIVATE_DOWNLOADS_SERVICE_SECRET, then production deploy)
+and the Liquid paste are still Todd's. `sws-dl backfill-plan` is dry-run-only
+for step 10, never writes anything.
