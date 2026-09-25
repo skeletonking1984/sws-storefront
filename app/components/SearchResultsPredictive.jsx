@@ -1,5 +1,6 @@
 import {Link, useFetcher, useNavigate} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
+import {hasRealDiscount} from '~/lib/price';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {
   getEmptyPredictiveSearchResult,
@@ -263,6 +264,9 @@ function SearchResultsPredictiveProducts({
           });
 
           const price = product?.selectedOrFirstAvailableVariant?.price;
+          const compareAtPrice =
+            product?.selectedOrFirstAvailableVariant?.compareAtPrice;
+          const onSale = hasRealDiscount(price, compareAtPrice);
           const image = product?.selectedOrFirstAvailableVariant?.image;
           return (
             <li
@@ -289,7 +293,22 @@ function SearchResultsPredictiveProducts({
                 </span>
                 <div>
                   <p>{product.title}</p>
-                  <small>{price && <Money data={price} />}</small>
+                  <small className="predictive-search-result-item-price">
+                    {onSale && (
+                      <s className="predictive-search-result-item-compare-price">
+                        <span className="sr-only">Regular price </span>
+                        <Money data={compareAtPrice} />
+                      </s>
+                    )}
+                    {price && (
+                      <>
+                        <span className="sr-only">
+                          {onSale ? 'Sale price ' : 'Price '}
+                        </span>
+                        <Money data={price} />
+                      </>
+                    )}
+                  </small>
                 </div>
               </Link>
             </li>

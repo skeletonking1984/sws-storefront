@@ -6,6 +6,7 @@ import {useVariantUrl} from '~/lib/variants';
 import {parseWorksWith, isMultistream} from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {findVideoMedia, pickBestMp4Source} from '~/lib/video';
+import {hasRealDiscount} from '~/lib/price';
 
 /**
  * True on devices that support a real `:hover` (mouse/trackpad). Touch
@@ -120,6 +121,12 @@ export function ProductItem({
   const platforms = (parseWorksWith(product.worksWith?.value ?? product.worksWith) || []).slice(0, 4);
   const multistream = isMultistream(product);
   const {publish} = useAnalytics();
+
+  // Product-level compareAt, aligned to the same minVariantPrice the card
+  // already shows. Missing or non-discounting compareAtPrice never renders
+  // -- see app/lib/price.js.
+  const compareAtPrice = product.compareAtPriceRange?.minVariantPrice;
+  const onSale = hasRealDiscount(product.priceRange?.minVariantPrice, compareAtPrice);
 
   const videoMedia = findVideoMedia(product.media?.nodes);
   const videoSource = videoMedia && pickBestMp4Source(videoMedia.sources);
@@ -321,6 +328,13 @@ export function ProductItem({
       ) : null}
       <div className="product-item-footer">
         <span className="product-item-price-pill">
+          {onSale && (
+            <s className="product-item-compare-price">
+              <span className="sr-only">Regular price </span>
+              <Money data={compareAtPrice} />
+            </s>
+          )}
+          <span className="sr-only">{onSale ? 'Sale price ' : 'Price '}</span>
           <Money data={product.priceRange.minVariantPrice} />
         </span>
         {platforms.length > 0 && (

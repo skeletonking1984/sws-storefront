@@ -1764,6 +1764,20 @@ button.reset:hover:not(:has(> *)) {
   -webkit-line-clamp: 2;
 }
 
+.predictive-search-result-item-price {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* Sits on the aside panel's near-black background (rgba(11, 7, 19, 0.94)),
+   darker than the pill backgrounds used elsewhere, so the same --sws-sub at
+   0.8 opacity measures well above 4.5:1 here too. */
+.predictive-search-result-item-compare-price {
+  color: var(--sws-sub);
+  opacity: 0.8;
+}
+
 .predictive-search-result-item a:hover,
 .predictive-search-result-item.is-highlighted a {
   color: var(--sws-holo-1);
@@ -1882,6 +1896,20 @@ button.reset:hover:not(:has(> *)) {
 
 .search-results-item small {
   color: var(--sws-holo-1);
+}
+
+.search-results-item-price {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* This page's background is --sws-bg (#0b0713), darker than the card
+   pills elsewhere, so the same --sws-sub at 0.8 opacity clears 4.5:1 here
+   with more room than the 4.97:1 measured on --sws-card-solid. */
+.search-results-item-compare-price {
+  color: var(--sws-sub);
+  opacity: 0.8;
 }
 
 .search input[type='search'] {
@@ -3298,6 +3326,7 @@ button.reset:hover:not(:has(> *)) {
 .product-item-footer {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: space-between;
 }
@@ -3309,6 +3338,15 @@ button.reset:hover:not(:has(> *)) {
   color: var(--sws-holo-1);
   font-weight: 800;
   padding: 0.2rem 0.7rem;
+}
+
+/* Same recipe as .product-price-on-sale s (PDP) and .kit-card-compare-price
+   (homepage kit band): 0.8 opacity on --sws-sub over this pill's
+   --sws-card-solid background measures 4.97:1, above WCAG AA's 4.5:1. */
+.product-item-compare-price {
+  color: var(--sws-sub);
+  font-weight: 600;
+  opacity: 0.8;
 }
 
 .product-item-platforms {
@@ -4323,9 +4361,16 @@ button.reset:hover:not(:has(> *)) {
   width: fit-content;
 }
 
+/*
+  0.6 opacity here measured 3.35:1 against the pill's --sws-card-solid
+  background (#1c1230), which fails WCAG AA's 4.5:1 for normal text. 0.8
+  measures 4.97:1 -- matches .kit-card-compare-price below, which already
+  used 0.8 for the same reason. Computed by blending --sws-sub (#a89ec4) at
+  each opacity over #1c1230 and running the WCAG relative-luminance formula.
+*/
 .product-price-on-sale s {
   color: var(--sws-sub);
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .product-options h5 {

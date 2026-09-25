@@ -392,6 +392,11 @@ const CROSS_SELL_FRAGMENTS = `#graphql
         ...MoneyCrossSell
       }
     }
+    compareAtPriceRange {
+      minVariantPrice {
+        ...MoneyCrossSell
+      }
+    }
   }
 `;
 

@@ -4,6 +4,7 @@ import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
+import {computeLineCompareAtTotal} from '~/lib/price';
 
 /**
  * A single line item in the cart. It displays the product image, title, price.
@@ -51,7 +52,10 @@ export function CartLineItem({layout, line, childrenMap}) {
           >
             {product.title}
           </Link>
-          <ProductPrice price={line?.cost?.totalAmount} />
+          <ProductPrice
+            price={line?.cost?.totalAmount}
+            compareAtPrice={computeLineCompareAtTotal(line)}
+          />
           {selectedOptions.some((o) => o.value !== 'Default Title') && (
             <ul className="cart-line-options">
               {selectedOptions

@@ -1,6 +1,7 @@
 import {Link} from 'react-router';
 import {Image, Money, Pagination} from '@shopify/hydrogen';
 import {urlWithTrackingParams} from '~/lib/search';
+import {hasRealDiscount} from '~/lib/price';
 
 /**
  * @param {Omit<SearchResultsProps, 'error' | 'type'>}
@@ -105,6 +106,9 @@ function SearchResultsProducts({term, products}) {
             });
 
             const price = product?.selectedOrFirstAvailableVariant?.price;
+            const compareAtPrice =
+              product?.selectedOrFirstAvailableVariant?.compareAtPrice;
+            const onSale = hasRealDiscount(price, compareAtPrice);
             const image = product?.selectedOrFirstAvailableVariant?.image;
 
             return (
@@ -115,7 +119,22 @@ function SearchResultsProducts({term, products}) {
                   )}
                   <div>
                     <p>{product.title}</p>
-                    <small>{price && <Money data={price} />}</small>
+                    <small className="search-results-item-price">
+                      {onSale && (
+                        <s className="search-results-item-compare-price">
+                          <span className="sr-only">Regular price </span>
+                          <Money data={compareAtPrice} />
+                        </s>
+                      )}
+                      {price && (
+                        <>
+                          <span className="sr-only">
+                            {onSale ? 'Sale price ' : 'Price '}
+                          </span>
+                          <Money data={price} />
+                        </>
+                      )}
+                    </small>
                   </div>
                 </Link>
               </div>

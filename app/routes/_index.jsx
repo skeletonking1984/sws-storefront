@@ -18,6 +18,7 @@ import {EmailCapture} from '~/components/EmailCapture';
 import {HappyClients} from '~/components/HappyClients';
 import {SOCIALS} from '~/components/SocialLinks';
 import {useVariantUrl} from '~/lib/variants';
+import {hasRealDiscount} from '~/lib/price';
 import {absoluteAsset, buildMeta, getOrigin} from '~/lib/seo';
 import {handleNewsletterSignup} from '~/lib/newsletter.server';
 import {FAN_FAVORITE_HANDLES, VIBES, WORKS_WITH_PLATFORMS} from '~/lib/nav';
@@ -665,6 +666,12 @@ function KitCard({product}) {
   const variant = product.selectedOrFirstAvailableVariant;
   const price = variant?.price;
   const compareAtPrice = variant?.compareAtPrice;
+  // formatSavings already returns null for a non-discount, but the pill
+  // below used to gate the struck-through price on `compareAtPrice` being
+  // merely truthy, which rendered a fake "was $12.00 now $12.00" whenever
+  // Shopify had compareAtPrice set equal to (or under) price. hasRealDiscount
+  // is the one shared gate every price render uses now (app/lib/price.js).
+  const onSale = hasRealDiscount(price, compareAtPrice);
   const savings = formatSavings(price, compareAtPrice);
   const tagLabel = kitTagLabel(product.productType);
   const hook = firstSentenceHook(product.description);
@@ -696,14 +703,14 @@ function KitCard({product}) {
              * reader, an answer engine) sees a discount as a price rise.
              */
             <span className="kit-card-price-pill">
-              {compareAtPrice && (
+              {onSale && (
                 <s className="kit-card-compare-price">
                   <span className="sr-only">Regular price </span>
                   <Money data={compareAtPrice} />
                 </s>
               )}
               <span className="sr-only">
-                {compareAtPrice ? 'Sale price ' : 'Price '}
+                {onSale ? 'Sale price ' : 'Price '}
               </span>
               <Money data={price} />
             </span>
@@ -946,6 +953,12 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
         currencyCode
       }
     }
+    compareAtPriceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
     featuredImage {
       id
       url
@@ -1060,6 +1073,12 @@ const HALLOWEEN_COLLECTION_QUERY = `#graphql
           productType
           worksWith: metafield(namespace: "custom", key: "works_with") { value }
           priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          compareAtPriceRange {
             minVariantPrice {
               amount
               currencyCode

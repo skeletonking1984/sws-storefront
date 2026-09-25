@@ -892,6 +892,12 @@ const RELATED_PRODUCTS_QUERY = `#graphql
             currencyCode
           }
         }
+        compareAtPriceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
         featuredImage {
           id
           altText
