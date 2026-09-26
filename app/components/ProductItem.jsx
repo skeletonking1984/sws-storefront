@@ -108,6 +108,7 @@ export function ProductItem({
   listName,
   index,
   headingLevel = 2,
+  badge,
 }) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
@@ -257,6 +258,10 @@ export function ProductItem({
               Multistream
             </span>
           )}
+          {/* Bottom-left, the one corner the kind tag (top-left) and the
+              multistream ribbon (top-right) don't use. Only "New arrivals"
+              passes this. */}
+          {badge && <span className="product-item-new-badge">{badge}</span>}
           <ResponsiveImage
             alt={image.altText || product.title}
             data={image}

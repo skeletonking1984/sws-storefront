@@ -2235,23 +2235,83 @@ button.reset:hover:not(:has(> *)) {
 
 /*
 * --------------------------------------------------
-* routes/_index — Top widgets
+* routes/_index — Best sellers / New arrivals home shelves
+*
+* Mobile first: a horizontal scroll row (one card at a time, next one
+* peeking) below 40em, a real grid from tablet up. No `overflow-x` on
+* anything but the row itself, so this can never cause page-level
+* horizontal scroll at 360px the way an unbroken grid item elsewhere in
+* this file already has (see the PDP `li` note in CLAUDE.md).
 * --------------------------------------------------
 */
-.top-widgets {
-  padding: 0 0 3rem;
+.home-shelf {
+  padding: 1.5rem 0 3rem;
 }
 
-.top-widgets-grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 1fr;
-  padding: 0 2rem;
-  @media (min-width: 40em) {
+.home-shelf-head {
+  align-items: baseline;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 0 2rem 1.25rem;
+}
+
+.home-shelf-head .sws-section-heading {
+  margin: 0;
+  min-width: 0;
+}
+
+.home-shelf-link {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.home-shelf-grid {
+  /* `overflow-x: auto` alone does not reliably keep this row's off-screen
+     cards out of the DOCUMENT's scrollable area in Chrome once flex items
+     use a percentage flex-basis: measured live, without `contain`, the page
+     itself gained ~1400px of real horizontal scroll (window.scrollX, not
+     just a visual clip) even though this element's own box stayed 328px
+     wide. `contain: layout` forces the containment `overflow-x: auto` looks
+     like it should already provide. Confirmed by removing it: the page-level
+     scroll returns immediately. The starfield background (`.sws-starfield`,
+     above) hit the same class of leak and is contained the same way. */
+  contain: layout;
+  display: flex;
+  gap: 1.1rem;
+  overflow-x: auto;
+  padding: 0 1.25rem 0.35rem;
+  scroll-padding: 0 1.25rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.home-shelf-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.home-shelf-grid .product-item {
+  flex: 0 0 78%;
+  max-width: 320px;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 40em) {
+  .home-shelf-grid {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
+    overflow-x: visible;
+    padding: 0 2rem;
   }
-  @media (min-width: 65em) {
-    grid-template-columns: repeat(3, 1fr);
+  .home-shelf-grid .product-item {
+    flex: initial;
+    max-width: none;
+  }
+}
+
+@media (min-width: 65em) {
+  .home-shelf-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -3309,6 +3369,26 @@ button.reset:hover:not(:has(> *)) {
 
 .product-item-ribbon-star {
   font-size: 0.85em;
+}
+
+/* "New arrivals" only. Bottom-left: the type tag (top-left) and multistream
+   ribbon (top-right) already own the other two corners of the image. Flat
+   chip like the type tag, not the loud ribbon treatment -- new is a fact,
+   not the thing being sold. */
+.product-item-new-badge {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-holo-2);
+  border-radius: var(--radius-pill);
+  bottom: 0.6rem;
+  color: var(--sws-holo-2);
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  left: 0.6rem;
+  padding: 0.18rem 0.55rem;
+  position: absolute;
+  text-transform: uppercase;
+  z-index: 2;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -10,15 +10,17 @@ import {SHOP_RATING} from '~/components/EtsyReviews';
 // pickHomeReviews(), which is only called from loadCriticalData below, so
 // the homepage's client bundle never ships every product's review text.
 import etsyReviews from '~/data/etsy-reviews.json';
-// Ranked by REAL sales. Small (12 entries), unlike etsyReviews, but still only
-// ever read in the loader. Rebuilt by scripts/build-top-sellers.mjs.
-import topSellers from '~/data/top-sellers.json';
+// Ranked by REAL Etsy revenue, filtered for IP risk, resolved active. Small
+// (8 entries), unlike etsyReviews, but still only ever read in the loader.
+// Rebuilt by scripts/refresh-best-sellers.mjs (see CLAUDE.md/LAUNCH.md).
+import bestSellersData from '~/data/best-sellers.json';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {EmailCapture} from '~/components/EmailCapture';
 import {HappyClients} from '~/components/HappyClients';
 import {SOCIALS} from '~/components/SocialLinks';
 import {useVariantUrl} from '~/lib/variants';
 import {hasRealDiscount} from '~/lib/price';
+import {isIpRisky} from '~/lib/productFeed';
 import {absoluteAsset, buildMeta, getOrigin} from '~/lib/seo';
 import {handleNewsletterSignup} from '~/lib/newsletter.server';
 import {FAN_FAVORITE_HANDLES, VIBES, WORKS_WITH_PLATFORMS} from '~/lib/nav';
@@ -135,12 +137,9 @@ function loadDeferredData({context}) {
     });
 
   /*
-   * "Top widgets" is ordered by WHAT ACTUALLY SELLS, refreshed by
-   * scripts/build-top-sellers.mjs into data/top-sellers.json.
-   *
-   * It used to read the top-widgets collection, which is MANUAL sort: a
-   * revenue order frozen by hand on 2026-09-13 that could only move when
-   * someone remembered to reorder it in Admin.
+   * "Best sellers" is ordered by WHAT ACTUALLY SELLS, refreshed by
+   * scripts/refresh-best-sellers.mjs into data/best-sellers.json (which in
+   * turn calls scripts/build-top-sellers.mjs for the Etsy revenue pull).
    *
    * The obvious alternative, sortKey: BEST_SELLING, is worse and it is worth
    * saying why so nobody "simplifies" this back. Shopify's best-selling signal
@@ -150,30 +149,61 @@ function loadDeferredData({context}) {
    * margin: 80 units, $1,171, 16.6% of all revenue. An ordering that hides the
    * best seller is not better than a frozen one.
    *
+   * refresh-best-sellers.mjs already dropped anything do-not-use-ip tagged or
+   * IP_TERMS matched before writing the file; filtered again here defensively
+   * in case the committed file goes stale between refreshes.
+   *
    * Falls through to the curated fan-favourites list below if the handles stop
    * resolving, which they will if a product is drafted between refreshes.
    */
-  const topWidgets = context.storefront
+  const bestSellers = context.storefront
     .query(RECOMMENDED_PRODUCTS_QUERY, {
       variables: Object.fromEntries(
-        TOP_SELLER_HANDLES.map((h, i) => [`handle${i}`, h]),
+        BEST_SELLER_HANDLES.map((h, i) => [`handle${i}`, h]),
       ),
     })
     .then((response) =>
-      TOP_SELLER_HANDLES.map((_, i) => response[`product${i}`])
+      BEST_SELLER_HANDLES.map((_, i) => response[`product${i}`])
         .filter(Boolean)
+        .filter((product) => !isExcludedFromHome(product))
         /* Carry the real unit count onto the node so the card can show it.
          * Attached here rather than threaded through as a prop because the
          * band already passes whole product objects down two Await layers. */
         .map((product) => ({
           ...product,
           soldUnits: SOLD_UNITS.get(product.handle) ?? null,
-          soldWindowDays: topSellers?.window?.days ?? null,
+          soldWindowDays: bestSellersData?.window?.days ?? null,
         })),
     )
     .catch((error) => {
       console.error(error);
       return null;
+    });
+
+  /*
+   * "New arrivals": the newest ACTIVE products, Storefront API sortKey
+   * CREATED_AT reverse. Todd asked for this alongside best sellers 2026-09-25
+   * so a new pack or widget has somewhere to be seen before it has sold
+   * anything (best sellers structurally can't show it yet).
+   *
+   * `-tag:do-not-use-ip` excludes at the API level; isExcludedFromHome below
+   * is the same defensive second check as the best sellers band, catching an
+   * IP-named product that hasn't been tagged yet (see app/lib/ipTerms.js).
+   * Fetches 16 and slices to 8 so a few exclusions don't thin the row.
+   */
+  const newArrivals = context.storefront
+    .query(NEW_ARRIVALS_QUERY, {
+      variables: {first: 16, query: '-tag:do-not-use-ip'},
+    })
+    .then((response) =>
+      (response?.products?.nodes ?? [])
+        .filter(Boolean)
+        .filter((product) => !isExcludedFromHome(product))
+        .slice(0, 8),
+    )
+    .catch((error) => {
+      console.error(error);
+      return [];
     });
 
   /*
@@ -214,10 +244,26 @@ function loadDeferredData({context}) {
 
   return {
     recommendedProducts,
-    topWidgets,
+    bestSellers,
+    newArrivals,
     kitsAndOverlayPacks,
     halloweenProducts,
   };
+}
+
+/**
+ * Shared IP-safety gate for the homepage's non-curated bands (best sellers,
+ * new arrivals). The curated bands (kits, Halloween) already read from named
+ * collections a human maintains; these two are built from raw rankings/sort
+ * orders, so nothing stops an IP-named product from earning or shipping its
+ * way in. `do-not-use-ip` is the tag; IP_TERMS (app/lib/ipTerms.js, shared
+ * with the product feed) is the same check applied to title/tags, for a
+ * product that earns under a renamed title before the tag lands on it.
+ * @param {{title?: string; tags?: string[]}} product
+ */
+function isExcludedFromHome(product) {
+  const tags = product?.tags || [];
+  return tags.includes('do-not-use-ip') || isIpRisky({title: product?.title, tags});
 }
 
 /** Smart collection in Shopify Admin, rule: TAG EQUALS `halloween`. */
@@ -244,15 +290,15 @@ export function isHalloweenSeason(date = new Date()) {
 }
 
 /**
- * The eight handles the "Top widgets" band asks for, highest earning first.
+ * The eight handles the "Best sellers" band asks for, highest earning first.
  *
  * RECOMMENDED_PRODUCTS_QUERY declares handle0 through handle7 as non-null, so
  * this has to be exactly eight even on a thin week. Short lists are padded from
  * the curated fan favourites rather than by repeating a handle, so a padded
  * slot still renders a real product instead of a duplicate card.
  */
-const TOP_SELLER_HANDLES = (() => {
-  const ranked = (topSellers?.handles ?? []).slice(0, 8);
+const BEST_SELLER_HANDLES = (() => {
+  const ranked = (bestSellersData?.handles ?? []).slice(0, 8);
   const seen = new Set(ranked);
   for (const handle of FAN_FAVORITE_HANDLES) {
     if (ranked.length >= 8) break;
@@ -274,7 +320,7 @@ const TOP_SELLER_HANDLES = (() => {
  * rule. If the join loses a product it shows nothing rather than a zero.
  */
 const SOLD_UNITS = new Map(
-  (topSellers?.detail ?? []).map((row) => [row.handle, row.units]),
+  (bestSellersData?.detail ?? []).map((row) => [row.handle, row.units]),
 );
 
 /** How many cards the kits band shows. The grid is 2 across, so 4 is two rows. */
@@ -367,32 +413,38 @@ export default function Homepage() {
         }}
       />
       <Hero />
+      {/*
+        Best sellers and New arrivals sit directly under the hero, ABOVE Shop
+        by vibe, the kits band and everything else. Todd, 2026-09-25: "we need
+        to promote top sellers and new ones on the home somehow" -- both rows
+        used to be one section ("Top widgets") lower down the page, tuned by
+        the 2026-09-13 scroll-depth measurement below; that measurement was
+        about the kits band pushing sellers down, not about vibe chips, so
+        moving these two rows above Shop by vibe doesn't fight it.
+        The hero's "See it live" link points at #best-sellers.
+      */}
+      <BestSellers
+        bestSellers={data.bestSellers}
+        fallback={data.recommendedProducts}
+      />
+      <NewArrivals newArrivals={data.newArrivals} />
       <ShopByVibe />
       {/*
-        Seasonal band, above Top widgets on purpose: for the six weeks it is
-        live it IS the highest-intent shelf in the shop, and it is made of
-        products rather than decoration, so it does not cost a phone visitor
-        a screen of scrolling before reaching something buyable. Outside the
-        season window it renders nothing at all.
+        Seasonal band: for the six weeks it is live it IS the highest-intent
+        shelf in the shop, and it is made of products rather than decoration,
+        so it does not cost a phone visitor a screen of scrolling before
+        reaching something buyable. Outside the season window it renders
+        nothing at all.
       */}
       <HalloweenBand products={data.halloweenProducts} />
       {/*
-        Top widgets sits ABOVE the kits band on purpose. Measured on the
-        live site at 375px on 2026-09-13: the kits band is 2372px tall and
-        pushed the best sellers to 3578px down the page, about 4.4 phone
-        screens of scrolling before a visitor reaches anything that has
-        actually sold. The kits are also the most expensive things in the
-        catalogue ($29.99 to $68.35), so the old order asked for the
-        biggest commitment first. Instagram is currently the only channel
-        that has converted a real customer, and that traffic is phone
-        traffic landing here, so lead with the proven sellers.
-        The hero's "See it live" link points at #top-widgets, which is now
-        much closer to it too.
+        Kits band sits below best sellers/new arrivals/vibe/Halloween.
+        Measured on the live site at 375px on 2026-09-13: the kits band alone
+        is 2372px tall, so it stays low, after the cheaper, faster-to-scan
+        rows above it. The kits are also the most expensive things in the
+        catalogue ($29.99 to $68.35), so this still asks for the biggest
+        commitment last.
       */}
-      <TopWidgets
-        topWidgets={data.topWidgets}
-        fallback={data.recommendedProducts}
-      />
       <KitsAndOverlayPacks kits={data.kitsAndOverlayPacks} />
       <WorksWithStrip />
       <ReviewsSection homeReviews={data.homeReviews} />
@@ -448,7 +500,7 @@ function Hero() {
             <Link className="sws-btn sws-btn-primary" to="/collections/all">
               Shop widgets
             </Link>
-            <Link className="sws-btn sws-btn-ghost" to="#top-widgets">
+            <Link className="sws-btn sws-btn-ghost" to="#best-sellers">
               See it live
             </Link>
           </div>
@@ -800,39 +852,50 @@ function HalloweenBand({products}) {
 }
 
 /**
+ * Real revenue, real rank, see the loader comment above `bestSellers` for why
+ * this is Etsy revenue rather than Shopify's BEST_SELLING sort. 8 cards: a
+ * horizontal scroll row at phone widths (`.home-shelf-grid`), a grid from
+ * tablet up. "Shop all" points at the real `best-sellers` Shopify collection
+ * (created/synced by scripts/refresh-best-sellers.mjs's printed Admin
+ * procedure, see LAUNCH.md) so the same rank order holds off the homepage too.
  * @param {{
- *   topWidgets: Promise<any[] | null>;
+ *   bestSellers: Promise<any[] | null>;
  *   fallback: Promise<RecommendedProductsQuery | null>;
  * }}
  */
-function TopWidgets({topWidgets, fallback}) {
+function BestSellers({bestSellers, fallback}) {
   return (
     <section
-      className="top-widgets"
-      id="top-widgets"
-      aria-labelledby="top-widgets-heading"
+      className="home-shelf best-sellers"
+      id="best-sellers"
+      aria-labelledby="best-sellers-heading"
     >
-      <h2 id="top-widgets-heading" className="sws-section-heading">
-        Top widgets
-      </h2>
-      <Suspense fallback={<div className="top-widgets-grid" />}>
-        <Await resolve={topWidgets}>
-          {(topWidgetNodes) => (
+      <div className="home-shelf-head">
+        <h2 id="best-sellers-heading" className="sws-section-heading">
+          Best sellers
+        </h2>
+        <Link className="sws-btn sws-btn-ghost home-shelf-link" to="/collections/best-sellers">
+          Shop all
+        </Link>
+      </div>
+      <Suspense fallback={<div className="home-shelf-grid" />}>
+        <Await resolve={bestSellers}>
+          {(bestSellerNodes) => (
             <Await resolve={fallback}>
               {(fallbackResponse) => {
                 const nodes =
-                  topWidgetNodes && topWidgetNodes.length
-                    ? topWidgetNodes
+                  bestSellerNodes && bestSellerNodes.length
+                    ? bestSellerNodes
                     : fallbackResponse?.products?.nodes ?? [];
                 if (!nodes.length) return null;
                 return (
-                  <div className="top-widgets-grid">
-                    {nodes.slice(0, 6).map((product, index) => (
+                  <div className="home-shelf-grid">
+                    {nodes.slice(0, 8).map((product, index) => (
                       <ProductItem
                         key={product.id}
                         product={product}
-                        listId="home-top-widgets"
-                        listName="Top widgets"
+                        listId="home-best-sellers"
+                        listName="Best sellers"
                         index={index}
                         /* sits under the section's own <h2> */
                         headingLevel={3}
@@ -843,6 +906,60 @@ function TopWidgets({topWidgets, fallback}) {
               }}
             </Await>
           )}
+        </Await>
+      </Suspense>
+    </section>
+  );
+}
+
+/**
+ * Newest ACTIVE products, Storefront API sortKey CREATED_AT reverse (see the
+ * loader's `newArrivals` fetch). Same shelf treatment as Best sellers, plus a
+ * small "New" chip on each card so it reads as a distinct promise (untested,
+ * just launched) rather than a second best-sellers row. "Shop all" sorts the
+ * full catalogue the same way, no Admin collection needed for this one.
+ * @param {{newArrivals: Promise<any[]>}}
+ */
+function NewArrivals({newArrivals}) {
+  return (
+    <section
+      className="home-shelf new-arrivals"
+      id="new-arrivals"
+      aria-labelledby="new-arrivals-heading"
+    >
+      <div className="home-shelf-head">
+        <h2 id="new-arrivals-heading" className="sws-section-heading">
+          New arrivals
+        </h2>
+        <Link
+          className="sws-btn sws-btn-ghost home-shelf-link"
+          to="/collections/all?sort=newest"
+        >
+          Shop all
+        </Link>
+      </div>
+      <Suspense fallback={<div className="home-shelf-grid" />}>
+        <Await resolve={newArrivals}>
+          {(nodes) => {
+            const items = (nodes || []).filter(Boolean);
+            if (!items.length) return null;
+            return (
+              <div className="home-shelf-grid">
+                {items.slice(0, 8).map((product, index) => (
+                  <ProductItem
+                    key={product.id}
+                    product={product}
+                    listId="home-new-arrivals"
+                    listName="New arrivals"
+                    index={index}
+                    /* sits under the section's own <h2> */
+                    headingLevel={3}
+                    badge="New"
+                  />
+                ))}
+              </div>
+            );
+          }}
         </Await>
       </Suspense>
     </section>
@@ -940,12 +1057,17 @@ function CustomCommissionCallout() {
   );
 }
 
-const RECOMMENDED_PRODUCTS_QUERY = `#graphql
+// Shared by RECOMMENDED_PRODUCTS_QUERY (by handle, best sellers + fan
+// favourites fallback) and NEW_ARRIVALS_QUERY (by sortKey). `tags` is here so
+// isExcludedFromHome (the do-not-use-ip / IP_TERMS gate) has something to
+// check on every band that reads this fragment.
+const RECOMMENDED_PRODUCT_FRAGMENT = `#graphql
   fragment RecommendedProduct on Product {
     id
     title
     productType
     handle
+    tags
     worksWith: metafield(namespace: "custom", key: "works_with") { value }
     priceRange {
       minVariantPrice {
@@ -983,6 +1105,9 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       }
     }
   }
+`;
+
+const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   query RecommendedProducts (
     $country: CountryCode
     $language: LanguageCode
@@ -1004,6 +1129,26 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     product6: product(handle: $handle6) { ...RecommendedProduct }
     product7: product(handle: $handle7) { ...RecommendedProduct }
   }
+  ${RECOMMENDED_PRODUCT_FRAGMENT}
+`;
+
+/**
+ * Newest ACTIVE products, for the "New arrivals" band. `query` carries the
+ * `-tag:do-not-use-ip` exclusion (see the loader); `first: 16` so a handful
+ * of exclusions still leave 8 to show.
+ */
+const NEW_ARRIVALS_QUERY = `#graphql
+  query NewArrivals(
+    $country: CountryCode
+    $language: LanguageCode
+    $first: Int!
+    $query: String
+  ) @inContext(country: $country, language: $language) {
+    products(first: $first, sortKey: CREATED_AT, reverse: true, query: $query) {
+      nodes { ...RecommendedProduct }
+    }
+  }
+  ${RECOMMENDED_PRODUCT_FRAGMENT}
 `;
 
 const KITS_AND_OVERLAY_PACKS_QUERY = `#graphql

@@ -57,6 +57,7 @@
     "audit:watch-pages:self-test": "node scripts/audit-watch-pages.mjs --self-test",
     "build:top-sellers": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/build-top-sellers.mjs",
     "audit:top-sellers": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/build-top-sellers.mjs --check",
+    "refresh:best-sellers": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/refresh-best-sellers.mjs",
     "build:alt": "node scripts/build-alt-text.mjs",
     "build:delivery-facts": "ETSY_PACKAGE_ROOT=../sws-etsy-mcp node scripts/build-delivery-facts.mjs",
     "audit:buyable": "node scripts/audit-buyable.mjs",
@@ -68,7 +69,9 @@
     "audit:site": "node scripts/audit-site-health.mjs",
     "audit:site:self-test": "node scripts/audit-site-health.mjs --self-test",
     "audit:seo": "node scripts/audit-seo.mjs",
-    "audit:seo:self-test": "node scripts/audit-seo.mjs --self-test"
+    "audit:seo:self-test": "node scripts/audit-seo.mjs --self-test",
+    "verify:ab": "node scripts/verify-ab-landing.mjs --self-test",
+    "report:ab": "node scripts/report-ab-landing.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

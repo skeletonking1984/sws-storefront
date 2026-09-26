@@ -7738,3 +7738,209 @@ Deploy (Todd): `npx shopify hydrogen deploy --env=production`
 - **Still blocked: 18**, none for missing files: 11 likely Etsy matches awaiting confirmation,
   7 with no Etsy listing. Listed for Shapla in `repos/sws-downloads/SHAPLA-UPLOAD-LIST.md`
   (+ `.json` for the upload page). Digital Products app stays until those 18 are done.
+
+## Sticker Note Multistream Chat Widget (9031650803902): 2026-09-25, held at DRAFT
+
+Files are fixed and delivering; the product stays DRAFT because its listing media fails review.
+
+**Files** (originals `content/products/sticker-note/source/`, shipped copies `fixed/`). The source
+zip and PDF byte-match Etsy listing 4580432522 (47549 b, 2829383 b), which is live on Etsy
+since 2026-09-22 with the unfixed files.
+- Zip: complete StreamElements custom widget (html/css/js/fields/data), JSON valid, `node --check`
+  clean. Fixed: raw Twitch tier in the sub alert ("(Tier 1000)") mapped to Tier 1/2/3/Prime, same
+  mapping as `products/chat-widgets/_engine/js.txt`; 63 em dashes in field labels and group
+  names, 25 in CSS comments and 1 in a console string swapped to hyphens. html/data untouched,
+  CSS outside comments identical. `__MACOSX` dropped.
+- PDF: 33 em dashes plus the Title metadata. Incremental update (original bytes kept as prefix).
+  29 swapped to the font's own hyphen glyph; 4 in a weight whose subset had no hyphen got one
+  built from that weight's own em dash (same stroke, caps, baseline). Render diff at 150 dpi:
+  exactly 33 changed regions, all at dash positions. No Discord link at all (support line says
+  "Message us on Etsy"); installer link resolves to an overlay named for this widget.
+- sws-downloads: uploaded (zip 44724 b, PDF 3177809 b), published, `verify` ok on both.
+  `backfill-orders`: 17 scanned, 17 entitled, 0 errors.
+
+**Listing:** refund paragraph now equals `PRODUCT_REFUND_LINE()` exactly. Category Digital
+Artwork, inventory tracked 1000, requiresShipping false, works_with all 7 (code has YouTube
+API, Kick Pusher, TikTok via TikFinity).
+
+**Blocking activation (media, needs new art):** "(Tier 1000)" baked into images 3, 6, 7
+(fullscreen, alerts, face-cam); em dashes in the settings screenshot (image 5) and the video
+("Hello from Kick - these notes pop!" rendered with an em dash); image 4 says "Twitch chat
+Supported Only", "A video tutorial with a PDF", "Streamlab"; image 6 says "Suppert Events";
+hero emote looks like a known game character. Name: "Sticker" is shared with the live
+Y2K Sticker Chat Widget (8962396913854 / Etsy 4543765531), a collision under the rule.
+
+### 2026-09-25 (Todd present): two duplicate product pairs merged, the newer copy of each deleted
+
+Todd: "I want to delete dupes to make it clear, so pick one, and delete the other, but make sure its right."
+
+Sameness proven before anything was touched: every image of both products viewed side by side
+against the Etsy listing images (same glass butterfly with crystal heart; same round potion bottle
+with cork, butterfly and moon charm), the older product's description was the Etsy description
+word for word, and the Etsy file manifest matched the newer product's delivered files byte for byte.
+Orders: 0 of 51 reference any of the four products.
+
+| Kept (older, live since 2025-07-31, 12 channels) | Deleted | Etsy | Redirect (live 301) |
+|---|---|---|---|
+| 8537284575422, now titled Crystal Butterfly Goal Widget for Twitch, Faceted Liquid Fill | 8998346981566 | 1771365068 | `UrlRedirect/394726375614` |
+| 8537283363006, now titled Nature Potion Bottle Goal Widget for Twitch, Glass Liquid Fill | 8998347014334 | 1707804164 | `UrlRedirect/394726408382` |
+
+Merged into each keeper, all re-queried after: Etsy files on sws-downloads (uploaded in Etsy order,
+published, `sws-dl verify` all OK), rewritten title, description, SEO, tags added, Etsy video at
+media position 2, newer Etsy images first and the old images kept after them, all media READY.
+Handles unchanged, status ACTIVE, 12 publications. Prices NOT changed and they differ from Etsy:
+Crystal Butterfly $17.10 here vs $10.71 on Etsy; Nature Potion $20.12 here vs $10.75 on Etsy.
+
+- Potion description corrected while merging: the newer draft said no Streamlabs build ships. Wrong:
+  `naturepotioncode.zip` holds `Nature potion Streamelements.zip` AND `Nature Streamlabs.zip`.
+  Goal types now read off `fields.txt` (follower, subscriber, tip, cheer, raid). Its refund
+  paragraph was the pre-v2 sentence; replaced with `PRODUCT_REFUND_LINE`.
+- Not copied: potion images 7928196594 and 7976153233 (baked typo "Inlcuded", see 2026-09-24).
+- Both keepers are still on TikTok (pre-existing). This repo's rule says a goal widget never goes
+  there. Left as is; Todd's call.
+- `sws-dl unpublish` is broken: Worker `handleUnpublish` calls `metafieldDelete`, gone in Admin API
+  2026-07. Metafields removed via `metafieldsDelete` by hand; D1 still marks both deleted ids
+  published (orphans, no orders).
+- `data/etsy-video-map.json` repointed to the keepers; `scripts/activate-products.mjs` no longer
+  lists the two deleted handles. Backups: `data/dedupe-backup-2026-09-25/`.
+
+### Update, same day: Sticker Note media replaced (still DRAFT)
+
+7 new 2048 WebP frames and a new 15 s 1920x1080 h264 video, rendered from the FIXED widget code
+(`products/showcase/sticker-note/`, `build.py --name` and `video/record.mjs --name`, product name is
+one parameter). Attached, all READY, order hero, video, 5 more; the 6 Etsy images and Etsy video
+detached (files kept). No "Tier 1000", no dashes, no emotes. Added text min 5.19:1 (frames), 4.79:1
+(video, colour math). Gate file `products/showcase/sticker-note/qa/DESIGN-QA.md` (B1 to B5 PASS,
+24/30); Art QA `VERDICT.md` owed. Still open: the name collision, the ticker layout cutting names.
+
+### Update 2026-09-25: Sticker Note widget code fixed twice more; Shopify push blocked on missing tool
+
+Name confirmed final by Todd: "Sticker Note" (shared "Sticker" word with the live Y2K Sticker Chat
+Widget is fine). Two product defects fixed in `content/products/sticker-note/fixed/`:
+
+1. **Ticker/reverse-ticker truncated every name to 2-3 letters** ("Ki...", "moc..."). Root cause:
+   `--row-share` (JS) divides the stream width by `msgLimitAmount` (10 by default), squeezing each
+   card's `max-width` under 200px in horizontal layouts; the header row (badge + name + time, all
+   `nowrap`) had no room left for the name once badge and timestamp took their share. Fixed with CSS
+   only, no JS touched: `.note-name` gets a 12ch `min-width` floor, `.note-marks`/`.note-time` get
+   `flex-shrink: 0`, and `.chat-stream.align-horizontal .note-card` gets a `min-width: min(260px,
+   stream-w - inset)` floor (a min-width above max-width wins the CSS cascade, so this overrides the
+   row-share squeeze). Verified with a real headless render: names read in full up to ~12 characters,
+   ellipsis only past that.
+2. **Role text-on-note contrast**: admin/follower/sub/mod/VIP measured 3.30 to 4.34:1 against their
+   own note background (viewer already passed at 5.69). Darkened each role's ink colour in HSL
+   lightness only (same hue/saturation, so the sticker-note look is unchanged): now 4.58 to 4.61:1,
+   every role clears 4.5:1 at its worst rendered pixel. Changed in `data.txt` and `fields.txt` (the
+   shipped StreamElements defaults), not just the preview data.
+3. "One click install" claim on the gallery removed rather than left unverified: the third-party
+   StreamElements installer it pointed at (`seapi.c4ldas.com.br`) can't be inspected for whether its
+   hosted overlay snapshot carries the fixed code without actually running the install against a live
+   account, out of scope here.
+
+New zip 45,095 B (was 44,724 B), sha256 `e02bf4c25e175034679edf1d081f8f887d182f811c5ded1df2fb5a7b969b2f1b`,
+uploaded and published to sws-downloads, `sws-dl verify` clean on both files.
+
+Gallery (frames 02, 04, 07 + video changed; 01/03/05/06 same content, rebuilt) and video re-rendered
+locally from the fixed widget. `qa/DESIGN-QA.md` rerun in full: B1-B5 PASS including product colours
+(previously flagged), score 26/30 (was 24/30, now clears the 25+ ship threshold).
+
+**Blocked: Shopify media not re-pushed.** This session had no Shopify Admin API tool or credential
+(`claude mcp list` shows no admin GraphQL connector bound here; no local token file; macOS keychain
+read is blocked by a hook). The `stagedUploadsCreate`/`productCreateMedia`/`fileUpdate` swap that put
+the current (now-stale) gallery on the DRAFT product needs an operator session with that access, same
+as before. **The live Shopify draft still shows the pre-fix images** - Art QA should review the local
+files in `products/showcase/sticker-note/frames/` and `video/out/`, not the live product page, until
+this is done.
+
+Also blocked on the same missing tool, and contingent on Grok's `VERDICT.md` (not written as of this
+pass): confirming Shopify category/inventory/`custom.download_files` metafield, `productUpdate` to
+ACTIVE, `publishablePublish` to all 11 publications, re-querying to verify, and the storefront-URL
+200 check.
+
+### Update 2026-09-25 evening: Sticker Note LIVE (ACTIVE, 11 channels)
+
+Supersedes "Shopify push blocked" above: the push was done from the operator session.
+- Art QA VERDICT: PASS WITH FIXES. Hard fix H1 done: all 8 media on Shopify pixel-match the reviewed files (frames 1, 3, 6 were still pre-fix and were replaced; 2, 4, 7 + video replaced earlier). Order hero, video, roles, platforms, layouts, alerts, any game, included.
+- Category Digital Artwork, inventory tracked 1000, `custom.download_files` = fixed zip 45,095 B (sha e02bf4c2...) + PDF 3,177,809 B. Price $18.99 = Etsy.
+- ACTIVE, published to all 11 publications (TikTok included, chat widget works there). PDP 200 with new hero.
+- Etsy 4580432522: Todd swapped in the fixed zip + PDF 2026-09-25; Etsy gallery still the old set (Tier 1000, test strings, emote).
+- Open soft fixes: S2 frame 6 HUD box, S3 frame 4 panel size + clipped note, S4 "Now tipped" copy.
+
+### 2026-09-25 late: Digital Products app retirement cleared
+- Active products: every one carries custom.download_files (re-scanned via Admin API, 133/133 before this batch).
+- Rescued from the Digital Products app by Todd (zips) + standard ManuallySetupGoalWidgetTutorial.pdf: Twitch Liquid Goal Bar Star 8537283231934, Butterfly Liquid 8537283952830, Love Bottle 8537285918910, Pumpkin Goal 8537286312126, Celestial Cute Moon 8537285394622. All uploaded, published, verified, set ACTIVE. Source copies: content/products/shopify-dp-rescue-2026-09-25/.
+- Archived IP products Charizard 8537283657918 and Eevee 8537284837566 given files (from content/products) so past orders #1017 #1029 #1031 #1033 can still download. They stay ARCHIVED.
+- Still DRAFT, no files: Twitch Liquid Combo 8537285198014 (past orders #1026, #1041 have no file in our system).
+- backfill-orders re-run: 0 errors. Resend path for any buyer: Shopify order > More actions > Resend order confirmation (email carries the SWS Downloads button), or the account order page button.
+
+## Homepage: "Best sellers" and "New arrivals" rows added, 2026-09-25/26
+
+Todd: "we need to promote top sellers and new ones on the home somehow, figure it out."
+
+Two rows added to the homepage, directly under the hero (above Shop by vibe, moved up from
+the old "Top widgets" position lower down the page): **Best sellers** (real Etsy revenue,
+8 cards) and **New arrivals** (newest ACTIVE products, 8 cards, small "New" chip). Mobile:
+horizontal scroll row, one card plus a peek of the next; tablet/desktop: 2 then 4 column
+grid. `#best-sellers` is the hero's "See it live" anchor now (was `#top-widgets`).
+
+**Best sellers ranking** (window 2026-08-12 to 2026-09-26, 45 days, Etsy revenue, filtered
+for `do-not-use-ip` tag and IP_TERMS, resolved ACTIVE via the live Storefront API):
+
+| Rank | Product | Revenue | Units |
+|---|---|---|---|
+| 1 | Multistream Chat Widget for Twitch, YouTube, Kick, One Click Install | $683.40 | 43 |
+| 2 | Moon Jar Goal Widget for Twitch, YouTube, Kick, Real Falling Physics | $661.69 | 49 |
+| 3 | Y2K Sticker Chat Widget for Twitch, YouTube, Kick, TikTok, Retro Alerts | $407.86 | 30 |
+| 4 | Neon Glow Chat and Goal Widget for Twitch, Transparent Glow Theme | $262.43 | 28 |
+| 5 | Neon Multistream Chat Widget for Twitch, YouTube, Kick, Glow Theme | $224.92 | 20 |
+| 6 | Celestial Star Goal Widget for Twitch and Kick, Animated Progress | $216.58 | 31 |
+| 7 | Cosmic Galaxy Chat and Goal Widget for Twitch, Glass Theme | $94.39 | 11 |
+| 8 | Spooky Jar Goal Widget for Twitch, Animated Halloween Sub Tracker | $90.18 | 7 |
+
+No product dropped for `do-not-use-ip`/IP_TERMS in this run (none of the top 16 by revenue
+matched). Full detail in `app/data/best-sellers.json`, refreshed `app/data/top-sellers.json`
+alongside it (was stale from an earlier window).
+
+**How it works.** `scripts/refresh-best-sellers.mjs` (one command, `npm run
+refresh:best-sellers`) runs `build-top-sellers.mjs` for the Etsy pull, resolves each
+candidate against the Storefront API, drops anything IP-tagged/matched or not
+active+published, keeps the top 8, and writes `app/data/best-sellers.json`, which the
+homepage loader reads directly (same by-handle GraphQL pattern as the old fan-favourites
+list, see CLAUDE.md). The homepage row does **not** depend on a Shopify collection existing.
+
+**Still open: the `best-sellers` Shopify collection itself.** The "Shop all" link on that
+row points at `/collections/best-sellers`, which is a REAL collection the script cannot
+create: this repo's scripts have no Admin API token (same gap as `scripts/
+activate-products.mjs`, see CLAUDE.md), so every catalog write here goes through an
+operator session with the Shopify Admin MCP or the Admin UI. `refresh-best-sellers.mjs`
+prints the exact `collectionCreate` / `collectionAddProducts` / `collectionReorderProducts`
+/ `publishablePublish` mutations (to Headless `201721348286`, SWS Storefront `201722527934`,
+Online Store `132110254270`) every time it runs. **Todd (or an operator session with Admin
+access): run that printed procedure once, then re-run it after any future
+`refresh:best-sellers` reorders the top 8.** Verified 2026-09-25: `/collections/best-sellers`
+404s until this is done; every other part of both rows (images, prices, links, mobile
+layout) is live and verified against the local preview build.
+
+**New arrivals** needs no Admin step: "Shop all" sorts `/collections/all?sort=newest`
+(new `sortKey`/`reverse` support added to `CATALOG_QUERY` in `collections.all.jsx`),
+verified 200 and same order as the homepage row.
+
+**Bug found and fixed while building this**: `overflow-x: auto` alone did not keep the new
+horizontal scroll rows' off-screen cards out of the document's real scrollable area at
+360px. Measured live: `document.documentElement.scrollWidth` 1758px against a 360px
+viewport, and `window.scrollX` actually reached 1398 after `scrollTo(9999, 0)` -- a real,
+draggable horizontal page scroll, not just a cosmetic clip (`body { overflow-x: hidden }`
+hides the scrollbar but not the scroll, same class of bug as the 2026-09-14 header note
+above). Fixed with `contain: layout` on `.home-shelf-grid` (`app/styles/app.css`); confirmed
+by removing it that the page scroll returns immediately. Verified clean afterward with a
+real headless Chrome render (Playwright driving the installed Google Chrome, not a
+screenshot-only check): `scrollWidth === clientWidth === 360`, `scrollX` stays `0`. Desktop
+(1440px) grid confirmed 4 columns, 8 cards, no page overflow either.
+
+Files: `app/routes/_index.jsx`, `app/routes/collections.all.jsx`, `app/components/
+ProductItem.jsx` (new `badge` prop), `app/styles/app.css`, `scripts/refresh-best-sellers.mjs`
+(new), `app/data/best-sellers.json` (new), `app/data/top-sellers.json` (refreshed),
+`package.json` (`refresh:best-sellers` script).
+
+Not deployed. Todd's deploy command: `npx shopify hydrogen deploy --env=production`
+(interactive confirmation, must run from a real terminal, see CLAUDE.md).

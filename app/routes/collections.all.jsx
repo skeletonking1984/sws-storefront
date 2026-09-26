@@ -45,6 +45,13 @@ async function loadCriticalData({context, request}) {
   const url = new URL(request.url);
   const activeType = url.searchParams.get('type') || '';
   const searchQuery = url.searchParams.get('q') || '';
+  // The homepage "New arrivals" row's "Shop all" link lands here with
+  // ?sort=newest, so newest-first has to be reachable from this page too.
+  // No other sort exists yet -- add one the same way if a second is ever
+  // needed.
+  const sort = url.searchParams.get('sort') || '';
+  const sortKey = sort === 'newest' ? 'CREATED_AT' : undefined;
+  const reverse = sort === 'newest';
 
   const queryParts = [];
   if (activeType) queryParts.push(`tag:${activeType}`);
@@ -55,11 +62,13 @@ async function loadCriticalData({context, request}) {
       variables: {
         ...paginationVariables,
         query: queryParts.length ? queryParts.join(' AND ') : undefined,
+        sortKey,
+        reverse,
       },
     }),
     // Add other queries here, so that they are loaded in parallel
   ]);
-  return {products, activeType, searchQuery};
+  return {products, activeType, searchQuery, sort};
 }
 
 /**
@@ -240,8 +249,18 @@ const CATALOG_QUERY = `#graphql
     $startCursor: String
     $endCursor: String
     $query: String
+    $sortKey: ProductSortKeys
+    $reverse: Boolean
   ) @inContext(country: $country, language: $language) {
-    products(first: $first, last: $last, before: $startCursor, after: $endCursor, query: $query) {
+    products(
+      first: $first
+      last: $last
+      before: $startCursor
+      after: $endCursor
+      query: $query
+      sortKey: $sortKey
+      reverse: $reverse
+    ) {
       nodes {
         ...CollectionItem
       }

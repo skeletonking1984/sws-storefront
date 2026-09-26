@@ -1,0 +1,93 @@
+{
+  "generatedAt": "2026-09-26T03:12:08.676Z",
+  "window": {
+    "since": "2026-08-12",
+    "until": "2026-09-26",
+    "days": 45
+  },
+  "source": "app/data/top-sellers.json (Etsy revenue), resolved active via Storefront API, filtered for do-not-use-ip tag and IP_TERMS",
+  "handles": [
+    "multistream-chat-widget-twitch-youtube-kick-overlay-digital-download-easy-setup-one-click-installation",
+    "animated-moon-jar-goal-widget-twitch-sub-goal-overlay-falling-stars-tracker-instant-download",
+    "y2k-sticker-chat-widget-retro-alerts-multistream-obs-ready-digital-download",
+    "neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
+    "neon-animated-multistream-chat-widget-twitch-youtube-kick-overlay-digital-download",
+    "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
+    "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only",
+    "spooky-jar-goal-widget-for-twitch-animated-halloween-sub-tracker"
+  ],
+  "detail": [
+    {
+      "rank": 1,
+      "handle": "multistream-chat-widget-twitch-youtube-kick-overlay-digital-download-easy-setup-one-click-installation",
+      "id": "gid://shopify/Product/8962396848318",
+      "title": "Multistream Chat Widget for Twitch, YouTube, Kick, One Click Install",
+      "listing_id": 4536576701,
+      "revenue": 683.4,
+      "units": 43
+    },
+    {
+      "rank": 2,
+      "handle": "animated-moon-jar-goal-widget-twitch-sub-goal-overlay-falling-stars-tracker-instant-download",
+      "id": "gid://shopify/Product/8962396946622",
+      "title": "Moon Jar Goal Widget for Twitch, YouTube, Kick, Real Falling Physics",
+      "listing_id": 4551047317,
+      "revenue": 661.69,
+      "units": 49
+    },
+    {
+      "rank": 3,
+      "handle": "y2k-sticker-chat-widget-retro-alerts-multistream-obs-ready-digital-download",
+      "id": "gid://shopify/Product/8962396913854",
+      "title": "Y2K Sticker Chat Widget for Twitch, YouTube, Kick, TikTok, Retro Alerts",
+      "listing_id": 4543765531,
+      "revenue": 407.86,
+      "units": 30
+    },
+    {
+      "rank": 4,
+      "handle": "neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
+      "id": "gid://shopify/Product/8537283330238",
+      "title": "Neon Glow Chat and Goal Widget for Twitch, Transparent Glow Theme",
+      "listing_id": 4333471272,
+      "revenue": 262.43,
+      "units": 28
+    },
+    {
+      "rank": 5,
+      "handle": "neon-animated-multistream-chat-widget-twitch-youtube-kick-overlay-digital-download",
+      "id": "gid://shopify/Product/8962397012158",
+      "title": "Neon Multistream Chat Widget for Twitch, YouTube, Kick, Glow Theme",
+      "listing_id": 4539065835,
+      "revenue": 224.92,
+      "units": 20
+    },
+    {
+      "rank": 6,
+      "handle": "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
+      "id": "gid://shopify/Product/8962396881086",
+      "title": "Celestial Star Goal Widget for Twitch and Kick, Animated Progress",
+      "listing_id": 1790018033,
+      "revenue": 216.58,
+      "units": 31
+    },
+    {
+      "rank": 7,
+      "handle": "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only",
+      "id": "gid://shopify/Product/8537284313278",
+      "title": "Cosmic Galaxy Chat and Goal Widget for Twitch, Glass Theme",
+      "listing_id": 4322617816,
+      "revenue": 94.39,
+      "units": 11
+    },
+    {
+      "rank": 8,
+      "handle": "spooky-jar-goal-widget-for-twitch-animated-halloween-sub-tracker",
+      "id": "gid://shopify/Product/9020611264702",
+      "title": "Spooky Jar Goal Widget for Twitch | Animated Halloween Sub Tracker",
+      "listing_id": 4563233208,
+      "revenue": 90.18,
+      "units": 7
+    }
+  ]
+}
