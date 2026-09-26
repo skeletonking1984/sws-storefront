@@ -1,3 +1,4 @@
+import {DISCORD_INVITE} from '~/lib/discord';
 // Real brand marks (path data from simple-icons, CC0). Exported because the
 // PDP share row needs the same X mark and there is no reason for two copies
 // of it to drift apart.
@@ -10,7 +11,7 @@ export const ICON_PATHS = {
 
 export const SOCIALS = [
   {name: 'X', href: 'https://x.com/streamwidget'},
-  {name: 'Discord', href: 'https://discord.gg/6XKnA5Jrt'},
+  {name: 'Discord', href: DISCORD_INVITE},
   {name: 'Etsy', href: 'https://www.etsy.com/shop/StreamWidgetShop'},
 ];
 
