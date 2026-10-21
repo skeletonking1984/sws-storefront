@@ -33,13 +33,29 @@ export const meta = ({matches, location}) => {
 /** @param {Route.LoaderArgs} */
 export async function loader({context}) {
   const {storefront} = context;
-  const [{widgets}, {kits}] = await Promise.all([
+  const [{widgets}, {kits}, {eligible}] = await Promise.all([
     storefront.query(WIDGETS_QUERY),
     storefront.query(KITS_QUERY),
+    storefront.query(ELIGIBLE_QUERY, {
+      variables: {query: BUNDLE_ELIGIBLE_QUERY},
+    }),
   ]);
 
   const rank = new Map((topSellers.handles || []).map((h, i) => [h, i]));
-  const items = (widgets?.products?.nodes || [])
+  const newCutoff = Date.now() - NEW_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+
+  // The widgets collection plus any ACTIVE product tagged bundle-eligible,
+  // deduped by id (the collection copy wins). The Storefront API only returns
+  // published products, so there is no status filter to add.
+  const merged = new Map();
+  for (const p of [
+    ...(widgets?.products?.nodes || []),
+    ...(eligible?.nodes || []),
+  ]) {
+    if (p && !merged.has(p.id)) merged.set(p.id, p);
+  }
+
+  const items = [...merged.values()]
     .map((p) => {
       const v = p.variants?.nodes?.[0];
       const price = Number(v?.price?.amount || 0);
@@ -54,11 +70,20 @@ export async function loader({context}) {
           : null,
         variantId: v.id,
         price,
+        createdAt: p.createdAt,
         top: rank.has(p.handle) ? rank.get(p.handle) : null,
+        isNew: isNewProduct(p.createdAt, newCutoff),
       };
     })
     .filter(Boolean)
+    // New (created in the last 14 days, newest first), then best sellers by
+    // top-sellers.json rank, then A to Z.
     .sort((a, b) => {
+      if (a.isNew !== b.isNew) return a.isNew ? -1 : 1;
+      if (a.isNew && b.isNew) {
+        const byDate = Date.parse(b.createdAt) - Date.parse(a.createdAt);
+        if (byDate) return byDate;
+      }
       if (a.top !== null && b.top !== null) return a.top - b.top;
       if (a.top !== null) return -1;
       if (b.top !== null) return 1;
@@ -87,6 +112,21 @@ export async function loader({context}) {
     .filter(Boolean);
 
   return {items, curated, reviews: pickReviews(), rating: etsyReviewsData.shop};
+}
+
+/** Products created within this many days get the "New" badge and sort first. */
+const NEW_WINDOW_DAYS = 14;
+
+/** Storefront API search syntax: active products tagged for bundling. */
+const BUNDLE_ELIGIBLE_QUERY = 'tag:bundle-eligible';
+
+/**
+ * @param {string | undefined} createdAt
+ * @param {number} cutoff epoch ms
+ */
+function isNewProduct(createdAt, cutoff) {
+  const t = Date.parse(createdAt || '');
+  return Number.isFinite(t) && t >= cutoff;
 }
 
 /** Skip 5-star reviews that mention a problem (keeps the sidebar quotes fully positive). */
@@ -121,24 +161,43 @@ export default function BundlePage() {
   return <BundleBuilder {...data} />;
 }
 
+const BUNDLE_WIDGET_FRAGMENT = `#graphql
+  fragment BundleWidget on Product {
+    id
+    handle
+    title
+    productType
+    createdAt
+    featuredImage { url altText width height }
+    variants(first: 1) {
+      nodes { id availableForSale price { amount currencyCode } }
+    }
+  }
+`;
+
 const WIDGETS_QUERY = `#graphql
   query BundleWidgets($country: CountryCode, $language: LanguageCode)
   @inContext(country: $country, language: $language) {
     widgets: collection(handle: "widgets") {
       products(first: 250) {
-        nodes {
-          id
-          handle
-          title
-          productType
-          featuredImage { url altText width height }
-          variants(first: 1) {
-            nodes { id availableForSale price { amount currencyCode } }
-          }
-        }
+        nodes { ...BundleWidget }
       }
     }
   }
+  ${BUNDLE_WIDGET_FRAGMENT}
+`;
+
+const ELIGIBLE_QUERY = `#graphql
+  query BundleEligible(
+    $query: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    eligible: products(first: 250, query: $query) {
+      nodes { ...BundleWidget }
+    }
+  }
+  ${BUNDLE_WIDGET_FRAGMENT}
 `;
 
 const KITS_QUERY = `#graphql

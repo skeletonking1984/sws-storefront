@@ -199,7 +199,9 @@ function loadDeferredData({context}) {
    * `-tag:do-not-use-ip` excludes at the API level; isExcludedFromHome below
    * is the same defensive second check as the best sellers band, catching an
    * IP-named product that hasn't been tagged yet (see app/lib/ipTerms.js).
-   * Fetches 16 and slices to 8 so a few exclusions don't thin the row.
+   * Row is 8: up to FRESH_SLOTS (2) from `fresh`, then the rest (at least 6)
+   * newest-first by CREATED_AT. Fetches 16 and slices to 8, so exclusions and
+   * up to FRESH_SLOTS duplicates against `fresh` still leave 6 to fill.
    *
    * The `fresh` collection (manual sort, Admin) leads the row, up to
    * FRESH_SLOTS. CREATED_AT can't see an old product that was just
@@ -340,7 +342,7 @@ function isExcludedFromHome(product) {
 
 /** Manual collection in Shopify Admin; its first FRESH_SLOTS products lead New arrivals. */
 export const FRESH_COLLECTION_HANDLE = 'fresh';
-const FRESH_SLOTS = 4;
+const FRESH_SLOTS = 2;
 
 /** Smart collection in Shopify Admin, rule: TAG EQUALS `halloween`. */
 export const HALLOWEEN_COLLECTION_HANDLE = 'halloween';
@@ -835,10 +837,13 @@ function BundlePromo({tiles: picked, bestSellers, fallback}) {
   );
 }
 
-/** One row of product cards: swipe on phones, 2 across on tablets, 4 on desktop. */
-function ProductRow({products, listId, listName, badge, limit = 6}) {
+/**
+ * Up to 8 product cards: one swipe row on phones, a 2-across grid (4 rows) on
+ * tablets, a 4-across grid (2 rows) on desktop.
+ */
+function ProductRow({products, listId, listName, badge, limit = 8}) {
   return (
-    <div className="home-row home-row--cap4">
+    <div className="home-row">
       {products.slice(0, limit).map((product, index) => (
         <ProductItem
           key={product.id}
@@ -857,8 +862,8 @@ function ProductRow({products, listId, listName, badge, limit = 6}) {
 
 /**
  * Real revenue, real rank, see the loader comment above `bestSellers` for why
- * this is Etsy revenue rather than Shopify's BEST_SELLING sort. Six cards on a
- * phone swipe row, four on a tablet or desktop row. "Shop all" points at the
+ * this is Etsy revenue rather than Shopify's BEST_SELLING sort. Eight cards:
+ * a phone swipe row, a 2-across tablet grid, a 4-across desktop grid. "Shop all" points at the
  * real `best-sellers` Shopify collection so the same rank order holds off the
  * homepage too. Keeps id="best-sellers": the hero's "See it live" targets it.
  * @param {{
@@ -1614,7 +1619,7 @@ const HALLOWEEN_COLLECTION_QUERY = `#graphql
   ) @inContext(country: $country, language: $language) {
     collection(handle: $handle) {
       id
-      products(first: 8) {
+      products(first: 8, sortKey: CREATED, reverse: true) {
         nodes {
           id
           title

@@ -2517,17 +2517,6 @@ button.reset:hover:not(:has(> *)) {
   .home-row--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  /* six cards on a phone swipe row, the first four on anything wider.
-     nth-of-type, NOT nth-child, and it must stay that way: a <Link
-     prefetch="intent"> renders its prefetch <link rel="prefetch"> elements as
-     SIBLINGS of the <a> the first time the pointer or a finger touches it
-     (24 of them on the homepage, measured). nth-child counted those, so every
-     tile after the one you hovered became child number 5 or later and
-     vanished (2026-10-18, New arrivals). Cards are the only <a> in
-     these rows, and the <link> elements are a different type. */
-  .home-row--cap4 > a:nth-of-type(n + 5) {
-    display: none;
-  }
 }
 
 @media (min-width: 65em) {

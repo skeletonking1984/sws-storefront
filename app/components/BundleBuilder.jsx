@@ -243,7 +243,9 @@ export function BundleBuilder({items, curated, reviews, rating}) {
                           fallbackWidth={400}
                         />
                       ) : null}
-                      {w.top !== null && w.top < 12 ? (
+                      {w.isNew ? (
+                        <em className="bb-badge">New</em>
+                      ) : w.top !== null && w.top < 12 ? (
                         <em className="bb-badge">Top seller</em>
                       ) : null}
                       <i className="bb-check" aria-hidden="true">

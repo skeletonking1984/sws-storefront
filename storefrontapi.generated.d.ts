@@ -1885,6 +1885,22 @@ export type BlogsQuery = {
   };
 };
 
+export type BundleWidgetFragment = Pick<
+  StorefrontAPI.Product,
+  'id' | 'handle' | 'title' | 'productType' | 'createdAt'
+> & {
+  featuredImage?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
+  >;
+  variants: {
+    nodes: Array<
+      Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+      }
+    >;
+  };
+};
+
 export type BundleWidgetsQueryVariables = StorefrontAPI.Exact<{
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
@@ -1896,7 +1912,7 @@ export type BundleWidgetsQuery = {
       nodes: Array<
         Pick<
           StorefrontAPI.Product,
-          'id' | 'handle' | 'title' | 'productType'
+          'id' | 'handle' | 'title' | 'productType' | 'createdAt'
         > & {
           featuredImage?: StorefrontAPI.Maybe<
             Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
@@ -1912,6 +1928,34 @@ export type BundleWidgetsQuery = {
       >;
     };
   }>;
+};
+
+export type BundleEligibleQueryVariables = StorefrontAPI.Exact<{
+  query: StorefrontAPI.Scalars['String']['input'];
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+}>;
+
+export type BundleEligibleQuery = {
+  eligible: {
+    nodes: Array<
+      Pick<
+        StorefrontAPI.Product,
+        'id' | 'handle' | 'title' | 'productType' | 'createdAt'
+      > & {
+        featuredImage?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
+        >;
+        variants: {
+          nodes: Array<
+            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
+              price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+            }
+          >;
+        };
+      }
+    >;
+  };
 };
 
 export type BundleKitsQueryVariables = StorefrontAPI.Exact<{
@@ -3108,7 +3152,7 @@ interface GeneratedQueryTypes {
     return: HomeLatestArticlesQuery;
     variables: HomeLatestArticlesQueryVariables;
   };
-  '#graphql\n  query HalloweenCollection(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      products(first: 8) {\n        nodes {\n          id\n          title\n          handle\n          productType\n          worksWith: metafield(namespace: "custom", key: "works_with") { value }\n          tags\n          gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n          priceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n          compareAtPriceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n          featuredImage {\n            id\n            url\n            altText\n          }\n          media(first: 25) {\n            nodes {\n              __typename\n              ... on Video {\n                id\n                previewImage {\n                  url\n                }\n                sources {\n                  url\n                  mimeType\n                  format\n                  width\n                  height\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query HalloweenCollection(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      products(first: 8, sortKey: CREATED, reverse: true) {\n        nodes {\n          id\n          title\n          handle\n          productType\n          worksWith: metafield(namespace: "custom", key: "works_with") { value }\n          tags\n          gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n          priceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n          compareAtPriceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n          featuredImage {\n            id\n            url\n            altText\n          }\n          media(first: 25) {\n            nodes {\n              __typename\n              ... on Video {\n                id\n                previewImage {\n                  url\n                }\n                sources {\n                  url\n                  mimeType\n                  format\n                  width\n                  height\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: HalloweenCollectionQuery;
     variables: HalloweenCollectionQueryVariables;
   };
@@ -3144,9 +3188,13 @@ interface GeneratedQueryTypes {
     return: BlogsQuery;
     variables: BlogsQueryVariables;
   };
-  '#graphql\n  query BundleWidgets($country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    widgets: collection(handle: "widgets") {\n      products(first: 250) {\n        nodes {\n          id\n          handle\n          title\n          productType\n          featuredImage { url altText width height }\n          variants(first: 1) {\n            nodes { id availableForSale price { amount currencyCode } }\n          }\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query BundleWidgets($country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    widgets: collection(handle: "widgets") {\n      products(first: 250) {\n        nodes { ...BundleWidget }\n      }\n    }\n  }\n  #graphql\n  fragment BundleWidget on Product {\n    id\n    handle\n    title\n    productType\n    createdAt\n    featuredImage { url altText width height }\n    variants(first: 1) {\n      nodes { id availableForSale price { amount currencyCode } }\n    }\n  }\n\n': {
     return: BundleWidgetsQuery;
     variables: BundleWidgetsQueryVariables;
+  };
+  '#graphql\n  query BundleEligible(\n    $query: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    eligible: products(first: 250, query: $query) {\n      nodes { ...BundleWidget }\n    }\n  }\n  #graphql\n  fragment BundleWidget on Product {\n    id\n    handle\n    title\n    productType\n    createdAt\n    featuredImage { url altText width height }\n    variants(first: 1) {\n      nodes { id availableForSale price { amount currencyCode } }\n    }\n  }\n\n': {
+    return: BundleEligibleQuery;
+    variables: BundleEligibleQueryVariables;
   };
   '#graphql\n  query BundleKits($country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    kits: collection(handle: "bundles") {\n      products(first: 20) {\n        nodes {\n          handle\n          title\n          featuredImage { url altText }\n          priceRange { minVariantPrice { amount currencyCode } }\n        }\n      }\n    }\n  }\n': {
     return: BundleKitsQuery;
