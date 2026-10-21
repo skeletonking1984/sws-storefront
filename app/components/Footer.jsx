@@ -64,9 +64,16 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}) {
  * }}
  */
 function FooterMenu({menu, primaryDomainUrl, publicStoreDomain}) {
+  const items = (menu || FALLBACK_FOOTER_MENU).items;
+  // The footer menu itself lives in Shopify Admin. Code owned pages are added
+  // here, and only when the Admin menu does not already link to them, so
+  // adding the same link in Admin later never shows it twice.
+  const hasCompatibilityLink = items.some((item) =>
+    (item.url || '').replace(/\/$/, '').endsWith('/compatibility'),
+  );
   return (
     <nav className="footer-menu" role="navigation">
-      {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
+      {items.map((item) => {
         if (!item.url) return null;
         // if the url is internal, we strip the domain
         const url =
@@ -92,6 +99,16 @@ function FooterMenu({menu, primaryDomainUrl, publicStoreDomain}) {
           </NavLink>
         );
       })}
+      {!hasCompatibilityLink && (
+        <NavLink
+          end
+          prefetch="intent"
+          style={activeLinkStyle}
+          to="/compatibility"
+        >
+          What works with what
+        </NavLink>
+      )}
     </nav>
   );
 }

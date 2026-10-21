@@ -39,6 +39,8 @@ export const EXCLUDED_PAGE_HANDLES = {
 export const STATIC_ROUTES = [
   {path: '/', changefreq: 'daily', priority: '1.0'},
   {path: '/collections/all', changefreq: 'daily', priority: '0.9'},
+  // Code owned info page, not a Shopify Page, so it is listed here.
+  {path: '/compatibility', changefreq: 'monthly', priority: '0.5'},
 ];
 
 /** Per-type `<changefreq>`/`<priority>` hints used when rendering `<url>` entries. */
