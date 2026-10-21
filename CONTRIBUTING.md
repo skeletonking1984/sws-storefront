@@ -6,6 +6,6 @@ Stream Widget Shop storefront, published so the code can be read.
 - Pull requests are not accepted. Development happens in a private
   repository and this copy is refreshed from it.
 - Bug reports about the live site are welcome at
-  support@streamwidgetshop.com.
+  streamwidgetshop@gmail.com.
 - Security reports: see [SECURITY.md](SECURITY.md).
-- The code is not licensed for reuse; see [LICENSE](LICENSE).
+- The code is MIT licensed (see [LICENSE](LICENSE)). Brand assets, product art and widget files are not; see [NOTICE](NOTICE).

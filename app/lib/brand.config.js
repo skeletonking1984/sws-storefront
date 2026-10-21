@@ -34,7 +34,7 @@ export const brand = {
 
   /** Support/contact inbox, shown on the contact page and in policy text
    * (ContactPage.jsx / policyContent.js / notify.server.js). */
-  supportEmail: 'support@streamwidgetshop.com',
+  supportEmail: 'streamwidgetshop@gmail.com',
   /** "From" display name + address for outbound Stream Chat Lite email
    * (freeChatEmail.server.js). Address's domain must match `domain` above
    * for the DMARC-alignment check that file also does. */

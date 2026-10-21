@@ -4,7 +4,7 @@ The headless Shopify storefront behind **[streamwidgetshop.com](https://streamwi
 
 [![The Stream Widget Shop homepage: a live Moon Jar goal widget filling while multistream chat scrolls beside it](docs/screenshots/storefront-home.webp)](https://streamwidgetshop.com)
 
-> This is a read-only showcase copy of the production code. See [CONTRIBUTING.md](CONTRIBUTING.md) and [LICENSE](LICENSE).
+> This is a read-only showcase copy of the production code. See [CONTRIBUTING.md](CONTRIBUTING.md), [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
 ## Features
 
@@ -98,4 +98,4 @@ This copy leaves out internal operations material: the launch log, QA artifacts,
 
 - Live store: https://streamwidgetshop.com
 - Security: [SECURITY.md](SECURITY.md)
-- License: all rights reserved, see [LICENSE](LICENSE). Fonts are SIL OFL 1.1, see [app/assets/fonts/OFL.txt](app/assets/fonts/OFL.txt).
+- License: the code is MIT, see [LICENSE](LICENSE). The Stream Widget Shop name, logos, product art, widget files and other brand assets are not covered by MIT and stay all rights reserved, see [NOTICE](NOTICE). Fonts are SIL OFL 1.1, see [app/assets/fonts/OFL.txt](app/assets/fonts/OFL.txt).

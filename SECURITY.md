@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-Email **support@streamwidgetshop.com** with "Security" in the subject line.
+Email **streamwidgetshop@gmail.com** with "Security" in the subject line.
 Please include:
 
 - what you found and where (URL, route or file),
