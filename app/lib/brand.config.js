@@ -40,7 +40,7 @@ export const brand = {
    * for the DMARC-alignment check that file also does. */
   chatFromEmail: {
     name: 'Stream Widget Shop',
-    address: 'chat@streamwidgetshop.com',
+    address: 'streamwidgetshop@gmail.com',
   },
 
   logo: {
