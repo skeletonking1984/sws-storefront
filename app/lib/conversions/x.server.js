@@ -1,0 +1,437 @@
+/**
+ * X (Twitter) Conversion API destination.
+ *
+ * Implements the shared destination interface documented in
+ * app/lib/conversions/index.server.js. Built against
+ * https://docs.x.com/x-ads-api/measurement/web-conversions
+ *
+ * Three things the first, unverified version of this file got wrong, all
+ * three flagged in its own TODOs and all three now settled against the docs:
+ *
+ * 1. AUTH IS OAUTH 1.0a, NOT A BEARER TOKEN. Every request is signed with
+ *    four credentials: the app's consumer key and secret, plus a user access
+ *    token and secret for a user with AD_MANAGER or ACCOUNT_ADMIN on the ads
+ *    account. Signing lives in app/lib/oauth1.server.js and is proved
+ *    against the RFC 5849 worked example by scripts/verify-oauth1.mjs.
+ * 2. The endpoint is `POST /{version}/measurement/conversions/{pixel_id}`,
+ *    version 12.
+ * 3. `event_id` is the conversion event's id from Ads Manager, not the pixel
+ *    id, and is required.
+ *
+ * WHY hashed_email MATTERS MORE THAN twclid HERE. X requires at least one
+ * identifier and the old code sent only `twclid`, returning early when it
+ * was absent. `twclid` only exists if the buyer landed on THIS site from an
+ * X ad. X's own Conversion Diagnostics reported "Click ID tracking: Not
+ * detected, no conversions carried a click ID in the last 24 hours" across
+ * 191 events, so twclid-only would have kept sending nothing. Email is on
+ * every Shopify order, so it is sent as `hashed_email` (SHA256, lowercased
+ * and trimmed, unsalted, per the docs) and twclid is added when present.
+ * An order with neither is the only case that still no-ops.
+ *
+ * Rate limit, well clear of this shop's volume: 60,000 events per account
+ * per 15 minutes.
+ */
+
+import {oauth1Header} from '../oauth1.server.js';
+
+const X_CAPI_VERSION = '12';
+
+export const id = 'x';
+
+/**
+ * TWO AUTH PATHS, because X appears to offer both and only one of them is
+ * confirmed in the docs.
+ *
+ *   R. RELAY, and this is the one in use. POST to a separate relay
+ *      service that already holds working Ads API credentials and signs
+ *      OAuth 1.0a on our behalf. The storefront
+ *      sends {pixel_id, conversions[]} with a bearer token and never sees an
+ *      X secret. Two env vars here instead of four copied secrets, one place
+ *      to rotate instead of two. Preferred whenever configured.
+ *   A. Pixel token. A single static token generated in the Ads UI under
+ *      Events Manager, sent as an `X-Pixel-Token` header. Needs no developer
+ *      account and no Ads API approval. Referenced in X's developer forum
+ *      but NOT in the web-conversions docs page, so it is
+ *      likely-but-unconfirmed.
+ *   B. OAuth 1.0a locally. Four credentials, signed per request by
+ *      app/lib/oauth1.server.js. What the official docs describe. Kept as a
+ *      fallback for a deployment with no relay.
+ *
+ * Whichever is configured is used, R first. Supporting both costs one branch and removes the need to guess
+ * right, which a previous version of this file did not do: it sent a plain
+ * bearer token, which is neither of these and would always have failed.
+ * @param {Record<string, string | undefined>} env
+ */
+export function authMode(env) {
+  if (!env?.PUBLIC_X_PIXEL_ID) return null;
+  if (env?.PRIVATE_X_RELAY_URL && env?.PRIVATE_X_RELAY_TOKEN) return 'relay';
+  if (env?.PRIVATE_X_PIXEL_TOKEN) return 'pixel_token';
+  if (
+    env?.PRIVATE_X_CONSUMER_KEY &&
+    env?.PRIVATE_X_CONSUMER_SECRET &&
+    env?.PRIVATE_X_ACCESS_TOKEN &&
+    env?.PRIVATE_X_ACCESS_TOKEN_SECRET
+  ) {
+    return 'oauth1';
+  }
+  return null;
+}
+
+/** @param {Record<string, string | undefined>} env */
+export function isConfigured(env) {
+  return authMode(env) !== null;
+}
+
+/** SHA256 hex, lowercased and trimmed first, unsalted. Per X's docs. */
+async function sha256Hex(value) {
+  const normalized = String(value).trim().toLowerCase();
+  if (!normalized) return null;
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(normalized),
+  );
+  return [...new Uint8Array(digest)]
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/**
+ * @param {object} args
+ * @param {Record<string, string | undefined>} args.env
+ * @param {object} args.order Raw Shopify order payload from the webhook body.
+ * @param {Record<string, string>} args.clickIds Click ids captured for this
+ *   order, keyed by cart attribute (see app/lib/clickIds.server.js). Only
+ *   `_twclid` is used here.
+ * @param {string} args.eventId Shared dedup id, the same for every
+ *   destination on this order. Sent as X's `conversion_id`, which is what X
+ *   uses to reconcile a server event against a browser pixel event for the
+ *   same purchase.
+ * @returns {Promise<{ok: boolean, reason?: string}>}
+ */
+export async function sendPurchase({env, order, clickIds, eventId}) {
+  if (!isConfigured(env)) return {ok: false, reason: 'not_configured'};
+
+  const purchaseEventId = env?.PRIVATE_X_PURCHASE_EVENT_ID;
+  if (!purchaseEventId) return {ok: false, reason: 'not_configured'};
+
+  /*
+   * ONE identifier object, not one per signal. X validates each element of
+   * `identifiers` as a complete identifier on its own, so
+   * [{hashed_email}, {ip_address}, {user_agent}] is rejected outright with
+   * "At least one user identifier must be provided" even though three were
+   * supplied. Verified against the live API on 2026-09-15:
+   *
+   *   [{hashed_email, ip_address, user_agent}]  accepted
+   *   [{hashed_email}]                          accepted
+   *   [{ip_address, user_agent}]                accepted
+   *   [{hashed_email}, {ip_address}, {user_agent}]  REJECTED
+   *
+   * Getting this wrong does not degrade matching, it stops every conversion
+   * from being recorded at all. Do not split these back out.
+   *
+   * Why more than email: `hashed_email` only matches when the buyer's
+   * checkout email is the one on their X account, which for most shoppers it
+   * is not. X reported "CAPI events received, but none of your key
+   * conversions could be matched to a user" on 2026-09-15 with email as the
+   * only identifier, and the hashing was verified correct at the time, so the
+   * gap was coverage rather than correctness. IP and user agent let X match
+   * on the device that saw the ad.
+   *
+   * Only email and phone are hashed. Hashing IP or user agent would make them
+   * unmatchable.
+   */
+  const identifier = {};
+
+  const twclid = clickIds?._twclid;
+  if (twclid) identifier.twclid = twclid;
+
+  const email = order?.email || order?.contact_email || order?.customer?.email;
+  if (email) {
+    const hashed = await sha256Hex(email);
+    if (hashed) identifier.hashed_email = hashed;
+  }
+
+  const ip = order?.browser_ip || order?.client_details?.browser_ip;
+  if (ip) identifier.ip_address = String(ip);
+
+  const userAgent = order?.client_details?.user_agent;
+  if (userAgent) identifier.user_agent = String(userAgent);
+
+  if (Object.keys(identifier).length === 0) {
+    // Nothing to attribute on. Not an error, just an order X cannot match.
+    return {ok: false, reason: 'no_identifier'};
+  }
+
+  const identifiers = [identifier];
+
+  const items = Array.isArray(order.line_items) ? order.line_items : [];
+
+  const body = {
+    conversions: [
+      {
+        event_id: purchaseEventId,
+        conversion_time: new Date(
+          order.processed_at || order.created_at || Date.now(),
+        ).toISOString(),
+        identifiers,
+        /*
+         * value AND price_currency. Both, or X counts the conversion and
+         * reports no revenue against it.
+         *
+         * Caught on the first real attributed sale, 2026-09-15: Ads Manager
+         * showed Purchases 1 against the right ad, and "Purchases - sale
+         * amount" empty. The conversion arrived, the money did not, so cost per
+         * purchase was computable and ROAS was not. A bare `value` with nothing
+         * to denominate it in is not revenue.
+         *
+         * Shopify's orders/create body carries `currency`; `presentment_currency`
+         * is the fallback for a multi currency shop.
+         */
+        value:
+          order.total_price !== undefined
+            ? String(order.total_price)
+            : undefined,
+        price_currency: order.currency || order.presentment_currency || 'USD',
+        number_items: items.reduce(
+          (sum, item) => sum + (Number(item.quantity) || 0),
+          0,
+        ),
+        conversion_id: eventId,
+        contents: items.map((item) => ({
+          content_id:
+            item.product_id !== undefined ? String(item.product_id) : undefined,
+          content_name: item.title,
+          content_price:
+            item.price !== undefined ? String(item.price) : undefined,
+          num_items: item.quantity,
+        })),
+      },
+    ],
+  };
+
+  return postConversions(env, body.conversions);
+}
+
+/**
+ * The transport, shared by sendPurchase and sendEvent.
+ *
+ * Extracted when sendEvent was added, so the three auth modes, the relay's
+ * "200 carrying X's 401" trap and the timeout live in exactly one place. Two
+ * copies of this would drift, and the half that drifted would fail silently:
+ * every caller here already swallows errors by design so one destination
+ * cannot break a page or a webhook.
+ *
+ * @param {Record<string, string | undefined>} env
+ * @param {Array<object>} conversions
+ * @returns {Promise<{ok: boolean, reason?: string}>}
+ */
+async function postConversions(env, conversions) {
+  const mode = authMode(env);
+
+  // Relay: the connector signs, so this never builds an ads-api.x.com URL
+  // and never touches a credential.
+  if (mode === 'relay') {
+    try {
+      const res = await fetch(env.PRIVATE_X_RELAY_URL, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${env.PRIVATE_X_RELAY_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pixel_id: env.PUBLIC_X_PIXEL_ID,
+          conversions,
+        }),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) return {ok: false, reason: `relay_${res.status}`};
+      const out = await res.json().catch(() => null);
+      // The relay reports X's own status rather than its own, so a 200 from
+      // the worker carrying a 401 from X is still a failure here.
+      if (out && out.ok === false) {
+        return {ok: false, reason: `x_${out.status || 'error'}`};
+      }
+      return {ok: true};
+    } catch {
+      return {ok: false, reason: 'relay_unreachable'};
+    }
+  }
+
+  const url = `https://ads-api.x.com/${X_CAPI_VERSION}/measurement/conversions/${encodeURIComponent(
+    env.PUBLIC_X_PIXEL_ID,
+  )}`;
+
+  try {
+    const headers = {'Content-Type': 'application/json'};
+    if (mode === 'pixel_token') {
+      headers['X-Pixel-Token'] = env.PRIVATE_X_PIXEL_TOKEN;
+    } else {
+      headers.authorization = await oauth1Header({
+        method: 'POST',
+        url,
+        credentials: {
+          consumerKey: env.PRIVATE_X_CONSUMER_KEY,
+          consumerSecret: env.PRIVATE_X_CONSUMER_SECRET,
+          token: env.PRIVATE_X_ACCESS_TOKEN,
+          tokenSecret: env.PRIVATE_X_ACCESS_TOKEN_SECRET,
+        },
+      });
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({conversions}),
+      signal: AbortSignal.timeout(8000),
+    });
+
+    if (response.ok) return {ok: true};
+    // X reports per-conversion errors in the body with a 200 as well, but a
+    // non-2xx is always a real failure. Carry the status so a bad credential
+    // is distinguishable from a bad payload in the webhook's own logging.
+    return {ok: false, reason: `send_failed_${response.status}`};
+  } catch {
+    return {ok: false, reason: 'send_failed'};
+  }
+}
+
+/**
+ * Browser funnel events, server side. The other half of `sendPurchase`.
+ *
+ * WHY THIS EXISTS. X's Events Manager reported CAPI as "Partially set up:
+ * your CAPI setup is working, but it only covers a tiny fraction of your
+ * conversions", and it was right for a reason worse than the wording. This
+ * file used to implement `sendPurchase` and nothing else, so `/api/e` (the
+ * same-origin relay that exists precisely because content blockers kill
+ * uwt.js) filtered X out entirely: it fans out only to destinations that
+ * implement `sendEvent`, and only ga4.server.js did. A blocked visitor's
+ * page_view, view_item, add_to_cart and begin_checkout all reached GA4 and
+ * none of them reached X. X saw a blocked visitor as no visitor.
+ *
+ * NO DOUBLE COUNTING, by construction rather than by dedup. PixelBus only
+ * POSTs to /api/e when it has already determined the browser pixel did NOT
+ * load, so the pixel path and this path are mutually exclusive for a given
+ * visitor. This is the same contract ga4.server.js's sendEvent relies on.
+ * `conversion_id` is still sent when the caller supplies one, so X can also
+ * reconcile on its own if that assumption ever stops holding.
+ *
+ * IDENTIFIERS ARE THE BINDING CONSTRAINT HERE, more than on purchase. A
+ * purchase has the buyer's email; a page view has no email, no name and no
+ * order. All that is left is twclid (only present if they arrived from an X
+ * ad), and the request's IP and user agent. So this needs `ip` and
+ * `userAgent` threaded in from the request by api.e.jsx, and it no-ops
+ * rather than sending an unattributable event. Same single-object shape as
+ * sendPurchase: X rejects [{a},{b}] as "At least one user identifier must
+ * be provided" even when several were supplied. Do not split them out.
+ *
+ * Only the four events that have an X conversion event configured are sent.
+ * The rest of ALLOWED_EVENT_NAMES in api.e.jsx (view_item_list, select_item,
+ * remove_from_cart, view_cart, search) have no X equivalent defined in
+ * Events Manager, and inventing one would report an event against an id
+ * that means something else.
+ */
+const X_EVENT_ID_KEYS = {
+  page_view: 'PUBLIC_X_EVENT_ID_PAGE_VIEW',
+  view_item: 'PUBLIC_X_EVENT_ID_VIEW_CONTENT',
+  add_to_cart: 'PUBLIC_X_EVENT_ID_ADD_TO_CART',
+  begin_checkout: 'PUBLIC_X_EVENT_ID_BEGIN_CHECKOUT',
+  // Stream Chat Lite's confirmed signup, see normalizeSignupConfirmed in
+  // app/lib/analytics/events.js. No event id exists in X Ads Manager yet
+  // (same pending state the other X_EVENT_ID_KEYS started in,
+  // see x.js's file header) -- until PUBLIC_X_EVENT_ID_LEAD is set this
+  // just resolves to not_configured below, a safe no-op.
+  generate_lead: 'PUBLIC_X_EVENT_ID_LEAD',
+};
+
+/**
+ * @param {object} args
+ * @param {Record<string, string | undefined>} args.env
+ * @param {string} args.name Normalized event name from analytics/events.js.
+ * @param {Record<string, any>} args.params
+ * @param {Record<string, string>} args.clickIds
+ * @param {string} [args.ip] Caller's IP, from the request.
+ * @param {string} [args.userAgent] Caller's user agent, from the request.
+ * @param {string} [args.eventId] Optional dedup id.
+ * @returns {Promise<{ok: boolean, reason?: string}>}
+ */
+export async function sendEvent({
+  env,
+  name,
+  params,
+  clickIds,
+  ip,
+  userAgent,
+  hashedEmail,
+  eventId,
+}) {
+  if (!isConfigured(env)) return {ok: false, reason: 'not_configured'};
+
+  // The commission inquiry lead (pages.custom-widgets.jsx) is a ChatGPT Ads
+  // conversion, not an X one. X_EVENT_ID_KEYS maps generate_lead to the
+  // Stream Chat Lite signup event, so letting it through would report
+  // commission leads as free-chat signups and corrupt that optimisation.
+  if (name === 'generate_lead' && params?.method === 'custom-widgets') {
+    return {ok: false, reason: 'not_an_x_conversion'};
+  }
+
+  const key = X_EVENT_ID_KEYS[name];
+  if (!key) return {ok: false, reason: 'no_x_event_for_name'};
+  const xEventId = env?.[key];
+  if (!xEventId) return {ok: false, reason: 'not_configured'};
+
+  const identifier = {};
+  const twclid = clickIds?._twclid;
+  if (twclid) identifier.twclid = twclid;
+  /*
+   * hashed_email is the strongest identifier X takes short of a completed
+   * order, and until now every pre-purchase event went without one: a page
+   * view carries no email, and twclid only exists for an ad click (X's own
+   * diagnostics reported zero click ids across 191 events), so the funnel was
+   * matched on IP and user agent alone.
+   *
+   * Already hashed by app/lib/hashedEmail.server.js with the SAME
+   * normalization sha256Hex uses below for the purchase path, lowercased and
+   * trimmed then unsalted SHA256. If those two ever diverge the same person
+   * reads as two different people and matching silently halves.
+   */
+  if (hashedEmail) identifier.hashed_email = String(hashedEmail);
+  if (ip) identifier.ip_address = String(ip);
+  if (userAgent) identifier.user_agent = String(userAgent);
+
+  if (Object.keys(identifier).length === 0) {
+    return {ok: false, reason: 'no_identifier'};
+  }
+
+  const items = Array.isArray(params?.items) ? params.items : [];
+
+  const conversion = {
+    event_id: xEventId,
+    conversion_time: new Date().toISOString(),
+    identifiers: [identifier],
+  };
+
+  // value without price_currency reports a conversion with a blank sale
+  // amount, which is the exact fault that cost a day on the purchase path
+  // (see sendPurchase). Send both or neither.
+  if (params?.value !== undefined && params?.value !== null) {
+    conversion.value = String(params.value);
+    conversion.price_currency = params.currency || 'USD';
+  }
+
+  if (items.length) {
+    conversion.number_items = items.reduce(
+      (sum, item) => sum + (Number(item.quantity) || 1),
+      0,
+    );
+    conversion.contents = items.map((item) => ({
+      content_id: item.id !== undefined ? String(item.id) : undefined,
+      content_name: item.name,
+      content_price: item.price !== undefined ? String(item.price) : undefined,
+      num_items: item.quantity || 1,
+    }));
+  }
+
+  if (eventId) conversion.conversion_id = eventId;
+
+  return postConversions(env, [conversion]);
+}

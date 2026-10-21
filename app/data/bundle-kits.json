@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-10-15",
+  "source": "Kit component lists, joined to Shopify product handles; kit-exclusive pieces are not sold alone, so they are not in components.",
+  "kits": [
+    {
+      "name": "Spooky Stream Kit",
+      "handle": "spooky-stream-kit",
+      "components": [
+        "gid://shopify/Product/8591211266238",
+        "gid://shopify/Product/8591210840254",
+        "gid://shopify/Product/9020611264702",
+        "gid://shopify/Product/8998344884414",
+        "gid://shopify/Product/8537283821758",
+        "gid://shopify/Product/8537283788990",
+        "gid://shopify/Product/8537284346046"
+      ]
+    },
+    {
+      "name": "Celestial Stream Kit",
+      "handle": "celestial-stream-kit",
+      "components": [
+        "gid://shopify/Product/8962396881086",
+        "gid://shopify/Product/8962396946622",
+        "gid://shopify/Product/8537283559614",
+        "gid://shopify/Product/8537284149438",
+        "gid://shopify/Product/8537284280510",
+        "gid://shopify/Product/8537284313278",
+        "gid://shopify/Product/9020609790142",
+        "gid://shopify/Product/8537284247742"
+      ]
+    },
+    {
+      "name": "Multistream Chat Pack",
+      "handle": "multistream-chat-widget-pack",
+      "components": [
+        "gid://shopify/Product/8962396848318",
+        "gid://shopify/Product/9020610117822",
+        "gid://shopify/Product/8998345048254"
+      ]
+    },
+    {
+      "name": "Neon Circuit Stream Kit",
+      "handle": "neon-circuit-stream-kit",
+      "components": [
+        "gid://shopify/Product/8537283330238",
+        "gid://shopify/Product/8962396913854",
+        "gid://shopify/Product/8962396979390",
+        "gid://shopify/Product/8998347047102"
+      ]
+    },
+    {
+      "name": "Hanami Stream Kit",
+      "handle": "hanami-stream-kit",
+      "components": [
+        "gid://shopify/Product/8537283461310",
+        "gid://shopify/Product/8537283133630",
+        "gid://shopify/Product/8537283264702",
+        "gid://shopify/Product/8591210873022",
+        "gid://shopify/Product/8971182244030",
+        "gid://shopify/Product/8537284018366",
+        "gid://shopify/Product/8537285361854",
+        "gid://shopify/Product/8537286443198",
+        "gid://shopify/Product/8998346981566"
+      ]
+    },
+    {
+      "name": "Yuletide Stream Kit",
+      "handle": "yuletide-stream-kit",
+      "components": [
+        "gid://shopify/Product/8537285230782",
+        "gid://shopify/Product/8537286213822",
+        "gid://shopify/Product/8537286049982",
+        "gid://shopify/Product/8537286082750",
+        "gid://shopify/Product/8537286148286",
+        "gid://shopify/Product/8537286115518"
+      ]
+    }
+  ]
+}

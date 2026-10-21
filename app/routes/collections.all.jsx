@@ -1,0 +1,299 @@
+import {Form, Link, useLoaderData, useSearchParams} from 'react-router';
+import {Analytics, getPaginationVariables} from '@shopify/hydrogen';
+import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {ProductItem} from '~/components/ProductItem';
+import {
+  FreeChatProductCard,
+  SHOW_FREE_CHAT_GRID_CARD,
+} from '~/components/FreeChatProductCard';
+import {CATEGORY_LINKS} from '~/components/CollectionFilterBar';
+import {buildMeta, getOrigin} from '~/lib/seo';
+import {logoWebp as logo} from '~/lib/cdnAssets';
+import {brand} from '~/lib/brand.config';
+
+/**
+ * @type {Route.MetaFunction}
+ */
+export const meta = ({matches, location}) => {
+  const origin = getOrigin(matches);
+  return buildMeta({
+    title: `All Widgets | ${brand.name}`,
+    description:
+      'Browse every animated chat and goal widget: Twitch, YouTube, Kick, and multistream. Instant digital download.',
+    url: `${origin}${location.pathname}`,
+  });
+};
+
+/**
+ * @param {Route.LoaderArgs} args
+ */
+export async function loader(args) {
+  // Start fetching non-critical data without blocking time to first byte
+  const deferredData = loadDeferredData(args);
+
+  // Await the critical data required to render initial state of the page
+  const criticalData = await loadCriticalData(args);
+
+  return {...deferredData, ...criticalData};
+}
+
+/**
+ * Load data necessary for rendering content above the fold. This is the critical data
+ * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
+ * @param {Route.LoaderArgs}
+ */
+async function loadCriticalData({context, request}) {
+  const {storefront} = context;
+  const paginationVariables = getPaginationVariables(request, {
+    pageBy: 24,
+  });
+  const url = new URL(request.url);
+  const activeType = url.searchParams.get('type') || '';
+  const searchQuery = url.searchParams.get('q') || '';
+  // The homepage "New arrivals" row's "Shop all" link lands here with
+  // ?sort=newest, so newest-first has to be reachable from this page too.
+  // No other sort exists yet -- add one the same way if a second is ever
+  // needed.
+  const sort = url.searchParams.get('sort') || '';
+  const sortKey = sort === 'newest' ? 'CREATED_AT' : undefined;
+  const reverse = sort === 'newest';
+
+  const queryParts = [];
+  if (activeType) queryParts.push(`tag:${activeType}`);
+  if (searchQuery)
+    queryParts.push(`(title:*${searchQuery}* OR tag:*${searchQuery}*)`);
+
+  const [{products}] = await Promise.all([
+    storefront.query(CATALOG_QUERY, {
+      variables: {
+        ...paginationVariables,
+        query: queryParts.length ? queryParts.join(' AND ') : undefined,
+        sortKey,
+        reverse,
+      },
+    }),
+    // Add other queries here, so that they are loaded in parallel
+  ]);
+  return {products, activeType, searchQuery, sort};
+}
+
+/**
+ * Load data for rendering content below the fold. This data is deferred and will be
+ * fetched after the initial page load. If it's unavailable, the page should still 200.
+ * Make sure to not throw any errors here, as it will cause the page to 500.
+ * @param {Route.LoaderArgs}
+ */
+function loadDeferredData() {
+  return {};
+}
+
+export default function Collection() {
+  /** @type {LoaderReturnData} */
+  const {products, activeType, searchQuery} = useLoaderData();
+  const [searchParams] = useSearchParams();
+
+  const typeHref = (tag) => {
+    const params = new URLSearchParams(searchParams);
+    if (tag) {
+      params.set('type', tag);
+    } else {
+      params.delete('type');
+    }
+    const query = params.toString();
+    return query ? `/collections/all?${query}` : '/collections/all';
+  };
+
+  return (
+    <div className="collection">
+      <h1>Products</h1>
+      <div className="collection-filter-bar">
+        <div className="collection-filter-types">
+          <Link
+            to={typeHref('')}
+            className={`collection-filter-type${activeType ? '' : ' active'}`}
+            aria-current={activeType ? undefined : 'page'}
+          >
+            All products
+          </Link>
+          {CATEGORY_LINKS.map(({label, handle}) => (
+            <Link
+              key={handle}
+              to={`/collections/${handle}`}
+              className="collection-filter-type"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+        <Form
+          method="get"
+          className="collection-filter-search-form"
+          toolname="filter_widgets_in_collection"
+          tooldescription="Filter the widgets shown on this collection page by a search term."
+        >
+          {activeType && <input type="hidden" name="type" value={activeType} />}
+          <input
+            type="search"
+            name="q"
+            className="collection-filter-search"
+            placeholder="Search all widgets..."
+            defaultValue={searchQuery}
+            aria-label="Search all products"
+          />
+        </Form>
+      </div>
+      {products.nodes.length === 0 ? (
+        <div className="collection-empty">
+          <img src={logo} alt="" aria-hidden="true" />
+          <p>
+            No widgets match that search.{' '}
+            <Link to="/collections/all">Clear filters →</Link>
+          </p>
+        </div>
+      ) : (
+        <PaginatedResourceSection
+          connection={products}
+          resourcesClassName="products-grid"
+        >
+          {({node: product, index}) => (
+            <>
+              {SHOW_FREE_CHAT_GRID_CARD &&
+                index === 0 &&
+                !activeType &&
+                !searchQuery && (
+                  <FreeChatProductCard
+                    key="free-chat-lite"
+                    placement="collection-all"
+                  />
+                )}
+              <ProductItem
+                key={product.id}
+                product={product}
+                loading={index < 8 ? 'eager' : undefined}
+                listId="all-products"
+                listName="All Products"
+                index={index}
+              />
+            </>
+          )}
+        </PaginatedResourceSection>
+      )}
+      {/* This route is a products query, not a real Shopify collection, so
+          there is no collection object to hand Hydrogen. Without this the
+          main browse page published no collection_viewed at all and fired
+          no view_item_list, while every real /collections/<handle> page
+          did. The synthetic id/handle/title match the listId and listName
+          already passed to ProductItem above, so a click here reports the
+          same list it was viewed in. Shape of `products` must stay in sync
+          with normalizeViewItemList in app/lib/analytics/events.js. */}
+      <Analytics.CollectionView
+        data={{
+          collection: {
+            id: 'all-products',
+            handle: 'all-products',
+            title: 'All Products',
+          },
+          products: products.nodes.map((node, i) => ({
+            id: node.id,
+            title: node.title,
+            price: node.priceRange?.minVariantPrice?.amount,
+            productType: node.productType,
+            index: i,
+          })),
+        }}
+      />
+    </div>
+  );
+}
+
+const COLLECTION_ITEM_FRAGMENT = `#graphql
+  fragment MoneyCollectionItem on MoneyV2 {
+    amount
+    currencyCode
+  }
+  fragment CollectionItem on Product {
+    id
+    handle
+    title
+    productType
+    worksWith: metafield(namespace: "custom", key: "works_with") { value }
+    tags
+    gifSupport: metafield(namespace: "custom", key: "gif_support") { value }
+    featuredImage {
+      id
+      altText
+      url
+    }
+    media(first: 25) {
+      nodes {
+        __typename
+        ... on Video {
+          id
+          previewImage {
+            url
+          }
+          sources {
+            url
+            mimeType
+            format
+            width
+            height
+          }
+        }
+      }
+    }
+    priceRange {
+      minVariantPrice {
+        ...MoneyCollectionItem
+      }
+      maxVariantPrice {
+        ...MoneyCollectionItem
+      }
+    }
+    compareAtPriceRange {
+      minVariantPrice {
+        ...MoneyCollectionItem
+      }
+    }
+  }
+`;
+
+// NOTE: https://shopify.dev/docs/api/storefront/latest/objects/product
+const CATALOG_QUERY = `#graphql
+  query Catalog(
+    $country: CountryCode
+    $language: LanguageCode
+    $first: Int
+    $last: Int
+    $startCursor: String
+    $endCursor: String
+    $query: String
+    $sortKey: ProductSortKeys
+    $reverse: Boolean
+  ) @inContext(country: $country, language: $language) {
+    products(
+      first: $first
+      last: $last
+      before: $startCursor
+      after: $endCursor
+      query: $query
+      sortKey: $sortKey
+      reverse: $reverse
+    ) {
+      nodes {
+        ...CollectionItem
+      }
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+  ${COLLECTION_ITEM_FRAGMENT}
+`;
+
+/** @typedef {import('./+types/collections.all').Route} Route */
+/** @typedef {import('storefrontapi.generated').CollectionItemFragment} CollectionItemFragment */
+/** @typedef {ReturnType<typeof useLoaderData<typeof loader>>} LoaderReturnData */

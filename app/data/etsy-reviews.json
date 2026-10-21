@@ -1,0 +1,1455 @@
+{
+  "shop": {
+    "average": 4.76,
+    "count": 1024,
+    "soldCount": 7825,
+    "favoriteCount": 1339,
+    "url": "https://www.etsy.com/shop/StreamWidgetShop/reviews"
+  },
+  "generatedAt": "2026-10-20T12:13:30.286Z",
+  "sourceNote": "Public showcase copy: per-product rating aggregates only (count, average, distribution). Review text is not included in this repository, so `reviews` is empty for every product. Shape of one review: {rating: number, date: 'YYYY-MM-DD', text: string, language: string}.",
+  "products": {
+    "cute-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1758361648,
+      "count": 14,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 14
+      },
+      "reviews": []
+    },
+    "goth-spell-book-spooky-vibes-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "goth-spell-book-spooky-vibes-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1747633766,
+      "count": 17,
+      "average": 4.9,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 15
+      },
+      "reviews": []
+    },
+    "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download": {
+      "handle": "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
+      "etsyListingId": 1790018033,
+      "count": 54,
+      "average": 4.8,
+      "distribution": {
+        "1": 1,
+        "2": 2,
+        "3": 0,
+        "4": 3,
+        "5": 48
+      },
+      "reviews": []
+    },
+    "butterfly-galaxy-theme-glassy-transparent-chat-and-goal-stream-widgets-minimal-starry-elegant-glass-theme-clean-vibe-streamelement-only": {
+      "handle": "butterfly-galaxy-theme-glassy-transparent-chat-and-goal-stream-widgets-minimal-starry-elegant-glass-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4322607453,
+      "count": 8,
+      "average": 4.6,
+      "distribution": {
+        "1": 0,
+        "2": 1,
+        "3": 0,
+        "4": 0,
+        "5": 7
+      },
+      "reviews": []
+    },
+    "multistream-chat-widget-twitch-youtube-kick-overlay-digital-download-easy-setup-one-click-installation": {
+      "handle": "multistream-chat-widget-twitch-youtube-kick-overlay-digital-download-easy-setup-one-click-installation",
+      "etsyListingId": 4536576701,
+      "count": 11,
+      "average": 4.9,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 10
+      },
+      "reviews": []
+    },
+    "gothic-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "gothic-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1834826106,
+      "count": 6,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 6
+      },
+      "reviews": []
+    },
+    "combo-goal-widget-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "combo-goal-widget-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1790033028,
+      "count": 47,
+      "average": 4.7,
+      "distribution": {
+        "1": 2,
+        "2": 0,
+        "3": 2,
+        "4": 3,
+        "5": 40
+      },
+      "reviews": []
+    },
+    "animated-moon-jar-goal-widget-twitch-sub-goal-overlay-falling-stars-tracker-instant-download": {
+      "handle": "animated-moon-jar-goal-widget-twitch-sub-goal-overlay-falling-stars-tracker-instant-download",
+      "etsyListingId": 4551047317,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only": {
+      "handle": "neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4333471272,
+      "count": 82,
+      "average": 4.7,
+      "distribution": {
+        "1": 3,
+        "2": 1,
+        "3": 2,
+        "4": 4,
+        "5": 72
+      },
+      "reviews": []
+    },
+    "full-moon-bar-loading-goal-widget-is-fully-customisable-for-twitch-streamelements-and-obs-bar-goal-widget": {
+      "handle": "full-moon-bar-loading-goal-widget-is-fully-customisable-for-twitch-streamelements-and-obs-bar-goal-widget",
+      "etsyListingId": 1904185485,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "halloween-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "halloween-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1792249804,
+      "count": 13,
+      "average": 4.9,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 12
+      },
+      "reviews": []
+    },
+    "pastel-cloud-stream-widget-cute-rainbow-cloud-fully-customisable-goal-widget-for-streamlabs-and-streamelements": {
+      "handle": "pastel-cloud-stream-widget-cute-rainbow-cloud-fully-customisable-goal-widget-for-streamlabs-and-streamelements",
+      "etsyListingId": 1797937195,
+      "count": 13,
+      "average": 4.8,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 11
+      },
+      "reviews": []
+    },
+    "halloween-eye-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "halloween-eye-potion-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1805179619,
+      "count": 10,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 10
+      },
+      "reviews": []
+    },
+    "classical-tarot-card-chat-and-goal-widget-minimal-mystical-elegant-theme-alerts-for-twitch-streams-streamelements-only": {
+      "handle": "classical-tarot-card-chat-and-goal-widget-minimal-mystical-elegant-theme-alerts-for-twitch-streams-streamelements-only",
+      "etsyListingId": 1892179450,
+      "count": 6,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 6
+      },
+      "reviews": []
+    },
+    "diamond-butterfly-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-stream-elements": {
+      "handle": "diamond-butterfly-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-stream-elements",
+      "etsyListingId": 1771365068,
+      "count": 18,
+      "average": 4.7,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 1,
+        "4": 3,
+        "5": 14
+      },
+      "reviews": []
+    },
+    "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only": {
+      "handle": "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4336744223,
+      "count": 10,
+      "average": 4.9,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 9
+      },
+      "reviews": []
+    },
+    "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only": {
+      "handle": "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4322617816,
+      "count": 15,
+      "average": 4.7,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 14
+      },
+      "reviews": []
+    },
+    "nature-portion-bottle-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-streamelements-streamlabs-obs": {
+      "handle": "nature-portion-bottle-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-streamelements-streamlabs-obs",
+      "etsyListingId": 1707804164,
+      "count": 42,
+      "average": 4.8,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 5,
+        "5": 36
+      },
+      "reviews": []
+    },
+    "cute-rabbit-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-rabbit-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1730461418,
+      "count": 33,
+      "average": 4.7,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 2,
+        "4": 2,
+        "5": 28
+      },
+      "reviews": []
+    },
+    "neon-animated-multistream-chat-widget-twitch-youtube-kick-overlay-digital-download": {
+      "handle": "neon-animated-multistream-chat-widget-twitch-youtube-kick-overlay-digital-download",
+      "etsyListingId": 4539065835,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "y2k-sticker-chat-widget-retro-alerts-multistream-obs-ready-digital-download": {
+      "handle": "y2k-sticker-chat-widget-retro-alerts-multistream-obs-ready-digital-download",
+      "etsyListingId": 4543765531,
+      "count": 4,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 4
+      },
+      "reviews": []
+    },
+    "classical-floral-red-chat-and-goal-widget-minimal-starry-mystical-chat-box-with-pronouns-alerts-for-twitch-streamelements": {
+      "handle": "classical-floral-red-chat-and-goal-widget-minimal-starry-mystical-chat-box-with-pronouns-alerts-for-twitch-streamelements",
+      "etsyListingId": 4315451056,
+      "count": 2,
+      "average": 4.5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "broken-star-bar-loading-goal-widget-is-fully-customisable-for-twitch-streamelements-and-obs-bar-goal-widget": {
+      "handle": "broken-star-bar-loading-goal-widget-is-fully-customisable-for-twitch-streamelements-and-obs-bar-goal-widget",
+      "etsyListingId": 1888424656,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "boba-drink-cute-fruit-drink-goal-widget-for-twitch-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "boba-drink-cute-fruit-drink-goal-widget-for-twitch-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1712229820,
+      "count": 16,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 16
+      },
+      "reviews": []
+    },
+    "cute-owl-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-owl-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1742236253,
+      "count": 4,
+      "average": 3.5,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 1,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "sakura-petal-butterfly-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only": {
+      "handle": "sakura-petal-butterfly-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4320003692,
+      "count": 12,
+      "average": 4.4,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 1,
+        "4": 1,
+        "5": 9
+      },
+      "reviews": []
+    },
+    "sakura-animated-twitch-chat-widget-kawaii-cherry-blossom-stream-decor-digital-download": {
+      "handle": "sakura-animated-twitch-chat-widget-kawaii-cherry-blossom-stream-decor-digital-download",
+      "etsyListingId": 4505167275,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "pastel-color-minimal-chat-bubble-for-twitch-streamers-streamlements-only-setup-through-obs": {
+      "handle": "pastel-color-minimal-chat-bubble-for-twitch-streamers-streamlements-only-setup-through-obs",
+      "etsyListingId": 4341725255,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "cute-froggy-goal-widget-liquid-filling-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-froggy-goal-widget-liquid-filling-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1763385692,
+      "count": 10,
+      "average": 4.8,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 1,
+        "4": 0,
+        "5": 9
+      },
+      "reviews": []
+    },
+    "mushroom-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "mushroom-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1790037076,
+      "count": 9,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 9
+      },
+      "reviews": []
+    },
+    "sparkling-bubble-sakura-flower-stream-chat-widgets-glassy-chat-with-flowers-and-petals": {
+      "handle": "sparkling-bubble-sakura-flower-stream-chat-widgets-glassy-chat-with-flowers-and-petals",
+      "etsyListingId": 4369470796,
+      "count": 6,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 6
+      },
+      "reviews": []
+    },
+    "lotus-butterfly-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only": {
+      "handle": "lotus-butterfly-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4310437865,
+      "count": 7,
+      "average": 3.7,
+      "distribution": {
+        "1": 2,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 4
+      },
+      "reviews": []
+    },
+    "celestial-moon-cute-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "celestial-moon-cute-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1728594513,
+      "count": 14,
+      "average": 4.8,
+      "distribution": {
+        "1": 0,
+        "2": 1,
+        "3": 0,
+        "4": 0,
+        "5": 13
+      },
+      "reviews": []
+    },
+    "dreamy-moon-cloud-glass-goal-widget-customisable-for-twitch-and": {
+      "handle": "dreamy-moon-cloud-glass-goal-widget-customisable-for-twitch-and",
+      "etsyListingId": 1707756402,
+      "count": 75,
+      "average": 4.7,
+      "distribution": {
+        "1": 3,
+        "2": 1,
+        "3": 0,
+        "4": 6,
+        "5": 65
+      },
+      "reviews": []
+    },
+    "pokemon-charizard-character-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "pokemon-charizard-character-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1881347726,
+      "count": 9,
+      "average": 4.6,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 8
+      },
+      "reviews": []
+    },
+    "moon-glow-neon-aesthetic-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only": {
+      "handle": "moon-glow-neon-aesthetic-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4336740821,
+      "count": 12,
+      "average": 4.7,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 4,
+        "5": 8
+      },
+      "reviews": []
+    },
+    "halloween-spooky-neon-chat-widget-transparent-neon-glow-theme-streamelements": {
+      "handle": "halloween-spooky-neon-chat-widget-transparent-neon-glow-theme-streamelements",
+      "etsyListingId": 4358908164,
+      "count": 5,
+      "average": 4.4,
+      "distribution": {
+        "1": 0,
+        "2": 1,
+        "3": 0,
+        "4": 0,
+        "5": 4
+      },
+      "reviews": []
+    },
+    "glowing-moon-chat-stream-widget-starry-night-theme-streamelements": {
+      "handle": "glowing-moon-chat-stream-widget-starry-night-theme-streamelements",
+      "etsyListingId": 4348428360,
+      "count": 8,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 8
+      },
+      "reviews": []
+    },
+    "saber-neon-chat-widget-twitch-streamelements-animated-glow-chat-goal-overlay-vtuber-streamer-obs": {
+      "handle": "saber-neon-chat-widget-twitch-streamelements-animated-glow-chat-goal-overlay-vtuber-streamer-obs",
+      "etsyListingId": 4473894910,
+      "count": 2,
+      "average": 4.5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "celestial-butterfly-chat-and-goal-stream-widgets-minimal-elegant-celestial-theme-clean-vibe-streamelement-only": {
+      "handle": "celestial-butterfly-chat-and-goal-stream-widgets-minimal-elegant-celestial-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4339053159,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "broken-heart-bar-loading-goal-widget-is-fully-customisable-for-twitch-streamelements-and-obs-bar-goal-widget": {
+      "handle": "broken-heart-bar-loading-goal-widget-is-fully-customisable-for-twitch-streamelements-and-obs-bar-goal-widget",
+      "etsyListingId": 1902602881,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "heart-skeleton-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "heart-skeleton-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1797449100,
+      "count": 11,
+      "average": 4.6,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 10
+      },
+      "reviews": []
+    },
+    "lunar-cat-aesthetic-dark-purple-chat-goal-stream-widgets-animated-celestial-elegant-lunar-theme-clean-vibe-streamelement-only": {
+      "handle": "lunar-cat-aesthetic-dark-purple-chat-goal-stream-widgets-animated-celestial-elegant-lunar-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4333466716,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "cute-bulbasaur-pok-e-mon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements": {
+      "handle": "cute-bulbasaur-pok-e-mon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements",
+      "etsyListingId": 1771354232,
+      "count": 21,
+      "average": 4.7,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 18
+      },
+      "reviews": []
+    },
+    "cute-peach-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-streamelements-streamlabs-obs": {
+      "handle": "cute-peach-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-streamelements-streamlabs-obs",
+      "etsyListingId": 1723478277,
+      "count": 34,
+      "average": 4.6,
+      "distribution": {
+        "1": 3,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 29
+      },
+      "reviews": []
+    },
+    "lunar-cat-aesthetic-light-purple-chat-goal-stream-widgets-animated-celestial-elegant-lunar-theme-clean-vibe-streamelement-only": {
+      "handle": "lunar-cat-aesthetic-light-purple-chat-goal-stream-widgets-animated-celestial-elegant-lunar-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4333468758,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "plants-vibe-dreamy-chat-goal-stream-widgets-minimal-celestial-nature-theme-clean-vibe-streamelement-only": {
+      "handle": "plants-vibe-dreamy-chat-goal-stream-widgets-minimal-celestial-nature-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4325051591,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "christmas-combo-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "christmas-combo-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1824587286,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "classical-floral-purple-chat-and-goal-widget-minimal-starry-mystical-chat-box-with-pronouns-alerts-for-twitch-streams-streamelements": {
+      "handle": "classical-floral-purple-chat-and-goal-widget-minimal-starry-mystical-chat-box-with-pronouns-alerts-for-twitch-streams-streamelements",
+      "etsyListingId": 4314558793,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "minimal-halloween-chat-widget-creepy-skull-ghost-theme-streamelements": {
+      "handle": "minimal-halloween-chat-widget-creepy-skull-ghost-theme-streamelements",
+      "etsyListingId": 4362041097,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "lantern-aesthetic-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "lantern-aesthetic-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1772576667,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "halloween-spooky-tea-bag-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "halloween-spooky-tea-bag-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1806974501,
+      "count": 3,
+      "average": 4.3,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "retro-file-love-chat-widget-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-love-goal": {
+      "handle": "retro-file-love-chat-widget-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-love-goal",
+      "etsyListingId": 4297334656,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "sakura-dessert-loading-goal-widget-is-fully-customisable-for-twitch-streamelements": {
+      "handle": "sakura-dessert-loading-goal-widget-is-fully-customisable-for-twitch-streamelements",
+      "etsyListingId": 1763459664,
+      "count": 4,
+      "average": 3,
+      "distribution": {
+        "1": 2,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "floral-purple-chat-widget-minimal-starry-mystical-elegant-theme-chat-box-with-pronouns-alerts-for-twitch-streams-streamelements": {
+      "handle": "floral-purple-chat-widget-minimal-starry-mystical-elegant-theme-chat-box-with-pronouns-alerts-for-twitch-streams-streamelements",
+      "etsyListingId": 1763900071,
+      "count": 18,
+      "average": 4.9,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 16
+      },
+      "reviews": []
+    },
+    "pastel-bubble-chat-widget-pastel-gradient-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-bubble-goal": {
+      "handle": "pastel-bubble-chat-widget-pastel-gradient-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-bubble-goal",
+      "etsyListingId": 1904486343,
+      "count": 5,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 5
+      },
+      "reviews": []
+    },
+    "butterfly-vibe-combo-goal-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "butterfly-vibe-combo-goal-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1858698516,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "cute-moon-panda-combo-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-moon-panda-combo-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1728586845,
+      "count": 8,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 8
+      },
+      "reviews": []
+    },
+    "cute-spooky-bat-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-spooky-bat-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1775661417,
+      "count": 14,
+      "average": 4.6,
+      "distribution": {
+        "1": 0,
+        "2": 1,
+        "3": 1,
+        "4": 1,
+        "5": 11
+      },
+      "reviews": []
+    },
+    "christmas-holly-leaves-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "christmas-holly-leaves-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1839823855,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "cute-minimalist-heart-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-minimalist-heart-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1721971396,
+      "count": 7,
+      "average": 4,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 1,
+        "4": 1,
+        "5": 4
+      },
+      "reviews": []
+    },
+    "pokemon-eevee-character-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements": {
+      "handle": "pokemon-eevee-character-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-streamelements",
+      "etsyListingId": 1881257942,
+      "count": 6,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 6
+      },
+      "reviews": []
+    },
+    "cute-bat-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-bat-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1809138683,
+      "count": 3,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 3
+      },
+      "reviews": []
+    },
+    "spooky-cauldron-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-stream-elements": {
+      "handle": "spooky-cauldron-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-stream-elements",
+      "etsyListingId": 1785478023,
+      "count": 28,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 27
+      },
+      "reviews": []
+    },
+    "cute-sea-horse-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-sea-horse-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1895254409,
+      "count": 1,
+      "average": 4,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 0
+      },
+      "reviews": []
+    },
+    "halloween-neon-vibes-stream-chat-widgets-transparent-neon-glow-theme-streamelements": {
+      "handle": "halloween-neon-vibes-stream-chat-widgets-transparent-neon-glow-theme-streamelements",
+      "etsyListingId": 4358899434,
+      "count": 2,
+      "average": 4.5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "twin-skull-berry-goal-widget-cute-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "twin-skull-berry-goal-widget-cute-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1795999492,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "star-bottle-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-streamelements-streamlabs-obs": {
+      "handle": "star-bottle-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-streamelements-streamlabs-obs",
+      "etsyListingId": 1723688245,
+      "count": 6,
+      "average": 3.3,
+      "distribution": {
+        "1": 2,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "cute-seal-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-stream-elements": {
+      "handle": "cute-seal-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-stream-elements",
+      "etsyListingId": 1820781516,
+      "count": 3,
+      "average": 3.7,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "water-fire-nature-cloud-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "water-fire-nature-cloud-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1744034158,
+      "count": 3,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 3
+      },
+      "reviews": []
+    },
+    "halloween-spider-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "halloween-spider-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 4342607027,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "game-machine-old-arcade-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "game-machine-old-arcade-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1858669918,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "stream-widget-devil-and-angel-combo-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "stream-widget-devil-and-angel-combo-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1780969806,
+      "count": 15,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 15
+      },
+      "reviews": []
+    },
+    "minimal-line-chat-widget-simple-line-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-progress-goal": {
+      "handle": "minimal-line-chat-widget-simple-line-minimal-theme-with-pronouns-alerts-for-twitch-streams-streamelements-only-with-progress-goal",
+      "etsyListingId": 4297334909,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "dreamy-lotus-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only": {
+      "handle": "dreamy-lotus-glass-transparent-chat-and-goal-stream-widgets-minimal-elegant-glass-theme-clean-vibe-streamelement-only",
+      "etsyListingId": 4328622333,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "cute-auctopus-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-auctopus-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1888414230,
+      "count": 3,
+      "average": 4.7,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "cute-cow-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-cow-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1849166777,
+      "count": 4,
+      "average": 4.3,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 1,
+        "4": 1,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "cute-bunny-chat-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-bunny-chat-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1730459480,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "envelope-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-stream-elements": {
+      "handle": "envelope-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-stream-elements",
+      "etsyListingId": 1834953893,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "sparkling-diamond-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "sparkling-diamond-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1881111390,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "valorant-brimstone-character-chat-and-goal-widget-gaming-modern-theme-with-pronouns-alerts-for-twitch-streamelements-only": {
+      "handle": "valorant-brimstone-character-chat-and-goal-widget-gaming-modern-theme-with-pronouns-alerts-for-twitch-streamelements-only",
+      "etsyListingId": 4306870352,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "pikachu-goal-pokemon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements": {
+      "handle": "pikachu-goal-pokemon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-tiktok-studio-and-stream-elements",
+      "etsyListingId": 1785601401,
+      "count": 7,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 7
+      },
+      "reviews": []
+    },
+    "cute-chicken-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-chicken-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1834815562,
+      "count": 5,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 5
+      },
+      "reviews": []
+    },
+    "spooky-skull-moon-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "spooky-skull-moon-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1810190709,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "cute-blue-whale-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-blue-whale-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1714418210,
+      "count": 3,
+      "average": 4.7,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "cute-love-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-love-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1791485718,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "p2u-glassy-chat-and-goal-widget-combo-minimal-modern-elegant-theme-alerts-for-twitch-streams-streamelements-only": {
+      "handle": "p2u-glassy-chat-and-goal-widget-combo-minimal-modern-elegant-theme-alerts-for-twitch-streams-streamelements-only",
+      "etsyListingId": 1892198146,
+      "count": 1,
+      "average": 1,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "reviews": []
+    },
+    "cute-cat-paw-alert-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-cat-paw-alert-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1849162325,
+      "count": 6,
+      "average": 4.7,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 4
+      },
+      "reviews": []
+    },
+    "starry-stream-widget-moon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "starry-stream-widget-moon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1742742952,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "spooky-skull-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "spooky-skull-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1810207793,
+      "count": 2,
+      "average": 3,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "cute-melting-moon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-melting-moon-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1726399702,
+      "count": 4,
+      "average": 3.8,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "tombstone-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "tombstone-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1758354750,
+      "count": 4,
+      "average": 4.8,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 3
+      },
+      "reviews": []
+    },
+    "cute-bloodworm-nature-insects-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-bloodworm-nature-insects-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1725330698,
+      "count": 3,
+      "average": 3.7,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "love-pumpkin-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "love-pumpkin-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1797446192,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "christmas-candy-cane-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "christmas-candy-cane-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1839828093,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "casino-card-slot-icon-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-streamelements-streamlabs-obs": {
+      "handle": "casino-card-slot-icon-glass-goal-widget-cute-minimal-customizable-goal-widget-for-twitch-streamelements-streamlabs-obs",
+      "etsyListingId": 1722104747,
+      "count": 3,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 3
+      },
+      "reviews": []
+    },
+    "cute-sand-timer-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-sand-timer-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1728033126,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "twin-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "twin-ghost-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1806958699,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "cat-goth-goal-widget-cat-skull-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cat-goth-goal-widget-cat-skull-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1790102864,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "snowman-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "snowman-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1827920187,
+      "count": 4,
+      "average": 4,
+      "distribution": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 3
+      },
+      "reviews": []
+    },
+    "cute-star-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "cute-star-bottle-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1720725716,
+      "count": 2,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2
+      },
+      "reviews": []
+    },
+    "10x-frog-emotes-pack-1-2-for-twitch-cute-little-froggy-kawaii-twitch-add-on-stream-deco-cute-froggy": {
+      "handle": "10x-frog-emotes-pack-1-2-for-twitch-cute-little-froggy-kawaii-twitch-add-on-stream-deco-cute-froggy",
+      "etsyListingId": 1736513808,
+      "count": 1,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1
+      },
+      "reviews": []
+    },
+    "yakitori-skewered-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements": {
+      "handle": "yakitori-skewered-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "etsyListingId": 1735046293,
+      "count": 4,
+      "average": 5,
+      "distribution": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 4
+      },
+      "reviews": []
+    }
+  }
+}

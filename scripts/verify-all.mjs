@@ -1,0 +1,165 @@
+/**
+ * Runs EVERY channel health check, then reports.
+ *
+ * WHY THIS FILE EXISTS. `verify:all` used to be a chain of `&&`, so the first
+ * non-zero exit stopped the run. On 2026-09-15 one check failed on two live
+ * products, which is a known long lived blocker, and that single
+ * expected failure silently skipped the last three checks in the chain:
+ * verify-test-order-filter, verify-tracking and verify-feed. A nightly routine
+ * that stops checking the moment it finds its first known problem is not a
+ * nightly routine. The three skipped checks cover the test order guard in
+ * front of all revenue reporting, conversion tracking, and the product feed
+ * every sales channel consumes, so the checks being skipped were the ones
+ * guarding the money.
+ *
+ * Every check now runs to completion, output is streamed as it happens, and a
+ * summary at the end says which passed and which failed. The exit code is
+ * still 1 if anything failed, so CI and the nightly routine behave the same.
+ *
+ *   node scripts/verify-all.mjs
+ */
+import {spawnSync} from 'node:child_process';
+
+const CHECKS = [
+  /*
+   * --live, not the bare run, and that flag is the whole point of the check.
+   *
+   * The Meta pixel assertion was added to verify-channels on 2026-09-19 for
+   * exactly one failure mode: PUBLIC_META_PIXEL_ID is unset on Oxygen, the
+   * adapter no-ops, and a missing pixel and a quiet day are byte-for-byte the
+   * same page. It only runs behind --live, because it has to fetch the served
+   * HTML to see what is actually in it. This list called the script with no
+   * arguments, so the nightly suite ran the offline half and printed
+   * PASS channels on 2026-09-19 while `npm run verify:channels` failed on the
+   * same repo, in the same minute, on the same missing pixel.
+   *
+   * A check built so a fault cannot go quiet, invoked in the one place that
+   * runs every night, in the mode that cannot see the fault.
+   */
+  ['channels', 'scripts/verify-channels.mjs', {}, ['--live']],
+  ['catalog', 'scripts/audit-catalog.mjs', {}],
+  ['shipping', 'scripts/audit-shipping.mjs', {}],
+  ['policy claims', 'scripts/audit-policy-claims.mjs', {}],
+  ['test order filter', 'scripts/verify-test-order-filter.mjs', {}],
+  ['live banner gate', 'scripts/verify-live-banner.mjs', {}],
+  ['tracking', 'scripts/verify-tracking.mjs', {}],
+  ['first-party session', 'scripts/verify-first-party-session.mjs', {}],
+  ['X funnel events', 'scripts/verify-x-events.mjs', {}],
+  ['feed', 'scripts/verify-feed.mjs', {}],
+  ['feed csv (X spec)', 'scripts/verify-feed-csv.mjs', {}],
+  ['feed csv (Pinterest spec)', 'scripts/verify-feed-pinterest.mjs', {}],
+  // --gate, not the bare run. See the BACKLOG_HIGH_WATER comment in that
+  // file: 70 descriptions are a counted rewrite queue being worked off a
+  // batch a night, and the gate fails if that queue GROWS or if anything is
+  // wrong with a product outside it.
+  ['descriptions', 'scripts/audit-descriptions.mjs', {}, ['--gate']],
+  // A sample, not the whole catalogue: this one fetches the rendered page AND
+  // the image bytes for each product, so 122 of them would dominate the run.
+  // Best-selling first, because those are the links that actually get shared.
+  ['share cards', 'scripts/audit-share-cards.mjs', {}, ['--limit', '8']],
+  // Search Console found three different missing fields in this markup on
+  // three separate days, each time before anything here did. It is a lagging
+  // indicator by design, so the same questions get asked locally now.
+  ['structured data', 'scripts/audit-structured-data.mjs', {}, ['--limit', '6']],
+  // Title + meta description drift over every product and collection. Runs
+  // the full catalogue, not a sample, see the header in that file for why.
+  ['seo fields', 'scripts/audit-seo.mjs', {}],
+  // The PDP answer block. Generated from the catalogue, so a template
+  // change is a catalogue-wide change, which is exactly what a check is
+  // for. Text only here; the --live form fetches real pages and belongs in
+  // the post-deploy pass, not in a check that has to run offline.
+  ['answer blocks', 'scripts/audit-answer-blocks.mjs', {}],
+  // Alt text on every product image. This is catalogue DATA, not code, so it
+  // regresses the moment anyone adds a product or an image through the API:
+  // productCreate and productCreateMedia both leave alt empty, which is how
+  // 676 of 918 media nodes ended up with none.
+  // FAQPage markup on the FAQ page and every PDP. Built from the Shopify page
+  // body, which can be edited without touching this repo, so the question
+  // count on the page and the Question count in the markup are asserted equal
+  // rather than assumed. Text form here; --live belongs in the post-deploy pass.
+  // Multistream claims. A platform name in works_with means "a chat source
+  // this widget reads" on a chat widget and "somewhere the streamer can be
+  // live" on a goal widget, and conflating the two put a ribbon reading
+  // "reads chat from more than one platform" on two widgets that read none.
+  // Catalogue DATA, so it regresses whenever a metafield or a product type
+  // is edited in Admin.
+  // The self-test runs FIRST, and it is here because on 2026-09-22 this audit
+  // shipped with its own fixtures at 9/13 and nothing in this list ran them.
+  // Four of its cases and its first rule still described the definition of
+  // isMultistream that the same commit had replaced, so the live check failed
+  // two goal widgets whose pages were already correct and the only evidence
+  // that the check itself was wrong sat behind an npm script nobody ran.
+  ['multistream rules', 'scripts/audit-multistream.mjs', {}, ['--self-test']],
+  ['multistream claims', 'scripts/audit-multistream.mjs', {}],
+  // Stream Chat Lite offers Twitch and Kick only (2026-10-05). Offline
+  // source scan of every free-chat surface, self-test first.
+  ['free chat platforms rules', 'scripts/audit-free-chat-platforms.mjs', {}, ['--self-test']],
+  ['free chat platforms claims', 'scripts/audit-free-chat-platforms.mjs', {}],
+  ['FAQ JSON-LD', 'scripts/audit-faq-jsonld.mjs', {}],
+  // What /llms.txt says about each product, held to its works_with. The
+  // self-test runs first for the reason given above the multistream pair.
+  ['llms.txt rules', 'scripts/audit-llms-txt.mjs', {}, ['--self-test']],
+  ['llms.txt claims', 'scripts/audit-llms-txt.mjs', {}],
+  ['alt text', 'scripts/audit-alt-text.mjs', {}],
+  /*
+   * A product video may be crawlable on its PDP and nowhere else. Search
+   * Console sat at "Video isn't on a watch page" on 66 of 113 videos from
+   * 2026-09-14 to 2026-09-23 with nothing here able to see it, because the
+   * defect is not in the markup a schema audit reads: it is the same file
+   * appearing on a page that is not about it. Self-test first, same reason as
+   * multistream above. The live half fetches production, so until the fix is
+   * deployed this FAILS, and that failure is the fault, not the check.
+   */
+  ['watch pages (self-test)', 'scripts/audit-watch-pages.mjs', {}, ['--self-test']],
+  ['watch pages', 'scripts/audit-watch-pages.mjs', {}],
+  /*
+   * Is the sitemap telling the truth. site health below proves every listed URL
+   * loads; it cannot see that the sitemap lists the wrong URLs or dates them
+   * wrong. On 2026-10-05 all 141 product URLs carried today's lastmod because
+   * the Storefront API's sitemap(type: PRODUCT).updatedAt is the request time.
+   * Checks membership against the published catalogue, every listed URL, and
+   * that lastmod is valid, not future, varied, and not newer than the real
+   * updatedAt. Self-test first, same reason as multistream above. The live half
+   * fetches production, so until the fix is deployed this FAILS on lastmod, and
+   * that failure is the fault, not the check.
+   */
+  ['sitemap rules', 'scripts/audit-sitemap.mjs', {}, ['--self-test']],
+  ['sitemap', 'scripts/audit-sitemap.mjs', {}],
+  /*
+   * LAST on purpose. Every check above fetches the live site, so if this one
+   * fails their results describe older code than the repo contains, and the
+   * reader needs to know that after seeing them, not before.
+   */
+  /*
+   * Does every page load at all. Every other check asks a narrow question of
+   * a product; the site is also collections, policies, pages, a blog, a cart
+   * and an account area, and a dead one of those was invisible to all of them.
+   */
+  ['site health', 'scripts/audit-site-health.mjs', {}],
+  ['deploy freshness', 'scripts/audit-deploy-freshness.mjs', {}],
+];
+
+const results = [];
+
+for (const [name, script, extraEnv, args = []] of CHECKS) {
+  console.log(`\n${'='.repeat(64)}\n${name}\n${'='.repeat(64)}`);
+  const run = spawnSync(process.execPath, [script, ...args], {
+    stdio: 'inherit',
+    env: {...process.env, ...extraEnv},
+  });
+  const code = run.status === null ? 1 : run.status;
+  results.push([name, code]);
+}
+
+console.log(`\n${'='.repeat(64)}\nSUMMARY\n${'='.repeat(64)}`);
+for (const [name, code] of results) {
+  console.log(`  ${code === 0 ? 'PASS' : 'FAIL'}  ${name}`);
+}
+
+const failed = results.filter(([, code]) => code !== 0);
+console.log(
+  `\n${results.length - failed.length}/${results.length} checks passed.` +
+    (failed.length ? ` Failed: ${failed.map(([n]) => n).join(', ')}` : ''),
+);
+
+process.exit(failed.length ? 1 : 0);

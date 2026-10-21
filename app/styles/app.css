@@ -1,0 +1,7847 @@
+/*
+ * Self hosted, not fetched from Google Fonts.
+ *
+ * Lighthouse on the live homepage put 0.1322 of the page's 0.1323 CLS on one
+ * element, `div.hero-grid`, with the cause named as "Web font loaded" and the
+ * URL given as the Baloo 2 woff2 on fonts.gstatic.com. Google's stylesheet
+ * ships `display=swap`, which guarantees exactly that reflow: the hero paints
+ * in the fallback, then jumps when the real face arrives a cross-origin round
+ * trip later.
+ *
+ * Serving the same two variable fonts from our own origin means they can be
+ * PRELOADED (see root.jsx) and arrive in the first wave rather than after a
+ * render blocking stylesheet on a third party host. It also removes a
+ * render blocking request, two preconnects, and a third party dependency.
+ *
+ * The unicode-range values are copied verbatim from Google's own stylesheet,
+ * so latin-ext is still only downloaded by a page that actually needs it.
+ *
+ * Both families are VARIABLE fonts, one file each covering every weight the
+ * site uses (Baloo 2 700 and 800, Nunito 400, 700 and 800), which is why
+ * there are four files and not ten.
+ */
+
+@font-face {
+  font-family: 'Baloo 2';
+  font-style: normal;
+  font-weight: 700 800;
+  font-display: swap;
+  src: url('../assets/fonts/baloo-2-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Baloo 2';
+  font-style: normal;
+  font-weight: 700 800;
+  font-display: swap;
+  src: url('../assets/fonts/baloo-2-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('../assets/fonts/nunito-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('../assets/fonts/nunito-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../assets/fonts/space-grotesk-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../assets/fonts/space-grotesk-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/*
+* --------------------------------------------------
+* SWS brand tokens, edit these to restyle the whole site
+* --------------------------------------------------
+*/
+/*
+ * Metric matched fallbacks. This is what actually fixes the layout shift.
+ *
+ * Self hosting and preloading the fonts (above) shortened the window before
+ * the real face arrives, but `font-display: swap` still swaps AFTER first
+ * paint, and the fallback was not the same width, so the hero still reflowed.
+ * Lighthouse reported CLS 0.132 on `div.hero-grid` with the cause "Web font
+ * loaded" both BEFORE and AFTER the self hosting change, which is how it was
+ * caught: the number did not move at all.
+ *
+ * `size-adjust` scales the fallback so it occupies the same space as the real
+ * face, and the swap then costs nothing. Used in preference to
+ * `font-display: optional`, which would also guarantee zero CLS but by
+ * sometimes never painting the brand font at all.
+ *
+ * ONE FACE PER WEIGHT, and the percentages are solved empirically rather than
+ * calculated. Two traps, both hit while doing it:
+ *
+ *   1. `local('Arial')` inside an @font-face does NOT render like
+ *      `font-family: Arial` at the same weight. Arial ships no 700 or 800
+ *      face, so the two paths synthesise bold differently. A value derived by
+ *      measuring Arial directly made Baloo 2 WORSE, from +3.49% to -6.29%.
+ *   2. One size-adjust cannot serve several weights. Averaging across
+ *      Nunito 400/700/800 left 400 out by 3.17%, and 400 is nearly all the
+ *      body copy on the site.
+ *
+ * Solved by binary converging each weight against the real face at 200px on a
+ * string of real page copy. All five land at 0.00% residual. Re-measure with
+ * the same method if either family or a used weight ever changes.
+ */
+
+@font-face {
+  font-family: 'Baloo 2 Fallback';
+  src: local('Arial');
+  font-weight: 700;
+  size-adjust: 99.83%;
+}
+
+@font-face {
+  font-family: 'Baloo 2 Fallback';
+  src: local('Arial');
+  font-weight: 800;
+  size-adjust: 101.4%;
+}
+
+@font-face {
+  font-family: 'Nunito Fallback';
+  src: local('Arial');
+  font-weight: 400;
+  size-adjust: 102.53%;
+}
+
+@font-face {
+  font-family: 'Nunito Fallback';
+  src: local('Arial');
+  font-weight: 700;
+  size-adjust: 106.3%;
+}
+
+@font-face {
+  font-family: 'Nunito Fallback';
+  src: local('Arial');
+  font-weight: 800;
+  size-adjust: 108.51%;
+}
+
+/*
+ * Space Grotesk carries the blog article body only (--font-article). Measured
+ * with the same method as the faces above and for the same reason: an article
+ * is almost entirely text, so an unmatched fallback reflows the whole page on
+ * swap. Solved at 200px on a real sentence of article copy, both weights
+ * landing at 0.00% residual.
+ *
+ * Only 400 and 700 exist here because that is all the article body uses: body
+ * copy at 400 and <strong> at 700. Headings are --font-display, not this.
+ *
+ * Measuring trap, hit twice before the numbers below were trusted: reading the
+ * width inside `document.fonts.ready` alone is NOT enough. The face had not
+ * painted, the span silently measured the DEFAULT serif, and that produced a
+ * plausible-looking 14429px where the real face is 17338px. Always
+ * `document.fonts.load()` the exact face, then assert `document.fonts.check()`
+ * and wait for the measurement to stop changing, before believing a number.
+ */
+
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  src: local('Arial');
+  font-weight: 400;
+  size-adjust: 108.91%;
+}
+
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  src: local('Arial');
+  font-weight: 700;
+  size-adjust: 109.07%;
+}
+
+:root {
+  --aside-width: 400px;
+  --grid-item-width: 320px;
+  --header-height: 72px;
+
+  /*
+   * Sticker brand palette, deep space purple with a chunky holographic
+   * sticker sitting on top.
+   */
+  --sws-bg: #0b0713;
+  --sws-bg-alt: #180f28;
+  --sws-card: rgba(28, 18, 48, 0.72);
+  --sws-card-solid: #1c1230;
+  --sws-border: rgba(183, 157, 242, 0.22);
+  --sws-border-strong: rgba(183, 157, 242, 0.4);
+  --sws-text: #f3ecff;
+  --sws-sub: #a89ec4;
+
+  /* holo gradient stops, cyan to lavender to pink to hot pink to mint */
+  --sws-holo-1: #7fe6ff;
+  --sws-holo-2: #b79df2;
+  --sws-holo-3: #f2a6d8;
+  --sws-holo-4: #f0509a;
+  --sws-holo-5: #87cfb2;
+
+  /* generic accent aliases, kept so existing component rules still work */
+  --sws-accent-1: var(--sws-holo-4);
+  --sws-accent-2: var(--sws-holo-1);
+  --sws-accent-3: var(--sws-holo-2);
+
+  /* cream sticker chrome, borrowed from the Widget Stage HUD */
+  --sws-cream: #fef8e8;
+  --sws-ink: #1a1024;
+  --sws-outline: #010101;
+
+  --font-display: 'Baloo 2', 'Baloo 2 Fallback', system-ui, -apple-system,
+    sans-serif;
+  --font-body: 'Nunito', 'Nunito Fallback', system-ui, -apple-system,
+    sans-serif;
+  /*
+     Blog articles only. Chosen from a six-way comparison on 2026-09-15:
+     Nunito echoes Baloo 2's roundness, so long-form copy read flat. Deliberately
+     NOT --font-body, which stays Nunito everywhere else on the site.
+  */
+  --font-article: 'Space Grotesk', 'Space Grotesk Fallback', system-ui,
+    -apple-system, sans-serif;
+  --sws-font: var(--font-body);
+
+  --radius-card: 18px;
+  --radius-pill: 999px;
+
+  /* generic aliases used across the skeleton's existing rules */
+  --color-dark: var(--sws-bg);
+  --color-light: var(--sws-text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--sws-bg);
+}
+
+body {
+  background: linear-gradient(180deg, var(--sws-bg) 0%, var(--sws-bg-alt) 100%);
+  color: var(--sws-text);
+  font-family: var(--sws-font);
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Forces body to own a stacking context so the fixed, negative
+     z-index aurora/star pseudo-elements below paint ON TOP of this
+     opaque background instead of being buried under it at the root
+     stacking context (fixed elements otherwise escape straight to the
+     root and lose to body's own box). */
+  isolation: isolate;
+}
+
+/* Aurora blobs: slow drift, clearly visible, never fights product art. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -20%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 16% 20%, rgba(183, 157, 242, 0.34), transparent 60%),
+    radial-gradient(circle at 84% 14%, rgba(240, 80, 154, 0.3), transparent 62%),
+    radial-gradient(circle at 78% 68%, rgba(127, 230, 255, 0.26), transparent 58%),
+    radial-gradient(circle at 22% 86%, rgba(242, 166, 216, 0.24), transparent 60%);
+  animation: sws-aurora-drift 40s ease-in-out infinite alternate;
+}
+
+/* Star field: three parallax layers, drifting on their own and leaning toward
+   the pointer. Markup and behaviour: app/components/Starfield.jsx.
+
+   This replaced a single `body::after` tile that only twinkled. One tile has
+   no depth, so any movement applied to it read as the whole page sliding
+   rather than as stars.
+
+   --sws-star-x / --sws-star-y are -1..1 from the centre of the viewport,
+   written by the component's rAF. Every layer multiplies them by its own
+   depth, which IS the parallax: the near layer travels roughly five times the
+   far one. Untouched (no JS, no pointer, reduced motion) they are 0 and each
+   layer simply sits where its drift puts it. */
+.sws-starfield {
+  --sws-star-x: 0;
+  --sws-star-y: 0;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Contains the layers' paint so a transform here can never invalidate the
+     page behind it. */
+  contain: strict;
+}
+
+.sws-star-layer {
+  position: absolute;
+  /* Oversized on purpose. The layers translate by up to 30px and the tile
+     repeats, but an inset of 0 would still show a hard edge at the moment a
+     layer leans past the viewport. */
+  inset: -60px;
+  will-change: transform;
+  transform: translate3d(
+    calc(var(--sws-star-x) * var(--sws-star-depth)),
+    calc(var(--sws-star-y) * var(--sws-star-depth)),
+    0
+  );
+  /* Snaps to the pointer would look mechanical. This is the lag that makes it
+     feel like distance. */
+  transition: transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/*
+ * The drift element. It holds the repeating tile and moves by TRANSFORM, which
+ * the compositor handles without repainting. It is oversized by one tile in
+ * each direction so a translate of one full tile can loop seamlessly.
+ *
+ * This replaced an animation on `background-position`, which is a paint
+ * property: three promoted full-viewport layers were repainting every frame
+ * forever. See Starfield.jsx for the whole story.
+ */
+.sws-star-drift {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  will-change: transform;
+}
+
+/* Far: dense, small, dim, barely moves. This is the backdrop. */
+.sws-star-layer-far {
+  --sws-star-depth: 6px;
+  opacity: 0.5;
+  /* Twinkle stays here: opacity is composited, so it is free. */
+  animation: sws-twinkle 6s ease-in-out infinite alternate;
+}
+
+.sws-star-drift-far {
+  background-image:
+    radial-gradient(1px 1px at 6% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 24% 34%, #fff, transparent),
+    radial-gradient(1px 1px at 41% 6%, #fff, transparent),
+    radial-gradient(1px 1px at 58% 28%, #fff, transparent),
+    radial-gradient(1px 1px at 73% 52%, #fff, transparent),
+    radial-gradient(1px 1px at 89% 18%, #fff, transparent),
+    radial-gradient(1px 1px at 14% 68%, #fff, transparent),
+    radial-gradient(1px 1px at 33% 88%, #fff, transparent),
+    radial-gradient(1px 1px at 52% 62%, #fff, transparent),
+    radial-gradient(1px 1px at 96% 74%, #fff, transparent);
+  background-size: 260px 260px;
+  /* Oversized by exactly one tile, so a translate of one full tile
+     never uncovers a trailing edge. */
+  inset: -260px;
+  animation: sws-star-drift-far 240s linear infinite;
+}
+
+/* Mid: the layer you actually read as "stars". */
+.sws-star-layer-mid {
+  --sws-star-depth: 16px;
+  opacity: 0.72;
+  /* Twinkle stays here: opacity is composited, so it is free. */
+  animation: sws-twinkle 7.5s ease-in-out -2s infinite alternate;
+}
+
+.sws-star-drift-mid {
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 44%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 46% 20%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 67% 8%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 82% 82%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 8% 90%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 62% 70%, #fff, transparent);
+  background-size: 340px 340px;
+  /* Oversized by exactly one tile, so a translate of one full tile
+     never uncovers a trailing edge. */
+  inset: -340px;
+  animation: sws-star-drift-mid 170s linear infinite;
+}
+
+/* Near: few, large, brightest, moves most. Sparse on purpose, because this is
+   the layer that would turn into snow if there were many of them. */
+.sws-star-layer-near {
+  --sws-star-depth: 30px;
+  opacity: 0.85;
+  /* Twinkle stays here: opacity is composited, so it is free. */
+  animation: sws-twinkle 9s ease-in-out -4s infinite alternate;
+}
+
+.sws-star-drift-near {
+  background-image:
+    radial-gradient(2.2px 2.2px at 28% 56%, #fff, transparent),
+    radial-gradient(2.2px 2.2px at 91% 42%, #fff, transparent),
+    radial-gradient(2.2px 2.2px at 38% 8%, #fff, transparent),
+    radial-gradient(2.2px 2.2px at 75% 30%, #fff, transparent);
+  background-size: 520px 520px;
+  /* Oversized by exactly one tile, so a translate of one full tile
+     never uncovers a trailing edge. */
+  inset: -520px;
+  animation: sws-star-drift-near 110s linear infinite;
+}
+
+/* The constant drift, so the field is alive on a phone and before any pointer
+   has moved. Each layer scrolls exactly one tile, so the loop is seamless, and
+   each runs at its own speed and angle. It animates background-position rather
+   than transform because transform is already spoken for by the parallax. */
+@keyframes sws-star-drift-far {
+  to {
+    transform: translate3d(260px, -260px, 0);
+  }
+}
+
+@keyframes sws-star-drift-mid {
+  to {
+    transform: translate3d(-340px, -340px, 0);
+  }
+}
+
+@keyframes sws-star-drift-near {
+  to {
+    transform: translate3d(520px, -520px, 0);
+  }
+}
+
+@keyframes sws-aurora-drift {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(-4%, 3%) scale(1.08);
+  }
+}
+
+@keyframes sws-twinkle {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  .sws-star-layer,
+  /* The drift moved onto its own element on 2026-09-17. Without this line it
+     would have escaped the reduced-motion kill switch entirely, which is the
+     kind of regression that ships silently because nobody testing has the
+     preference set. */
+  .sws-star-drift {
+    animation: none;
+  }
+
+  /* The component never attaches its listener under this preference, so the
+     layers cannot move. Belt and braces: kill the easing too, so nothing can
+     animate here even if a custom property is set some other way. */
+  .sws-star-layer {
+    transition: none;
+  }
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  border-radius: 10px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+}
+
+.sws-holo {
+  background: linear-gradient(
+    90deg,
+    var(--sws-holo-1),
+    var(--sws-holo-2),
+    var(--sws-holo-3),
+    var(--sws-holo-4),
+    var(--sws-holo-5),
+    var(--sws-holo-1)
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sws-holo-shift 6s linear infinite;
+}
+
+.sws-glow {
+  text-shadow: 0 0 18px rgba(242, 166, 216, 0.45), 0 0 36px rgba(127, 230, 255, 0.25);
+}
+
+@keyframes sws-holo-shift {
+  to {
+    background-position: 300% center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sws-holo {
+    animation: none;
+  }
+}
+
+/*
+* --------------------------------------------------
+* Sticker button + chip system
+* --------------------------------------------------
+*/
+.sws-btn {
+  align-items: center;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-display);
+  font-weight: 800;
+  gap: 0.5rem;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  white-space: nowrap;
+}
+
+.sws-btn-primary {
+  background: linear-gradient(
+    100deg,
+    var(--sws-holo-1),
+    var(--sws-holo-2),
+    var(--sws-holo-3),
+    var(--sws-holo-4)
+  );
+  background-size: 260% auto;
+  border: 3px solid var(--sws-ink);
+  box-shadow: 0 0 0 1px var(--sws-outline), 0 10px 26px -10px rgba(240, 80, 154, 0.65);
+  color: var(--sws-ink);
+  padding: 0.85rem 2rem;
+}
+
+.sws-btn-primary:hover {
+  background-position: 100% center;
+  box-shadow: 0 0 0 1px var(--sws-outline), 0 14px 32px -10px rgba(127, 230, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.sws-btn-ghost {
+  background: rgba(243, 236, 255, 0.04);
+  border: 2px solid var(--sws-border-strong);
+  color: var(--sws-text);
+  padding: 0.8rem 1.85rem;
+}
+
+.sws-btn-ghost:hover {
+  border-color: var(--sws-holo-1);
+  color: var(--sws-holo-1);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sws-btn-primary,
+  .sws-btn-ghost {
+    transition: none;
+  }
+  .sws-btn-primary:hover,
+  .sws-btn-ghost:hover {
+    transform: none;
+  }
+}
+
+.sws-chip {
+  align-items: center;
+  background: var(--sws-cream);
+  border: 2px solid var(--sws-ink);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0 var(--sws-outline);
+  color: var(--sws-ink);
+  display: inline-flex;
+  font-weight: 800;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  text-decoration: none;
+  transition: transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.sws-chip:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sws-chip {
+    transition: none;
+  }
+  .sws-chip:hover {
+    transform: none;
+  }
+}
+
+.sws-glass-card {
+  background: var(--sws-card);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
+}
+
+/*
+* --------------------------------------------------
+* Non anchor links
+* --------------------------------------------------
+*/
+.link:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/*
+* --------------------------------------------------
+* components/Aside
+* --------------------------------------------------
+*/
+@media (max-width: 45em) {
+  html:has(.overlay.expanded) {
+    overflow: hidden;
+  }
+}
+
+aside {
+  background: rgba(11, 7, 19, 0.94);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border-left: 1px solid var(--sws-border);
+  color: var(--sws-text);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.55);
+  /*
+   * `dvh`, not `vh`. On Chrome for Android `100vh` is the LARGE viewport,
+   * the height with the URL bar hidden, so a fixed drawer sized in vh is
+   * taller than the screen actually shows and its bottom sits behind the
+   * URL bar. Nothing can scroll it into view either, because the drawer is
+   * fixed and its own scroll container ends off screen.
+   *
+   * On a Moto G5, 2026-09-14: only half the checkout button was visible and
+   * the drawer could not scroll. Modelled at a 568px visible height with
+   * 100vh resolving to 640: the Continue to Checkout button rendered 559 to
+   * 616, so 9 of its 57 pixels were on screen, 48 were cut off, and the
+   * drawer reported scrollHeight === clientHeight so there was nothing to
+   * scroll. With dvh it renders 487 to 544, all 57 pixels visible.
+   *
+   * The vh line stays first as the fallback for anything without dvh.
+   */
+  height: 100vh;
+  height: 100dvh;
+  width: min(var(--aside-width), 100vw);
+  position: fixed;
+  right: calc(-1 * var(--aside-width));
+  top: 0;
+  transition: transform 200ms ease-in-out;
+}
+
+aside header {
+  align-items: center;
+  border-bottom: 1px solid var(--sws-border);
+  display: flex;
+  height: var(--header-height);
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+aside header h3 {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+aside header .close {
+  align-items: center;
+  /*
+   * Reads as a button, not as a stray glyph. This control could not be found
+   * at all on a phone: it was a muted 20px x in a transparent box,
+   * and the site header was painting over it. Given a real border and
+   * surface it is unmistakable, and 44px square is the Apple minimum tap
+   * target.
+   */
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 999px;
+  color: var(--sws-text);
+  display: flex;
+  font-size: 1.5rem;
+  font-weight: bold;
+  height: 44px;
+  justify-content: center;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 200ms, background 200ms, border-color 200ms;
+  width: 44px;
+}
+
+aside header .close:hover {
+  background: var(--sws-card);
+  color: var(--sws-holo-4);
+}
+
+aside header h2 {
+  margin-bottom: 0.6rem;
+  margin-top: 0;
+}
+
+aside main {
+  display: flex;
+  flex-direction: column;
+  /*
+   * Subtract this element's OWN margin as well as the header. `margin: 1rem`
+   * is 16px top and bottom, so `calc(100% - header)` made the content box
+   * 32px taller than the space left for it and pushed the bottom of the
+   * drawer, where Continue to Checkout lives, past the bottom of the screen.
+   * Measured before the fix at a 640px drawer: main ran 88 to 656 against a
+   * 640px viewport.
+   */
+  height: calc(100% - var(--header-height) - 2rem);
+  margin: 1rem;
+  overflow-y: auto;
+  /*
+   * Keep the drag inside the drawer. Without this, a touch scroll that
+   * reaches either end of this container chains to the page behind, so the
+   * background moves while the menu appears stuck. Chrome for Android does
+   * this by default; a wheel event in a desktop emulator does not, which is
+   * why it only shows up on a real phone.
+   */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+aside p {
+  margin: 0 0 0.25rem;
+}
+
+aside p:last-child {
+  margin: 0;
+}
+
+aside li {
+  margin-bottom: 0.125rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.5);
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transition: opacity 400ms ease-in-out;
+  transition: opacity 400ms;
+  visibility: hidden;
+  /*
+   * An aside is `aria-modal`, so it must sit above ALL site chrome: the
+   * sticky header (20) and the desktop mega panel (30).
+   *
+   * At 10 it sat below the header, and the header is 72px tall, which is
+   * exactly where each aside's own header and its close button live. So the
+   * site header painted over the drawer's "CART" title and its close
+   * button, and `document.elementFromPoint` at the centre of that close
+   * button returned `a.header-cart-btn`. Tapping the X to close the cart
+   * actually hit the site header's cart icon underneath it. A request on
+   * 2026-09-14 asked for a close button on the menu and checkout drawers;
+   * there already was one, it was buried and unclickable.
+   *
+   * Same family as the sticky Add to cart bar that covered Continue to
+   * Checkout. Nothing that is page chrome may outrank an open modal.
+   */
+  z-index: 40;
+}
+
+.overlay .close-outside {
+  background: transparent;
+  border: none;
+  color: transparent;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: calc(100% - var(--aside-width));
+}
+
+.overlay .light {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.overlay .cancel {
+  cursor: default;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+
+.overlay.expanded {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+/* reveal aside */
+.overlay.expanded aside {
+  transform: translateX(calc(var(--aside-width) * -1));
+}
+
+button.reset {
+  border: 0;
+  background: inherit;
+  font-size: inherit;
+}
+
+button.reset > * {
+  margin: 0;
+}
+
+button.reset:not(:has(> *)) {
+  height: 1.5rem;
+  line-height: 1.5rem;
+}
+
+button.reset:hover:not(:has(> *)) {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/*
+* --------------------------------------------------
+* components/Header
+* --------------------------------------------------
+*/
+.header {
+  align-items: center;
+  /*
+   * Near opaque, no live blur. The header is sticky over a page whose
+   * aurora and three star layers animate forever, so a backdrop-filter here
+   * had to re-blur everything behind it on every frame of every scroll. On a
+   * weak GPU that is the lag. The colour is the old 0.78 wash plus the blur's
+   * softening folded into one solid, so the bar reads the same.
+   */
+  background: rgba(11, 7, 19, 0.94);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(
+      90deg,
+      var(--sws-holo-1),
+      var(--sws-holo-2),
+      var(--sws-holo-3),
+      var(--sws-holo-4)
+    )
+    1;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.75rem;
+  height: var(--header-height);
+  padding: 0 1rem;
+  @media (max-width: 420px) {
+    gap: 8px;
+  }
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  @media (min-width: 45em) {
+    padding: 0 2rem;
+  }
+}
+
+.header-brand {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.header-brand img {
+  width: auto;
+  height: 40px;
+  border-radius: 0;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgba(242, 166, 216, 0.4));
+  @media (min-width: 45em) {
+    height: 48px;
+  }
+}
+
+/* Text wordmark is a fallback only: the logo PNG carries the brand now.
+   Shown only if the image itself fails to load (see Header.jsx). */
+.header-brand strong {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  font-size: 1.1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-menu-mobile-toggle {
+  @media (min-width: 68.75em) {
+    display: none;
+  }
+}
+
+.header-menu-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mobile-menu-footer {
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.mobile-menu-account-link {
+  color: var(--sws-sub);
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+  text-decoration: none;
+}
+
+.mobile-menu-account-link:hover {
+  color: var(--sws-text);
+}
+
+/*
+* --------------------------------------------------
+* components/SocialLinks
+* --------------------------------------------------
+*/
+.social-links {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.social-link {
+  align-items: center;
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 50%;
+  color: var(--sws-sub);
+  display: flex;
+  height: 38px;
+  justify-content: center;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+  width: 38px;
+}
+
+.social-link:hover {
+  border-color: var(--sws-holo-4);
+  color: var(--sws-holo-4);
+  transform: translateY(-2px);
+}
+
+.social-link svg {
+  fill: currentColor;
+  height: 16px;
+  width: 16px;
+}
+
+.header-menu-desktop {
+  display: none;
+  flex-wrap: nowrap;
+  grid-gap: 0.5rem;
+  @media (min-width: 68.75em) {
+    display: flex;
+    margin-left: 1.5rem;
+  }
+  @media (min-width: 78em) {
+    grid-gap: 0.25rem;
+    margin-left: 2.5rem;
+  }
+}
+
+.header-menu-item {
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  color: var(--sws-sub);
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.45rem 0.85rem;
+  position: relative;
+  text-decoration: none;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+  @media (min-width: 78em) {
+    padding: 0.45rem 1rem;
+  }
+}
+
+.header-menu-item:hover {
+  background: var(--sws-card);
+  border-color: var(--sws-border);
+  color: var(--sws-text);
+}
+
+/*
+ * Blog, called out at the top level (2026-10-09). Brighter than the
+ * other plain links plus a small mint "fresh" dot, so it reads as the place
+ * new content lands without competing with the Free Chat holo CTA.
+ */
+.header-menu-blog {
+  align-items: center;
+  color: var(--sws-text);
+  display: inline-flex;
+  gap: 0.45rem;
+}
+
+.header-menu-blog::before {
+  background: var(--sws-holo-5);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--sws-holo-5);
+  content: '';
+  flex-shrink: 0;
+  height: 7px;
+  width: 7px;
+  animation: sws-blog-dot 2.4s ease-in-out infinite;
+}
+
+@keyframes sws-blog-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-menu-blog::before {
+    animation: none;
+  }
+}
+
+.header-ctas {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  grid-gap: 0.5rem;
+  margin-left: auto;
+  @media (min-width: 45em) {
+    grid-gap: 0.5rem;
+  }
+  /* 0a97398 dropped the 1720px squeeze block, which also carried
+     the phone gaps. Without them the header needs 378px and a 360px phone
+     zooms the whole page out. Measured 2026-10-03 on production at 360 with
+     these two gaps loaded from first paint: CTA right edge 361.6 to 345.6,
+     layout width 364 to 360 on / and /collections/all, 366 to 360 on
+     /free-chat-widget. */
+  @media (max-width: 420px) {
+    grid-gap: 4px;
+  }
+}
+
+.header-ctas > * {
+  min-width: fit-content;
+}
+
+/*
+ * Follow-up, 2026-09-27: `.header-preview-link` ("Free Chat") was
+ * never given its own rule, so it rendered as a bare default-styled anchor
+ * (blue, underlined, browser default padding) wedged directly between
+ * `.header-menu-desktop`'s last pill ("Overlays & kits") and `.header-ctas`
+ * with only the row's own `gap` between them. At 1024 to 1440px, inside the
+ * overflow window documented below, that gap was the only thing keeping it
+ * off the neighboring pill, so a screenshot at 1440px showed it crowding
+ * "Overlays & kits" instead of reading as its own separate "Free Chat"
+ * link. Styled to match `.header-menu-item`'s pill so it is visually its
+ * own nav entry, `flex-shrink: 0` plus `white-space: nowrap` so it can
+ * never be squeezed into overlapping its neighbor, and a `margin-left` on
+ * top of the row gap for a clear gap from "Overlays & kits". Verified at
+ * 1440, 1024 and 360 (hidden under 45em, unchanged).
+ */
+.header-preview-link {
+  align-items: center;
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.header-preview-link:hover {
+  background: var(--sws-card);
+  border-color: var(--sws-border-strong);
+}
+
+/*
+ * "Custom" in the header, 2026-10-07. Same pill geometry as
+ * `.header-preview-link` so the two read as one nav family, but it keeps the
+ * plain border: Free Chat is the one holo CTA and a second one competes with
+ * it. Sits with the nav (no `order`), so Free Chat's `margin-left: auto`
+ * still pushes it to the right edge.
+ */
+.header-custom-link {
+  align-items: center;
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.header-custom-link:hover {
+  background: var(--sws-card);
+  border-color: var(--sws-border-strong);
+}
+
+/* "Build a bundle" (2026-10-17): same pill, accent border so it reads as the
+   offer without competing with Free Chat. Hidden below 96em: measured on this
+   build, with it the header overflowed its viewport by 43px at 720, 86px at
+   1366 and 54px at 1440 (production already overflows 1100 to 1180 by 6px
+   without it). Below 96em the link is in the Widgets mega menu and the mobile
+   menu instead. */
+.header-bundle-link {
+  align-items: center;
+  display: none;
+  border: 1px solid var(--sws-holo-4);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+  @media (min-width: 96em) {
+    display: inline-flex;
+  }
+}
+
+.header-bundle-link:hover {
+  background: var(--sws-card);
+}
+
+/* Widgets mega menu and mobile accordion: the bundle offer under Browse. */
+.mega-bundle-link {
+  background: linear-gradient(
+    135deg,
+    rgba(127, 230, 255, 0.12),
+    rgba(240, 80, 154, 0.16)
+  );
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 14px;
+  color: var(--sws-text);
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  text-decoration: none;
+}
+
+.mega-bundle-link b {
+  color: var(--sws-holo-3);
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
+.mega-bundle-link:hover {
+  border-color: var(--sws-holo-1);
+}
+
+/*
+ * The desktop header overflows its own viewport between roughly 1280px and
+ * 1500px, where the horizontal nav is already showing but there is not yet
+ * room for it.
+ *
+ * Measured on production at 1440x900: the header content box is 1361px
+ * (1425 minus 32px padding each side) while its three children need
+ * 222 + 890 + 275 plus two 12px gaps = 1411px. `.header-menu-desktop` is
+ * `flex: 0 1 auto` but inherits `min-width: auto`, so it refuses to shrink
+ * below its content and pushes `.header-ctas` to a right edge of 1491.
+ * `body { overflow-x: hidden }` hides the scrollbar but does not stop the
+ * scroll: window.scrollX reached 68 on the live site.
+ *
+ * Tightening the gaps and the nav item padding recovers the 68px without
+ * clipping or hiding anything: after this the three children end at 242,
+ * 1104 and 1405, all inside 1425, and scrollX is 0. This measurement
+ * predates `.header-preview-link` above; follow-up note above
+ * for that fourth child.
+ *
+ * Found 2026-09-14 while verifying checkout at desktop widths. Pre-existing,
+ * and not caught by the 2026-09-08 mega menu pass, which measured the panel
+ * rather than the header row itself.
+ */
+/*
+ * Phone sized tap targets in the header.
+ *
+ * Measured at 360px: the menu button was 22x22, and the account, search and
+ * cart icons were 36 to 38px. Apple asks for 44x44 and WCAG 2.5.8 for 24x24;
+ * the primary way into navigation on a phone was half the smaller of those.
+ *
+ * There was no room to simply grow them: the header content box is 320px at
+ * 360px wide and the brand lockup alone took 182 of it, so the row was
+ * already 7px over. Capping the wordmark at 96px frees what the four
+ * controls need. Measured after: brand 134, controls 4 x 44, right edge 350
+ * inside 360, no document overflow.
+ */
+/*
+ * Everything a thumb has to hit gets 44x44 on a phone. Apple's minimum, and
+ * WCAG 2.5.8 asks 24x24 as a floor. Measured at 360px before this: gallery
+ * arrows 36, share buttons 38, social links 38. Inline text links inside a
+ * paragraph are exempt under WCAG and are deliberately left alone.
+ */
+@media (max-width: 44.99em) {
+  .product-gallery-arrow,
+  .share-btn,
+  .social-link {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (max-width: 44.99em) {
+  .header-brand img:not(.brand-pfp) {
+    height: auto;
+    max-width: 96px;
+  }
+
+  .header-ctas > * {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .header-menu-mobile-toggle {
+    height: 44px;
+    width: 44px;
+  }
+
+  /* no room beside the icons on a phone; the mobile menu has it. */
+  .header-bundle-link,
+  .header-custom-link,
+  .header-preview-link {
+    display: none;
+  }
+}
+
+.header-ctas a,
+.header-ctas button {
+  font-size: 0.85rem;
+  @media (min-width: 45em) {
+    font-size: 1rem;
+  }
+}
+
+.header-icon-btn {
+  align-items: center;
+  border-radius: 999px;
+  color: var(--sws-sub);
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.55rem;
+  position: relative;
+  text-decoration: none;
+  transition: color 0.2s, background 0.2s;
+}
+
+.header-icon-btn:hover {
+  background: var(--sws-card);
+  color: var(--sws-holo-3);
+}
+
+.header-icon-label {
+  /*
+   * Hidden from the EYE, not from the accessibility tree.
+   *
+   * This used to be `display: none`, which removes the element outright, so
+   * below 82em the account and cart links were an <svg> and nothing else and
+   * had no accessible name at all. An audit of the live site flagged
+   * `a.header-icon-btn` as "Links must have discernible text". The Search
+   * control was the only one that passed, and only because it carries its own
+   * `aria-label`.
+   *
+   * Clipping instead of removing keeps one source for the label, which matters
+   * for the account link: its text is "Account" or "Sign in" depending on the
+   * session, so an `aria-label` here would be a second copy that can go stale
+   * against the first.
+   */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+
+  /* 2026-09-27 nav cleanup: never shown visually. Account and cart read
+     as icons alone, like every modern storefront; the text stays for
+     screen readers. */
+}
+
+.header-cart-btn {
+  position: relative;
+}
+
+.header-cart-count {
+  align-items: center;
+  background: var(--sws-accent-1);
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  font-size: 0.65rem;
+  font-weight: 700;
+  height: 16px;
+  justify-content: center;
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  width: 16px;
+}
+
+/*
+* --------------------------------------------------
+* components/Footer
+* --------------------------------------------------
+*/
+.footer {
+  background: linear-gradient(180deg, transparent, rgba(24, 15, 40, 0.6));
+  border-top: 1px solid var(--sws-border);
+  margin-top: auto;
+  position: relative;
+}
+
+.footer-top {
+  align-items: center;
+  border-bottom: 1px solid var(--sws-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+}
+
+.footer-brand {
+  align-items: center;
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* logo.png is a 900x250 horizontal lockup. Pinning both height AND width
+   squashes it into a square, which is what the footer did until 2026-09-10.
+   Set height only and let width follow the natural ratio, same as
+   .header-brand img. */
+.footer-brand img {
+  height: 44px;
+  width: auto;
+  filter: drop-shadow(0 0 10px rgba(242, 166, 216, 0.35));
+}
+
+.footer-etsy-link {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.footer-etsy-link:hover {
+  color: var(--sws-holo-1);
+}
+
+.footer-tagline {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  margin: 0;
+  max-width: 360px;
+}
+
+.footer-menu {
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  grid-gap: 1.5rem;
+  padding: 1.5rem 1rem;
+}
+
+.footer-menu a {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  min-width: fit-content;
+  text-decoration: none;
+}
+
+.footer-menu a:hover {
+  color: var(--sws-text);
+}
+
+/*
+* --------------------------------------------------
+* components/Cart
+* --------------------------------------------------
+*/
+.cart {
+  margin: 0 auto;
+  max-width: 720px;
+  padding: 2rem;
+}
+
+.cart h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+/*
+ * The drawer is a flex column: the line items take whatever room is left and
+ * scroll, the summary sits under them at its real height.
+ *
+ * This used to be `max-height: calc(100vh - var(--cart-aside-summary-height))`,
+ * a hardcoded GUESS at how tall the summary is, with a second constant for
+ * the with-discount case. The guess was about 300px. On a 360px wide phone
+ * the discount and gift card forms wrap and the summary is 559px, so the
+ * scroll area was sized 340px while the summary absolutely positioned over it
+ * covered 104% of the drawer. Every cart line sat underneath it and
+ * `scrollHeight === clientHeight`, so there was nothing to scroll: the cart
+ * opened straight onto "Totals" with no products visible and no way to reach
+ * them. 2026-09-14: the drawer could not scroll and content was cut off.
+ *
+ * `min-height: 0` is load bearing. A flex child defaults to `min-height: auto`
+ * and refuses to shrink below its content, so without it this never scrolls,
+ * it just grows and pushes the summary off the bottom.
+ *
+ * No constant here may restate a dimension the layout already knows.
+ */
+.cart-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  /*
+   * NOT the scroll container any more. `.cart-details` below is. While this
+   * element scrolled, the summary scrolled with the line items because it was
+   * inside it, which put Continue to Checkout at the end of the scroll rather
+   * than in front of the buyer. Measured on production at 360x640 with 4
+   * items: this box was 536px, its scrollHeight 1372px, and the checkout
+   * button rendered at y 1172, 532px below the fold, with
+   * `document.elementFromPoint` at its centre returning null.
+   */
+  overflow: hidden;
+  width: auto;
+}
+
+/*
+ * Only the line items scroll. The summary is a sibling of this element, so it
+ * stays pinned under the scroll area whatever the cart holds.
+ */
+.cart-details {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.cart .cart-main,
+.cart .cart-details {
+  display: block;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+}
+
+/*
+ * Intentionally no longer changes the height. The flex layout above already
+ * gives the summary exactly the room it needs, discount row or not, which is
+ * what the two `--cart-aside-summary-height*` constants were guessing at.
+ */
+
+.cart-main ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cart-empty {
+  color: var(--sws-sub);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem 0;
+}
+
+.cart-line {
+  border-bottom: 1px solid var(--sws-border);
+  padding: 1rem 0;
+}
+
+.cart-line-inner {
+  display: flex;
+  gap: 1rem;
+}
+
+.cart-line img {
+  background: radial-gradient(circle at 50% 45%, rgba(183, 157, 242, 0.22), transparent 65%),
+    var(--sws-bg);
+  border-radius: 10px;
+  display: block;
+  flex-shrink: 0;
+  height: 80px;
+  width: 80px;
+  object-fit: cover;
+}
+
+.cart-line-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.cart-line-title {
+  color: var(--sws-text);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.cart-line-title:hover {
+  color: var(--sws-accent-2);
+}
+
+.cart-line-options {
+  color: var(--sws-sub);
+  font-size: 0.8rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cart-line-quantity {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.cart-line-quantity-label {
+  color: var(--sws-sub);
+  font-size: 0.8rem;
+}
+
+.cart-line-quantity-value {
+  font-size: 0.9rem;
+  min-width: 1.2rem;
+  text-align: center;
+}
+
+/*
+  44px is the minimum comfortable touch target on a phone (Apple HIG and
+  the WCAG 2.5.8 target-size minimum of 24px is a floor, not a goal).
+  These were 26px square, measured on the live site at 375px. The visual
+  button stays small so the cart does not look clumsy: the box is still
+  drawn at 26px and the extra area is transparent padding, added with a
+  pseudo-element so it does not push the cart layout around.
+*/
+.cart-qty-btn {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 6px;
+  color: var(--sws-text);
+  cursor: pointer;
+  height: 26px;
+  position: relative;
+  width: 26px;
+}
+
+.cart-qty-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 44px;
+  width: 44px;
+  transform: translate(-50%, -50%);
+}
+
+.cart-qty-btn:disabled {
+  color: var(--sws-sub);
+  cursor: not-allowed;
+}
+
+/* Same reasoning as .cart-qty-btn above: this measured 47x19 at 375px. */
+.cart-remove-btn {
+  background: none;
+  border: none;
+  color: var(--sws-sub);
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  min-height: 44px;
+  padding: 0 0.25rem;
+  text-decoration: underline;
+}
+
+.cart-remove-btn:hover {
+  color: var(--sws-text);
+}
+
+.cart-summary-page {
+  border-top: 1px solid var(--sws-border);
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  position: relative;
+}
+
+.cart-summary-page h4 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.cart-summary-aside {
+  background: rgba(11, 7, 19, 0.96);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--sws-border);
+  bottom: 0;
+  padding-top: 0.75rem;
+  /*
+   * In flow, not absolutely positioned over the scroll area. See the note on
+   * `.cart-main`: pinned to the drawer's bottom it covered every cart line on
+   * a phone. As a flex child it sits after the items at its natural height and
+   * is always fully visible, and the items scroll above it.
+   */
+  flex: 0 0 auto;
+  /*
+   * Span the drawer, do not restate its width. This used to be
+   * `width: calc(var(--aside-width) - 40px)`, a flat 360px, while the drawer
+   * itself is `width: min(var(--aside-width), 100vw)`. So on any screen
+   * narrower than 400px the summary was wider than the column it sits in and
+   * ran off the right edge of the phone, taking the Continue to Checkout
+   * button and the Apply buttons with it.
+   *
+   * On a Moto G5 (360px wide), 2026-09-14: the drawer's content was cut
+   * off on the right. Measured on production at 360px: `main` was 327px wide
+   * and this block was 360px, so checkout rendered 17px past the screen edge.
+   * At 375px it overflowed by 2px, which is why it was easy to wave past.
+   *
+   * 360px is the most common Android viewport width, so this hit most Android
+   * buyers. Its containing block is the `aside` itself (`main` is static), and
+   * `main` carries `margin: 1rem`, so left/right of 1rem lines this up with
+   * the content column exactly: 327px at a 360px viewport, measured.
+   */
+  width: auto;
+}
+
+/*
+ * Pay first, fiddle with codes after, at every width.
+ *
+ * This used to be a `max-width: 44.99em` block that reordered the summary's
+ * children with flex `order` so the checkout button jumped above the two code
+ * forms. The forms are now inside a collapsed `<details>` and the DOM order is
+ * already totals, checkout, disclosure, so nothing needs reordering and the
+ * tab order matches what is on the screen.
+ *
+ * The disclosure is what makes pinning the summary possible at all. Expanded,
+ * the discount and gift card forms wrap on a 360px phone and the block is
+ * 365px tall inside a 536px drawer, leaving 171px of cart visible. Collapsed,
+ * it is totals plus the button.
+ */
+.cart-code-disclosure {
+  border-top: 1px solid var(--sws-border);
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.cart-code-disclosure > summary {
+  color: var(--sws-sub);
+  cursor: pointer;
+  font-size: 0.85rem;
+  /* 44px tall including padding, the same tap target as every other control
+     in the drawer. */
+  padding: 0.7rem 0.25rem;
+}
+
+.cart-code-disclosure > summary:hover,
+.cart-code-disclosure > summary:focus-visible {
+  color: var(--sws-text);
+}
+
+.cart-code-form {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.cart-code-input {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  flex: 1;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.9rem;
+}
+
+.cart-code-apply {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+}
+
+.add-to-cart-button {
+  font-size: 1.05rem;
+  width: 100%;
+  @media (min-width: 45em) {
+    width: auto;
+  }
+}
+
+.add-to-cart-button:disabled {
+  background: var(--sws-border);
+  border-color: var(--sws-border-strong);
+  box-shadow: none;
+  color: var(--sws-sub);
+  cursor: not-allowed;
+}
+
+/* Sticky "Add to cart" on mobile: the button itself pins to the bottom of
+   the viewport so it's reachable no matter how far the buyer has scrolled.
+   Variant pickers (when a product has any) stay in normal flow above it. */
+@media (max-width: 44.99em) {
+  .add-to-cart-button {
+    background: linear-gradient(
+      100deg,
+      var(--sws-holo-1),
+      var(--sws-holo-2),
+      var(--sws-holo-3),
+      var(--sws-holo-4)
+    );
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    border-radius: 0;
+    border-width: 0;
+    border-top: 3px solid var(--sws-ink);
+    padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom, 0px));
+    width: 100%;
+    /*
+     * MUST stay below `.overlay` (z-index 10), which is every aside: the
+     * cart drawer, the search palette and the mobile menu.
+     *
+     * At z-index 15 this bar painted ON TOP of the cart drawer it had just
+     * opened, and it is pinned to the same bottom edge, so it covered the
+     * bottom ~60px of the drawer, which is exactly where "Continue to
+     * Checkout" sits. Measured on production 2026-09-14: the checkout link
+     * occupied y 731-788, this bar occupied y 750-810, and
+     * document.elementFromPoint at the centre of the checkout link returned
+     * this button. Tapping Checkout on a phone re-added the item to the cart
+     * instead of going to checkout, and scrolling the drawer did not free it
+     * because both are fixed to the viewport. Checkout was impossible on
+     * mobile.
+     *
+     * The button stayed visibly present and looked perfectly normal, which
+     * is why a check that only asserted the checkout URL loads never caught
+     * it. Press the button, do not navigate to its href.
+     *
+     * 5 keeps it above page content (which tops out at z-index 2) and below
+     * every modal. Do not raise it.
+     */
+    z-index: 5;
+  }
+
+  /*
+   * backdrop-filter on an ancestor makes that ancestor the containing block
+   * for position: fixed, so the bar above pinned to the bottom of the glass
+   * buy card instead of the viewport and scrolled away with the page. It
+   * went unnoticed until fd498d3 (2026-09-27) put the unprefixed
+   * backdrop-filter last so the minifier finally kept it in Chrome. The
+   * button lives inside .product-main, so the card loses its blur on phones.
+   * Any new blurred ancestor of .add-to-cart-button breaks this the same way.
+   */
+  .product-main.sws-glass-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /*
+   * With the button fixed and no variant pickers, .product-form is 0px tall
+   * but still costs two flex gaps, and the share row's top border sat right
+   * under the highlights' bottom border: an empty band between two lines.
+   * Cancel one gap and let the highlights border be the only divider.
+   */
+  .product-form:not(:has(.product-options)) {
+    margin-top: -0.9rem; /* the .product-main gap */
+  }
+
+  .product-form:not(:has(.product-options)) + .share-row {
+    border-top: 0;
+    margin-top: 0;
+  }
+
+  .product {
+    padding-bottom: 5.5rem;
+  }
+}
+
+.cart-checkout-button {
+  background: linear-gradient(
+    100deg,
+    var(--sws-holo-1),
+    var(--sws-holo-2),
+    var(--sws-holo-3),
+    var(--sws-holo-4)
+  );
+  border: 3px solid var(--sws-ink);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 0 1px var(--sws-outline);
+  color: var(--sws-ink);
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  padding: 0.85rem 1.5rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.cart-line-quantity {
+  display: flex;
+}
+
+/* Child line components (warranties, gift wrapping, etc.) */
+.cart-line-children {
+  padding-left: 2rem;
+}
+
+.cart-discount {
+  align-items: center;
+  display: flex;
+  margin-top: 0.25rem;
+}
+
+.cart-subtotal {
+  align-items: center;
+  display: flex;
+}
+/*
+* --------------------------------------------------
+* components/Search
+* --------------------------------------------------
+*/
+.predictive-search {
+  height: calc(100vh - var(--header-height) - 40px);
+  overflow-y: auto;
+}
+
+.predictive-search-form {
+  background: rgba(11, 7, 19, 0.94);
+  padding-bottom: 0.75rem;
+  position: sticky;
+  top: 0;
+}
+
+.predictive-search-form input {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  padding: 0.65rem 1rem;
+  width: 100%;
+}
+
+.predictive-search-result {
+  margin-bottom: 2rem;
+}
+
+.predictive-search-result h5 {
+  color: var(--sws-sub);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.predictive-search-result-item {
+  border-radius: 10px;
+  margin-bottom: 0.15rem;
+  padding: 0.2rem;
+}
+
+.predictive-search-result-item.is-highlighted {
+  background: var(--sws-card);
+}
+
+.predictive-search-result-item a {
+  align-items: center;
+  color: var(--sws-text);
+  display: flex;
+  text-decoration: none;
+}
+
+.predictive-search-result-item a > div {
+  min-width: 0;
+}
+
+.predictive-search-result-item a p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.predictive-search-result-item-price {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* Sits on the aside panel's near-black background (rgba(11, 7, 19, 0.94)),
+   darker than the pill backgrounds used elsewhere, so the same --sws-sub at
+   0.8 opacity measures well above 4.5:1 here too. */
+.predictive-search-result-item-compare-price {
+  color: var(--sws-sub);
+  opacity: 0.8;
+}
+
+.predictive-search-result-item a:hover,
+.predictive-search-result-item.is-highlighted a {
+  color: var(--sws-holo-1);
+}
+
+.predictive-search-result-item a:focus-visible {
+  outline: 2px solid var(--sws-holo-1);
+  outline-offset: -2px;
+}
+
+/* Square framing via CSS only, no aspectRatio/width/height on the <Image>
+   itself: this catalog's source art isn't square, so the
+   wrapper handles it with object-fit instead of a CDN crop. */
+.predictive-search-result-item-image {
+  aspect-ratio: 1 / 1;
+  background: var(--sws-card);
+  border-radius: 8px;
+  display: block;
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+  overflow: hidden;
+  width: 50px;
+}
+
+.predictive-search-result-item-image img {
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.predictive-search-no-results {
+  color: var(--sws-sub);
+  padding: 1rem 0.25rem;
+}
+
+.predictive-search-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.25rem;
+}
+
+.predictive-search-skeleton-row {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.predictive-search-skeleton-image {
+  border-radius: 8px;
+  flex-shrink: 0;
+  height: 50px;
+  width: 50px;
+}
+
+.predictive-search-skeleton-lines {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.predictive-search-skeleton-line {
+  border-radius: 4px;
+  height: 12px;
+  width: 100%;
+}
+
+.predictive-search-skeleton-line.short {
+  width: 40%;
+}
+
+.search h2 {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.search-result {
+  margin-bottom: 2rem;
+}
+
+.search-results-item {
+  border-bottom: 1px solid var(--sws-border);
+  margin-bottom: 0;
+  padding: 0.75rem 0;
+}
+
+.search-results-item a {
+  align-items: center;
+  color: var(--sws-text);
+  display: flex;
+  flex: row;
+  gap: 1rem;
+  text-decoration: none;
+}
+
+.search-results-item a:hover {
+  color: var(--sws-holo-1);
+}
+
+.search-results-item img {
+  background: var(--sws-card);
+  border-radius: 8px;
+  flex-shrink: 0;
+  height: 50px;
+  object-fit: cover;
+  width: 50px;
+}
+
+.search-results-item p {
+  margin: 0;
+}
+
+.search-results-item small {
+  color: var(--sws-holo-1);
+}
+
+.search-results-item-price {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* This page's background is --sws-bg (#0b0713), darker than the card
+   pills elsewhere, so the same --sws-sub at 0.8 opacity clears 4.5:1 here
+   with more room than the 4.97:1 measured on --sws-card-solid. */
+.search-results-item-compare-price {
+  color: var(--sws-sub);
+  opacity: 0.8;
+}
+
+.search input[type='search'] {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  margin-right: 0.5rem;
+  padding: 0.6rem 1rem;
+}
+
+.search button {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.6rem 1.1rem;
+}
+
+/*
+* --------------------------------------------------
+* routes/_index: shared section styles
+* --------------------------------------------------
+*/
+.sws-section-eyebrow {
+  color: var(--sws-sub);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sws-section-heading {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 1.5rem;
+  padding: 0 2rem;
+  @media (min-width: 45em) {
+    font-size: 1.9rem;
+  }
+}
+
+/* Section rhythm now lives in the homepage v2 block (--home-gap). */
+
+/*
+* --------------------------------------------------
+* routes/_index: Hero
+* --------------------------------------------------
+*/
+/*
+  Note for whoever tries to shrink this: on a phone the hero measures
+  807px against an 812px viewport, so nothing below it peeks and there is
+  no cue to scroll. Lowering `min-height` does NOT fix that, which was
+  tried and measured on 2026-09-13: the hero's own CONTENT is 807px tall,
+  so min-height is not what sets the height and changing it does nothing
+  at all. Shrinking this means shrinking the content, most likely
+  `.hero-stream-frame`, not this rule. Left at full height deliberately
+  rather than shipping a no-op.
+*/
+.hero {
+  align-items: center;
+  display: flex;
+  min-height: calc(100vh - var(--header-height));
+  /* 1.5rem of top padding on a phone, not 2.5: every 16px above the fold is
+     16px the product frame does not get. */
+  padding: 1.5rem 1.25rem 2.5rem;
+  position: relative;
+  @media (min-width: 45em) {
+    padding: 3rem 2rem;
+  }
+}
+
+.hero-grid {
+  align-items: center;
+  display: grid;
+  /* 1.5rem between the copy and the stream frame on a phone (2.5 pushed the
+     frame 16px further down for no gain), 3.5 once the hero is two column. */
+  gap: 1.5rem;
+  margin: 0 auto;
+  max-width: 1320px;
+  position: relative;
+  text-align: center;
+  width: 100%;
+  z-index: 1;
+  @media (min-width: 55em) {
+    gap: 3.5rem;
+    grid-template-columns: 0.85fr 1.15fr;
+    text-align: left;
+  }
+}
+
+/*
+  `.hero-logo` / `.hero-brand` / `.hero-brand img.hero-pfp` removed
+  2026-09-28: the stacked pfp+logo lockup they styled was dropped from the
+  hero (coordinator review: it dominated the left column above the h1 and
+  wasted the fold on mobile). The header carries the logo on every page
+  already, including this one. See git history for the prior rules if the
+  lockup ever needs to come back.
+*/
+
+/* Small sticker-style label above the headline. One more rung in the type
+   hierarchy between the brand lockup and the h1, so the eye has a clear
+   order: brand, then what this is, then the headline, then the sell line.
+   Reuses .sws-section-eyebrow (already the shop's label style) rather than
+   inventing a new one. */
+.hero-copy p.hero-eyebrow {
+  /* Brighter than the shared --sws-sub token (#a89ec4) on purpose: measured
+     against the REAL rendered hero background (the aurora glow layer
+     lightens it to roughly rgb(77,61,93) here, not the flat surface-base
+     brand.rules.json was verified against), --sws-sub only reaches ~3.9:1,
+     under the 4.5:1 AA text minimum. This lands at ~5.6:1 typical. See
+     the design QA notes for the sampled numbers and the pre-existing dip this
+     did not fix (body copy and the trust row reuse --sws-sub on the same
+     glow and were already below 4.5:1 before this redesign).
+
+     Selector is `.hero-copy p.hero-eyebrow`, not just `.hero-eyebrow`:
+     `.hero-copy p` (tag+class) outranks a single class on specificity alone,
+     source order notwithstanding, and silently overrode this the first time
+     it was written as a bare class. */
+  color: #c8c0e0;
+  margin: 0 0 0.75rem;
+}
+
+.hero-copy h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.08;
+  margin: 0 0 1rem;
+  @media (min-width: 45em) {
+    font-size: 3.4rem;
+  }
+  @media (min-width: 64em) {
+    font-size: 4.25rem;
+  }
+}
+
+/* Contrast fix, 2026-09-28 (coordinator review): "pop." is set in gradient
+   text (background-clip: text, color: transparent), so it carries no solid
+   `color` a token bump could touch, and a text-shadow (tried first) does
+   not composite cleanly behind clipped gradient text in Chrome at this
+   weight/size, it muddied the whole glyph rather than rimming it, visibly
+   worse, caught by re-screenshotting rather than trusting the CSS alone.
+   Measured 2.52:1 against the REAL rendered hero background at its darker
+   gradient stops, under the 3:1 large-text minimum (this is 68px+, past
+   the large-text threshold). `filter: brightness()` lifts the whole
+   gradient's luminance uniformly, so it still reads as the same holo hue
+   sequence, just lighter, with no shadow/outline artifact. Scoped to the
+   hero only; sitewide `.sws-holo` (used elsewhere on lighter or flatter
+   backgrounds where it already passes) is untouched. */
+.hero-copy h1 .sws-holo {
+  filter: brightness(1.3);
+}
+
+.hero-copy p {
+  color: var(--sws-sub);
+  font-size: 1.05rem;
+  margin: 0 0 1.5rem;
+  /* Contrast fix, 2026-09-28 (coordinator review): measured 4.10:1 against
+     the REAL rendered hero background (the aurora glow lightens it well
+     past the flat surface-base brand.rules.json verified --sws-sub
+     against), under the 4.5:1 AA minimum. A tight dark shadow right against
+     the glyph edge raises the effective local contrast without changing
+     the token or the brand's dim/sub colour anywhere else on the site.
+     Re-measured after this change, measured in design QA. */
+  text-shadow: 0 1px 2px rgba(5, 2, 10, 0.9), 0 0 10px rgba(5, 2, 10, 0.55);
+  @media (min-width: 45em) {
+    font-size: 1.15rem;
+  }
+}
+
+/*
+  Buttons side by side on a phone, stacked only below 380px where two of
+  them will not fit. Stacked at every width they cost 127px of the first
+  screen (measured 375x812, 2026-09-21) to say two words.
+*/
+.hero-cta-row {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  @media (max-width: 23.75em) {
+    flex-direction: column;
+  }
+  @media (min-width: 55em) {
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: flex-start;
+    margin-bottom: 1.25rem;
+  }
+}
+
+.hero-trust-row {
+  align-items: center;
+  color: var(--sws-sub);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  gap: 0.5rem;
+  justify-content: center;
+  /* Contrast fix, 2026-09-28: same fix and same reasoning as `.hero-copy p`
+     above, measured 4.30:1 before this change. text-shadow is inherited,
+     so this reaches the child spans (rating, sold, favorites stats)
+     without a rule per child. */
+  text-shadow: 0 1px 2px rgba(5, 2, 10, 0.9), 0 0 10px rgba(5, 2, 10, 0.55);
+  @media (min-width: 55em) {
+    justify-content: flex-start;
+  }
+}
+
+.hero-trust-sep {
+  opacity: 0.5;
+}
+
+/*
+  Real stream scene frame: one clean 4:3 panel holding the real Neon chat
+  and goal widgets, live, large. No tilt, no page-level scanline, no double
+  glow.
+
+  Redesigned 2026-09-28 (the previous hero was too weak), then
+  redone same day on coordinator review: the first pass's 16:9 frame at
+  hero-column display widths (~650-900px) meant the widgets, which only
+  filled a small corner of a 1600px-wide source canvas, got shrunk twice
+  over and read as a mostly-empty rectangle with unreadable labels. 4:3
+  instead of 16:9 at the same column width means less horizontal shrink for
+  the same content, and the source composite itself (hero/hero-v2-video.html)
+  now renders both widgets much larger within a smaller 1200x900 canvas. The
+  old frame was ALSO rotated 3deg with its own scanline layer stacked on top
+  of a composite that carried a second scanline of its own, on top of a
+  4-widget collage, busy, not premium. This frame is dead level, one soft
+  ambient glow, restrained so the real widgets (which already glow) stay the
+  brightest thing in the frame.
+*/
+.hero-stream-frame {
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(155deg, #140b23, #0b0713 70%);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 24px 48px -20px rgba(10, 5, 20, 0.65), 0 0 40px -18px rgba(183, 157, 242, 0.18);
+  margin: 0 auto;
+  max-width: 900px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  @media (min-width: 55em) {
+    max-width: none;
+  }
+}
+
+.hero-stream-media {
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  position: absolute;
+  width: 100%;
+}
+
+.hero-stream-label {
+  bottom: 14px;
+  font-size: 0.75rem;
+  right: 14px;
+  padding: 0.4rem 0.85rem;
+  position: absolute;
+  z-index: 2;
+}
+
+/*
+* --------------------------------------------------
+* routes/_index: homepage v2 (2026-10-17, bbpromo1)
+*
+* Problem: the SWS homepage was too blocky and not well organized.
+* What was wrong, measured on prod 1bfdeeb at 390px: 12,941px tall, nine
+* full-width bands each with its own padding, border and heading style
+* (centred eyebrow + h2, left h2 + ghost button, boxed kits band, bordered
+* works-with ribbon, cream sticker callout, glass free-chat slot), and gaps
+* between bands of 56px, then 3rem, then 4rem, depending on the band.
+*
+* What replaces it: ONE spacing scale (the --home-* vars below), ONE section
+* header (SectionHead in _index.jsx), ONE row (.home-row: swipe on a phone,
+* 2 across on a tablet, 4 on a desktop), no borders or fills on bands. Bands
+* that said the same thing were merged: reviews + platforms + streamers are
+* one band, custom work + free chat are one two-up row. The look is the live
+* brand (tokens above); only the layout idea of one rhythm came from the
+* feat/neon-brand "section rhythm" commit, none of its colours or fonts.
+* --------------------------------------------------
+*/
+.home {
+  --home-px: 1.25rem; /* side gutter */
+  --home-gap: 2.75rem; /* between bands */
+  --home-head-gap: 1.1rem; /* band head to its content */
+  --home-card-gap: 0.9rem; /* between cards */
+  --home-max: 1240px;
+}
+
+@media (min-width: 45em) {
+  .home {
+    --home-px: 2rem;
+    --home-gap: 4.25rem;
+    --home-head-gap: 1.5rem;
+    --home-card-gap: 1.25rem;
+  }
+}
+
+/* The hero keeps the exact top margin it always had (56px phone, 96px
+   desktop): its box must not move. Everything after it uses the one scale. */
+.home > .hero {
+  margin-top: 56px;
+  @media (min-width: 45em) {
+    margin-top: 96px;
+  }
+}
+
+.home > .hero ~ * {
+  margin-top: var(--home-gap);
+}
+
+.home-sec {
+  margin-inline: auto;
+  max-width: var(--home-max);
+  padding-inline: var(--home-px);
+  width: 100%;
+}
+
+/* Band header: eyebrow, one h2, up to two text links. */
+.home-head {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.35rem 1.25rem;
+  justify-content: space-between;
+  margin-bottom: var(--home-head-gap);
+}
+
+.home-head-text {
+  min-width: 0;
+}
+
+.home-head .sws-section-eyebrow {
+  font-size: 0.75rem;
+  margin: 0 0 0.2rem;
+}
+
+.home-head-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0;
+  @media (min-width: 45em) {
+    font-size: 1.9rem;
+  }
+}
+
+.home-head-links {
+  align-items: flex-end;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 0;
+  @media (min-width: 45em) {
+    flex-direction: row;
+    gap: 0 1.25rem;
+  }
+}
+
+.home-head-link {
+  color: var(--sws-holo-1);
+  font-size: 0.9rem;
+  font-weight: 800;
+  padding: 0.5rem 0;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.home-head-link::after {
+  content: ' \2192';
+}
+
+.home-head-link:hover,
+.home-head-link:focus-visible {
+  color: var(--sws-text);
+}
+
+/* One row for every set of cards. */
+.home-row {
+  /* see the old .home-shelf-grid note: without `contain`, a flex row of
+     percentage-basis cards leaked ~1400px of page-level horizontal scroll. */
+  contain: layout;
+  display: flex;
+  gap: var(--home-card-gap);
+  margin-inline: calc(var(--home-px) * -1);
+  overflow-x: auto;
+  padding: 0 var(--home-px) 0.5rem;
+  scroll-padding-inline: var(--home-px);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.home-row::-webkit-scrollbar {
+  display: none;
+}
+
+.home-row > * {
+  flex: 0 0 72%;
+  max-width: 300px;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 40em) {
+  .home-row {
+    contain: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-inline: 0;
+    overflow: visible;
+    padding: 0;
+  }
+  .home-row > * {
+    max-width: none;
+  }
+  .home-row--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  /* six cards on a phone swipe row, the first four on anything wider.
+     nth-of-type, NOT nth-child, and it must stay that way: a <Link
+     prefetch="intent"> renders its prefetch <link rel="prefetch"> elements as
+     SIBLINGS of the <a> the first time the pointer or a finger touches it
+     (24 of them on the homepage, measured). nth-child counted those, so every
+     tile after the one you hovered became child number 5 or later and
+     vanished (2026-10-18, New arrivals). Cards are the only <a> in
+     these rows, and the <link> elements are a different type. */
+  .home-row--cap4 > a:nth-of-type(n + 5) {
+    display: none;
+  }
+}
+
+@media (min-width: 65em) {
+  .home-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .home-row--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---- Bundle Builder promo ---- */
+.bundle-promo-inner {
+  align-items: center;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(127, 230, 255, 0.1),
+      rgba(183, 157, 242, 0.14) 45%,
+      rgba(240, 80, 154, 0.14)
+    ),
+    var(--sws-card);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 24px;
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  @media (min-width: 45em) {
+    gap: 2.5rem;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    padding: 2rem 2.25rem;
+  }
+}
+
+.bundle-promo-copy {
+  min-width: 0;
+}
+
+.bundle-promo-copy .sws-section-eyebrow {
+  font-size: 0.75rem;
+  margin: 0 0 0.3rem;
+}
+
+.bundle-promo-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 6vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 0.6rem;
+  text-wrap: balance;
+}
+
+.bundle-promo-deal {
+  display: block;
+  font-size: 0.72em;
+  margin-top: 0.25rem;
+}
+
+.bundle-promo-deal .nowrap {
+  white-space: nowrap;
+}
+
+.bundle-promo-sub {
+  color: var(--sws-sub);
+  margin: 0 0 1rem;
+  max-width: 34rem;
+}
+
+.bundle-promo-tiers {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+  margin: 0 0 1.25rem;
+  max-width: 28rem;
+  padding: 0;
+}
+
+.bundle-promo-tiers li {
+  background: rgba(243, 236, 255, 0.06);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 14px;
+  color: var(--sws-sub);
+  font-size: 0.78rem;
+  line-height: 1.25;
+  padding: 0.5rem 0.4rem;
+  text-align: center;
+}
+
+.bundle-promo-tiers b {
+  color: var(--sws-holo-3);
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+}
+
+.bundle-promo-cta {
+  min-height: 48px;
+}
+
+.bundle-promo-art {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.bundle-promo-art:empty {
+  min-height: 12rem;
+}
+
+.bundle-promo-art li {
+  aspect-ratio: 16 / 10;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(183, 157, 242, 0.28), transparent 65%),
+    var(--sws-bg);
+  border: 1px solid var(--sws-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* contain, never cover or a ratio: product art is not square and cover
+   chops the edge text. */
+.bundle-promo-art img {
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+/* ---- Shop by vibe: one slim strip ---- */
+.home-vibes {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.1rem;
+}
+
+.home-vibes-label {
+  color: var(--sws-sub);
+  flex: 0 0 auto;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.vibe-chip-row {
+  display: flex;
+  flex: 1 1 100%;
+  gap: 0.6rem;
+  margin-inline: calc(var(--home-px) * -1);
+  min-width: 0;
+  overflow-x: auto;
+  padding: 0.25rem var(--home-px);
+  scrollbar-width: none;
+  @media (min-width: 45em) {
+    flex: 1 1 0;
+    margin-inline: 0;
+    overflow-x: visible;
+    padding: 0.25rem;
+    flex-wrap: wrap;
+  }
+}
+
+.vibe-chip-row::-webkit-scrollbar {
+  display: none;
+}
+
+.vibe-chip-row .sws-chip {
+  padding: 0.4rem 0.95rem;
+}
+
+/* ---- Seasonal shelf: same row, an orange eyebrow and rule, no box ---- */
+.halloween-band .sws-section-eyebrow {
+  color: #ffb066;
+}
+
+.halloween-band .home-head {
+  border-bottom: 1px solid rgba(255, 158, 74, 0.32);
+  padding-bottom: 0.75rem;
+}
+
+.halloween-sub {
+  color: var(--sws-sub);
+  margin: 0 0 var(--home-head-gap);
+  max-width: 46rem;
+}
+
+/* ---- Kits ---- */
+.kit-card {
+  background: var(--sws-card);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
+  display: block;
+  overflow: hidden;
+  padding: 1.25rem;
+  text-decoration: none;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.kit-card:hover {
+  border-color: var(--sws-border-strong);
+  box-shadow: 0 20px 48px -20px rgba(242, 166, 216, 0.35);
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kit-card {
+    transition: none;
+  }
+  .kit-card:hover {
+    transform: none;
+  }
+}
+
+.kit-card-image {
+  aspect-ratio: 16 / 10;
+  background: radial-gradient(
+      circle at 50% 45%,
+      rgba(183, 157, 242, 0.28),
+      transparent 65%
+    ),
+    var(--sws-bg);
+  border-radius: 14px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.kit-card-image img {
+  border-radius: 14px;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.kit-card-tag {
+  background: var(--sws-cream);
+  border: 2px solid var(--sws-ink);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0 var(--sws-outline);
+  color: var(--sws-ink);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 800;
+  left: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  position: absolute;
+  text-transform: uppercase;
+  top: 0.75rem;
+  z-index: 1;
+}
+
+.kit-card-body h3 {
+  color: var(--sws-text);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin: 0 0 0.5rem;
+}
+
+.kit-card-hook {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+.kit-card-footer {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.kit-card-price-pill {
+  align-items: center;
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-holo-1);
+  display: inline-flex;
+  font-weight: 800;
+  gap: 0.5rem;
+  padding: 0.3rem 0.85rem;
+}
+
+.kit-card-compare-price {
+  color: var(--sws-sub);
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.kit-card-savings {
+  background: linear-gradient(
+    90deg,
+    var(--sws-holo-1),
+    var(--sws-holo-2),
+    var(--sws-holo-3),
+    var(--sws-holo-4)
+  );
+  background-size: 300% auto;
+  border-radius: var(--radius-pill);
+  color: var(--sws-ink);
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 0.25rem 0.7rem;
+}
+
+.home-row--kits .kit-card {
+  height: 100%;
+  padding: 1rem;
+}
+
+.home-row--kits .kit-card-image {
+  margin-bottom: 0.85rem;
+}
+
+.home-row--kits .kit-card-body h3 {
+  font-size: 1.05rem;
+}
+
+.home-row--kits .kit-card-hook {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  margin-bottom: 0.85rem;
+  overflow: hidden;
+}
+
+/* ---- Proof: reviews, platforms, streamers in one band ---- */
+.home-trust .home-head-title {
+  font-size: 1.5rem;
+  @media (min-width: 45em) {
+    font-size: 1.9rem;
+  }
+}
+
+.chat-bubble-review {
+  background: var(--sws-card);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
+  border-top-left-radius: 4px;
+  padding: 1.1rem 1.25rem;
+}
+
+.chat-bubble-review-head {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.chat-bubble-review-name {
+  color: var(--sws-holo-1);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.chat-bubble-review-stars {
+  color: #ffd166;
+  font-size: 0.85rem;
+}
+
+.chat-bubble-review p {
+  color: var(--sws-text);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.home-reviews-link {
+  color: var(--sws-sub);
+  display: inline-block;
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0;
+  text-decoration: none;
+}
+
+.home-reviews-link:hover {
+  color: var(--sws-holo-1);
+}
+
+.works-with {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.works-with-label {
+  color: var(--sws-sub);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.9rem;
+  text-transform: uppercase;
+}
+
+.works-with-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  justify-content: center;
+}
+
+.works-with-item {
+  align-items: center;
+  color: var(--sws-sub);
+  display: inline-flex;
+  font-size: 0.85rem;
+  font-weight: 700;
+  gap: 0.5rem;
+}
+
+.works-with-item .platform-icon {
+  height: 20px;
+  width: 20px;
+}
+
+.home > .email-capture {
+  padding-inline: var(--home-px);
+}
+
+/* ---- Custom work + free chat, side by side ---- */
+.home-more {
+  display: grid;
+  gap: var(--home-card-gap);
+  @media (min-width: 45em) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.home-more-card {
+  align-items: flex-start;
+  background: var(--sws-card);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.35rem 1.35rem 1.5rem;
+}
+
+.home-more-card--custom {
+  border-color: var(--sws-border-strong);
+}
+
+.home-more-card h2 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.home-more-card p {
+  color: var(--sws-sub);
+  flex: 1;
+  margin: 0 0 0.5rem;
+}
+
+/* ---- Blog row ---- */
+.home-articles .home-row > .blog-article {
+  max-width: 340px;
+  @media (min-width: 40em) {
+    max-width: none;
+  }
+}
+
+.home-article-excerpt {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+
+/*
+* --------------------------------------------------
+* routes/_index: Email capture
+* --------------------------------------------------
+*/
+.email-capture {
+  padding: 1rem 2rem 4rem;
+}
+
+.email-capture-inner {
+  margin: 0 auto;
+  max-width: 640px;
+  padding: 2.25rem;
+  text-align: center;
+}
+
+.email-capture-inner h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 0.6rem;
+}
+
+.email-capture-inner > p {
+  color: var(--sws-sub);
+  margin: 0 0 1.25rem;
+}
+
+.email-capture-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: center;
+  @media (min-width: 40em) {
+    flex-direction: row;
+  }
+}
+
+.email-capture-form input {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.2rem;
+}
+
+.email-capture-success {
+  color: var(--sws-holo-5);
+  font-weight: 700;
+  margin: 0;
+}
+
+.email-capture-error {
+  color: var(--sws-holo-4);
+  margin: 0.75rem 0 0;
+}
+
+/*
+* --------------------------------------------------
+* generic page containers (collections, blog, policies, account, search)
+* --------------------------------------------------
+*/
+.collection,
+.collections,
+.blog,
+.article,
+.policies,
+.policy,
+.account,
+.search,
+.page {
+  padding: 1.25rem 1rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  @media (min-width: 45em) {
+    padding: 2rem;
+  }
+}
+
+.collection h1,
+.collections h1,
+.blog h1,
+.article h1,
+.policies h1,
+.policy h1,
+.account h1,
+.search h1,
+.page h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.page main {
+  color: var(--sws-sub);
+  max-width: 720px;
+}
+
+.page main :is(h2, h3) {
+  color: var(--sws-text);
+  margin: 1.5rem 0 0.5rem;
+}
+
+.page main a {
+  color: var(--sws-accent-2);
+}
+
+/*
+* --------------------------------------------------
+* components/FaqAccordion
+* --------------------------------------------------
+*/
+.faq-accordion {
+  max-width: 720px;
+}
+
+.faq-category {
+  color: var(--sws-accent-2);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin: 2rem 0 0.75rem;
+  text-transform: uppercase;
+}
+
+.faq-category:first-child {
+  margin-top: 0;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--sws-border);
+  padding: 0.9rem 0;
+}
+
+.faq-item summary {
+  color: var(--sws-text);
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::before {
+  content: '+ ';
+  color: var(--sws-accent-1);
+  font-weight: 800;
+}
+
+.faq-item[open] summary::before {
+  content: '\2212 ';
+}
+
+.faq-item p {
+  color: var(--sws-sub);
+  margin: 0.6rem 0 0;
+}
+
+/*
+* --------------------------------------------------
+* components/HowItWorksSteps
+* --------------------------------------------------
+*/
+.how-it-works {
+  max-width: 760px;
+}
+
+.how-it-works-intro {
+  color: var(--sws-sub);
+  margin-bottom: 0.75rem;
+}
+
+.how-it-works-steps {
+  list-style: none;
+  margin: 2rem 0;
+  padding: 0;
+}
+
+.how-it-works-step {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--sws-border);
+}
+
+.how-it-works-step:last-child {
+  border-bottom: none;
+}
+
+.how-it-works-step-number {
+  align-items: center;
+  background: linear-gradient(90deg, var(--sws-accent-1), var(--sws-accent-3));
+  border-radius: 999px;
+  color: #0a0a12;
+  display: flex;
+  flex-shrink: 0;
+  font-weight: 800;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+}
+
+.how-it-works-step h3 {
+  color: var(--sws-text);
+  font-size: 1.05rem;
+  margin: 0 0 0.35rem;
+}
+
+.how-it-works-step p {
+  color: var(--sws-sub);
+  margin: 0;
+}
+
+.how-it-works-info-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  margin-top: 1.5rem;
+}
+
+.how-it-works-info-block {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.how-it-works-info-block h4 {
+  color: var(--sws-text);
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.how-it-works-info-block p {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/*
+* --------------------------------------------------
+* components/ContactPage
+* --------------------------------------------------
+*/
+.contact-page {
+  max-width: 760px;
+}
+
+.contact-intro {
+  color: var(--sws-sub);
+  font-size: 1.05rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact-form {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 480px;
+  padding: 1.5rem;
+}
+
+.contact-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.contact-form-row label {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+}
+
+.contact-form-row input,
+.contact-form-row textarea {
+  background: var(--sws-bg-alt);
+  border: 1px solid var(--sws-border);
+  border-radius: 8px;
+  color: var(--sws-text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.65rem 0.8rem;
+  resize: vertical;
+}
+
+.contact-form button[type='submit'] {
+  border: none;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.contact-form button[type='submit']:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.contact-form-error {
+  color: var(--sws-accent-1);
+  font-size: 0.85rem;
+}
+
+.contact-form-error p {
+  margin: 0 0 0.6rem;
+}
+
+/* Specificity matters here. `.page main a` (0,1,2) sets the cyan accent colour
+   on every link in page content, which beat a plain `.contact-form-mailto-btn`
+   (0,1,0) and painted this button's label cyan on a cyan gradient stop, so the
+   text was invisible. Qualifying with the parent gets to (0,2,1) and wins.
+   `border: none` also has to go, or the button loses the dark sticker outline
+   that makes the primary button legible. */
+.contact-form-error a.contact-form-mailto-btn {
+  color: var(--sws-ink);
+  border: 3px solid var(--sws-ink);
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1rem;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.contact-form-field-error {
+  color: var(--sws-accent-1);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.contact-form-honeypot {
+  height: 1px;
+  left: -9999px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+
+.contact-form-success {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-accent-2);
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  max-width: 480px;
+  padding: 1.5rem;
+}
+
+.contact-form-success h3 {
+  color: var(--sws-text);
+  margin: 0 0 0.5rem;
+}
+
+.contact-form-success p {
+  color: var(--sws-sub);
+  margin: 0;
+}
+
+.contact-alt-email {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  margin-bottom: 2.5rem;
+}
+
+.contact-links-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.contact-link-card {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 12px;
+  color: inherit;
+  display: block;
+  padding: 1.25rem;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.contact-link-card:hover {
+  border-color: var(--sws-accent-1);
+}
+
+.contact-link-card h3 {
+  color: var(--sws-text);
+  font-size: 1rem;
+  margin: 0 0 0.4rem;
+}
+
+.contact-link-card p {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.product-item {
+  background: var(--sws-card);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
+  /* Column so the price row can pin to the bottom: cards in one row then put
+     their price on the same line whether the title ran two lines or three and
+     whether the sold and GIF lines are shown. */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.85rem;
+  /* Containing block for the ::after hover plate below. */
+  position: relative;
+  text-decoration: none;
+  /*
+   * Transform ONLY. Every other hover property moved to ::after so a hover is
+   * a compositor job and never re-rasterises the card.
+   *
+   * What this cost before (2026-10-09, visible glitching on a fast sweep across a
+   * grid): border-color and box-shadow are PAINT properties, so each of the
+   * 0.2s transitions repainted the whole card every frame, and because the
+   * card also carries backdrop-filter, every one of those repaints re-sampled
+   * and re-blurred the backdrop underneath it. A fast sweep across 24 cards
+   * ran 24 of those back to back.
+   */
+  transition: transform 0.2s ease;
+  /*
+   * Promote the card ONCE, up front, instead of letting the hover transform
+   * create a layer and the transition's end tear it down again. That create/
+   * destroy per hover is the "popping" half of the jank. It also keeps the
+   * backdrop blur in the compositor rather than in a main-thread raster.
+   *
+   * The backdrop under a card is NEVER static on this site: body::before
+   * drifts for 40s on a loop and .sws-star-layer leans toward the pointer
+   * (Starfield.jsx), so a non-promoted blurred card repaints forever. Same
+   * failure reported on a laptop in 2026-09-17, one layer down.
+   */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/*
+ * The hover plate: border highlight and glow, faded by OPACITY so the hover
+ * animates nothing a repaint can see. `inset: -1px` sits it exactly over the
+ * card's own 1px border instead of just inside it (absolute inset is measured
+ * from the padding box), so the two lines coincide rather than doubling.
+ *
+ * This is why .product-item no longer has `overflow: hidden`: an overflow clip
+ * on the parent also clips a child's outer box-shadow, so the glow would never
+ * have been visible here. Nothing needed that clip -- .product-item-image
+ * carries its own `overflow: hidden`, and at 0.85rem of padding every child
+ * sits well inside an 18px corner radius.
+ */
+.product-item::after {
+  border: 1px solid var(--sws-border-strong);
+  border-radius: calc(var(--radius-card) + 1px);
+  box-shadow: 0 16px 40px -18px rgba(242, 166, 216, 0.35);
+  content: '';
+  inset: -1px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity 0.2s ease;
+}
+
+.product-item:hover::after {
+  opacity: 1;
+}
+
+.product-item:hover {
+  /* translate3d, not translateY: a 3D transform keeps the card on the layer it
+     already had rather than swapping it for a new one mid-hover. */
+  transform: translate3d(0, -4px, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-item,
+  .product-item::after {
+    transition: none;
+  }
+  .product-item:hover {
+    /* Still translateZ, not `none`: dropping the transform would hand the
+       layer back and reintroduce the create/destroy pop. */
+    transform: translateZ(0);
+  }
+}
+
+.product-item-image {
+  aspect-ratio: 1 / 1;
+  background: radial-gradient(circle at 50% 45%, rgba(183, 157, 242, 0.22), transparent 65%),
+    var(--sws-bg);
+  border-radius: 12px;
+  margin-bottom: 0.85rem;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+/*
+ * ONE fit box for both states of the tile. The still and the preview video
+ * occupy the same square and are fitted the same way, so the swap cannot
+ * offset or re-crop the artwork. Declared in a single rule on purpose: these
+ * two only stay stable if they stay identical, and the moment one of them
+ * gets its own `object-fit` or `object-position` the artwork moves at the
+ * swap. (`object-position` is restated rather than left to the default for
+ * the same reason.)
+ *
+ * What this does NOT remove, because CSS cannot: the still and the clip have
+ * different intrinsic ratios (stills here are mostly non-square, the demo
+ * clips are 900x720), and two different ratios fitted with `contain` into one
+ * box paint different rectangles. Making them identical needs `cover` (crops
+ * the clip's edge UI, banned) or `fill` (stretches it). So the
+ * residual size change is crossfaded over the 0.25s below rather than
+ * snapped, and since 2026-10-09 it only happens on a deliberate hover, not
+ * once per card on a sweep across the grid.
+ */
+.product-item-image img,
+.product-item-video {
+  border-radius: 12px;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 50%;
+  width: 100%;
+}
+
+/* Hover/focus preview video, laid over the still image at the same box.
+   Hidden by default (opacity + pointer-events: none) and only faded in via
+   the .is-active class the component toggles on hover/focus, never via a
+   bare :hover pseudo-class -- that is what gets stuck "on" after a tap on
+   touch devices. preload="none" and the JS play/pause live in
+   ProductItem.jsx; this is presentation only.
+
+   The 0.25s below is a contract with PREVIEW_FADE_MS in ProductItem.jsx: the
+   component waits out this fade before it pauses the element, so change both
+   or neither. Pausing during the fade is what made the half-faded frame snap
+   back to frame 0 in view. */
+.product-item-video {
+  /*
+   * Opaque, and matching the still's own backdrop, so the image underneath
+   * cannot show through.
+   *
+   * The card box is square and the fit is `contain` (shared rule above), but
+   * the demo clips are not square: this catalog's are 900x720, a 5:4. So the
+   * video letterboxes inside the square and, with a transparent background,
+   * the still image stayed visible in the bands above and below it. Both show
+   * the same artwork, so the card rendered the picture inside its own
+   * picture. 2026-09-14: the card showed a picture inside the same picture,
+   * with content duplicated.
+   *
+   * `contain` stays. These are widget demos with text and UI at the edges;
+   * `cover` would crop a square out of a 5:4 clip and cut that off, which is
+   * the same reason the images never get `crop=center`.
+   */
+  background: radial-gradient(
+      circle at 50% 45%,
+      rgba(183, 157, 242, 0.22),
+      transparent 65%
+    ),
+    var(--sws-bg);
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity 0.25s ease;
+  z-index: 1;
+}
+
+.product-item-video.is-active {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-item-video {
+    transition: none;
+  }
+}
+
+/* Type label only -- quieted deliberately so Multistream (the ribbon,
+   below) reads as the dominant claim on the tile. Flat outline chip, no
+   gradient, no shadow, restated colour so it never inherits an accent. */
+.product-item-tag {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  left: 0.6rem;
+  padding: 0.18rem 0.55rem;
+  position: absolute;
+  text-transform: uppercase;
+  top: 0.6rem;
+  z-index: 2;
+}
+
+.product-item-tag.tag-chat {
+  color: var(--sws-holo-1);
+}
+
+.product-item-tag.tag-goal {
+  color: var(--sws-holo-3);
+}
+
+.product-item-tag.tag-free {
+  color: var(--sws-holo-2);
+}
+
+/* Stream Chat Lite discovery card, see FreeChatProductCard.jsx. Same shape
+   and hover as a real product-item; only the price pill's colour differs,
+   so "Free" reads as a fact on the tile rather than a discount. Double
+   class for specificity, not source order: .product-item-price-pill's own
+   colour rule sits later in this file and would otherwise win the tie. */
+.product-item-price-pill.free-chat-product-card-price {
+  color: var(--sws-holo-2);
+}
+
+/* Search's "Free" section always has exactly one card, so the shared
+   .products-grid's single `auto-fit` track would otherwise stretch it to
+   the full row width via its `1fr` track (a single 1fr track with nothing
+   to share the row with fills the whole container, and since
+   .product-item-image is `aspect-ratio: 1/1`, that blew the card up to a
+   near-full-viewport square). Double class for specificity, not source
+   order: this rule must win regardless of where it lands relative to
+   .products-grid in the file. */
+.products-grid.search-free-chat-grid {
+  grid-template-columns: minmax(0, var(--grid-item-width));
+}
+
+/* Opposite corner from .product-item-tag (top-left) so the two never
+   collide. Colour is restated explicitly rather than inherited: a gradient
+   badge with an inherited text colour is how the contact form button went
+   invisible on its own background (see the note above
+   .contact-form-error a.contact-form-mailto-btn), so this sets both the
+   gradient and the ink colour/outline on the same rule.
+
+   Multistream is the differentiator worth paying for, the type tag above
+   is just a category label -- this is the louder of the two on purpose:
+   bigger, a harder holographic shimmer, an ink outline with a stronger
+   shadow, and a star glyph the type tag does not get. */
+.product-item-ribbon {
+  align-items: center;
+  background: linear-gradient(
+    120deg,
+    var(--sws-holo-1),
+    var(--sws-holo-2),
+    var(--sws-holo-3),
+    var(--sws-holo-4),
+    var(--sws-holo-1)
+  );
+  background-size: 300% auto;
+  border: 2px solid var(--sws-ink);
+  border-radius: var(--radius-pill);
+  box-shadow: 3px 3px 0 var(--sws-outline), 0 0 14px -2px rgba(242, 166, 216, 0.65);
+  color: var(--sws-ink);
+  display: inline-flex;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 800;
+  gap: 0.2rem;
+  letter-spacing: 0.03em;
+  padding: 0.28rem 0.65rem;
+  position: absolute;
+  right: 0.6rem;
+  text-transform: uppercase;
+  top: 0.6rem;
+  z-index: 2;
+  animation: sws-holo-shift 6s linear infinite;
+}
+
+.product-item-ribbon-star {
+  font-size: 0.85em;
+}
+
+/* "New arrivals" only. Bottom-left: the type tag (top-left) and multistream
+   ribbon (top-right) already own the other two corners of the image. Flat
+   chip like the type tag, not the loud ribbon treatment -- new is a fact,
+   not the thing being sold. */
+.product-item-new-badge {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-holo-2);
+  border-radius: var(--radius-pill);
+  bottom: 0.6rem;
+  color: var(--sws-holo-2);
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  left: 0.6rem;
+  padding: 0.18rem 0.55rem;
+  position: absolute;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-item-ribbon {
+    animation: none;
+  }
+}
+
+.product-item-title {
+  color: var(--sws-text);
+  font-size: 0.95rem;
+  line-height: 1.35;
+  margin: 0 0 0.5rem;
+  /* Takes over from the `overflow: hidden` the card used to carry (dropped so
+     the hover glow is not clipped): a title with one unbreakable token wraps
+     mid-token instead of widening the card. Only fires when a token cannot
+     fit, so ordinary titles wrap exactly as before. */
+  overflow-wrap: anywhere;
+}
+
+/* One rhythm for the meta lines under the title (sold, GIF): same size, same
+   colour, same 20px line box, 4px apart, so the badge and the text share a
+   centre line and the two rows stack evenly. */
+.product-item-sold,
+.product-item-gif {
+  align-items: center;
+  color: var(--sws-sub);
+  display: flex;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  margin: 0 0 0.25rem;
+  min-height: 20px;
+}
+
+/* Flex drops the plain space around a text run, so the word gap is put back
+   by hand: a flex `gap` here reads as a double space before "sold" and "Yes". */
+.product-item-sold strong,
+.product-item-gif strong {
+  color: var(--sws-text);
+  font-weight: 700;
+}
+
+.product-item-sold strong {
+  margin-right: 0.3em;
+}
+
+.product-item-gif strong {
+  margin-left: 0.3em;
+}
+
+.product-item-gif .product-gif-badge {
+  margin-right: 0.4rem;
+}
+
+.product-item-footer {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.product-item-price-pill {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-holo-1);
+  font-weight: 800;
+  padding: 0.2rem 0.7rem;
+}
+
+/* Same recipe as .product-price-on-sale s (PDP) and .kit-card-compare-price
+   (homepage kit band): 0.8 opacity on --sws-sub over this pill's
+   --sws-card-solid background measures 4.97:1, above WCAG AA's 4.5:1. */
+.product-item-compare-price {
+  color: var(--sws-sub);
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.product-item-platforms {
+  align-items: center;
+  display: flex;
+  gap: 0.4rem;
+  line-height: 0;
+  padding-right: 0.15rem;
+}
+
+.product-item-platforms .platform-icon,
+.product-item-platforms .platform-icon-monogram {
+  color: var(--sws-sub);
+  display: block;
+  height: 14px;
+  width: 14px;
+}
+
+/*
+* --------------------------------------------------
+* routes/collections._index.tsx
+* --------------------------------------------------
+*/
+.collections-grid {
+  display: grid;
+  grid-gap: 1.5rem;
+  /* min() so the track can shrink below 320px on a phone, see .products-grid */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(var(--grid-item-width), 100%), 1fr)
+  );
+  margin-bottom: 2rem;
+  padding: 0 2rem;
+}
+
+
+
+.collection-item {
+  background: var(--sws-card);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-card);
+  display: block;
+  overflow: hidden;
+  padding: 0.75rem;
+  text-decoration: none;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.collection-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--sws-border-strong);
+}
+
+.collection-item img {
+  border-radius: 10px;
+  height: auto;
+}
+
+/*
+* --------------------------------------------------
+* routes/collections.$handle.tsx
+* --------------------------------------------------
+*/
+.collection-description {
+  color: var(--sws-sub);
+  margin-bottom: 1rem;
+  max-width: 95%;
+  padding: 0 2rem;
+  @media (min-width: 45em) {
+    max-width: 600px;
+  }
+}
+
+/* custom.intro metafield, only present once a collection is set up as an
+   SEO landing page (see app/routes/collections.$handle.jsx). Same measure
+   as .collection-description, one notch larger since it is the real
+   opening copy rather than the raw Admin description. */
+.collection-intro {
+  color: var(--sws-text);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  max-width: 95%;
+  padding: 0 2rem;
+  @media (min-width: 45em) {
+    max-width: 680px;
+  }
+}
+
+/* .collection-guide and .collection-faq reuse .product-description /
+   .product-faq / .product-description-body wholesale (see
+   routes/products.$handle -- description + reviews below); only the
+   horizontal padding differs, since the collection page's grid sits in a
+   2rem-padded container the product page does not use the same way. */
+.collection-guide,
+.collection-faq {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/*
+* --------------------------------------------------
+* components/CollectionFilterBar
+* --------------------------------------------------
+*/
+.collection-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+  padding: 0 2rem;
+  @media (min-width: 55em) {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.collection-filter-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.collection-filter-type {
+  background: transparent;
+  border: 2px solid var(--sws-border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.4rem 0.9rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.collection-filter-type:hover {
+  border-color: var(--sws-holo-1);
+  color: var(--sws-text);
+}
+
+.collection-filter-type.active {
+  background: var(--sws-cream);
+  border: 2px solid var(--sws-ink);
+  box-shadow: 2px 2px 0 var(--sws-outline);
+  color: var(--sws-ink);
+  font-weight: 800;
+}
+
+.collection-filter-search-form {
+  width: 100%;
+  @media (min-width: 55em) {
+    max-width: 260px;
+  }
+}
+
+.collection-filter-search {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  font-size: 0.9rem;
+  padding: 0.55rem 1rem;
+  width: 100%;
+}
+
+.collection-empty {
+  align-items: center;
+  color: var(--sws-sub);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.collection-empty img {
+  filter: drop-shadow(0 0 20px rgba(242, 166, 216, 0.35));
+  opacity: 0.85;
+  width: 96px;
+}
+
+.collection-empty a {
+  color: var(--sws-holo-1);
+}
+
+.products-grid {
+  display: grid;
+  grid-gap: 1.5rem;
+  /*
+   * `min()` is load bearing. `minmax(var(--grid-item-width), 1fr)` alone
+   * makes every track at least 320px even when the container is narrower, so
+   * on a 360px phone the grid resolved to a single 320px column inside a
+   * 296px box and every product card was clipped 24px off the right edge.
+   * Measured at 360px before this: cards 320px wide starting at x=64, right
+   * edge 384, document scrollWidth 385 against a 360 viewport.
+   * `min(var(--grid-item-width), 100%)` lets the track shrink to the
+   * container on small screens and behaves identically above 320px.
+   */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(var(--grid-item-width), 100%), 1fr)
+  );
+  margin-bottom: 2rem;
+  padding: 0 2rem;
+}
+
+/*
+* --------------------------------------------------
+* routes/products.$handle.tsx
+* --------------------------------------------------
+*/
+.product {
+  padding: 1.25rem 1rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  @media (min-width: 45em) {
+    padding: 2rem;
+  }
+}
+
+.breadcrumbs {
+  margin-bottom: 1rem;
+}
+
+.breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.85rem;
+  color: var(--sws-sub);
+}
+
+.breadcrumbs li:not(:last-child)::after {
+  content: '/';
+  margin-left: 0.4rem;
+  color: var(--sws-border);
+}
+
+.breadcrumbs a {
+  color: var(--sws-sub);
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+  color: var(--sws-text);
+  text-decoration: underline;
+}
+
+.breadcrumbs [aria-current='page'] {
+  color: var(--sws-text);
+}
+
+/*
+ * On a phone the trail is one line: the current-page crumb repeats the h1,
+ * and wrapping it cost 63px above the buy box. Add to cart already sat at
+ * y=1299 of a 789px screen on production (360px, 2026-09-28). With this
+ * rule it sits at 1336 (trail 28px); without it, 1424. Keep anything added
+ * above the buy box this small. BreadcrumbList JSON-LD still carries the
+ * full trail.
+ */
+@media (max-width: 44.99em) {
+  .breadcrumbs {
+    margin-bottom: 0.5rem;
+  }
+
+  .breadcrumbs li:last-child {
+    display: none;
+  }
+
+  .breadcrumbs li:nth-last-child(2)::after {
+    content: none;
+  }
+}
+
+.product-top {
+  display: grid;
+  grid-gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+  @media (min-width: 45em) {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-gap: 3rem;
+  }
+}
+
+.product h1 {
+  margin-top: 0;
+  /* The heading is the product NAME now (36 chars on average across the
+     catalog, 85 at the longest), not the 99-character Etsy search string,
+     so it can be read at a size a phone buyer registers as a title. */
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 0;
+  overflow-wrap: break-word;
+  @media (min-width: 45em) {
+    font-size: 1.7rem;
+  }
+}
+
+.product-image img {
+  border-radius: 16px;
+  height: auto;
+  width: 100%;
+}
+
+.product-main {
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+  padding: 1.25rem;
+  @media (min-width: 45em) {
+    padding: 1.75rem;
+    position: sticky;
+    top: 6rem;
+  }
+}
+
+/*
+  Buy box first on a phone.
+
+  Measured on the live PDP at 375x812 on 2026-09-21: the price rendered at
+  y=811 of an 812px viewport, so it was never on the first screen, and the
+  raw Etsy h1 above it was 168px tall on its own. Mobile added to cart was
+  1.30% against 6.86% on desktop.
+
+  Flex `order` rather than a DOM move on purpose: the h1 stays first in the
+  document, so the reading order a screen reader and a crawler get is
+  unchanged, and only the two non-interactive blocks (rating, price) move
+  visually. Above 45em the sticky column has room for both and the source
+  order is what renders.
+*/
+.product-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+  /* Negative, not 2. Every other child of .product-main is order 0, so a
+     positive order sends the name and the price BELOW the highlights and the
+     share row instead of above them. */
+  order: -1;
+  @media (min-width: 45em) {
+    order: 0;
+  }
+}
+
+.product-buybox {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  order: -2;
+  @media (min-width: 45em) {
+    order: 0;
+  }
+}
+
+/*
+  The full keyword title, kept on the page under the name. It is the string
+  buyers recognise from Etsy search and it holds the words the h1 gave up,
+  so it stays visible rather than being dropped or hidden from crawlers.
+*/
+.product-title-full {
+  color: var(--sws-sub);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+/*
+* --------------------------------------------------
+* components/MobileStickyAddToCart
+* --------------------------------------------------
+*/
+.mobile-sticky-atc {
+  display: none;
+}
+
+@media (max-width: 44.99em) {
+  .mobile-sticky-atc {
+    align-items: center;
+    background: var(--sws-card-solid);
+    border-top: 3px solid var(--sws-ink);
+    bottom: 0;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+    display: flex;
+    gap: 0.75rem;
+    justify-content: space-between;
+    left: 0;
+    opacity: 0;
+    padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+    pointer-events: none;
+    position: fixed;
+    right: 0;
+    transform: translateY(100%);
+    transition: transform 200ms ease-in-out, opacity 200ms ease-in-out;
+    /*
+     * MUST stay below `.overlay` (z-index 40), which is every aside: the
+     * cart drawer, the search palette and the mobile menu -- see the
+     * 2026-09-14 fix above ("the sticky Add to cart bar covered Checkout")
+     * for why this class of bug never gets to recur. 30 sits above the
+     * sticky header (20) and every in-page z-index (max 2), below every
+     * modal.
+     */
+    z-index: 30;
+  }
+
+  .mobile-sticky-atc-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  /*
+   * Belt and suspenders on top of the useAside() check in the component:
+   * any open aside hides this bar outright by pure CSS, even if React state
+   * is mid-transition. Same html:has(.overlay.expanded) pattern already
+   * used above for the body scroll lock.
+   */
+  body:has(.overlay.expanded) .mobile-sticky-atc {
+    display: none;
+  }
+
+  .mobile-sticky-atc-price {
+    flex-shrink: 0;
+  }
+
+  .mobile-sticky-atc-price .product-price,
+  .mobile-sticky-atc-price .product-price-on-sale {
+    font-size: 1.05rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .mobile-sticky-atc-button {
+    flex: 1;
+    font-size: 1rem;
+    max-width: 220px;
+    min-height: 48px;
+    padding: 0.7rem 1.5rem;
+  }
+
+  .mobile-sticky-atc-button:disabled {
+    background: var(--sws-border);
+    border-color: var(--sws-border-strong);
+    box-shadow: none;
+    color: var(--sws-sub);
+    cursor: not-allowed;
+  }
+}
+
+/*
+* --------------------------------------------------
+* components/ProductGallery
+* --------------------------------------------------
+*/
+.product-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  @media (min-width: 45em) {
+    flex-direction: row;
+  }
+}
+
+.product-gallery-main {
+  aspect-ratio: 1 / 1;
+  background: var(--sws-card);
+  border-radius: 16px;
+  order: -1;
+  overflow: hidden;
+  position: relative;
+  @media (min-width: 45em) {
+    flex: 1;
+    order: 0;
+  }
+}
+
+.product-gallery-main img,
+.product-gallery-video {
+  border-radius: 16px;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+/*
+ * The small "Watch the demo" link on the PDP, sitting right under the
+ * gallery so Googlebot (and a real visitor) can discover the dedicated
+ * watch page by crawling from the product it belongs to. See
+ * app/routes/videos.$handle.jsx.
+ */
+.product-watch-link {
+  color: var(--sws-accent-1);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.product-watch-link:hover {
+  text-decoration: underline;
+}
+
+/*
+ * app/routes/videos.$handle.jsx -- the dedicated watch page. Nothing on this
+ * page competes with the video for attention: no grid, no cross-sell cards.
+ */
+.watch-page {
+  margin: 0 auto;
+  max-width: 900px;
+  padding: 1.25rem 1rem 3rem;
+  @media (min-width: 45em) {
+    padding: 2rem;
+  }
+}
+
+.watch-video {
+  background: var(--sws-card);
+  border-radius: 16px;
+  display: block;
+  height: auto;
+  max-width: 100%;
+  width: 100%;
+}
+
+.watch-title {
+  font-size: 1.6rem;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.watch-description {
+  color: var(--sws-text-muted, var(--sws-text));
+  margin: 0 0 1.25rem;
+}
+
+.watch-back-link {
+  color: var(--sws-accent-1);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.watch-back-link:hover {
+  text-decoration: underline;
+}
+
+.product-gallery-arrow {
+  align-items: center;
+  background: rgba(10, 10, 18, 0.6);
+  border: none;
+  border-radius: 999px;
+  color: var(--sws-text);
+  cursor: pointer;
+  display: flex;
+  font-size: 1.5rem;
+  height: 36px;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  z-index: 2;
+}
+
+.product-gallery-arrow.prev {
+  left: 0.75rem;
+}
+
+.product-gallery-arrow.next {
+  right: 0.75rem;
+}
+
+.product-gallery-thumbs {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  overflow-x: auto;
+  overflow-y: visible;
+  width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sws-border) transparent;
+  @media (min-width: 45em) {
+    flex-direction: column;
+    max-height: min(560px, 90vw);
+    overflow-x: visible;
+    overflow-y: auto;
+    width: 64px;
+  }
+}
+
+.product-gallery-thumbs::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+}
+
+.product-gallery-thumbs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.product-gallery-thumbs::-webkit-scrollbar-thumb {
+  background: var(--sws-border);
+  border-radius: 999px;
+}
+
+.product-gallery-thumbs::-webkit-scrollbar-thumb:hover {
+  background: var(--sws-accent-1);
+}
+
+.product-gallery-thumb {
+  background: var(--sws-card);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  height: 64px;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 64px;
+}
+
+.product-gallery-thumb img {
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.product-gallery-thumb.active {
+  border-color: var(--sws-accent-1);
+}
+
+.product-gallery-play {
+  align-items: center;
+  background: rgba(10, 10, 18, 0.55);
+  color: var(--sws-text);
+  display: flex;
+  font-size: 0.9rem;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+}
+
+/*
+* --------------------------------------------------
+* components/EtsyRating
+* --------------------------------------------------
+*/
+.etsy-rating {
+  align-items: center;
+  color: var(--sws-sub);
+  display: flex;
+  font-size: 0.9rem;
+  gap: 0.4rem;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.etsy-rating:hover {
+  color: var(--sws-text);
+}
+
+.etsy-rating-stars {
+  color: #ffd166;
+  letter-spacing: 0.05em;
+}
+
+/*
+* --------------------------------------------------
+* components/ProductHighlights
+* --------------------------------------------------
+*/
+.product-highlights {
+  border-top: 1px solid var(--sws-border);
+  border-bottom: 1px solid var(--sws-border);
+  padding: 1rem 0;
+}
+
+.product-highlights-label {
+  color: var(--sws-sub);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+}
+
+.product-platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.product-platform-badge {
+  align-items: center;
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 999px;
+  color: var(--sws-accent-2);
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 600;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem 0.3rem 0.5rem;
+}
+
+.platform-icon {
+  fill: currentColor;
+  flex-shrink: 0;
+  height: 14px;
+  width: 14px;
+}
+
+.platform-icon-monogram {
+  align-items: center;
+  background: var(--sws-accent-2);
+  border-radius: 50%;
+  color: #0a0a12;
+  display: inline-flex;
+  font-size: 0.55rem;
+  font-weight: 800;
+  height: 16px;
+  justify-content: center;
+  letter-spacing: -0.02em;
+  width: 16px;
+}
+
+.product-highlights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.product-highlights-list li {
+  color: var(--sws-sub);
+  font-size: 0.92rem;
+}
+
+/*
+* --------------------------------------------------
+* routes/products.$handle: description + reviews
+* --------------------------------------------------
+*/
+.product-description {
+  border-top: 1px solid var(--sws-border);
+  margin: 2.5rem 0;
+  max-width: 760px;
+  padding-top: 2rem;
+}
+
+.product-description h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+/*
+  The quotable answer block (app/lib/answerBlock.js). Set above the
+  Description heading, at reading size, with an accent rule down the left so
+  it reads as the short answer to the long section under it rather than as
+  another paragraph of body copy.
+
+  It is deliberately plain text in the flow of the page, not a hidden div and
+  not a visually-truncated one. A passage that an answer engine can quote but
+  a buyer cannot read is cloaking, and the sentence is what a buyer wants in
+  the first five seconds anyway.
+*/
+.product-answer {
+  border-left: 3px solid var(--sws-accent-2);
+  color: var(--sws-text);
+  font-family: var(--font-article, inherit);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  margin: 0 0 1.75rem;
+  padding: 0.15rem 0 0.15rem 1rem;
+}
+
+@media (max-width: 640px) {
+  .product-answer {
+    font-size: 0.98rem;
+    padding-left: 0.8rem;
+  }
+}
+
+/*
+  Normalized description body. Markup comes from lib/productDescription.js:
+  h3 section headings, ul/li for the feature lists, p for prose.
+
+  Typography matches the blog articles on purpose. 2026-09-15: product pages and descriptions
+  needed the same typography as the blog.
+
+  It also fixes a readability bug the blog already had. This block was set in
+  --sws-sub (#a89ec4), which scores 3.13 against the purple the page actually
+  sits on and fails WCAG AA's 4.5 for body text. #ddd6ec scores 5.59. The PDP
+  description is the copy that has to convince someone to spend money, so it
+  was the worst place on the site to leave a contrast failure.
+*/
+.product-description-body {
+  font-family: var(--font-article);
+  color: #ddd6ec;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.product-description-body > * + * {
+  margin-top: 1.05rem;
+}
+
+.product-description-body p {
+  max-width: 68ch;
+}
+
+/* Inline code in a product description is almost always a query string the
+   buyer has to type, so it has to read on the dark page rather than borrow the
+   light chip from the reset. */
+.product-description-body code {
+  background: rgba(24, 16, 44, 0.72);
+  color: #f0d9a8;
+  border: 1px solid rgba(180, 150, 220, 0.28);
+  border-radius: 5px;
+  padding: 0.1em 0.42em;
+  font-size: 0.92em;
+  white-space: nowrap;
+}
+
+.product-description-body strong,
+.product-description-body b {
+  color: var(--sws-text);
+  font-weight: 700;
+}
+
+/* The lead line sets the tone before the reader commits, same as the article. */
+.product-description-body > p:first-of-type {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: var(--sws-text, #ece7f7);
+}
+
+/*
+  Section headings in the display face, like the blog's.
+
+  Kept UPPERCASE and tracked rather than borrowed wholesale from the article
+  h3: these are spec-sheet labels ("REQUIREMENTS", "HOW TO USE") in a scannable
+  column, not prose headings in a reading column, and a buyer skims them. Size
+  goes up from 0.8rem so they read as structure instead of fine print.
+*/
+.product-description-body h3 {
+  align-items: baseline;
+  color: var(--sws-text);
+  display: flex;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  gap: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Air above each new section, but not above the very first one. */
+.product-description-body > h3 + * {
+  margin-top: 0.6rem;
+}
+
+.product-description-body > * + h3 {
+  border-top: 1px solid var(--sws-border);
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+}
+
+.product-description-body ul {
+  display: grid;
+  gap: 0.55rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.product-description-body li {
+  align-items: baseline;
+  display: grid;
+  gap: 0.6rem;
+  /* Fixed icon column so wrapped text lines up under itself, not under the emoji. */
+  grid-template-columns: 1.35rem 1fr;
+  /*
+   * A grid item defaults to `min-width: auto`, which refuses to shrink below
+   * its content's min-content width. These lists name real filenames, and
+   * `HalloweenMashroomSpookySlideGoalWidgetCode.zip` has no break opportunity
+   * in it, so the `1fr` column pushed the whole row past the viewport.
+   *
+   * Measured on a 360px screen, 2026-09-17: the `li` came out 330.8px inside
+   * a 296px `ul` and gave the page 3px of horizontal scroll on EVERY product
+   * page. Mobile is 76 to 83 percent of sessions since 2026-09-15, so this
+   * was the majority experience of the page that has to close the sale.
+   */
+  min-width: 0;
+}
+
+/*
+ * The text column has to be allowed to shrink too, and a long filename has to
+ * be allowed to break. `anywhere` rather than `break-word` because the tokens
+ * here are filenames with no hyphen or space to break on.
+ */
+.product-description-body li > .pd-item {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.product-description-body .pd-icon {
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* Lists that carry no emoji get a conventional bullet in the same column. */
+.product-description-body .pd-plain .pd-icon::before {
+  color: var(--sws-accent-3);
+  content: '•';
+}
+
+.product-description-body a {
+  color: var(--sws-accent-2);
+}
+
+@media (min-width: 45em) {
+  /* Lists of short labels only. Full sentences stay in one column. */
+  .product-description-body .pd-compact {
+    column-gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+}
+
+/*
+* --------------------------------------------------
+* routes/products.$handle: FAQ + related widgets
+* --------------------------------------------------
+*/
+.product-faq {
+  border-top: 1px solid var(--sws-border);
+  margin: 2.5rem 0;
+  max-width: 760px;
+  padding-top: 2rem;
+}
+
+.product-faq h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.product-faq-link {
+  color: var(--sws-holo-1);
+  display: inline-block;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  text-decoration: none;
+}
+
+.product-faq-link:hover {
+  color: var(--sws-holo-3);
+}
+
+.product-related {
+  border-top: 1px solid var(--sws-border);
+  margin: 2.5rem 0;
+  padding-top: 2rem;
+}
+
+.product-related h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+}
+
+.product-related-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(2, 1fr);
+  @media (min-width: 45em) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.product-related-browse-link {
+  color: var(--sws-holo-1);
+  display: inline-block;
+  font-size: 0.9rem;
+  margin-top: 1.5rem;
+  text-decoration: none;
+}
+
+.product-related-browse-link:hover {
+  color: var(--sws-holo-3);
+}
+
+.etsy-reviews {
+  border-top: 1px solid var(--sws-border);
+  padding-top: 2rem;
+}
+
+.etsy-reviews h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.etsy-review-themes {
+  align-items: center;
+  color: var(--sws-sub);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  gap: 0.6rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.etsy-review-themes-label {
+  color: var(--sws-text);
+  font-weight: 700;
+}
+
+.etsy-review-theme {
+  white-space: nowrap;
+}
+
+.etsy-review-summary {
+  align-items: baseline;
+  color: var(--sws-text);
+  display: flex;
+  gap: 0.6rem;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.etsy-review-summary:hover {
+  color: var(--sws-accent-2);
+}
+
+.etsy-review-summary-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.etsy-review-summary-label {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+}
+
+.etsy-reviews-note {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  margin: 0.5rem 0 1.25rem;
+}
+
+.etsy-reviews-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.etsy-review-card {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 12px;
+  margin: 0;
+  padding: 1rem;
+}
+
+.etsy-review-stars {
+  color: #ffd166;
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.etsy-review-card p {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 0;
+}
+
+/*
+* --------------------------------------------------
+* components/ProductReviews: real per-product Etsy reviews
+* --------------------------------------------------
+*/
+.product-reviews {
+  border-top: 1px solid var(--sws-border);
+  margin: 2.5rem 0;
+  padding-top: 2rem;
+}
+
+.product-reviews h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.product-reviews-summary {
+  align-items: baseline;
+  color: var(--sws-text);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.product-reviews-summary:hover {
+  color: var(--sws-accent-2);
+}
+
+.product-reviews-summary-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.product-reviews-summary-label {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+}
+
+.product-reviews-distribution {
+  display: grid;
+  gap: 0.35rem;
+  margin: 1rem 0;
+  max-width: 320px;
+}
+
+.product-reviews-distribution-row {
+  align-items: center;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 2.2rem 1fr 1.5rem;
+}
+
+.product-reviews-distribution-label {
+  color: var(--sws-sub);
+  font-size: 0.8rem;
+}
+
+.product-reviews-distribution-bar {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 999px;
+  display: block;
+  height: 6px;
+  overflow: hidden;
+}
+
+.product-reviews-distribution-fill {
+  background: linear-gradient(90deg, var(--sws-accent-1), var(--sws-accent-3));
+  border-radius: 999px;
+  display: block;
+  height: 100%;
+}
+
+.product-reviews-distribution-count {
+  color: var(--sws-sub);
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+.product-reviews-note {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  margin: 0.5rem 0 1.25rem;
+}
+
+.product-reviews-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.product-review-card {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 12px;
+  margin: 0;
+  padding: 1rem;
+}
+
+.product-review-card p {
+  color: var(--sws-text);
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 0.5rem 0 0.75rem;
+  overflow-wrap: break-word;
+}
+
+.product-review-meta {
+  color: var(--sws-sub);
+  display: flex;
+  font-size: 0.78rem;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.product-reviews-expander {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 999px;
+  color: var(--sws-text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  padding: 0.5rem 1.1rem;
+}
+
+.product-reviews-expander:hover {
+  border-color: var(--sws-accent-1);
+  color: var(--sws-accent-2);
+}
+
+.product-reviews-link {
+  color: var(--sws-holo-1);
+  display: block;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  text-decoration: none;
+}
+
+.product-reviews-link:hover {
+  color: var(--sws-holo-3);
+}
+
+.product-price-on-sale,
+.product-price {
+  align-items: center;
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-holo-1);
+  display: inline-flex;
+  font-size: 1.3rem;
+  font-weight: 800;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  width: fit-content;
+}
+
+/*
+  0.6 opacity here measured 3.35:1 against the pill's --sws-card-solid
+  background (#1c1230), which fails WCAG AA's 4.5:1 for normal text. 0.8
+  measures 4.97:1 -- matches .kit-card-compare-price below, which already
+  used 0.8 for the same reason. Computed by blending --sws-sub (#a89ec4) at
+  each opacity over #1c1230 and running the WCAG relative-luminance formula.
+*/
+.product-price-on-sale s {
+  color: var(--sws-sub);
+  opacity: 0.8;
+}
+
+.product-options h5 {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.product-options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  grid-gap: 0.75rem;
+}
+
+.product-options-item,
+.product-options-item:disabled {
+  background-color: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 8px;
+  color: var(--sws-text);
+  padding: 0.4rem 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.product-option-label-swatch {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+.product-option-label-swatch img {
+  width: 100%;
+}
+
+/*
+* --------------------------------------------------
+* routes/blog._index.tsx
+* --------------------------------------------------
+*/
+.blog-subhead {
+  color: var(--sws-sub);
+  margin-bottom: 1.25rem;
+}
+
+.blog-category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.blog-category-pill {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 999px;
+  color: var(--sws-sub);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+}
+
+.blog-category-pill:hover {
+  color: var(--sws-text);
+}
+
+.blog-category-pill.active {
+  background: linear-gradient(90deg, var(--sws-accent-1), var(--sws-accent-3));
+  border-color: transparent;
+  color: #0a0a12;
+  font-weight: 700;
+}
+
+.blog-grid {
+  display: grid;
+  grid-gap: 1.5rem;
+  /* min() so the track can shrink below 320px on a phone, see .products-grid */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(var(--grid-item-width), 100%), 1fr)
+  );
+  margin-bottom: 2rem;
+}
+
+.blog-article {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 16px;
+  min-width: 0;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.blog-article:hover {
+  border-color: var(--sws-accent-1);
+  transform: translateY(-4px);
+}
+
+.blog-article a {
+  color: inherit;
+  display: block;
+  padding: 1rem;
+  text-decoration: none;
+}
+
+/*
+  1.9/1, matching the heroes exactly (1600x840).
+
+  This was 3/2. Every hero is 1.905:1, so `object-fit: cover` center cropped
+  about 10% off EACH side and ate the first letter of every headline: the blog
+  index showed "our overlay is" and "stalled in under a minute". The card, not
+  the art, was wrong.
+*/
+/*
+  Full bleed needs the width to match the negative margins. With `width: 100%`
+  plus `margin: -1rem -1rem`, the frame was shifted 1rem left but stayed only
+  as wide as the padded content box, so it stopped 2rem short of the card's
+  right edge (measured: 329px frame in a 361px card at 1440). The cover looked
+  cut off on the right with a dark strip beside it, though the image itself was
+  never cropped (1600x840 source, 1600/840 frame, `crop=center` URLs at the
+  same ratio). The ratio is the exact source ratio, 1600/840, not 1.9.
+*/
+.blog-article-image {
+  aspect-ratio: 1600 / 840;
+  display: block;
+  margin: -1rem -1rem 0.85rem;
+  overflow: hidden;
+  width: calc(100% + 2rem);
+}
+
+.blog-article-image img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.blog-article-category {
+  color: var(--sws-accent-2);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.blog-article h3 {
+  font-size: 1.05rem;
+  margin: 0.4rem 0 0.5rem;
+}
+
+.blog-article-excerpt {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+}
+
+.blog-article small {
+  color: var(--sws-sub);
+}
+
+/*
+* --------------------------------------------------
+* routes/blog.$articlehandle.tsx
+* --------------------------------------------------
+*/
+/*
+  Article body images come from Shopify's blog editor as raw <img> in
+  contentHtml, so their intrinsic size is whatever the author uploaded.
+  This used to be `width: 100%`, which force-stretched EVERY one of them to
+  the full content column no matter how small the source was. Measured on
+  2026-09-13: the lunar cat image in "Best VTuber Overlays 2026" rendered
+  at 913 CSS px from a 921px source, so on a 2x display it painted at half
+  the density it needed and read as blurry.
+
+  `max-width` instead of `width` means an image is never scaled UP past its
+  own resolution. A small image now sits at its true size and stays sharp
+  instead of being blown up. See enlargeArticleImages() in
+  app/routes/blogs.$blogHandle.$articleHandle.jsx for the other half, which
+  asks the CDN for a source big enough for a retina screen.
+*/
+.article img {
+  height: auto;
+  max-width: 100%;
+}
+
+/*
+  ARTICLE TYPOGRAPHY, added 2026-09-15.
+
+  The ask: blog article pages needed better headers, styling, formatting and
+  more distinctive fonts.
+
+  That was right and the cause was not the content. The markup Shopify returns is
+  well formed: this article alone carries 20 h2, 11 h3, 21 ul and 129 li. NOT
+  the flat-<p>-glued-with-<br> shape the product descriptions arrive in, so
+  nothing needed normalising. Every one of those elements was simply landing on
+  browser defaults, because `.article` only ever set page padding and an h1
+  size. A 20-heading article with no heading scale reads as one undifferentiated
+  wall, which is exactly how it looked.
+
+  Scoped to `.article-body` rather than `.article` so it only touches the
+  dangerouslySetInnerHTML block, never the page furniture around it.
+*/
+.article-body {
+  /*
+    65ch, not the 1200px the page allows. Long-form prose at 1200px runs to
+    ~160 characters a line and the eye loses its place on the return sweep;
+    the readability range is 45 to 75. The measure is the single biggest
+    change here, ahead of any font choice.
+  */
+  max-width: 68ch;
+  margin: 2.5rem auto 0;
+  font-family: var(--font-article);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  /*
+    Not --sws-sub (#a89ec4). 2026-09-15: the body text needed to be a little
+    brighter white. Measuring it agreed, and turned a taste note
+    into an accessibility one: against the purple starfield the article
+    actually sits on (~#5b4a72 sampled from the live page, NOT the #0b0713
+    page token) --sws-sub scores a 3.13 contrast ratio, under the 4.5 WCAG AA
+    needs for body text. #ddd6ec scores 5.59 and passes.
+
+    Deliberately not #fff or --sws-text: the lead paragraph below uses
+    --sws-text (#f3ecff) and needs to stay visibly brighter than the body, or
+    the hierarchy this whole block exists to create collapses again.
+  */
+  color: #ddd6ec;
+}
+
+/* Lead paragraph: sets the tone before the reader commits to the article. */
+.article-body > p:first-of-type {
+  font-size: 1.1875rem;
+  line-height: 1.7;
+  color: var(--sws-text, #ece7f7);
+}
+
+.article-body p {
+  margin: 0 0 1.15rem;
+}
+
+/*
+  Headings in the display face. Baloo 2 is already the brand's display font and
+  was going unused on this page entirely, which is most of why the articles read
+  as generic. Sizes are a real scale (2rem / 1.35rem) rather than the browser's
+  h2-h3 default, so a section break is visible at a glance while scrolling.
+*/
+.article-body :is(h2, h3, h4) {
+  font-family: var(--font-display);
+  color: var(--sws-text, #f3eefb);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.article-body h2 {
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.05rem);
+  font-weight: 800;
+  margin: 2.75rem 0 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--sws-border);
+}
+
+/*
+  The first h2 sits right under the lead, where a rule would read as a stray
+  divider rather than a section break.
+*/
+.article-body > h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.article-body h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 2rem 0 .65rem;
+}
+
+.article-body h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 1.5rem 0 .5rem;
+  color: var(--sws-sub);
+}
+
+/*
+  Lists were the worst of it. Shopify's editor emits plain ul/li and with no
+  styling the markers sat outside the measure and the items ran together, so
+  "clean / modern / cinematic" read as four orphan paragraphs instead of one
+  list. Custom marker keeps the text aligned and puts the brand colour on the
+  page where the eye already is.
+*/
+.article-body ul,
+.article-body ol {
+  margin: 0 0 1.35rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.article-body li {
+  position: relative;
+  padding-left: 1.6rem;
+  margin-bottom: .55rem;
+}
+
+.article-body ul > li::before {
+  content: '';
+  position: absolute;
+  left: .25rem;
+  top: .72em;
+  width: .45rem;
+  height: .45rem;
+  border-radius: 50%;
+  background: var(--sws-holo-2);
+}
+
+.article-body ol {
+  counter-reset: sws-ol;
+}
+
+.article-body ol > li {
+  counter-increment: sws-ol;
+}
+
+.article-body ol > li::before {
+  content: counter(sws-ol);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: .95em;
+  color: var(--sws-holo-2);
+}
+
+.article-body strong,
+.article-body b {
+  color: var(--sws-text, #f3eefb);
+  font-weight: 700;
+}
+
+.article-body a {
+  color: var(--sws-holo-1);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.article-body a:hover {
+  color: var(--sws-holo-3);
+}
+
+.article-body blockquote {
+  margin: 1.75rem 0;
+  padding: .25rem 0 .25rem 1.25rem;
+  border-left: 3px solid var(--sws-holo-2);
+  color: var(--sws-text, #ece7f7);
+  font-size: 1.1rem;
+}
+
+.article-body img {
+  border-radius: 14px;
+  margin: 1.75rem 0;
+}
+
+.article-body hr {
+  border: 0;
+  border-top: 1px solid var(--sws-border);
+  margin: 2.5rem 0;
+}
+
+/*
+  The article H1 and its byline. The shared `.article h1` rule set 1.8rem for
+  every page type at once; long article titles need more presence than a
+  policy page heading, and the byline was inheriting h1 weight and size
+  because the route nests it inside the h1 element.
+*/
+.article > h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 2.6vw, 3rem);
+  font-weight: 800;
+  line-height: 1.12;
+  text-wrap: balance;
+  max-width: 20ch;
+  margin: .5rem auto 1.25rem;
+  text-align: center;
+}
+
+.article > h1 div {
+  font-family: var(--font-body);
+  font-size: .9rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--sws-sub);
+  margin-top: .85rem;
+  letter-spacing: .02em;
+}
+
+.article > h1 address {
+  display: inline;
+  font-style: normal;
+}
+
+/*
+  Cross-sell row under an article. Deliberately styled as a distinct block
+  rather than more article body: it is an ad, and dressing an ad up as the
+  next paragraph is the pattern that teaches readers to distrust the page.
+  See app/lib/blogCrossSell.js for how the products are chosen, and why a row
+  is omitted entirely when nothing honest matches.
+*/
+/*
+  Product shelf under an article.
+
+  Breaks out WIDER than the .article-body measure (68ch) on purpose. The old
+  version was a four-item grid locked to the text column, so it read as the last
+  paragraph of the article rather than as a shop shelf. The width change is the
+  signal that the reading has ended.
+*/
+.article-shelf {
+  max-width: min(1200px, 92vw);
+  margin: 3.75rem auto 0;
+  padding-top: 2rem;
+  border-top: 1px solid var(--sws-border);
+}
+
+.article-shelf-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.article-shelf h2 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--sws-text, #f3eefb);
+  margin: 0;
+}
+
+.article-shelf-nav {
+  display: flex;
+  gap: .5rem;
+  flex: none;
+}
+
+.article-shelf-nav button {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--sws-border);
+  background: rgba(255, 255, 255, .05);
+  color: var(--sws-text, #f3eefb);
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, opacity .15s ease;
+}
+
+.article-shelf-nav button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, .12);
+  border-color: var(--sws-holo-2, #c49bff);
+}
+
+.article-shelf-nav button:disabled {
+  opacity: .3;
+  cursor: default;
+}
+
+.article-shelf-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.article-shelf-track {
+  display: grid;
+  grid-auto-flow: column;
+  /*
+    Fixed track width per card, not 1fr. In a column-flow grid 1fr would size
+    every card to the WIDEST one's content, so one long product title stretches
+    the whole shelf and the snap points drift out of step with the arrows.
+  */
+  grid-auto-columns: minmax(150px, 1fr);
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  /* Room for the card hover lift and any focus ring, which a plain
+     overflow container would otherwise clip. */
+  padding: 4px 4px 1rem;
+  margin: 0 -4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sws-border) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.article-shelf-item {
+  scroll-snap-align: start;
+  min-width: 0;
+}
+
+.article-shelf-track::-webkit-scrollbar {
+  height: 8px;
+}
+
+.article-shelf-track::-webkit-scrollbar-thumb {
+  background: var(--sws-border);
+  border-radius: 999px;
+}
+
+@media (min-width: 45em) {
+  .article-shelf-track {
+    grid-auto-columns: minmax(196px, 1fr);
+  }
+}
+
+/*
+  Equal height cards in the shelf.
+
+  2026-09-15: shelf cards needed to be the same size as on other
+  pages, because the tiles did not line up.
+
+  On a collection page the cards sit in a real grid, and CSS grid equalises
+  every card in a row for free, so nothing ever looked wrong there. The shelf
+  is a single row of independent track cells, so each card was free to be as
+  tall as its own title. These titles are Etsy keyword titles running to 15
+  words, so "Lunar Cat Aesthetic Light Purple Chat & Goal Stream Widgets -
+  Animated, celestial Elegant Lunar Theme Clean Vibe StreamElements Only" made
+  its card twice the height of its neighbour and pushed the price far below
+  every other price.
+
+  Scoped to .article-shelf rather than fixing .product-item globally: the other
+  surfaces already line up, and a global change would be a regression risk on
+  pages nobody asked me to touch.
+*/
+.article-shelf-item .product-item {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/*
+  Clamp the title to three lines. Equal card height alone is not enough: the
+  price still floats wherever the title happens to end. Three lines is the most
+  these titles can use before the card becomes a wall of keywords, and the full
+  title is still on the product page.
+*/
+.article-shelf-item .product-item-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* Reserve the full three lines so a 1-line and a 3-line title still put their
+     price on the same baseline. */
+  min-height: calc(3 * 1.35em);
+}
+
+/* Price and platform row pinned to the bottom of every card, so they align
+   across the shelf no matter how long the title above them ran. */
+.article-shelf-item .product-item-footer {
+  margin-top: auto;
+}
+
+/*
+* --------------------------------------------------
+* routes/account
+* --------------------------------------------------
+*/
+
+.account h1 {
+  font-size: 1.6rem;
+}
+
+.account-nav {
+  border-bottom: 1px solid var(--sws-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 1.25rem 0 2rem;
+  padding-bottom: 1rem;
+}
+
+.account-nav-link {
+  background: none;
+  border: none;
+  color: var(--sws-sub);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: inherit;
+  padding: 0;
+  text-decoration: none;
+}
+
+.account-nav-link:hover {
+  color: var(--sws-text);
+}
+
+.account-nav-link.active {
+  color: var(--sws-accent-2);
+  font-weight: 700;
+}
+
+.account-logout {
+  display: inline-block;
+}
+
+.account-content h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+/* Generic form styling shared by profile + addresses */
+.account-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 480px;
+}
+
+.account-content fieldset {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+}
+
+.account-content legend {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+  padding: 0;
+}
+
+.account-content label {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+}
+
+.account-content input:not([type='checkbox']) {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 8px;
+  color: var(--sws-text);
+  font-size: 1rem;
+  padding: 0.6rem 0.75rem;
+  width: 100%;
+}
+
+.account-content button[type='submit'] {
+  background: linear-gradient(90deg, var(--sws-accent-1), var(--sws-accent-3));
+  border: none;
+  border-radius: 999px;
+  color: #0a0a12;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.7rem 1.5rem;
+  width: fit-content;
+}
+
+.account-content button[type='button'] {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 999px;
+  color: var(--sws-text);
+  cursor: pointer;
+  padding: 0.6rem 1.3rem;
+  width: fit-content;
+}
+
+.account-addresses > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.account-addresses hr {
+  border-color: var(--sws-border);
+}
+
+/*
+* --------------------------------------------------
+* order cards
+* --------------------------------------------------
+*/
+.order-card {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  max-width: 480px;
+  padding: 1rem 1.25rem;
+}
+
+.order-card-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.order-card-number {
+  color: var(--sws-text);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.order-card-date,
+.order-card-meta {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  margin: 0.25rem 0;
+}
+
+.order-card-status {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.order-status-badge {
+  background: var(--sws-bg-alt);
+  border: 1px solid var(--sws-border);
+  border-radius: 999px;
+  color: var(--sws-sub);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  text-transform: capitalize;
+}
+
+.order-card-link {
+  color: var(--sws-accent-2);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+/*
+* --------------------------------------------------
+* Order Search Form - Minimal & Responsive
+* --------------------------------------------------
+*/
+.order-search-form {
+  margin-bottom: 1.5rem;
+}
+
+.order-search-fieldset {
+  border: 1px solid var(--sws-border);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.order-search-legend {
+  font-weight: 600;
+  padding: 0 0.5rem;
+}
+
+.order-search-active {
+  font-weight: normal;
+  opacity: 0.7;
+  margin-left: 0.5rem;
+}
+
+.order-search-inputs {
+  display: grid;
+  gap: 1rem;
+  margin: 0.25rem 0 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .order-search-inputs {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.order-search-input {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 4px;
+  color: var(--sws-text);
+  font-size: 1rem;
+}
+
+.order-search-buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/*
+* --------------------------------------------------
+* Shared shimmer skeleton utility
+* --------------------------------------------------
+*/
+@keyframes sws-shimmer-sweep {
+  0% {
+    background-position: -150% 0;
+  }
+  100% {
+    background-position: 150% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--sws-card-solid) 25%,
+    rgba(183, 157, 242, 0.22) 50%,
+    var(--sws-card-solid) 75%
+  );
+  background-size: 250% 100%;
+  animation: sws-shimmer-sweep 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer {
+    animation: none;
+  }
+  .overlay,
+  aside {
+    transition: none;
+  }
+}
+
+/*
+* --------------------------------------------------
+* Header mega menu (desktop)
+* --------------------------------------------------
+*/
+.header-mega-item {
+  position: relative;
+}
+
+.header-menu-trigger {
+  align-items: center;
+  background: none;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: inherit;
+  gap: 0.3rem;
+  line-height: inherit;
+}
+
+.header-menu-trigger.is-open {
+  background: var(--sws-card);
+  border-color: var(--sws-border);
+  color: var(--sws-text);
+}
+
+.header-menu-chevron {
+  transition: transform 0.2s ease;
+}
+
+.header-menu-trigger.is-open .header-menu-chevron,
+.mobile-accordion-trigger.is-open .header-menu-chevron {
+  transform: rotate(180deg);
+}
+
+.header-menu-trigger:focus-visible,
+.header-menu-item:focus-visible,
+.mobile-accordion-trigger:focus-visible,
+.mobile-accordion-link:focus-visible,
+.mega-tile:focus-visible,
+.mega-product-card:focus-visible,
+.mega-platform-link:focus-visible,
+.mega-vibe-chip:focus-visible {
+  outline: 2px solid var(--sws-holo-1);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-menu-chevron {
+    transition: none;
+  }
+}
+
+.mega-panel {
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  right: 0;
+  top: var(--header-height);
+  transform: translateY(-8px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  visibility: hidden;
+  z-index: 30;
+}
+
+.mega-panel.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mega-panel {
+    transition: none;
+    transform: none;
+  }
+}
+
+.mega-panel-inner {
+  background: rgba(11, 7, 19, 0.97);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(
+      90deg,
+      var(--sws-holo-1),
+      var(--sws-holo-2),
+      var(--sws-holo-3),
+      var(--sws-holo-4)
+    )
+    1;
+  box-shadow: 0 30px 70px -24px rgba(0, 0, 0, 0.65);
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0 auto;
+  max-height: calc(100vh - var(--header-height) - 24px);
+  max-width: 1400px;
+  overflow-y: auto;
+  padding: 2.25rem 3rem 2.5rem;
+}
+
+@media (max-width: 82em) {
+  .mega-panel-inner {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 1.75rem 2rem 2rem;
+  }
+}
+
+.mega-panel-col {
+  min-width: 0;
+}
+
+.mega-panel-col-wide {
+  grid-column: span 2;
+}
+
+.mega-panel-heading {
+  color: var(--sws-sub);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  margin: 0 0 1.1rem;
+  text-transform: uppercase;
+}
+
+.mega-tile-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.mega-tile {
+  align-items: center;
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 14px;
+  display: flex;
+  gap: 0.75rem;
+  /*
+   * A grid child defaults to min-width: auto, which is its CONTENT width,
+   * not its track width, so a tile wider than its column silently overflows
+   * the grid instead of shrinking. `.mega-tile-body` already carries this
+   * for the same reason; the tile itself was missed, and in the 375px mobile
+   * accordion the right hand column of tiles ran to x=397 in a 375px
+   * viewport, clipping "Goal widgets" and "All widgets" off screen. Measured
+   * on production 2026-09-14: adding this moved that edge 397 -> 355.
+   * Same root cause as the 2026-09-08 mega menu overflow fix.
+   */
+  min-width: 0;
+  padding: 0.6rem;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.mega-tile:hover {
+  border-color: var(--sws-border-strong);
+  transform: translateY(-2px);
+}
+
+.mega-tile-image {
+  aspect-ratio: 1 / 1;
+  background: radial-gradient(
+      circle at 50% 45%,
+      rgba(183, 157, 242, 0.28),
+      transparent 65%
+    ),
+    var(--sws-bg);
+  border-radius: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
+  width: 56px;
+}
+
+.mega-tile-image img {
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.mega-tile-image-placeholder {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.mega-tile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.mega-tile-title {
+  color: var(--sws-text);
+  font-size: 0.9rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mega-tile-count {
+  color: var(--sws-sub);
+  font-size: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mega-tile {
+    transition: none;
+  }
+  .mega-tile:hover {
+    transform: none;
+  }
+}
+
+.mega-vibe-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.mega-vibe-chip {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+}
+
+.mega-platform-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+}
+
+.mega-platform-link {
+  align-items: center;
+  color: var(--sws-sub);
+  display: inline-flex;
+  font-weight: 700;
+  gap: 0.6rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.mega-platform-link:hover {
+  color: var(--sws-holo-1);
+}
+
+.mega-platform-link .platform-icon {
+  height: 18px;
+  width: 18px;
+}
+
+.mega-product-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.mega-product-card {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 14px;
+  display: flex;
+  gap: 0.85rem;
+  padding: 0.75rem;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.mega-product-card:hover {
+  border-color: var(--sws-border-strong);
+  transform: translateY(-2px);
+}
+
+.mega-product-card-image {
+  aspect-ratio: 1 / 1;
+  background: radial-gradient(
+      circle at 50% 45%,
+      rgba(183, 157, 242, 0.28),
+      transparent 65%
+    ),
+    var(--sws-bg);
+  border-radius: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
+  width: 64px;
+}
+
+.mega-product-card-image img {
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.mega-product-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  justify-content: center;
+  min-width: 0;
+}
+
+.mega-product-card-eyebrow {
+  color: var(--sws-holo-3);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mega-product-card-title {
+  color: var(--sws-text);
+  display: -webkit-box;
+  font-size: 0.88rem;
+  font-weight: 700;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.mega-product-card-price {
+  color: var(--sws-holo-1);
+  font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mega-product-card {
+    transition: none;
+  }
+  .mega-product-card:hover {
+    transform: none;
+  }
+}
+
+.mega-panel-skeleton {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.mega-skeleton-tile {
+  border-radius: 14px;
+  height: 68px;
+}
+
+/*
+* --------------------------------------------------
+* Header mobile accordion menu
+* --------------------------------------------------
+*/
+.mobile-menu-search-field {
+  align-items: center;
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-sub);
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  min-height: 44px;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  width: 100%;
+}
+
+.mobile-menu-search-field:hover {
+  border-color: var(--sws-border-strong);
+  color: var(--sws-text);
+}
+
+.mobile-accordion-home {
+  color: var(--sws-holo-2);
+}
+
+.mobile-accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-accordion-item {
+  border-bottom: 1px solid var(--sws-border);
+}
+
+.mobile-accordion-link {
+  align-items: center;
+  color: var(--sws-text);
+  display: flex;
+  font-size: 1.05rem;
+  font-weight: 700;
+  min-height: 44px;
+  padding: 0.85rem 0.25rem;
+  text-decoration: none;
+}
+
+.mobile-accordion-trigger {
+  align-items: center;
+  background: none;
+  border: 0;
+  color: var(--sws-text);
+  display: flex;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0.85rem 0.25rem;
+  width: 100%;
+}
+
+.mobile-accordion-trigger .header-menu-chevron {
+  color: var(--sws-sub);
+  flex-shrink: 0;
+}
+
+.mobile-accordion-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0 0.25rem 1.25rem;
+}
+
+.mobile-accordion-panel .mega-panel-heading {
+  font-size: 0.72rem;
+}
+
+.mobile-accordion-panel .mega-product-grid {
+  grid-template-columns: 1fr;
+}
+
+.mobile-accordion-view-all {
+  align-items: center;
+  color: var(--sws-holo-1);
+  display: flex;
+  font-weight: 800;
+  min-height: 44px;
+  text-decoration: none;
+}
+
+/*
+* --------------------------------------------------
+* Search command palette
+* --------------------------------------------------
+*/
+.overlay:has(.search-palette) .close-outside {
+  width: 100%;
+}
+
+.overlay:has(.search-palette) aside {
+  align-items: flex-start;
+  background: transparent;
+  border-left: none;
+  box-shadow: none;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  padding: 9vh 1rem 2rem;
+  pointer-events: none;
+  right: 0;
+  transform: none;
+  width: 100vw;
+}
+
+.overlay:has(.search-palette) aside > header {
+  border-width: 0;
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.overlay:has(.search-palette) aside > main {
+  height: auto;
+  margin: 0;
+  max-height: 100%;
+  pointer-events: auto;
+  width: min(640px, 100%);
+}
+
+.search-palette {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: var(--radius-card);
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(183, 157, 242, 0.12);
+  display: flex;
+  flex-direction: column;
+  max-height: 78vh;
+  overflow: hidden;
+  width: 100%;
+}
+
+.search-palette-form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* Overrides reset.css's generic `form { max-width: 400px }` (>=768px),
+     which otherwise caps this fetcher.Form to 400px inside the 640px
+     palette shell no matter what the palette itself measures. */
+  max-width: none;
+}
+
+.search-palette-input-row {
+  align-items: center;
+  border-bottom: 1px solid var(--sws-border);
+  display: flex;
+  gap: 0.75rem;
+  padding: 1.1rem 1.25rem;
+}
+
+.search-palette-input-row:focus-within {
+  box-shadow: inset 0 -2px 0 0 var(--sws-holo-1);
+}
+
+.search-palette-input-icon {
+  color: var(--sws-sub);
+  flex-shrink: 0;
+}
+
+.search-palette-input {
+  background: none;
+  border: none;
+  color: var(--sws-text);
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 700;
+  min-width: 0;
+  padding: 0.35rem 0;
+}
+
+.search-palette-input::placeholder {
+  color: var(--sws-sub);
+  font-weight: 600;
+}
+
+.search-palette-input:focus {
+  outline: none;
+}
+
+.search-palette-clear {
+  align-items: center;
+  border-radius: 999px;
+  color: var(--sws-sub);
+  display: flex;
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  height: 28px;
+  justify-content: center;
+  line-height: 1;
+  width: 28px;
+}
+
+.search-palette-clear:hover {
+  background: var(--sws-card);
+  color: var(--sws-holo-4);
+}
+
+.search-palette-close {
+  align-items: center;
+  color: var(--sws-sub);
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.3rem;
+}
+
+.search-palette-close kbd,
+.search-palette-hints kbd {
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 6px;
+  color: var(--sws-sub);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+}
+
+.search-palette-close:hover kbd {
+  border-color: var(--sws-holo-1);
+  color: var(--sws-holo-1);
+}
+
+.search-palette-clear:focus-visible,
+.search-palette-close:focus-visible,
+.search-palette-thumb:focus-visible,
+.search-palette-view-all:focus-visible {
+  outline: 2px solid var(--sws-holo-1);
+  outline-offset: 2px;
+}
+
+.search-palette-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+}
+
+.search-palette-empty-section + .search-palette-empty-section {
+  margin-top: 1.5rem;
+}
+
+.search-palette-empty-heading {
+  color: var(--sws-sub);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.85rem;
+  text-transform: uppercase;
+}
+
+.search-palette-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.search-palette-thumb-row {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 30em) {
+  .search-palette-thumb-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.search-palette-thumb {
+  color: var(--sws-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+  text-decoration: none;
+}
+
+.search-palette-thumb-image {
+  aspect-ratio: 1 / 1;
+  background: radial-gradient(
+      circle at 50% 45%,
+      rgba(183, 157, 242, 0.28),
+      transparent 65%
+    ),
+    var(--sws-bg);
+  border: 1px solid var(--sws-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+.search-palette-thumb:hover .search-palette-thumb-image {
+  border-color: var(--sws-border-strong);
+}
+
+.search-palette-thumb-image img {
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.search-palette-thumb-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-palette-thumb-skeleton {
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-palette-thumb-image {
+    transition: none;
+  }
+}
+
+.search-palette-footer {
+  align-items: center;
+  border-top: 1px solid var(--sws-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+}
+
+.search-palette-footer-hints-only {
+  justify-content: flex-end;
+}
+
+.search-palette-view-all {
+  color: var(--sws-holo-1);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.search-palette-view-all:hover {
+  text-decoration: underline;
+}
+
+.search-palette-hints {
+  align-items: center;
+  color: var(--sws-sub);
+  display: inline-flex;
+  font-size: 0.75rem;
+  gap: 0.3rem;
+}
+
+@media (max-width: 45em) {
+  .search-palette-hints {
+    display: none;
+  }
+}
+
+/*
+* --------------------------------------------------
+* policies (privacy, refund, and the policies index)
+* --------------------------------------------------
+*/
+.policy,
+.policies {
+  max-width: 820px;
+}
+
+.policy-back {
+  display: inline-block;
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+}
+
+.policy-back::before {
+  content: '\2190';
+  margin-right: 0.4rem;
+}
+
+.policy-back:hover {
+  color: var(--sws-accent-2);
+}
+
+.policy-lede {
+  color: var(--sws-text);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0 0 0.75rem;
+}
+
+.policy-updated {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  margin: 0 0 2rem;
+}
+
+.policy-body {
+  color: var(--sws-sub);
+  line-height: 1.7;
+}
+
+.policy-body h2 {
+  color: var(--sws-text);
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 2rem 0 0.6rem;
+}
+
+.policy-body p {
+  margin: 0 0 1rem;
+}
+
+.policy-body ul {
+  margin: 0 0 1rem;
+  padding-left: 1.15rem;
+}
+
+.policy-body li {
+  margin-bottom: 0.5rem;
+}
+
+.policy-body strong {
+  color: var(--sws-text);
+}
+
+.policy-body a,
+.policy-help a {
+  color: var(--sws-accent-2);
+}
+
+.policy-help {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--sws-sub);
+  font-size: 0.95rem;
+}
+
+.policies-lede {
+  color: var(--sws-sub);
+  line-height: 1.6;
+  margin: 0 0 1.75rem;
+  max-width: 60ch;
+}
+
+.policies-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: 1fr;
+  @media (min-width: 45em) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.policies-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 1.1rem 1.2rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  text-decoration: none;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.policies-card:hover {
+  border-color: var(--sws-accent-2);
+  transform: translateY(-2px);
+}
+
+.policies-card-title {
+  color: var(--sws-text);
+  font-weight: 800;
+}
+
+.policies-card-summary {
+  color: var(--sws-sub);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* The plain-language qualifier under the platform badges. Deliberately not
+   styled as fine print: it answers the two questions that otherwise turn
+   into a refund, so it reads at body size. */
+.product-highlights-note {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin: 0.6rem 0 0;
+}
+
+/* "Twitch GIFs in chat: Yes|No" (2026-09-26). Sits with the works-with
+   chips, same badge treatment as .platform-icon-monogram so it reads as one
+   family of chips rather than a bolted-on line. Chat widgets only. */
+.product-gif-line {
+  align-items: center;
+  color: var(--sws-sub);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  gap: 0.45rem;
+  line-height: 1.45;
+  margin: 0.6rem 0 0;
+}
+
+.product-gif-line strong {
+  color: var(--sws-text);
+}
+
+.product-gif-badge {
+  align-items: center;
+  background: var(--sws-accent-2);
+  border-radius: 999px;
+  color: #0a0a12;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  font-weight: 800;
+  height: 18px;
+  justify-content: center;
+  letter-spacing: -0.01em;
+  padding: 0 0.45rem;
+}
+
+/* The card version of this line is styled with .product-item-sold under
+   .product-item-title, so the two meta lines share one rhythm. */
+
+.email-capture-code {
+  display: inline-block;
+  padding: 0.1em 0.45em;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.14);
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.cart-discount-error {
+  color: var(--sws-accent-1);
+  font-size: 0.85rem;
+  margin: 0.5rem 0 0;
+}
+
+.cart-discount-line dd {
+  color: var(--sws-accent-2);
+}
+
+.cart-total {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+/* ------------------------------------------------------------------
+   Brand pfp (temporary). The avatar people already know from X and
+   Etsy, shown beside the wordmark so the new logo does not read as a
+   different shop. Scoped overrides beat the generic
+   `.header-brand img` / `.footer-brand img` height rules above.
+   Remove once the new logo work lands.
+   ------------------------------------------------------------------ */
+.brand-pfp {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.header-brand img.brand-pfp {
+  height: 28px;
+  width: 28px;
+  /* `.header-brand img` above sets border-radius: 0, and that selector is
+     as specific as `.brand-pfp`, so the round crop has to be restated
+     here where the selector is stronger. */
+  border-radius: 50%;
+  border: 1px solid rgba(242, 166, 216, 0.45);
+  filter: drop-shadow(0 0 8px rgba(242, 166, 216, 0.35));
+}
+
+@media (min-width: 45em) {
+  .header-brand img.brand-pfp {
+    height: 40px;
+    width: 40px;
+  }
+}
+
+.footer-brand img.brand-pfp {
+  height: 38px;
+  width: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(242, 166, 216, 0.4);
+  filter: drop-shadow(0 0 8px rgba(242, 166, 216, 0.3));
+}
+
+/* ------------------------------------------------------------------
+   Product page share row. Same circular button as `.social-link` in
+   the footer, but these are share intents for THIS page rather than
+   links to the shop's own accounts, so they live apart: the footer
+   set must not pick up a "Copied" state or a copy button.
+   ------------------------------------------------------------------ */
+.share-row {
+  align-items: center;
+  border-top: 1px solid var(--sws-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+}
+
+.share-row-label {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.share-row-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.share-btn {
+  align-items: center;
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border);
+  border-radius: 50%;
+  color: var(--sws-sub);
+  cursor: pointer;
+  display: flex;
+  height: 38px;
+  justify-content: center;
+  padding: 0;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+  width: 38px;
+}
+
+.share-btn:hover,
+.share-btn:focus-visible {
+  border-color: var(--sws-holo-4);
+  color: var(--sws-holo-4);
+  transform: translateY(-2px);
+}
+
+.share-btn svg {
+  fill: currentColor;
+  height: 16px;
+  width: 16px;
+}
+
+/* Always in the DOM so the live region can announce into it without the
+   row reflowing when the word appears. */
+.share-row-copied {
+  color: var(--sws-holo-4);
+  font-size: 0.8rem;
+  min-height: 1em;
+}
+
+/*
+ * Do not stack gutters on a phone. `main` contributes 16px, the page wrapper
+ * another 16px, and the grid was adding 32px more, so at 360px wide 128 of
+ * the 360 pixels (36% of the screen) were empty margin and each product card
+ * got 232px. The outer 32px is plenty; dropping the grid's own padding takes
+ * cards to 296px, a 28% larger tap and read target, with no clipping.
+ *
+ * Must stay AFTER both grid rules: they set `padding: 0 2rem` as a shorthand,
+ * same specificity, so an earlier longhand override silently loses.
+ */
+@media (max-width: 44.99em) {
+  .products-grid,
+  .collections-grid {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/*
+ * First-visit launch offer (app/components/LaunchOffer.jsx).
+ *
+ * A bottom sheet on a phone and a small centred card above that, never a full
+ * screen cover. `z-index: 35` puts it above the sticky header (20) and the
+ * sticky Add to cart bar (5) but deliberately BELOW the drawers (40), so that
+ * even if the two ever coincide the cart always wins. The component also
+ * closes itself when a drawer opens.
+ */
+.launch-offer-root {
+  inset: 0;
+  position: fixed;
+  z-index: 35;
+}
+
+.launch-offer-scrim {
+  background: rgba(4, 2, 10, 0.55);
+  border: 0;
+  cursor: pointer;
+  inset: 0;
+  padding: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.launch-offer {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 20px 20px 0 0;
+  bottom: 0;
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.55);
+  left: 0;
+  padding: 1.5rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  position: absolute;
+  right: 0;
+  text-align: center;
+}
+
+@media (min-width: 45em) {
+  .launch-offer {
+    border-radius: 20px;
+    bottom: auto;
+    left: 50%;
+    max-width: 420px;
+    padding: 2rem;
+    right: auto;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.launch-offer-close {
+  align-items: center;
+  background: var(--sws-card);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 999px;
+  color: var(--sws-text);
+  cursor: pointer;
+  display: flex;
+  font-size: 1.5rem;
+  height: 44px;
+  justify-content: center;
+  line-height: 1;
+  position: absolute;
+  right: 0.75rem;
+  top: 0.75rem;
+  width: 44px;
+}
+
+.launch-offer-kicker {
+  color: var(--sws-holo-1);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+}
+
+.launch-offer-title {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  margin: 0 0 0.5rem;
+}
+
+.launch-offer-copy {
+  color: var(--sws-sub);
+  font-size: 0.95rem;
+  margin: 0 0 1rem;
+}
+
+.launch-offer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.launch-offer-input {
+  background: var(--sws-bg);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 999px;
+  color: var(--sws-text);
+  /* 16px minimum, or iOS Safari zooms the page on focus. */
+  font-size: 16px;
+  min-height: 48px;
+  padding: 0 1.1rem;
+  width: 100%;
+}
+
+.launch-offer-cta {
+  min-height: 48px;
+  width: 100%;
+}
+
+.launch-offer-decline {
+  background: none;
+  border: 0;
+  color: var(--sws-sub);
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-top: 0.85rem;
+  min-height: 44px;
+  text-decoration: underline;
+}
+
+.launch-offer-code {
+  color: var(--sws-text);
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.08em;
+}
+
+.launch-offer-fallback {
+  margin-top: 0.85rem;
+}
+
+/*
+ * --------------------------------------------------
+ * /admin/config
+ * --------------------------------------------------
+ * Deliberately plain. This is an internal status page, not a product
+ * surface, and it must stay legible when half the site's config is missing.
+ */
+.admin-config {
+  margin: 0 auto;
+  max-width: 1000px;
+  padding: 2rem 1rem 4rem;
+}
+
+.admin-config h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.admin-config h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 2rem 0 0.35rem;
+}
+
+.admin-config-summary {
+  margin-bottom: 0.5rem;
+}
+
+.admin-config-note {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  max-width: 68ch;
+}
+
+.admin-config-bad {
+  color: #ff8a8a;
+}
+
+.admin-config-table {
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.admin-config-table th,
+.admin-config-table td {
+  border-bottom: 1px solid var(--sws-border);
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-config-table th {
+  color: var(--sws-sub);
+  font-weight: 700;
+}
+
+.admin-config-table code {
+  font-size: 0.78rem;
+  /* Never break a variable name mid-token. `word-break: break-all` split
+     PUBLIC_X_PIXEL_ID across two lines as "PUBLIC_X_PIXEL_" / "ID", which is
+     unreadable for the one thing this table exists to show. */
+  white-space: nowrap;
+}
+
+/* Give the name column the room it needs and stop the impact prose from
+   squeezing it. */
+.admin-config-table th:first-child,
+.admin-config-table td:first-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.admin-config-table th:nth-child(2),
+.admin-config-table td:nth-child(2) {
+  white-space: nowrap;
+}
+
+.admin-config-unset td {
+  opacity: 0.62;
+}
+
+.admin-config-req {
+  color: #ffd27f;
+  display: block;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.admin-config-login {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.admin-config-login input {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  padding: 0.6rem 0.9rem;
+}
+
+/* The table is the one thing allowed to scroll sideways on a phone. */
+@media (max-width: 44.99em) {
+  .admin-config-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   routes/products_preview
+
+   This page had no styles at all, which is why it rendered as a wall of
+   unbulleted text with links that did not look like links (screenshot,
+   2026-09-20). It is an internal page nobody should reach on purpose, so it
+   borrows the brand card and button rather than inventing anything.
+--------------------------------------------------------------------------- */
+.products-preview {
+  max-width: 62ch;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.products-preview h2 {
+  margin-top: 2.25rem;
+}
+
+.products-preview__lead {
+  font-size: 1.05rem;
+}
+
+.products-preview__chain {
+  /* reset.css strips list markers globally, and an unnumbered list of three
+     ordered steps is what made the old page read as a wall of text. */
+  list-style: decimal;
+  margin: 1rem 0 0;
+  padding-left: 1.5rem;
+  line-height: 1.7;
+}
+
+.products-preview code {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 0.3rem;
+  padding: 0.1em 0.35em;
+  /* Handles and hostnames have no break opportunity, and this page is read on
+     a phone as often as not. Same trap as the PDP "What You Get" list. */
+  overflow-wrap: anywhere;
+}
+
+.products-preview__code {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+  margin: 0.75rem 0 0;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  min-width: 0;
+}
+
+.products-preview__key {
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+.products-preview .sws-btn-primary {
+  margin-top: 1rem;
+}
+
+/*
+* --------------------------------------------------
+* routes/_index: hero clip
+*
+* The live moon jar clip sits on top of the hero still rather than replacing
+* it. The still is the LCP element and paints first; this fades in over it once
+* the video can actually play, so a slow or blocked video is invisible instead
+* of being a hole in the hero. See HeroStreamClip in routes/_index.jsx.
+* --------------------------------------------------
+*/
+.hero-stream-clip {
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  opacity: 0;
+  position: absolute;
+  transition: opacity 600ms ease;
+  width: 100%;
+}
+
+.hero-stream-clip.is-ready {
+  opacity: 1;
+}
+
+/* Belt as well as braces: the component already declines to mount under
+   reduced motion, but if that check ever regresses the clip still stays down. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-stream-clip {
+    display: none;
+  }
+}
+
+/*
+* --------------------------------------------------
+* components/ProductItem: sales proof line
+*
+* Real Etsy units over the ranking window, on the homepage "Top widgets" cards
+* only. Quiet on purpose: it is corroboration under the title, not a claim
+* competing with it. Hidden below SOLD_PROOF_FLOOR, see ProductItem.jsx.
+* --------------------------------------------------
+*/
+/* Digits line up between stacked cards. Size, colour and spacing live with
+   .product-item-gif under .product-item-title. */
+.product-item-sold {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+* --------------------------------------------------
+* Header nav cleanup, 2026-09-27
+* Problem: too many menu items, needed modernizing. Seven pills plus four labelled
+* icons became: shopping links left (Widgets, Overlays & kits, Bundles,
+* Help), then a search field, the Free Chat CTA and icon-only account and
+* cart on the right. How it works, FAQ, Creator Hub and Contact live in the
+* Help dropdown (HELP_MENU_ITEMS in app/lib/nav.js).
+* --------------------------------------------------
+*/
+.help-dropdown {
+  background: rgba(11, 7, 19, 0.97);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--sws-border);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+  display: grid;
+  gap: 2px;
+  left: 50%;
+  min-width: 280px;
+  opacity: 0;
+  padding: 8px;
+  pointer-events: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  transform: translate(-50%, -6px);
+  transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s;
+  visibility: hidden;
+  z-index: 30;
+}
+
+/* Bridges the 10px gap so the pointer can travel into the dropdown. */
+.help-dropdown::before {
+  content: '';
+  height: 12px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: -12px;
+}
+
+.help-dropdown.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+  visibility: visible;
+}
+
+.help-dropdown-link {
+  border-radius: 10px;
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.help-dropdown-link:hover,
+.help-dropdown-link:focus-visible {
+  background: var(--sws-card);
+  outline: none;
+}
+
+.help-dropdown-title {
+  color: var(--sws-text);
+  font-weight: 700;
+}
+
+.help-dropdown-desc {
+  color: var(--sws-sub);
+  font-size: 0.82rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .help-dropdown {
+    transition: none;
+  }
+}
+
+/* Free Chat is the one CTA: pushed right, beside search, holo edge. */
+@media (min-width: 45em) {
+  .header-preview-link {
+    background:
+      linear-gradient(rgba(11, 7, 19, 0.92), rgba(11, 7, 19, 0.92)) padding-box,
+      linear-gradient(
+          90deg,
+          var(--sws-holo-1),
+          var(--sws-holo-2),
+          var(--sws-holo-3),
+          var(--sws-holo-4)
+        )
+        border-box;
+    border: 1px solid transparent;
+    margin-left: auto;
+    order: 3;
+  }
+
+  .header-preview-link:hover {
+    background:
+      linear-gradient(var(--sws-card), var(--sws-card)) padding-box,
+      linear-gradient(
+          90deg,
+          var(--sws-holo-1),
+          var(--sws-holo-2),
+          var(--sws-holo-3),
+          var(--sws-holo-4)
+        )
+        border-box;
+  }
+
+  .header-preview-link ~ .header-ctas {
+    margin-left: 0;
+    order: 4;
+  }
+}
+
+/* Search reads as a field on desktop: icon, hint, "/" shortcut. */
+.header-search-hint,
+.header-search-kbd {
+  display: none;
+}
+
+/* 82em, not the 68.75em nav breakpoint: at 1150 the full field pushed the
+   cart 10px off screen. Between the two it stays an icon. */
+@media (min-width: 82em) {
+  button.header-search-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--sws-border);
+    border-radius: var(--radius-pill);
+    gap: 0.5rem;
+    padding: 0.4rem 0.45rem 0.4rem 0.8rem;
+  }
+
+  button.header-search-btn:hover {
+    border-color: var(--sws-border-strong);
+  }
+
+  .header-search-hint {
+    color: var(--sws-sub);
+    display: inline;
+    font-size: 0.85rem;
+    font-weight: 500;
+    min-width: 6.5rem;
+    text-align: left;
+  }
+
+  .header-search-kbd {
+    border: 1px solid var(--sws-border);
+    border-radius: 6px;
+    color: var(--sws-sub);
+    display: inline-block;
+    font-family: inherit;
+    font-size: 0.72rem;
+    line-height: 1;
+    padding: 3px 7px;
+  }
+}
+
+/*
+ * "We're live" bar: sitewide, full width, above the header. Toggled by the
+ * sws.live_banner shop metafield, see docs/LIVE-BANNER.md. Dark text on the
+ * holo gradient, same pairing as .sws-btn-primary (>= 7:1).
+ */
+.sws-live-banner {
+  align-items: center;
+  background: linear-gradient(90deg, var(--sws-holo-1), var(--sws-holo-2), var(--sws-holo-3));
+  color: #0a0a12;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  gap: 0.35rem 1rem;
+  justify-content: center;
+  padding: 0.45rem 1rem;
+  position: relative;
+  width: 100%;
+  z-index: 5;
+}
+.sws-live-banner-msg {
+  align-items: center;
+  display: flex;
+  font-weight: 700;
+  gap: 0.5rem;
+  margin: 0;
+}
+.sws-live-tag {
+  background: #0a0a12;
+  border-radius: 4px;
+  color: #ff5a6e;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 0.12rem 0.4rem;
+}
+.sws-live-dot {
+  animation: sws-live-pulse 1.6s ease-out infinite;
+  background: #ff2d46;
+  border-radius: 50%;
+  display: inline-block;
+  height: 0.55rem;
+  width: 0.55rem;
+}
+@keyframes sws-live-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 45, 70, 0.7); }
+  70%, 100% { box-shadow: 0 0 0 0.5rem rgba(255, 45, 70, 0); }
+}
+.sws-live-banner-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+.sws-live-banner .sws-live-cta,
+.sws-live-banner .sws-live-cta:hover {
+  background: #0a0a12;
+  border: none;
+  box-shadow: none;
+  color: #fff;
+  font-size: 0.82rem;
+  padding: 0.3rem 0.9rem;
+}
+.sws-live-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sws-live-pill {
+  border-radius: var(--radius-pill);
+  color: #0a0a12;
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  text-decoration: underline;
+  text-decoration-color: rgba(10, 10, 18, 0.35);
+  text-underline-offset: 3px;
+}
+.sws-live-pill:hover,
+.sws-live-pill:focus-visible {
+  background: rgba(10, 10, 18, 0.12);
+  color: #0a0a12;
+}
+@media (max-width: 640px) {
+  .sws-live-banner { font-size: 0.82rem; gap: 0.3rem 0.6rem; padding: 0.4rem 0.75rem; }
+  .sws-live-banner-msg span:last-child { font-size: 0.8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sws-live-dot { animation: none; }
+}
+
+
+/* /pages/now-playing email gate (components/NowPlayingBetaGate). */
+.sws-beta-gate { margin: 1.25rem 0 0; max-width: 560px; position: relative; }
+.sws-beta-gate-label { color: var(--sws-text); display: block; font-weight: 700; margin-bottom: 0.5rem; }
+.sws-beta-gate-row { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.sws-beta-gate-input {
+  background: var(--sws-card-solid);
+  border: 1.5px solid var(--sws-border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--sws-text);
+  flex: 1 1 240px;
+  font: inherit;
+  min-width: 0;
+  padding: 0.65rem 1rem;
+}
+.sws-beta-gate-input:focus-visible { border-color: var(--sws-holo-1); outline: none; }
+.page main .sws-beta-gate-btn,
+.page main .sws-beta-gate-btn:hover { color: #0a0a12; }
+.sws-beta-gate-fine { color: var(--sws-sub); font-size: 0.8rem; margin: 0.5rem 0 0; }
+.sws-beta-gate-note { color: var(--sws-text); font-weight: 700; margin: 0 0 0.6rem; }
+.sws-beta-gate-error { color: #ff8a96; font-size: 0.85rem; margin: 0.5rem 0 0; }
+
+/*
+* --------------------------------------------------
+* Downloads (account/downloads, /downloads/<token>, order page)
+* --------------------------------------------------
+*
+* One visual language for all three surfaces, because they are one
+* component (app/components/DownloadsList.jsx). The old /downloads page
+* was styled nothing like the account area, which is part of why it read
+* as a checkpoint rather than a shop.
+*
+* Contrast, computed against the real tokens, not eyeballed (SWS design
+* gate B1, 4.5:1 normal text / 3:1 non-text):
+*   #f3ecff  text      on #1c1230 card   15.40:1
+*   #a89ec4  sub       on #1c1230 card    7.05:1
+*   #b79df2  link      on #1c1230 card    7.69:1
+*   #7fe6ff  notice    on #1c1230 card   12.37:1
+*   #1a1024  button ink on #f0509a fill   5.53:1
+* Spacing is on the 8pt grid (0.5rem steps). Buttons are 44px min height
+* so they are a real touch target on a phone.
+*/
+
+.sws-dl-page {
+  background: var(--sws-bg);
+  color: var(--sws-text);
+  display: flex;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem 1rem;
+}
+
+.sws-dl-card {
+  box-sizing: border-box;
+  max-width: 34rem;
+  width: 100%;
+}
+
+.sws-dl-heading {
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.sws-dl-intro {
+  color: var(--sws-sub);
+  margin: 0 0 1.5rem;
+}
+
+.sws-dl-notice {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 8px;
+  color: var(--sws-holo-1);
+  margin: 0 0 1.5rem;
+  padding: 1rem;
+}
+
+.sws-dl-order {
+  margin: 0 0 2rem;
+}
+
+.sws-dl-order-name {
+  color: var(--sws-sub);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  text-transform: none;
+}
+
+.sws-dl-product {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: 10px;
+  margin: 0 0 1rem;
+  padding: 1rem;
+}
+
+.sws-dl-product-title {
+  color: var(--sws-text);
+  font-size: 1.05rem;
+  margin: 0 0 1rem;
+  /* Real titles in this catalogue run long with no spaces to break on. */
+  overflow-wrap: anywhere;
+}
+
+.sws-dl-files {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sws-dl-file {
+  align-items: center;
+  border-top: 1px solid var(--sws-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  justify-content: space-between;
+  /* A flex item defaults to min-width:auto and refuses to shrink below its
+     content, and these are real filenames like
+     HalloweenMashroomSpookySlideGoalWidgetCode.zip with nothing to break
+     on -- the same trap already fixed on the PDP description list. */
+  min-width: 0;
+  padding: 1rem 0 0;
+}
+
+.sws-dl-file:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.sws-dl-filename {
+  color: var(--sws-text);
+  font-size: 0.9rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.sws-dl-button {
+  background: var(--sws-holo-4);
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: var(--sws-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 800;
+  min-height: 44px;
+  padding: 0.5rem 1.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.sws-dl-button:hover,
+.sws-dl-button:focus-visible {
+  background: var(--sws-holo-3);
+  color: var(--sws-ink);
+}
+
+/*
+ * On a phone the filename and the button stop sharing a row.
+ *
+ * With space-between, a short filename leaves the button on the right and
+ * a long one (which is most of this catalogue -- see .sws-dl-file) wraps
+ * and leaves the button on the LEFT, so the column of buttons zig-zags.
+ * Stacked and full width, every button lands in the same place and is a
+ * full-width tap target. Checked at 375 and at 360, which is where this
+ * catalogue's unbreakable filenames actually bite.
+ */
+@media (max-width: 600px) {
+  .sws-dl-file {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sws-dl-button {
+    white-space: normal;
+    width: 100%;
+  }
+}
+
+.sws-dl-empty {
+  background: var(--sws-card-solid);
+  border: 1px solid var(--sws-border);
+  border-radius: 10px;
+  color: var(--sws-text);
+  padding: 1.5rem;
+}
+
+.sws-dl-empty p {
+  margin: 0 0 0.5rem;
+}
+
+.sws-dl-empty p:last-child {
+  margin-bottom: 0;
+}
+
+.sws-dl-account-link {
+  margin: 1rem 0 0;
+}
+
+.sws-dl-account-link a {
+  color: var(--sws-holo-2);
+}
+
+.sws-dl-support {
+  color: var(--sws-sub);
+  font-size: 0.85rem;
+  margin: 1.5rem 0 0;
+}
+
+.account-order-downloads {
+  margin: 1.5rem 0 0;
+}
+
+.account-order-downloads .sws-dl-heading {
+  font-size: 1.2rem;
+}
+/* Build-your-own bundle: cart note (the cart aside shows on every page, so these live here, not in bundle.css) */
+/* Cart note for built kits (CartMain) */
+.bb-cart-note { margin: 12px 0; padding: 12px; border-radius: 14px; background: var(--sws-card); border: 1px solid var(--sws-border-strong); font-size: 14px; display: flex; flex-direction: column; gap: 8px; }
+.bb-cart-note b { color: var(--sws-holo-3); }
+.bb-cart-note .bb-platforms { justify-content: flex-start; gap: 10px; margin: 0; }
+.bb-cart-note .bb-platforms span { display: none; }
+
+.bb-cart-note .bb-platforms { display: flex; list-style: none; padding: 0; color: var(--sws-sub); }
+.bb-cart-note .bb-platforms li { display: inline-flex; }
+.bb-cart-note .platform-icon { width: 16px; height: 16px; fill: currentColor; }
+.bb-cart-review { color: var(--sws-sub); font-size: 13px; }
+
+/* Clear cart (cart drawer and /cart) */
+.cart-clear { display: block; margin: 6px 0 4px auto; padding: 4px 10px; background: none; border: 0; color: var(--sws-sub, #aaa); font-size: 13px; font-weight: 700; text-decoration: underline; cursor: pointer; }
+.cart-clear:disabled { opacity: .6; cursor: progress; }
+
+/* Bundles collection: "Build your own bundle" callout above the grid
+   (2026-10-18). Same card gradient as the homepage bundle promo, compact. */
+.collection-bundle-cta {
+  align-items: center;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(127, 230, 255, 0.1),
+      rgba(183, 157, 242, 0.14) 45%,
+      rgba(240, 80, 154, 0.14)
+    ),
+    var(--sws-card);
+  border: 1px solid var(--sws-border-strong);
+  border-radius: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  justify-content: space-between;
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.1rem;
+  @media (min-width: 45em) {
+    margin: 0 2rem 1.25rem;
+    padding: 1.1rem 1.5rem;
+  }
+}
+
+.collection-bundle-cta-copy {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.collection .collection-bundle-cta-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 4.5vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0 0 0.2rem;
+}
+
+.collection-bundle-cta-sub {
+  color: var(--sws-sub);
+  margin: 0;
+}
+
+.collection-bundle-cta-btn {
+  min-height: 48px;
+  padding: 0.7rem 1.6rem;
+  @media (max-width: 44.99em) {
+    width: 100%;
+  }
+}

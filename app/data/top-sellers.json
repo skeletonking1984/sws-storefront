@@ -1,0 +1,87 @@
+{
+  "generatedAt": "2026-10-03T14:11:39.578Z",
+  "window": {
+    "since": "2026-08-19",
+    "until": "2026-10-03",
+    "days": 45
+  },
+  "source": "Ranked by Etsy sales; sales figures are not included in this public copy.",
+  "mappedProducts": 68,
+  "unmappedProducts": 25,
+  "handles": [
+    "animated-moon-jar-goal-widget-twitch-sub-goal-overlay-falling-stars-tracker-instant-download",
+    "multistream-chat-widget-twitch-youtube-kick-overlay-digital-download-easy-setup-one-click-installation",
+    "y2k-sticker-chat-widget-retro-alerts-multistream-obs-ready-digital-download",
+    "neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
+    "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
+    "neon-animated-multistream-chat-widget-twitch-youtube-kick-overlay-digital-download",
+    "spooky-jar-goal-widget-for-twitch-animated-halloween-sub-tracker",
+    "animated-autumn-leaves-stream-decoration-cozy-fall-overlay",
+    "cute-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+    "heart-skeleton-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+    "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only",
+    "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only"
+  ],
+  "detail": [
+    {
+      "handle": "animated-moon-jar-goal-widget-twitch-sub-goal-overlay-falling-stars-tracker-instant-download",
+      "listing_id": 4551047317,
+      "title": "Animated Moon Jar Goal Widget • Twitch Sub Goal Overlay, Falling Stars Tracker (Instant Download)"
+    },
+    {
+      "handle": "multistream-chat-widget-twitch-youtube-kick-overlay-digital-download-easy-setup-one-click-installation",
+      "listing_id": 4536576701,
+      "title": "Multistream Chat Widget • Twitch, YouTube, Kick Overlay (Digital Download)  Easy Setup - One Click Installation"
+    },
+    {
+      "handle": "y2k-sticker-chat-widget-retro-alerts-multistream-obs-ready-digital-download",
+      "listing_id": 4543765531,
+      "title": "Y2K Sticker Chat Widget • Retro Alerts, Multistream OBS Ready (Digital Download)"
+    },
+    {
+      "handle": "neon-aesthetic-glowy-transparent-chat-and-goal-stream-widgets-minimal-neon-light-elegant-glow-theme-clean-vibe-streamelement-only",
+      "listing_id": 4333471272,
+      "title": "Neon Twitch Chat & Goal Widget | Multistream Glow Overlay (Digital Download)"
+    },
+    {
+      "handle": "animated-star-goal-widget-for-twitch-kick-obs-celestial-stream-overlay-digital-download",
+      "listing_id": 1790018033,
+      "title": "Animated Star Goal Widget for Twitch, Kick OBS, Celestial Stream Overlay (Digital Download)"
+    },
+    {
+      "handle": "neon-animated-multistream-chat-widget-twitch-youtube-kick-overlay-digital-download",
+      "listing_id": 4539065835,
+      "title": "Neon Animated Multistream Chat Widget • Twitch, YouTube, Kick Overlay (Digital Download)"
+    },
+    {
+      "handle": "spooky-jar-goal-widget-for-twitch-animated-halloween-sub-tracker",
+      "listing_id": 4563233208,
+      "title": "Spooky Jar Goal Widget | Animated Halloween Twitch Sub Tracker (StreamElements)"
+    },
+    {
+      "handle": "animated-autumn-leaves-stream-decoration-cozy-fall-overlay",
+      "listing_id": 4469342769,
+      "title": "Animated Autumn Leaves Stream Overlay | Cozy Fall Twitch Decoration (Digital Download)"
+    },
+    {
+      "handle": "cute-pumpkin-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "listing_id": 1758361648,
+      "title": "Pumpkin Goal Widget | Twitch Streamlabs StreamElements Halloween Animated Sub Goal Tracker | VTuber Streamer"
+    },
+    {
+      "handle": "heart-skeleton-goal-widget-liquid-filling-goal-widget-is-fully-customisable-for-twitch-streamlabs-and-streamelements",
+      "listing_id": 1797449100,
+      "title": "Love Skeleton Goal Widget | Twitch Streamlabs StreamElements Halloween Animated Sub Goal | VTuber Streamer"
+    },
+    {
+      "handle": "astro-moon-galaxy-vibe-glassy-transparent-chat-goal-stream-widgets-minimal-celestial-elegant-glass-theme-clean-vibe-streamelement-only",
+      "listing_id": 4322617816,
+      "title": "Cosmic Galaxy Chat Widget | Twitch StreamElements Animated Chat Goal Stream Overlay | VTuber Streamer"
+    },
+    {
+      "handle": "chrystal-moon-elegant-chat-and-goal-stream-widgets-minimal-starry-night-moon-theme-clean-vibe-streamelement-only",
+      "listing_id": 4336744223,
+      "title": "Cloudy Moon Overlay for Twitch | Dreamy Starry Night StreamElements Theme for VTubers"
+    }
+  ]
+}

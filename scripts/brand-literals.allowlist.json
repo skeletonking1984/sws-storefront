@@ -1,0 +1,17 @@
+[
+  {
+    "file": "app/lib/configRegistry.js",
+    "line": 48,
+    "reason": "Internal /admin/config diagnostic note describing this shop's own X event-naming convention (\"SWS prefixed events\"). Not reusable brand copy; a clone would rewrite the note, not template it."
+  },
+  {
+    "file": "app/lib/configRegistry.js",
+    "line": 94,
+    "reason": "SWS_DOWNLOADS_URL is the literal env var NAME for the sws-downloads Cloudflare Worker (a separate sibling repo), referenced by that exact string in account.orders.$id.jsx and the Worker itself. Renaming it is a coordinated cross-repo change, not a brand.config.js value -- a clone can keep using this exact env var name unchanged."
+  },
+  {
+    "file": "app/lib/conversions/testOrders.js",
+    "line": 26,
+    "reason": "TEST_DISCOUNT_PREFIX is an internal QA convention (a discount code prefixed SWSTEST marks a test order so it's excluded from ad conversions), not customer-facing brand text. A clone works identically keeping this exact prefix; renaming it buys nothing and risks breaking the verify:test-orders test fixtures that reference the same string."
+  }
+]

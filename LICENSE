@@ -1,0 +1,20 @@
+Copyright (c) 2026 Stream Widget Shop. All rights reserved.
+
+This repository is published so the source of the Stream Widget Shop
+storefront can be read and reviewed. No license is granted to copy, modify,
+distribute, sublicense or use this code, in whole or in part, in any other
+project or for any other purpose, without prior written permission from
+Stream Widget Shop.
+
+Brand names, logos, product names, product images and other marketing
+material referenced by this code are the property of Stream Widget Shop and
+are not licensed for any use.
+
+Third-party components keep their own licenses:
+
+- Fonts in app/assets/fonts/ are licensed under the SIL Open Font License,
+  Version 1.1. See app/assets/fonts/OFL.txt.
+- npm dependencies listed in package.json are licensed by their respective
+  authors under the terms in each package.
+
+Permission requests: support@streamwidgetshop.com

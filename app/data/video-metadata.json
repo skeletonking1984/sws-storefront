@@ -1,0 +1,722 @@
+{
+  "sourceNote": "Shopify Admin API files(query: \"media_type:VIDEO\"), fields createdAt and duration. The Storefront API exposes neither, and Google requires uploadDate on VideoObject, so the real values are pulled once and committed. Keyed by the numeric part of the Shopify Video GID, which the Storefront API does return per product media node. Regenerate whenever videos are added.",
+  "generatedAt": "2026-09-11T15:16:44Z",
+  "count": 143,
+  "videos": {
+    "30354200658110": {
+      "uploadDate": "2025-08-02T14:18:15Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "30354206818494": {
+      "uploadDate": "2025-08-02T14:25:13Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "30354209734846": {
+      "uploadDate": "2025-08-02T14:32:47Z",
+      "duration": "PT15S",
+      "durationMs": 15020
+    },
+    "30354241585342": {
+      "uploadDate": "2025-08-02T14:39:31Z",
+      "duration": "PT15S",
+      "durationMs": 14930
+    },
+    "32855890821310": {
+      "uploadDate": "2026-05-03T19:49:24Z",
+      "duration": "PT15S",
+      "durationMs": 14980
+    },
+    "33095343603902": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "33095343800510": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT14S",
+      "durationMs": 13730
+    },
+    "33095343833278": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT6S",
+      "durationMs": 6000
+    },
+    "33095343866046": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT6S",
+      "durationMs": 6120
+    },
+    "33095343898814": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT15S",
+      "durationMs": 15020
+    },
+    "33095343931582": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "33095343964350": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT6S",
+      "durationMs": 6120
+    },
+    "33095343997118": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT6S",
+      "durationMs": 6120
+    },
+    "33095344029886": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT6S",
+      "durationMs": 6120
+    },
+    "33095344062654": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT6S",
+      "durationMs": 6120
+    },
+    "33095344095422": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT6S",
+      "durationMs": 6120
+    },
+    "33095344128190": {
+      "uploadDate": "2026-06-06T16:38:32Z",
+      "duration": "PT6S",
+      "durationMs": 6120
+    },
+    "33109141225662": {
+      "uploadDate": "2026-06-08T19:06:14Z",
+      "duration": "PT6S",
+      "durationMs": 6120
+    },
+    "33109141258430": {
+      "uploadDate": "2026-06-08T19:06:14Z",
+      "duration": "PT6S",
+      "durationMs": 6120
+    },
+    "33109141291198": {
+      "uploadDate": "2026-06-08T19:06:14Z",
+      "duration": "PT6S",
+      "durationMs": 6120
+    },
+    "33453322109118": {
+      "uploadDate": "2026-07-15T22:06:54Z",
+      "duration": "PT15S",
+      "durationMs": 14970
+    },
+    "33487056076990": {
+      "uploadDate": "2026-07-22T03:06:35Z",
+      "duration": "PT45S",
+      "durationMs": 45000
+    },
+    "33502176608446": {
+      "uploadDate": "2026-07-22T21:06:26Z",
+      "duration": "PT10S",
+      "durationMs": 10110
+    },
+    "33600082313406": {
+      "uploadDate": "2026-07-31T01:06:40Z",
+      "duration": "PT30S",
+      "durationMs": 30000
+    },
+    "33604516610238": {
+      "uploadDate": "2026-07-31T20:08:24Z",
+      "duration": "PT10S",
+      "durationMs": 10040
+    },
+    "33654761849022": {
+      "uploadDate": "2026-08-04T20:07:33Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "33666558001342": {
+      "uploadDate": "2026-08-05T20:08:31Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34037429960894": {
+      "uploadDate": "2026-09-07T23:37:30Z",
+      "duration": "PT14S",
+      "durationMs": 14000
+    },
+    "34037534130366": {
+      "uploadDate": "2026-09-07T23:44:46Z",
+      "duration": "PT15S",
+      "durationMs": 14570
+    },
+    "34037539340478": {
+      "uploadDate": "2026-09-07T23:50:39Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075711504574": {
+      "uploadDate": "2026-09-09T16:34:55Z",
+      "duration": "PT15S",
+      "durationMs": 14850
+    },
+    "34075711570110": {
+      "uploadDate": "2026-09-09T16:34:56Z",
+      "duration": "PT15S",
+      "durationMs": 15020
+    },
+    "34075711635646": {
+      "uploadDate": "2026-09-09T16:34:56Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075711668414": {
+      "uploadDate": "2026-09-09T16:34:57Z",
+      "duration": "PT13S",
+      "durationMs": 13450
+    },
+    "34075711766718": {
+      "uploadDate": "2026-09-09T16:34:57Z",
+      "duration": "PT15S",
+      "durationMs": 14680
+    },
+    "34075711799486": {
+      "uploadDate": "2026-09-09T16:34:57Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075711897790": {
+      "uploadDate": "2026-09-09T16:34:58Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075711930558": {
+      "uploadDate": "2026-09-09T16:34:58Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075712913598": {
+      "uploadDate": "2026-09-09T16:35:13Z",
+      "duration": "PT15S",
+      "durationMs": 14910
+    },
+    "34075713503422": {
+      "uploadDate": "2026-09-09T16:35:14Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075713536190": {
+      "uploadDate": "2026-09-09T16:35:14Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075714093246": {
+      "uploadDate": "2026-09-09T16:35:14Z",
+      "duration": "PT15S",
+      "durationMs": 15020
+    },
+    "34075714126014": {
+      "uploadDate": "2026-09-09T16:35:15Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075714158782": {
+      "uploadDate": "2026-09-09T16:35:15Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075714191550": {
+      "uploadDate": "2026-09-09T16:35:16Z",
+      "duration": "PT14S",
+      "durationMs": 14000
+    },
+    "34075758002366": {
+      "uploadDate": "2026-09-09T16:41:30Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075758035134": {
+      "uploadDate": "2026-09-09T16:41:30Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075758067902": {
+      "uploadDate": "2026-09-09T16:41:30Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075758100670": {
+      "uploadDate": "2026-09-09T16:41:31Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075758133438": {
+      "uploadDate": "2026-09-09T16:41:32Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075758198974": {
+      "uploadDate": "2026-09-09T16:41:32Z",
+      "duration": "PT14S",
+      "durationMs": 14500
+    },
+    "34075758231742": {
+      "uploadDate": "2026-09-09T16:41:32Z",
+      "duration": "PT15S",
+      "durationMs": 14980
+    },
+    "34075758264510": {
+      "uploadDate": "2026-09-09T16:41:33Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075758330046": {
+      "uploadDate": "2026-09-09T16:41:34Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075758362814": {
+      "uploadDate": "2026-09-09T16:41:34Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075758395582": {
+      "uploadDate": "2026-09-09T16:41:34Z",
+      "duration": "PT14S",
+      "durationMs": 13730
+    },
+    "34075758428350": {
+      "uploadDate": "2026-09-09T16:41:35Z",
+      "duration": "PT13S",
+      "durationMs": 12550
+    },
+    "34075758461118": {
+      "uploadDate": "2026-09-09T16:41:35Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075758493886": {
+      "uploadDate": "2026-09-09T16:41:36Z",
+      "duration": "PT13S",
+      "durationMs": 12750
+    },
+    "34075760001214": {
+      "uploadDate": "2026-09-09T16:41:59Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760033982": {
+      "uploadDate": "2026-09-09T16:41:59Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760066750": {
+      "uploadDate": "2026-09-09T16:42:00Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760099518": {
+      "uploadDate": "2026-09-09T16:42:00Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760132286": {
+      "uploadDate": "2026-09-09T16:42:00Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760197822": {
+      "uploadDate": "2026-09-09T16:42:02Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760230590": {
+      "uploadDate": "2026-09-09T16:42:02Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760328894": {
+      "uploadDate": "2026-09-09T16:42:02Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760361662": {
+      "uploadDate": "2026-09-09T16:42:03Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760394430": {
+      "uploadDate": "2026-09-09T16:42:03Z",
+      "duration": "PT15S",
+      "durationMs": 14830
+    },
+    "34075760427198": {
+      "uploadDate": "2026-09-09T16:42:03Z",
+      "duration": "PT15S",
+      "durationMs": 14970
+    },
+    "34075760459966": {
+      "uploadDate": "2026-09-09T16:42:04Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760492734": {
+      "uploadDate": "2026-09-09T16:42:04Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075760525502": {
+      "uploadDate": "2026-09-09T16:42:04Z",
+      "duration": "PT15S",
+      "durationMs": 14860
+    },
+    "34075762262206": {
+      "uploadDate": "2026-09-09T16:42:29Z",
+      "duration": "PT15S",
+      "durationMs": 14970
+    },
+    "34075762327742": {
+      "uploadDate": "2026-09-09T16:42:29Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075762557118": {
+      "uploadDate": "2026-09-09T16:42:29Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075762589886": {
+      "uploadDate": "2026-09-09T16:42:30Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075762622654": {
+      "uploadDate": "2026-09-09T16:42:30Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075762655422": {
+      "uploadDate": "2026-09-09T16:42:30Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075762688190": {
+      "uploadDate": "2026-09-09T16:42:31Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075762720958": {
+      "uploadDate": "2026-09-09T16:42:31Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075762753726": {
+      "uploadDate": "2026-09-09T16:42:32Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075762786494": {
+      "uploadDate": "2026-09-09T16:42:32Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075762819262": {
+      "uploadDate": "2026-09-09T16:42:32Z",
+      "duration": "PT15S",
+      "durationMs": 14980
+    },
+    "34075762852030": {
+      "uploadDate": "2026-09-09T16:42:33Z",
+      "duration": "PT12S",
+      "durationMs": 12280
+    },
+    "34075762884798": {
+      "uploadDate": "2026-09-09T16:42:33Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34075762917566": {
+      "uploadDate": "2026-09-09T16:42:33Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095472935102": {
+      "uploadDate": "2026-09-10T20:50:53Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095472967870": {
+      "uploadDate": "2026-09-10T20:50:54Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095473230014": {
+      "uploadDate": "2026-09-10T20:50:54Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095473393854": {
+      "uploadDate": "2026-09-10T20:50:55Z",
+      "duration": "PT15S",
+      "durationMs": 15020
+    },
+    "34095473426622": {
+      "uploadDate": "2026-09-10T20:50:56Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095473459390": {
+      "uploadDate": "2026-09-10T20:50:56Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095473492158": {
+      "uploadDate": "2026-09-10T20:50:56Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095473524926": {
+      "uploadDate": "2026-09-10T20:50:57Z",
+      "duration": "PT15S",
+      "durationMs": 14920
+    },
+    "34095473557694": {
+      "uploadDate": "2026-09-10T20:50:57Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095473590462": {
+      "uploadDate": "2026-09-10T20:50:58Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095492202686": {
+      "uploadDate": "2026-09-10T20:53:25Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095492235454": {
+      "uploadDate": "2026-09-10T20:53:26Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095492268222": {
+      "uploadDate": "2026-09-10T20:53:26Z",
+      "duration": "PT15S",
+      "durationMs": 14950
+    },
+    "34095492563134": {
+      "uploadDate": "2026-09-10T20:53:26Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095492595902": {
+      "uploadDate": "2026-09-10T20:53:27Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095492661438": {
+      "uploadDate": "2026-09-10T20:53:27Z",
+      "duration": "PT15S",
+      "durationMs": 14920
+    },
+    "34095492956350": {
+      "uploadDate": "2026-09-10T20:53:28Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095493218494": {
+      "uploadDate": "2026-09-10T20:53:28Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095493415102": {
+      "uploadDate": "2026-09-10T20:53:28Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095493447870": {
+      "uploadDate": "2026-09-10T20:53:29Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095531065534": {
+      "uploadDate": "2026-09-10T20:55:52Z",
+      "duration": "PT15S",
+      "durationMs": 14920
+    },
+    "34095531098302": {
+      "uploadDate": "2026-09-10T20:55:52Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095531131070": {
+      "uploadDate": "2026-09-10T20:55:52Z",
+      "duration": "PT14S",
+      "durationMs": 14400
+    },
+    "34095531425982": {
+      "uploadDate": "2026-09-10T20:55:53Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095531458750": {
+      "uploadDate": "2026-09-10T20:55:53Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095531491518": {
+      "uploadDate": "2026-09-10T20:55:53Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095531753662": {
+      "uploadDate": "2026-09-10T20:55:54Z",
+      "duration": "PT15S",
+      "durationMs": 14970
+    },
+    "34095531786430": {
+      "uploadDate": "2026-09-10T20:55:54Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095531819198": {
+      "uploadDate": "2026-09-10T20:55:54Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095532376254": {
+      "uploadDate": "2026-09-10T20:55:55Z",
+      "duration": "PT15S",
+      "durationMs": 15020
+    },
+    "34095567601854": {
+      "uploadDate": "2026-09-10T20:58:04Z",
+      "duration": "PT15S",
+      "durationMs": 15020
+    },
+    "34095567863998": {
+      "uploadDate": "2026-09-10T20:58:04Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095567896766": {
+      "uploadDate": "2026-09-10T20:58:05Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095568158910": {
+      "uploadDate": "2026-09-10T20:58:06Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095568191678": {
+      "uploadDate": "2026-09-10T20:58:06Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095568289982": {
+      "uploadDate": "2026-09-10T20:58:06Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095568322750": {
+      "uploadDate": "2026-09-10T20:58:07Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34095568355518": {
+      "uploadDate": "2026-09-10T20:58:07Z",
+      "duration": "PT12S",
+      "durationMs": 12040
+    },
+    "34095568453822": {
+      "uploadDate": "2026-09-10T20:58:08Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34097273536702": {
+      "uploadDate": "2026-09-10T22:14:15Z",
+      "duration": "PT15S",
+      "durationMs": 14600
+    },
+    "34097358536894": {
+      "uploadDate": "2026-09-10T22:16:51Z",
+      "duration": "PT14S",
+      "durationMs": 13500
+    },
+    "34101230567614": {
+      "uploadDate": "2026-09-11T01:28:53Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101230665918": {
+      "uploadDate": "2026-09-11T01:28:54Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101230698686": {
+      "uploadDate": "2026-09-11T01:28:54Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101230796990": {
+      "uploadDate": "2026-09-11T01:28:54Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101230829758": {
+      "uploadDate": "2026-09-11T01:28:55Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101230993598": {
+      "uploadDate": "2026-09-11T01:28:55Z",
+      "duration": "PT14S",
+      "durationMs": 14230
+    },
+    "34101231026366": {
+      "uploadDate": "2026-09-11T01:28:55Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101231157438": {
+      "uploadDate": "2026-09-11T01:28:56Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101234827454": {
+      "uploadDate": "2026-09-11T01:29:40Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101234860222": {
+      "uploadDate": "2026-09-11T01:29:40Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101235187902": {
+      "uploadDate": "2026-09-11T01:29:41Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101235220670": {
+      "uploadDate": "2026-09-11T01:29:41Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101235318974": {
+      "uploadDate": "2026-09-11T01:29:42Z",
+      "duration": "PT15S",
+      "durationMs": 15020
+    },
+    "34101235351742": {
+      "uploadDate": "2026-09-11T01:29:42Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    },
+    "34101235384510": {
+      "uploadDate": "2026-09-11T01:29:42Z",
+      "duration": "PT15S",
+      "durationMs": 15000
+    }
+  }
+}

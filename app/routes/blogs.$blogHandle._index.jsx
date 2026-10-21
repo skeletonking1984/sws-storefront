@@ -1,0 +1,245 @@
+import {useState} from 'react';
+import {Link, useLoaderData} from 'react-router';
+import {Image, getPaginationVariables} from '@shopify/hydrogen';
+import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {BLOG_CATEGORIES, categorizeArticle} from '~/lib/blogCategories';
+import {buildMeta, getOrigin} from '~/lib/seo';
+import {brand} from '~/lib/brand.config';
+
+/**
+ * @type {Route.MetaFunction}
+ */
+export const meta = ({data, matches, location}) => {
+  const origin = getOrigin(matches);
+  const title = data?.blog.title ?? '';
+  return buildMeta({
+    title: `${title} | ${brand.name} Blog`,
+    description:
+      data?.blog.seo?.description ||
+      `Setup guides, product spotlights, and stream trends from the ${title} blog.`,
+    url: `${origin}${location.pathname}`,
+  });
+};
+
+/**
+ * @param {Route.LoaderArgs} args
+ */
+export async function loader(args) {
+  // Start fetching non-critical data without blocking time to first byte
+  const deferredData = loadDeferredData(args);
+
+  // Await the critical data required to render initial state of the page
+  const criticalData = await loadCriticalData(args);
+
+  return {...deferredData, ...criticalData};
+}
+
+/**
+ * Load data necessary for rendering content above the fold. This is the critical data
+ * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
+ * @param {Route.LoaderArgs}
+ */
+async function loadCriticalData({context, request, params}) {
+  const paginationVariables = getPaginationVariables(request, {
+    pageBy: 24,
+  });
+
+  if (!params.blogHandle) {
+    throw new Response(`blog not found`, {status: 404});
+  }
+
+  const [{blog}] = await Promise.all([
+    context.storefront.query(BLOGS_QUERY, {
+      variables: {
+        blogHandle: params.blogHandle,
+        ...paginationVariables,
+      },
+    }),
+    // Add other queries here, so that they are loaded in parallel
+  ]);
+
+  if (!blog?.articles) {
+    throw new Response('Not found', {status: 404});
+  }
+
+  redirectIfHandleIsLocalized(request, {handle: params.blogHandle, data: blog});
+
+  return {blog};
+}
+
+/**
+ * Load data for rendering content below the fold. This data is deferred and will be
+ * fetched after the initial page load. If it's unavailable, the page should still 200.
+ * Make sure to not throw any errors here, as it will cause the page to 500.
+ * @param {Route.LoaderArgs}
+ */
+function loadDeferredData() {
+  return {};
+}
+
+export default function Blog() {
+  /** @type {LoaderReturnData} */
+  const {blog} = useLoaderData();
+  const {articles} = blog;
+  const [activeCategory, setActiveCategory] = useState(null);
+
+  return (
+    <div className="blog">
+      <h1>{blog.title}</h1>
+      <p className="blog-subhead">
+        Setup guides, product spotlights, and stream trends.
+      </p>
+      <div className="blog-category-filter">
+        <button
+          type="button"
+          className={`blog-category-pill${activeCategory === null ? ' active' : ''}`}
+          onClick={() => setActiveCategory(null)}
+        >
+          All
+        </button>
+        {BLOG_CATEGORIES.map((cat) => (
+          <button
+            key={cat.key}
+            type="button"
+            className={`blog-category-pill${activeCategory === cat.key ? ' active' : ''}`}
+            onClick={() => setActiveCategory(cat.key)}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+      <PaginatedResourceSection
+        connection={articles}
+        resourcesClassName="blog-grid"
+      >
+        {({node: article, index}) => {
+          const category = categorizeArticle(article);
+          if (activeCategory && category.key !== activeCategory) return null;
+          return (
+            <ArticleItem
+              article={article}
+              category={category}
+              key={article.id}
+              loading={index < 2 ? 'eager' : 'lazy'}
+            />
+          );
+        }}
+      </PaginatedResourceSection>
+    </div>
+  );
+}
+
+/**
+ * @param {{
+ *   article: ArticleItemFragment;
+ *   category: {key: string; label: string};
+ *   loading?: HTMLImageElement['loading'];
+ * }}
+ */
+function ArticleItem({article, category, loading}) {
+  const publishedAt = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(article.publishedAt));
+  return (
+    <div className="blog-article" key={article.id}>
+      <Link to={`/blogs/${article.blog.handle}/${article.handle}`}>
+        {article.image && (
+          <div className="blog-article-image">
+            {/*
+              No `aspectRatio` prop on purpose. Hydrogen turns it into
+              `crop=center` on the CDN URL, which crops the source itself, and
+              this repo has been bitten by that before. The
+              wrapper's own aspect-ratio frames the card instead.
+            */}
+            <Image
+              alt={article.image.altText || article.title}
+              data={article.image}
+              loading={loading}
+              sizes="(min-width: 768px) 50vw, 100vw"
+            />
+          </div>
+        )}
+        <span className="blog-article-category">{category.label}</span>
+        <h3>{article.title}</h3>
+        {article.excerpt && (
+          <p className="blog-article-excerpt">{article.excerpt}</p>
+        )}
+        <small>{publishedAt}</small>
+      </Link>
+    </div>
+  );
+}
+
+// NOTE: https://shopify.dev/docs/api/storefront/latest/objects/blog
+const BLOGS_QUERY = `#graphql
+  query Blog(
+    $language: LanguageCode
+    $blogHandle: String!
+    $first: Int
+    $last: Int
+    $startCursor: String
+    $endCursor: String
+  ) @inContext(language: $language) {
+    blog(handle: $blogHandle) {
+      title
+      handle
+      seo {
+        title
+        description
+      }
+      # sortKey and reverse are NOT optional here. The Storefront API's default
+      # for blog articles is ID ascending, which is oldest first, so the index
+      # opened on a March article and buried anything new on the last page.
+      # Measured live 2026-09-23: page 2 ran June 4, June 8, June 8, July 16,
+      # July 22 top to bottom.
+      articles(
+        first: $first,
+        last: $last,
+        before: $startCursor,
+        after: $endCursor,
+        sortKey: PUBLISHED_AT,
+        reverse: true
+      ) {
+        nodes {
+          ...ArticleItem
+        }
+        pageInfo {
+          hasPreviousPage
+          hasNextPage
+          endCursor
+          startCursor
+        }
+
+      }
+    }
+  }
+  fragment ArticleItem on Article {
+    author: authorV2 {
+      name
+    }
+    contentHtml
+    excerpt(truncateAt: 120)
+    tags
+    handle
+    id
+    image {
+      id
+      altText
+      url
+      width
+      height
+    }
+    publishedAt
+    title
+    blog {
+      handle
+    }
+  }
+`;
+
+/** @typedef {import('./+types/blogs.$blogHandle._index').Route} Route */
+/** @typedef {import('storefrontapi.generated').ArticleItemFragment} ArticleItemFragment */
+/** @typedef {ReturnType<typeof useLoaderData<typeof loader>>} LoaderReturnData */
