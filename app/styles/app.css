@@ -4185,29 +4185,6 @@ button.reset:hover:not(:has(> *)) {
   }
 }
 
-/*
-  The full keyword title, kept on the page under the name. It is the string
-  buyers recognise from Etsy search and it holds the words the h1 gave up,
-  so it stays visible rather than being dropped or hidden from crawlers.
-*/
-.product-title-full {
-  color: var(--sws-sub);
-  font-size: 0.82rem;
-  line-height: 1.4;
-  margin: 0;
-  overflow-wrap: break-word;
-  /* One line on a phone: it repeats the name above it, and at three lines
-     it pushed the trust row off the first screen. The full string stays in
-     the DOM for crawlers and screen readers. */
-  @media (max-width: 44.99em) {
-    -webkit-box-orient: vertical;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-    overflow: hidden;
-  }
-}
-
 /* Price first on a phone, the rating as a smaller line under it. */
 @media (max-width: 44.99em) {
   .product-buybox .product-price {

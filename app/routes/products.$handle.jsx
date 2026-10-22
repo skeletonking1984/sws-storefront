@@ -725,20 +725,16 @@ export default function Product() {
             Mobile added to cart 1.30% against desktop 6.86% in the same
             period.
 
-            The full keyword title is still on the page, under the name, and
-            still carries every word it did: the meta title, the OG tags, the
-            Product JSON-LD `name` and the answer block are all untouched, so
-            nothing that a crawler reads lost a keyword. `subjectFromTitle` is
-            the same cleaner the gallery and the alt-text generator use, so
-            the three cannot drift. Across the catalog it yields 36 chars on
-            average, 0 empty, 0 collisions between products (checked against
-            the live feed, 123 products, 2026-09-21).
+            The full keyword title is NOT repeated on the page any more (it
+            ran as a one-line truncated copy of the name under the h1, a
+            duplicate a phone buyer read twice). It is still in the meta
+            title, the OG tags, the Product JSON-LD `name` and the answer
+            block, so nothing that a crawler reads lost a keyword.
+            `subjectFromTitle` is the same cleaner the gallery, the cards,
+            the cart and the alt-text generator use, so they cannot drift.
           */}
           <div className="product-heading">
             <h1>{shortTitle}</h1>
-            {shortTitle !== title ? (
-              <p className="product-title-full">{title}</p>
-            ) : null}
           </div>
           <div className="product-buybox">
             {showsProductReviews ? (
