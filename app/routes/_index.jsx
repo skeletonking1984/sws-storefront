@@ -25,6 +25,7 @@ import {absoluteAsset, buildMeta, getOrigin} from '~/lib/seo';
 import {handleNewsletterSignup} from '~/lib/newsletter.server';
 import {FAN_FAVORITE_HANDLES, VIBES, WORKS_WITH_PLATFORMS} from '~/lib/nav';
 import {fetchProductsByHandleWithAlias} from '~/lib/handleAliases';
+import {isNewProduct, mixInNewest} from '~/lib/newest';
 import {brand} from '~/lib/brand.config';
 import {
   logoWebp as logo,
@@ -166,7 +167,7 @@ function loadDeferredData({context}) {
    * Falls through to the curated fan-favourites list below if the handles stop
    * resolving, which they will if a product is drafted between refreshes.
    */
-  const bestSellers = context.storefront
+  const rankedBestSellers = context.storefront
     .query(RECOMMENDED_PRODUCTS_QUERY, {
       variables: Object.fromEntries(
         BEST_SELLER_HANDLES.map((h, i) => [`handle${i}`, h]),
@@ -207,15 +208,22 @@ function loadDeferredData({context}) {
    * reaches the homepage without a deploy (2026-10-01: keep the
    * homepage fresh). Remove it from the collection to retire it.
    */
-  const newArrivals = context.storefront
+  const newArrivalsResponse = context.storefront
     .query(NEW_ARRIVALS_QUERY, {
       variables: {
         first: 16,
         query: '-tag:do-not-use-ip',
         freshHandle: FRESH_COLLECTION_HANDLE,
         freshFirst: FRESH_SLOTS,
+        pinnedIds: BEST_SELLER_NEW_PINS,
       },
     })
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
+
+  const newArrivals = newArrivalsResponse
     .then((response) => {
       const seen = new Set();
       return [
@@ -231,6 +239,23 @@ function loadDeferredData({context}) {
       console.error(error);
       return [];
     });
+
+  /*
+   * Best sellers with new products mixed in every other slot (same
+   * mixInNewest as /bundle). The ranking is Etsy revenue, so a product that
+   * launched on the storefront this month can never earn a place in it on its
+   * own, however well it is doing. Mixed-in cards carry a "New" badge so the
+   * row never claims a sales rank they don't have. Same request as New
+   * arrivals, no extra round trip.
+   */
+  const bestSellers = Promise.all([
+    rankedBestSellers,
+    newArrivalsResponse,
+  ]).then(([ranked, response]) =>
+    ranked?.length
+      ? mixInNewest(ranked, pickBestSellerNewcomers(response))
+      : ranked,
+  );
 
   /*
    * "Kits and overlay packs" reads the two collections rather than a handle
@@ -312,6 +337,7 @@ function loadDeferredData({context}) {
 
   return {
     recommendedProducts,
+    rankedBestSellers,
     bestSellers,
     bundlePromoTiles,
     newArrivals,
@@ -363,6 +389,42 @@ export function isHalloweenSeason(date = new Date()) {
   const [startMonth, startDay] = HALLOWEEN_SEASON.start;
   const [endMonth, endDay] = HALLOWEEN_SEASON.end;
   return key >= startMonth * 100 + startDay && key <= endMonth * 100 + endDay;
+}
+
+/**
+ * New products that lead the Best sellers mix-in, by Shopify product id so a
+ * handle rename can't drop them. Each one still has to be inside NEW_DAYS of
+ * its createdAt (app/lib/newest.js), so a pin retires itself and the slots go
+ * back to plain newest-first without a deploy.
+ *
+ * 2026-10-22: Halloween Gummy Jar, then Moonlight Gummy Jar.
+ */
+const BEST_SELLER_NEW_PINS = [
+  'gid://shopify/Product/9080954290366',
+  'gid://shopify/Product/9081059999934',
+];
+
+/**
+ * The new products mixed into Best sellers, given the NEW_ARRIVALS_QUERY
+ * response: pins first, then newest by createdAt. Only products created in
+ * the last NEW_DAYS, never an IP-excluded one, each once.
+ *
+ * Exported so it can be reasoned about and tested without a network call.
+ *
+ * @param {any} response
+ * @param {number} now
+ * @returns {any[]}
+ */
+export function pickBestSellerNewcomers(response, now = Date.now()) {
+  const seen = new Set();
+  return [
+    ...(response?.pinned ?? []),
+    ...(response?.products?.nodes ?? []),
+  ]
+    .filter((product) => product?.id && isNewProduct(product.createdAt, now))
+    .filter((product) => !isExcludedFromHome(product))
+    .filter((product) => !seen.has(product.id) && seen.add(product.id))
+    .map((product) => ({...product, isNew: true}));
 }
 
 /**
@@ -524,7 +586,7 @@ export default function Homepage() {
       <Hero />
       <BundlePromo
         tiles={data.bundlePromoTiles}
-        bestSellers={data.bestSellers}
+        bestSellers={data.rankedBestSellers}
         fallback={data.recommendedProducts}
       />
       <BestSellers
@@ -848,7 +910,7 @@ function ProductRow({products, listId, listName, badge, limit = 6}) {
           index={index}
           /* sits under the section's own <h2> */
           headingLevel={3}
-          badge={badge}
+          badge={badge ?? (product.isNew ? 'New' : undefined)}
         />
       ))}
     </div>
@@ -1383,6 +1445,7 @@ const RECOMMENDED_PRODUCT_FRAGMENT = `#graphql
   fragment RecommendedProduct on Product {
     id
     title
+    createdAt
     productType
     handle
     tags
@@ -1516,7 +1579,11 @@ const NEW_ARRIVALS_QUERY = `#graphql
     $query: String
     $freshHandle: String!
     $freshFirst: Int!
+    $pinnedIds: [ID!]!
   ) @inContext(country: $country, language: $language) {
+    pinned: nodes(ids: $pinnedIds) {
+      ...RecommendedProduct
+    }
     fresh: collection(handle: $freshHandle) {
       products(first: $freshFirst) {
         nodes { ...RecommendedProduct }

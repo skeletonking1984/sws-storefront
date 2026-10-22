@@ -847,7 +847,7 @@ export type LlmsTxtCollectionsQuery = {
 
 export type RecommendedProductFragment = Pick<
   StorefrontAPI.Product,
-  'id' | 'title' | 'productType' | 'handle' | 'tags'
+  'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
 > & {
   worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
   gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -978,7 +978,7 @@ export type RecommendedProductsQuery = {
   product0?: StorefrontAPI.Maybe<
     Pick<
       StorefrontAPI.Product,
-      'id' | 'title' | 'productType' | 'handle' | 'tags'
+      'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
     > & {
       worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
       gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -1012,7 +1012,7 @@ export type RecommendedProductsQuery = {
   product1?: StorefrontAPI.Maybe<
     Pick<
       StorefrontAPI.Product,
-      'id' | 'title' | 'productType' | 'handle' | 'tags'
+      'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
     > & {
       worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
       gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -1046,7 +1046,7 @@ export type RecommendedProductsQuery = {
   product2?: StorefrontAPI.Maybe<
     Pick<
       StorefrontAPI.Product,
-      'id' | 'title' | 'productType' | 'handle' | 'tags'
+      'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
     > & {
       worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
       gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -1080,7 +1080,7 @@ export type RecommendedProductsQuery = {
   product3?: StorefrontAPI.Maybe<
     Pick<
       StorefrontAPI.Product,
-      'id' | 'title' | 'productType' | 'handle' | 'tags'
+      'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
     > & {
       worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
       gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -1114,7 +1114,7 @@ export type RecommendedProductsQuery = {
   product4?: StorefrontAPI.Maybe<
     Pick<
       StorefrontAPI.Product,
-      'id' | 'title' | 'productType' | 'handle' | 'tags'
+      'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
     > & {
       worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
       gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -1148,7 +1148,7 @@ export type RecommendedProductsQuery = {
   product5?: StorefrontAPI.Maybe<
     Pick<
       StorefrontAPI.Product,
-      'id' | 'title' | 'productType' | 'handle' | 'tags'
+      'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
     > & {
       worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
       gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -1182,7 +1182,7 @@ export type RecommendedProductsQuery = {
   product6?: StorefrontAPI.Maybe<
     Pick<
       StorefrontAPI.Product,
-      'id' | 'title' | 'productType' | 'handle' | 'tags'
+      'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
     > & {
       worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
       gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -1216,7 +1216,7 @@ export type RecommendedProductsQuery = {
   product7?: StorefrontAPI.Maybe<
     Pick<
       StorefrontAPI.Product,
-      'id' | 'title' | 'productType' | 'handle' | 'tags'
+      'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
     > & {
       worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
       gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -1256,15 +1256,62 @@ export type NewArrivalsQueryVariables = StorefrontAPI.Exact<{
   query?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['String']['input']>;
   freshHandle: StorefrontAPI.Scalars['String']['input'];
   freshFirst: StorefrontAPI.Scalars['Int']['input'];
+  pinnedIds:
+    | Array<StorefrontAPI.Scalars['ID']['input']>
+    | StorefrontAPI.Scalars['ID']['input'];
 }>;
 
 export type NewArrivalsQuery = {
+  pinned: Array<
+    StorefrontAPI.Maybe<
+      Pick<
+        StorefrontAPI.Product,
+        'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
+      > & {
+        worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+        gifSupport?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.Metafield, 'value'>
+        >;
+        priceRange: {
+          minVariantPrice: Pick<
+            StorefrontAPI.MoneyV2,
+            'amount' | 'currencyCode'
+          >;
+        };
+        compareAtPriceRange: {
+          minVariantPrice: Pick<
+            StorefrontAPI.MoneyV2,
+            'amount' | 'currencyCode'
+          >;
+        };
+        featuredImage?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
+        >;
+        media: {
+          nodes: Array<
+            | {__typename: 'ExternalVideo' | 'MediaImage' | 'Model3d'}
+            | ({__typename: 'Video'} & Pick<StorefrontAPI.Video, 'id'> & {
+                  previewImage?: StorefrontAPI.Maybe<
+                    Pick<StorefrontAPI.Image, 'url'>
+                  >;
+                  sources: Array<
+                    Pick<
+                      StorefrontAPI.VideoSource,
+                      'url' | 'mimeType' | 'format' | 'width' | 'height'
+                    >
+                  >;
+                })
+          >;
+        };
+      }
+    >
+  >;
   fresh?: StorefrontAPI.Maybe<{
     products: {
       nodes: Array<
         Pick<
           StorefrontAPI.Product,
-          'id' | 'title' | 'productType' | 'handle' | 'tags'
+          'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
         > & {
           worksWith?: StorefrontAPI.Maybe<
             Pick<StorefrontAPI.Metafield, 'value'>
@@ -1311,7 +1358,7 @@ export type NewArrivalsQuery = {
     nodes: Array<
       Pick<
         StorefrontAPI.Product,
-        'id' | 'title' | 'productType' | 'handle' | 'tags'
+        'id' | 'title' | 'createdAt' | 'productType' | 'handle' | 'tags'
       > & {
         worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
         gifSupport?: StorefrontAPI.Maybe<
@@ -3178,11 +3225,11 @@ interface GeneratedQueryTypes {
     return: BundlePromoTilesQuery;
     variables: BundlePromoTilesQueryVariables;
   };
-  '#graphql\n  query RecommendedProducts (\n    $country: CountryCode\n    $language: LanguageCode\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n    $handle5: String!\n    $handle6: String!\n    $handle7: String!\n  ) @inContext(country: $country, language: $language) {\n    product0: product(handle: $handle0) { ...RecommendedProduct }\n    product1: product(handle: $handle1) { ...RecommendedProduct }\n    product2: product(handle: $handle2) { ...RecommendedProduct }\n    product3: product(handle: $handle3) { ...RecommendedProduct }\n    product4: product(handle: $handle4) { ...RecommendedProduct }\n    product5: product(handle: $handle5) { ...RecommendedProduct }\n    product6: product(handle: $handle6) { ...RecommendedProduct }\n    product7: product(handle: $handle7) { ...RecommendedProduct }\n  }\n  #graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    productType\n    handle\n    tags\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    featuredImage {\n      id\n      url\n      altText\n    }\n    media(first: 25) {\n      nodes {\n        __typename\n        ... on Video {\n          id\n          previewImage {\n            url\n          }\n          sources {\n            url\n            mimeType\n            format\n            width\n            height\n          }\n        }\n      }\n    }\n  }\n\n': {
+  '#graphql\n  query RecommendedProducts (\n    $country: CountryCode\n    $language: LanguageCode\n    $handle0: String!\n    $handle1: String!\n    $handle2: String!\n    $handle3: String!\n    $handle4: String!\n    $handle5: String!\n    $handle6: String!\n    $handle7: String!\n  ) @inContext(country: $country, language: $language) {\n    product0: product(handle: $handle0) { ...RecommendedProduct }\n    product1: product(handle: $handle1) { ...RecommendedProduct }\n    product2: product(handle: $handle2) { ...RecommendedProduct }\n    product3: product(handle: $handle3) { ...RecommendedProduct }\n    product4: product(handle: $handle4) { ...RecommendedProduct }\n    product5: product(handle: $handle5) { ...RecommendedProduct }\n    product6: product(handle: $handle6) { ...RecommendedProduct }\n    product7: product(handle: $handle7) { ...RecommendedProduct }\n  }\n  #graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    createdAt\n    productType\n    handle\n    tags\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    featuredImage {\n      id\n      url\n      altText\n    }\n    media(first: 25) {\n      nodes {\n        __typename\n        ... on Video {\n          id\n          previewImage {\n            url\n          }\n          sources {\n            url\n            mimeType\n            format\n            width\n            height\n          }\n        }\n      }\n    }\n  }\n\n': {
     return: RecommendedProductsQuery;
     variables: RecommendedProductsQueryVariables;
   };
-  '#graphql\n  query NewArrivals(\n    $country: CountryCode\n    $language: LanguageCode\n    $first: Int!\n    $query: String\n    $freshHandle: String!\n    $freshFirst: Int!\n  ) @inContext(country: $country, language: $language) {\n    fresh: collection(handle: $freshHandle) {\n      products(first: $freshFirst) {\n        nodes { ...RecommendedProduct }\n      }\n    }\n    products(first: $first, sortKey: CREATED_AT, reverse: true, query: $query) {\n      nodes { ...RecommendedProduct }\n    }\n  }\n  #graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    productType\n    handle\n    tags\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    featuredImage {\n      id\n      url\n      altText\n    }\n    media(first: 25) {\n      nodes {\n        __typename\n        ... on Video {\n          id\n          previewImage {\n            url\n          }\n          sources {\n            url\n            mimeType\n            format\n            width\n            height\n          }\n        }\n      }\n    }\n  }\n\n': {
+  '#graphql\n  query NewArrivals(\n    $country: CountryCode\n    $language: LanguageCode\n    $first: Int!\n    $query: String\n    $freshHandle: String!\n    $freshFirst: Int!\n    $pinnedIds: [ID!]!\n  ) @inContext(country: $country, language: $language) {\n    pinned: nodes(ids: $pinnedIds) {\n      ...RecommendedProduct\n    }\n    fresh: collection(handle: $freshHandle) {\n      products(first: $freshFirst) {\n        nodes { ...RecommendedProduct }\n      }\n    }\n    products(first: $first, sortKey: CREATED_AT, reverse: true, query: $query) {\n      nodes { ...RecommendedProduct }\n    }\n  }\n  #graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    createdAt\n    productType\n    handle\n    tags\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    featuredImage {\n      id\n      url\n      altText\n    }\n    media(first: 25) {\n      nodes {\n        __typename\n        ... on Video {\n          id\n          previewImage {\n            url\n          }\n          sources {\n            url\n            mimeType\n            format\n            width\n            height\n          }\n        }\n      }\n    }\n  }\n\n': {
     return: NewArrivalsQuery;
     variables: NewArrivalsQueryVariables;
   };
