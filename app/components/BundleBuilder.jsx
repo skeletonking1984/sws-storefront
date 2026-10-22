@@ -28,6 +28,7 @@ export const BUNDLE_PLATFORMS = [
 const FILTERS = [
   {id: 'all', label: 'All'},
   {id: 'top', label: 'Top sellers'},
+  {id: 'new', label: 'New'},
   {id: 'chat', label: 'Chat'},
   {id: 'goal', label: 'Goal'},
 ];
@@ -97,6 +98,7 @@ export function BundleBuilder({items, curated, reviews, rating}) {
 
   const shown = items.filter((w) => {
     if (filter === 'top' && w.top === null) return false;
+    if (filter === 'new' && !w.isNew) return false;
     if (filter === 'chat' && !/chat/i.test(w.type)) return false;
     if (filter === 'goal' && !/goal/i.test(w.type)) return false;
     if (q && !w.title.toLowerCase().includes(q.trim().toLowerCase()))
@@ -243,7 +245,9 @@ export function BundleBuilder({items, curated, reviews, rating}) {
                           fallbackWidth={400}
                         />
                       ) : null}
-                      {w.top !== null && w.top < 12 ? (
+                      {w.isNew ? (
+                        <em className="bb-badge new">New</em>
+                      ) : w.top !== null && w.top < 12 ? (
                         <em className="bb-badge">Top seller</em>
                       ) : null}
                       <i className="bb-check" aria-hidden="true">
@@ -283,7 +287,11 @@ export function BundleBuilder({items, curated, reviews, rating}) {
             })}
           </ul>
           {shown.length === 0 ? (
-            <p className="bb-empty">No widgets match that search.</p>
+            <p className="bb-empty">
+              {filter === 'new' && !q
+                ? 'No widgets added in the last 30 days.'
+                : 'No widgets match that search.'}
+            </p>
           ) : null}
         </section>
 
