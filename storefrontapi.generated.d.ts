@@ -1896,7 +1896,7 @@ export type BundleWidgetsQuery = {
       nodes: Array<
         Pick<
           StorefrontAPI.Product,
-          'id' | 'handle' | 'title' | 'productType'
+          'id' | 'handle' | 'title' | 'productType' | 'createdAt'
         > & {
           featuredImage?: StorefrontAPI.Maybe<
             Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
@@ -1946,7 +1946,7 @@ export type MoneyProductItemFragment = Pick<
 
 export type ProductItemFragment = Pick<
   StorefrontAPI.Product,
-  'id' | 'handle' | 'title' | 'productType' | 'tags'
+  'id' | 'handle' | 'title' | 'productType' | 'createdAt' | 'tags'
 > & {
   worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
   gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -2009,7 +2009,7 @@ export type CollectionQuery = {
         nodes: Array<
           Pick<
             StorefrontAPI.Product,
-            'id' | 'handle' | 'title' | 'productType' | 'tags'
+            'id' | 'handle' | 'title' | 'productType' | 'createdAt' | 'tags'
           > & {
             worksWith?: StorefrontAPI.Maybe<
               Pick<StorefrontAPI.Metafield, 'value'>
@@ -2063,6 +2063,67 @@ export type CollectionQuery = {
   >;
 };
 
+export type CollectionNewestQueryVariables = StorefrontAPI.Exact<{
+  handle: StorefrontAPI.Scalars['String']['input'];
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+}>;
+
+export type CollectionNewestQuery = {
+  collection?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<
+          StorefrontAPI.Product,
+          'id' | 'handle' | 'title' | 'productType' | 'createdAt' | 'tags'
+        > & {
+          worksWith?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Metafield, 'value'>
+          >;
+          gifSupport?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Metafield, 'value'>
+          >;
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url'>
+          >;
+          media: {
+            nodes: Array<
+              | {__typename: 'ExternalVideo' | 'MediaImage' | 'Model3d'}
+              | ({__typename: 'Video'} & Pick<StorefrontAPI.Video, 'id'> & {
+                    previewImage?: StorefrontAPI.Maybe<
+                      Pick<StorefrontAPI.Image, 'url'>
+                    >;
+                    sources: Array<
+                      Pick<
+                        StorefrontAPI.VideoSource,
+                        'url' | 'mimeType' | 'format' | 'width' | 'height'
+                      >
+                    >;
+                  })
+            >;
+          };
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+            maxVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+          compareAtPriceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+        }
+      >;
+    };
+  }>;
+};
+
 export type CollectionFragment = Pick<
   StorefrontAPI.Collection,
   'id' | 'title' | 'handle'
@@ -2111,7 +2172,7 @@ export type MoneyCollectionItemFragment = Pick<
 
 export type CollectionItemFragment = Pick<
   StorefrontAPI.Product,
-  'id' | 'handle' | 'title' | 'productType' | 'tags'
+  'id' | 'handle' | 'title' | 'productType' | 'createdAt' | 'tags'
 > & {
   worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
   gifSupport?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -2164,7 +2225,7 @@ export type CatalogQuery = {
     nodes: Array<
       Pick<
         StorefrontAPI.Product,
-        'id' | 'handle' | 'title' | 'productType' | 'tags'
+        'id' | 'handle' | 'title' | 'productType' | 'createdAt' | 'tags'
       > & {
         worksWith?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
         gifSupport?: StorefrontAPI.Maybe<
@@ -3144,7 +3205,7 @@ interface GeneratedQueryTypes {
     return: BlogsQuery;
     variables: BlogsQueryVariables;
   };
-  '#graphql\n  query BundleWidgets($country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    widgets: collection(handle: "widgets") {\n      products(first: 250) {\n        nodes {\n          id\n          handle\n          title\n          productType\n          featuredImage { url altText width height }\n          variants(first: 1) {\n            nodes { id availableForSale price { amount currencyCode } }\n          }\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query BundleWidgets($country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    widgets: collection(handle: "widgets") {\n      products(first: 250) {\n        nodes {\n          id\n          handle\n          title\n          productType\n          createdAt\n          featuredImage { url altText width height }\n          variants(first: 1) {\n            nodes { id availableForSale price { amount currencyCode } }\n          }\n        }\n      }\n    }\n  }\n': {
     return: BundleWidgetsQuery;
     variables: BundleWidgetsQueryVariables;
   };
@@ -3152,15 +3213,19 @@ interface GeneratedQueryTypes {
     return: BundleKitsQuery;
     variables: BundleKitsQueryVariables;
   };
-  '#graphql\n  #graphql\n  fragment MoneyProductItem on MoneyV2 {\n    amount\n    currencyCode\n  }\n  fragment ProductItem on Product {\n    id\n    handle\n    title\n    productType\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    tags\n    gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n    featuredImage {\n      id\n      altText\n      url\n    }\n    media(first: 25) {\n      nodes {\n        __typename\n        ... on Video {\n          id\n          previewImage {\n            url\n          }\n          sources {\n            url\n            mimeType\n            format\n            width\n            height\n          }\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        ...MoneyProductItem\n      }\n      maxVariantPrice {\n        ...MoneyProductItem\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        ...MoneyProductItem\n      }\n    }\n  }\n\n  query Collection(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n    $first: Int\n    $last: Int\n    $startCursor: String\n    $endCursor: String\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      handle\n      title\n      description\n      descriptionHtml\n      image {\n        url\n        width\n        height\n      }\n      seo {\n        title\n        description\n      }\n      h1: metafield(namespace: "custom", key: "h1") { value }\n      intro: metafield(namespace: "custom", key: "intro") { value }\n      faq: metafield(namespace: "custom", key: "faq") { value }\n      products(\n        first: $first,\n        last: $last,\n        before: $startCursor,\n        after: $endCursor\n      ) {\n        nodes {\n          ...ProductItem\n        }\n        pageInfo {\n          hasPreviousPage\n          hasNextPage\n          endCursor\n          startCursor\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  #graphql\n  fragment MoneyProductItem on MoneyV2 {\n    amount\n    currencyCode\n  }\n  fragment ProductItem on Product {\n    id\n    handle\n    title\n    productType\n    createdAt\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    tags\n    gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n    featuredImage {\n      id\n      altText\n      url\n    }\n    media(first: 25) {\n      nodes {\n        __typename\n        ... on Video {\n          id\n          previewImage {\n            url\n          }\n          sources {\n            url\n            mimeType\n            format\n            width\n            height\n          }\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        ...MoneyProductItem\n      }\n      maxVariantPrice {\n        ...MoneyProductItem\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        ...MoneyProductItem\n      }\n    }\n  }\n\n  query Collection(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n    $first: Int\n    $last: Int\n    $startCursor: String\n    $endCursor: String\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      handle\n      title\n      description\n      descriptionHtml\n      image {\n        url\n        width\n        height\n      }\n      seo {\n        title\n        description\n      }\n      h1: metafield(namespace: "custom", key: "h1") { value }\n      intro: metafield(namespace: "custom", key: "intro") { value }\n      faq: metafield(namespace: "custom", key: "faq") { value }\n      products(\n        first: $first,\n        last: $last,\n        before: $startCursor,\n        after: $endCursor\n      ) {\n        nodes {\n          ...ProductItem\n        }\n        pageInfo {\n          hasPreviousPage\n          hasNextPage\n          endCursor\n          startCursor\n        }\n      }\n    }\n  }\n': {
     return: CollectionQuery;
     variables: CollectionQueryVariables;
+  };
+  '#graphql\n  #graphql\n  fragment MoneyProductItem on MoneyV2 {\n    amount\n    currencyCode\n  }\n  fragment ProductItem on Product {\n    id\n    handle\n    title\n    productType\n    createdAt\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    tags\n    gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n    featuredImage {\n      id\n      altText\n      url\n    }\n    media(first: 25) {\n      nodes {\n        __typename\n        ... on Video {\n          id\n          previewImage {\n            url\n          }\n          sources {\n            url\n            mimeType\n            format\n            width\n            height\n          }\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        ...MoneyProductItem\n      }\n      maxVariantPrice {\n        ...MoneyProductItem\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        ...MoneyProductItem\n      }\n    }\n  }\n\n  query CollectionNewest(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      products(first: 12, sortKey: CREATED, reverse: true) {\n        nodes {\n          ...ProductItem\n        }\n      }\n    }\n  }\n': {
+    return: CollectionNewestQuery;
+    variables: CollectionNewestQueryVariables;
   };
   '#graphql\n  fragment Collection on Collection {\n    id\n    title\n    handle\n    image {\n      id\n      url\n      altText\n      width\n      height\n    }\n  }\n  query StoreCollections(\n    $country: CountryCode\n    $endCursor: String\n    $first: Int\n    $language: LanguageCode\n    $last: Int\n    $startCursor: String\n  ) @inContext(country: $country, language: $language) {\n    collections(\n      first: $first,\n      last: $last,\n      before: $startCursor,\n      after: $endCursor\n    ) {\n      nodes {\n        ...Collection\n      }\n      pageInfo {\n        hasNextPage\n        hasPreviousPage\n        startCursor\n        endCursor\n      }\n    }\n  }\n': {
     return: StoreCollectionsQuery;
     variables: StoreCollectionsQueryVariables;
   };
-  '#graphql\n  query Catalog(\n    $country: CountryCode\n    $language: LanguageCode\n    $first: Int\n    $last: Int\n    $startCursor: String\n    $endCursor: String\n    $query: String\n    $sortKey: ProductSortKeys\n    $reverse: Boolean\n  ) @inContext(country: $country, language: $language) {\n    products(\n      first: $first\n      last: $last\n      before: $startCursor\n      after: $endCursor\n      query: $query\n      sortKey: $sortKey\n      reverse: $reverse\n    ) {\n      nodes {\n        ...CollectionItem\n      }\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        startCursor\n        endCursor\n      }\n    }\n  }\n  #graphql\n  fragment MoneyCollectionItem on MoneyV2 {\n    amount\n    currencyCode\n  }\n  fragment CollectionItem on Product {\n    id\n    handle\n    title\n    productType\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    tags\n    gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n    featuredImage {\n      id\n      altText\n      url\n    }\n    media(first: 25) {\n      nodes {\n        __typename\n        ... on Video {\n          id\n          previewImage {\n            url\n          }\n          sources {\n            url\n            mimeType\n            format\n            width\n            height\n          }\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        ...MoneyCollectionItem\n      }\n      maxVariantPrice {\n        ...MoneyCollectionItem\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        ...MoneyCollectionItem\n      }\n    }\n  }\n\n': {
+  '#graphql\n  query Catalog(\n    $country: CountryCode\n    $language: LanguageCode\n    $first: Int\n    $last: Int\n    $startCursor: String\n    $endCursor: String\n    $query: String\n    $sortKey: ProductSortKeys\n    $reverse: Boolean\n  ) @inContext(country: $country, language: $language) {\n    products(\n      first: $first\n      last: $last\n      before: $startCursor\n      after: $endCursor\n      query: $query\n      sortKey: $sortKey\n      reverse: $reverse\n    ) {\n      nodes {\n        ...CollectionItem\n      }\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        startCursor\n        endCursor\n      }\n    }\n  }\n  #graphql\n  fragment MoneyCollectionItem on MoneyV2 {\n    amount\n    currencyCode\n  }\n  fragment CollectionItem on Product {\n    id\n    handle\n    title\n    productType\n    createdAt\n    worksWith: metafield(namespace: "custom", key: "works_with") { value }\n    tags\n    gifSupport: metafield(namespace: "custom", key: "gif_support") { value }\n    featuredImage {\n      id\n      altText\n      url\n    }\n    media(first: 25) {\n      nodes {\n        __typename\n        ... on Video {\n          id\n          previewImage {\n            url\n          }\n          sources {\n            url\n            mimeType\n            format\n            width\n            height\n          }\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        ...MoneyCollectionItem\n      }\n      maxVariantPrice {\n        ...MoneyCollectionItem\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        ...MoneyCollectionItem\n      }\n    }\n  }\n\n': {
     return: CatalogQuery;
     variables: CatalogQueryVariables;
   };

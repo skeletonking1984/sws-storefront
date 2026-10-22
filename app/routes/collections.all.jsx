@@ -10,6 +10,7 @@ import {CATEGORY_LINKS} from '~/components/CollectionFilterBar';
 import {buildMeta, getOrigin} from '~/lib/seo';
 import {logoWebp as logo} from '~/lib/cdnAssets';
 import {brand} from '~/lib/brand.config';
+import {isNewProduct, mixInNewest} from '~/lib/newest';
 
 /**
  * @type {Route.MetaFunction}
@@ -63,7 +64,15 @@ async function loadCriticalData({context, request}) {
   if (searchQuery)
     queryParts.push(`(title:*${searchQuery}* OR tag:*${searchQuery}*)`);
 
-  const [{products}] = await Promise.all([
+  // Default sort, unfiltered, first page only: mix the last 30 days'
+  // products into page one so they are not buried. Later pages stay as is.
+  const mixNew =
+    !sort &&
+    !queryParts.length &&
+    !paginationVariables.startCursor &&
+    !paginationVariables.endCursor;
+  const now = Date.now();
+  const [{products: catalog}, newest] = await Promise.all([
     storefront.query(CATALOG_QUERY, {
       variables: {
         ...paginationVariables,
@@ -72,9 +81,21 @@ async function loadCriticalData({context, request}) {
         reverse,
       },
     }),
-    // Add other queries here, so that they are loaded in parallel
+    mixNew
+      ? storefront
+          .query(CATALOG_QUERY, {
+            variables: {first: 12, sortKey: 'CREATED_AT', reverse: true},
+          })
+          .catch(() => null)
+      : null,
   ]);
-  return {products, activeType, searchQuery, sort};
+  const fresh = (newest?.products?.nodes ?? []).filter((p) =>
+    isNewProduct(p.createdAt, now),
+  );
+  const products = fresh.length
+    ? {...catalog, nodes: mixInNewest(catalog.nodes, fresh)}
+    : catalog;
+  return {products, activeType, searchQuery, sort, now};
 }
 
 /**
@@ -89,7 +110,8 @@ function loadDeferredData() {
 
 export default function Collection() {
   /** @type {LoaderReturnData} */
-  const {products, activeType, searchQuery} = useLoaderData();
+  const {products, activeType, searchQuery, now} = useLoaderData();
+  const shownIds = new Set();
   const [searchParams] = useSearchParams();
 
   const typeHref = (tag) => {
@@ -155,27 +177,36 @@ export default function Collection() {
           connection={products}
           resourcesClassName="products-grid"
         >
-          {({node: product, index}) => (
-            <>
-              {SHOW_FREE_CHAT_GRID_CARD &&
-                index === 0 &&
-                !activeType &&
-                !searchQuery && (
-                  <FreeChatProductCard
-                    key="free-chat-lite"
-                    placement="collection-all"
-                  />
-                )}
-              <ProductItem
-                key={product.id}
-                product={product}
-                loading={index < 8 ? 'eager' : undefined}
-                listId="all-products"
-                listName="All Products"
-                index={index}
-              />
-            </>
-          )}
+          {({node: product, index}) => {
+            // Page one carries mixed-in new products; skip them if a later
+            // page brings the same product again.
+            if (shownIds.has(product.id)) return null;
+            shownIds.add(product.id);
+            return (
+              <>
+                {SHOW_FREE_CHAT_GRID_CARD &&
+                  index === 0 &&
+                  !activeType &&
+                  !searchQuery && (
+                    <FreeChatProductCard
+                      key="free-chat-lite"
+                      placement="collection-all"
+                    />
+                  )}
+                <ProductItem
+                  key={product.id}
+                  product={product}
+                  loading={index < 8 ? 'eager' : undefined}
+                  listId="all-products"
+                  listName="All Products"
+                  index={index}
+                  badge={
+                    isNewProduct(product.createdAt, now) ? 'New' : undefined
+                  }
+                />
+              </>
+            );
+          }}
         </PaginatedResourceSection>
       )}
       {/* This route is a products query, not a real Shopify collection, so
@@ -216,6 +247,7 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
     handle
     title
     productType
+    createdAt
     worksWith: metafield(namespace: "custom", key: "works_with") { value }
     tags
     gifSupport: metafield(namespace: "custom", key: "gif_support") { value }
