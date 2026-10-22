@@ -2344,6 +2344,31 @@ export type CommissionProofQuery = {
   >;
 };
 
+export type StreamSetupProductsQueryVariables = StorefrontAPI.Exact<{
+  blade: StorefrontAPI.Scalars['String']['input'];
+  jar: StorefrontAPI.Scalars['String']['input'];
+  parlour: StorefrontAPI.Scalars['String']['input'];
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+}>;
+
+export type StreamSetupProductsQuery = {
+  blade?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'handle'> & {
+      featuredImage?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url'>>;
+      media: {
+        nodes: Array<{
+          sources: Array<
+            Pick<StorefrontAPI.VideoSource, 'url' | 'mimeType' | 'width'>
+          >;
+        }>;
+      };
+    }
+  >;
+  jar?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Product, 'handle'>>;
+  parlour?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Product, 'handle'>>;
+};
+
 export type PolicyFragment = Pick<
   StorefrontAPI.ShopPolicy,
   'body' | 'handle' | 'id' | 'title' | 'url'
@@ -3236,6 +3261,10 @@ interface GeneratedQueryTypes {
   '#graphql\n  fragment CommissionProof on Product {\n    handle\n    title\n    featuredImage { url altText }\n    priceRange { minVariantPrice { amount currencyCode } }\n  }\n  query CommissionProof(\n    $h0: String!\n    $h1: String!\n    $h2: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    p0: product(handle: $h0) { ...CommissionProof }\n    p1: product(handle: $h1) { ...CommissionProof }\n    p2: product(handle: $h2) { ...CommissionProof }\n  }\n': {
     return: CommissionProofQuery;
     variables: CommissionProofQueryVariables;
+  };
+  '#graphql\n  query StreamSetupProducts(\n    $blade: String!\n    $jar: String!\n    $parlour: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    blade: product(handle: $blade) {\n      handle\n      featuredImage { url }\n      media(first: 10) {\n        nodes {\n          ... on Video {\n            sources { url mimeType width }\n          }\n        }\n      }\n    }\n    jar: product(handle: $jar) { handle }\n    parlour: product(handle: $parlour) { handle }\n  }\n': {
+    return: StreamSetupProductsQuery;
+    variables: StreamSetupProductsQueryVariables;
   };
   '#graphql\n  fragment Policy on ShopPolicy {\n    body\n    handle\n    id\n    title\n    url\n  }\n  query Policy(\n    $country: CountryCode\n    $language: LanguageCode\n    $privacyPolicy: Boolean!\n    $refundPolicy: Boolean!\n    $shippingPolicy: Boolean!\n    $termsOfService: Boolean!\n  ) @inContext(language: $language, country: $country) {\n    shop {\n      privacyPolicy @include(if: $privacyPolicy) {\n        ...Policy\n      }\n      shippingPolicy @include(if: $shippingPolicy) {\n        ...Policy\n      }\n      termsOfService @include(if: $termsOfService) {\n        ...Policy\n      }\n      refundPolicy @include(if: $refundPolicy) {\n        ...Policy\n      }\n    }\n  }\n': {
     return: PolicyQuery;
