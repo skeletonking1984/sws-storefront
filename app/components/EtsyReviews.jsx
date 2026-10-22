@@ -39,7 +39,11 @@ export const SAMPLE_REVIEWS = [
 export function EtsyReviews() {
   const fullStars = Math.round(SHOP_RATING.average);
   return (
-    <section className="etsy-reviews" aria-labelledby="etsy-reviews-heading">
+    <section
+      className="etsy-reviews"
+      id="shop-reviews"
+      aria-labelledby="etsy-reviews-heading"
+    >
       <h2 id="etsy-reviews-heading">Reviews for this shop</h2>
 
       <div className="etsy-review-themes">
@@ -51,12 +55,7 @@ export function EtsyReviews() {
         ))}
       </div>
 
-      <a
-        href={SHOP_RATING.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="etsy-review-summary"
-      >
+      <div className="etsy-review-summary">
         <span className="etsy-review-summary-number">
           {SHOP_RATING.average.toFixed(1)}
         </span>
@@ -66,13 +65,13 @@ export function EtsyReviews() {
           )}
         </span>
         <span className="etsy-review-summary-label">
-          Shop average ({SHOP_RATING.count} reviews on Etsy)
+          Shop average ({SHOP_RATING.count.toLocaleString('en-US')} reviews
+          on Etsy)
         </span>
-      </a>
+      </div>
 
       <p className="etsy-reviews-note">
-        These are shop-wide Etsy reviews, not filtered to this exact listing,
-        see all on Etsy.
+        These are shop-wide Etsy reviews, not filtered to this exact listing.
       </p>
 
       <div className="etsy-reviews-grid">

@@ -540,16 +540,11 @@ export function ReviewSnippets({reviews, rating, wide = false}) {
   return (
     <div className={wide ? 'bb-revs wide' : 'bb-revs'}>
       {rating ? (
-        <a
-          className="bb-rating"
-          href={rating.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <p className="bb-rating">
           <span aria-hidden="true">★★★★★</span>{' '}
           {Number(rating.average).toFixed(2)} from{' '}
           {Number(rating.count).toLocaleString('en-US')} Etsy reviews
-        </a>
+        </p>
       ) : null}
       <ul>
         {reviews.map((r) => (

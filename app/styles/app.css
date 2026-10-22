@@ -2922,9 +2922,6 @@ button.reset:hover:not(:has(> *)) {
   text-decoration: none;
 }
 
-.home-reviews-link:hover {
-  color: var(--sws-holo-1);
-}
 
 .works-with {
   margin-top: 1.5rem;
@@ -4860,9 +4857,6 @@ button.reset:hover:not(:has(> *)) {
   width: fit-content;
 }
 
-.etsy-review-summary:hover {
-  color: var(--sws-accent-2);
-}
 
 .etsy-review-summary-number {
   font-size: 1.8rem;
@@ -5044,15 +5038,10 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .product-reviews-link {
-  color: var(--sws-holo-1);
+  color: var(--sws-sub);
   display: block;
   font-size: 0.9rem;
   margin-top: 1rem;
-  text-decoration: none;
-}
-
-.product-reviews-link:hover {
-  color: var(--sws-holo-3);
 }
 
 .product-price-on-sale,

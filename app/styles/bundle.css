@@ -76,7 +76,7 @@
 .bb-revs li { font-size: 13px; color: var(--sws-sub); background: var(--sws-bg-alt); padding: 8px 10px; border-radius: 10px; }
 .bb-revs li span { color: #ffd166; display: block; font-size: 11px; letter-spacing: 1px; }
 .bb-revs q { quotes: "\201C" "\201D"; }
-.bb-rating { font-size: 13px; color: var(--sws-text); text-decoration: none; font-weight: 700; }
+.bb-rating { margin: 0; font-size: 13px; color: var(--sws-text); text-decoration: none; font-weight: 700; }
 .bb-rating span { color: #ffd166; }
 .bb-revs.wide ul { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 .bb-revs.wide li { font-size: 15px; padding: 14px; }

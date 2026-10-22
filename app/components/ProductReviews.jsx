@@ -168,14 +168,13 @@ export function ProductReviews({data}) {
         </button>
       )}
 
-      <a
-        href={SHOP_RATING.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="product-reviews-link"
-      >
-        See all {brand.social.etsySlug} reviews on Etsy →
-      </a>
+      {/* Stated as text, not a link out: a buyer who leaves for Etsy from
+          the bottom of the product page does not come back to check out. */}
+      <p className="product-reviews-link">
+        {brand.social.etsySlug} shop on Etsy:{' '}
+        {SHOP_RATING.average.toFixed(2)} stars from{' '}
+        {SHOP_RATING.count.toLocaleString('en-US')} reviews
+      </p>
     </section>
   );
 }
