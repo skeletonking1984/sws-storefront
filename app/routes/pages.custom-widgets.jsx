@@ -526,9 +526,8 @@ export default function CustomWidgetsPage() {
                 <>
                   <h3>We already have your request.</h3>
                   <p>
-                    {values.email
-                      ? `You sent one a few minutes ago, so we did not send a second. We will email ${values.email} with a quote and a first sketch.`
-                      : 'You sent one a few minutes ago, so we did not send a second. We will email you with a quote and a first sketch.'}
+                    You sent one a few minutes ago, so we did not send a second.
+                    We'll email you a quote and a first sketch.
                   </p>
                   <p>
                     Need to add something, or think this is a mistake? Write to{' '}
@@ -542,9 +541,7 @@ export default function CustomWidgetsPage() {
                 <>
                   <h3>Got it, thank you.</h3>
                   <p>
-                    {values.email
-                      ? `We will email ${values.email} with a quote and a first sketch.`
-                      : 'We will email you with a quote and a first sketch.'}
+                    We'll email you a quote and a first sketch.
                   </p>
                   <p>
                     Anything to add? Reply to that email, or write to{' '}
@@ -563,7 +560,7 @@ export default function CustomWidgetsPage() {
                   id="cw-name"
                   name="name"
                   type="text"
-                  autoComplete="name"
+                  autoComplete="off"
                   maxLength={FIELD_LIMITS.name}
                   required
                   defaultValue={values.name}
@@ -576,7 +573,7 @@ export default function CustomWidgetsPage() {
                   id="cw-email"
                   name="email"
                   type="email"
-                  autoComplete="email"
+                  autoComplete="off"
                   maxLength={FIELD_LIMITS.email}
                   required
                   defaultValue={values.email}
