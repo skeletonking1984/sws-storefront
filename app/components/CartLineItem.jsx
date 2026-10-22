@@ -4,7 +4,8 @@ import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
-import {computeLineCompareAtTotal} from '~/lib/price';
+import {computeLineCompareAtTotal, compareAtIsValueSum} from '~/lib/price';
+import {subjectFromTitle} from '~/lib/productName';
 
 /**
  * A single line item in the cart. It displays the product image, title, price.
@@ -19,18 +20,28 @@ import {computeLineCompareAtTotal} from '~/lib/price';
  */
 export function CartLineItem({layout, line, childrenMap}) {
   const {id, merchandise} = line;
-  const {product, title, image, selectedOptions} = merchandise;
+  const {product, image, selectedOptions} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
   const lineItemChildren = childrenMap[id];
   const childrenLabelId = `cart-line-children-${id}`;
+  // The name a person would say, not the Etsy keyword string (85 chars and
+  // four lines in the 390px drawer for Demon Samurai). The full title stays
+  // in the image alt below. Falls back to the full title, never to nothing.
+  const lineName = subjectFromTitle(product.title) || product.title;
+  // Single-variant products carry a placeholder option: "Title: Default Title"
+  // on most of the catalogue, "Title: Default" on seven. Neither tells a buyer
+  // anything, so a Title option holding a Default value is not shown.
+  const visibleOptions = (selectedOptions || []).filter(
+    (o) => !(o.name === 'Title' && /^default( title)?$/i.test(o.value)),
+  );
 
   return (
     <li key={id} className="cart-line">
       <div className="cart-line-inner">
         {image && (
           <Image
-            alt={title}
+            alt={product.title}
             aspectRatio="1/1"
             data={image}
             height={100}
@@ -50,21 +61,20 @@ export function CartLineItem({layout, line, childrenMap}) {
               }
             }}
           >
-            {product.title}
+            {lineName}
           </Link>
           <ProductPrice
             price={line?.cost?.totalAmount}
             compareAtPrice={computeLineCompareAtTotal(line)}
+            compareAtIsValue={compareAtIsValueSum(product.productType)}
           />
-          {(selectedOptions || []).some((o) => o.value !== 'Default Title') && (
+          {visibleOptions.length > 0 && (
             <ul className="cart-line-options">
-              {selectedOptions
-                .filter((o) => o.value !== 'Default Title')
-                .map((option) => (
-                  <li key={option.name}>
-                    {option.name}: {option.value}
-                  </li>
-                ))}
+              {visibleOptions.map((option) => (
+                <li key={option.name}>
+                  {option.name}: {option.value}
+                </li>
+              ))}
             </ul>
           )}
           <CartLineQuantity line={line} />
@@ -74,7 +84,7 @@ export function CartLineItem({layout, line, childrenMap}) {
       {lineItemChildren ? (
         <div>
           <p id={childrenLabelId} className="sr-only">
-            Line items with {product.title}
+            Line items with {lineName}
           </p>
           <ul aria-labelledby={childrenLabelId} className="cart-line-children">
             {lineItemChildren.map((childLine) => (

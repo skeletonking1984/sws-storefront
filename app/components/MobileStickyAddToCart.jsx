@@ -29,6 +29,7 @@ import {ProductPrice} from './ProductPrice';
  *   targetRef: {current: HTMLButtonElement | null};
  *   price?: MoneyV2;
  *   compareAtPrice?: MoneyV2 | null;
+ *   compareAtIsValue?: boolean;
  *   available: boolean;
  * }}
  */
@@ -36,6 +37,7 @@ export function MobileStickyAddToCart({
   targetRef,
   price,
   compareAtPrice,
+  compareAtIsValue = false,
   available,
 }) {
   const {type: asideType} = useAside();
@@ -88,7 +90,11 @@ export function MobileStickyAddToCart({
       aria-hidden={!show}
     >
       <div className="mobile-sticky-atc-price">
-        <ProductPrice price={price} compareAtPrice={compareAtPrice} />
+        <ProductPrice
+          price={price}
+          compareAtPrice={compareAtPrice}
+          compareAtIsValue={compareAtIsValue}
+        />
       </div>
       <button
         type="button"

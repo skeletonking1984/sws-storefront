@@ -14,6 +14,8 @@ import {ProductForm} from '~/components/ProductForm';
 import {MobileStickyAddToCart} from '~/components/MobileStickyAddToCart';
 import {ProductHighlights} from '~/components/ProductHighlights';
 import {ShareRow} from '~/components/ShareRow';
+import {ProductTrust} from '~/components/ProductTrust';
+import {ProductIncluded} from '~/components/ProductIncluded';
 import {articleFontPreload} from '~/lib/articleFont';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge} from '~/components/EtsyRating';
@@ -52,6 +54,7 @@ import etsyReviewsData from '~/data/etsy-reviews.json';
 import deliveryFacts from '~/data/product-delivery.json';
 import {buildAnswerBlock} from '~/lib/answerBlock';
 import {parseWorksWith} from '~/lib/platforms';
+import {compareAtIsValueSum, hasRealDiscount} from '~/lib/price';
 import {subjectFromTitle} from '~/lib/productName';
 import {byHandleWithAlias} from '~/lib/handleAliases';
 
@@ -201,12 +204,13 @@ async function loadCriticalData({context, params, request}) {
   // rather than in the component so the delivery table stays server side,
   // and built from the loader's own selected variant price so the sentence
   // and the price shown next to it come from the same response.
+  const delivery = byHandleWithAlias(deliveryFacts.products, handle) || null;
   const answerBlock = buildAnswerBlock({
     name: product.seo?.title || product.title,
     productType: product.productType,
     platforms: parseWorksWith(product.worksWith?.value),
     price: product.selectedOrFirstAvailableVariant?.price,
-    delivery: byHandleWithAlias(deliveryFacts.products, handle) || null,
+    delivery,
     noAccount: (product.tags || []).includes('no-account'),
   });
 
@@ -214,6 +218,11 @@ async function loadCriticalData({context, params, request}) {
     product,
     productReviews,
     answerBlock,
+    // Only this product's two delivery facts reach the client, for the
+    // "What's included" block. Same lookup the answer block uses.
+    delivery: delivery
+      ? {archives: delivery.archives ?? 0, setupDoc: delivery.setupDoc ?? null}
+      : null,
     primaryCategoryHandle,
     /*
       Which video rendition this request gets, decided here because it
@@ -351,6 +360,7 @@ export default function Product() {
     faq,
     productReviews,
     answerBlock,
+    delivery,
     smallScreen,
     primaryCategoryHandle,
   } = useLoaderData();
@@ -716,20 +726,16 @@ export default function Product() {
             Mobile added to cart 1.30% against desktop 6.86% in the same
             period.
 
-            The full keyword title is still on the page, under the name, and
-            still carries every word it did: the meta title, the OG tags, the
-            Product JSON-LD `name` and the answer block are all untouched, so
-            nothing that a crawler reads lost a keyword. `subjectFromTitle` is
-            the same cleaner the gallery and the alt-text generator use, so
-            the three cannot drift. Across the catalog it yields 36 chars on
-            average, 0 empty, 0 collisions between products (checked against
-            the live feed, 123 products, 2026-09-21).
+            The full keyword title is NOT repeated on the page any more (it
+            ran as a one-line truncated copy of the name under the h1, a
+            duplicate a phone buyer read twice). It is still in the meta
+            title, the OG tags, the Product JSON-LD `name` and the answer
+            block, so nothing that a crawler reads lost a keyword.
+            `subjectFromTitle` is the same cleaner the gallery, the cards,
+            the cart and the alt-text generator use, so they cannot drift.
           */}
           <div className="product-heading">
             <h1>{shortTitle}</h1>
-            {shortTitle !== title ? (
-              <p className="product-title-full">{title}</p>
-            ) : null}
           </div>
           <div className="product-buybox">
             {showsProductReviews ? (
@@ -740,7 +746,21 @@ export default function Product() {
             <ProductPrice
               price={selectedVariant?.price}
               compareAtPrice={selectedVariant?.compareAtPrice}
+              compareAtIsValue={compareAtIsValueSum(product.productType)}
+              showSavings
             />
+            {/* The slot under the price: a real saving or a kit's value when
+                there is one, otherwise the one pricing fact every product
+                shares (the answer block above says the same: a one-time
+                price, no subscription). Nothing here is a discount claim. */}
+            {hasRealDiscount(
+              selectedVariant?.price,
+              selectedVariant?.compareAtPrice,
+            ) ? null : (
+              <p className="product-price-note">
+                One-time price, no subscription
+              </p>
+            )}
           </div>
           <ProductHighlights
             description={description}
@@ -754,13 +774,23 @@ export default function Product() {
             selectedVariant={selectedVariant}
             buttonRef={addToCartButtonRef}
           />
+          {/* The shop rating line only when the badge above shows this
+              product's own reviews; otherwise the badge already says it. */}
+          <ProductTrust showShopRating={showsProductReviews} />
           <ShareRow title={title} />
         </div>
       </div>
+      <ProductIncluded
+        delivery={delivery}
+        platforms={parseWorksWith(worksWith?.value)}
+        productType={product.productType}
+        noAccount={(product.tags || []).includes('no-account')}
+      />
       <MobileStickyAddToCart
         targetRef={addToCartButtonRef}
         price={selectedVariant?.price}
         compareAtPrice={selectedVariant?.compareAtPrice}
+        compareAtIsValue={compareAtIsValueSum(product.productType)}
         available={Boolean(selectedVariant?.availableForSale)}
       />
       <div className="product-description">

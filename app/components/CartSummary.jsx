@@ -192,7 +192,13 @@ function CartCheckoutActions({checkoutUrl, cart}) {
       >
         Continue to Checkout &rarr;
       </a>
-      <br />
+      {/* The last thing read before paying a shop the buyer may have met a
+          minute ago on X. Facts only: the files are digital and arrive at
+          checkout, and the refund terms are one tap away. */}
+      <p className="cart-checkout-trust">
+        Instant download after payment.{' '}
+        <a href="/policies/refund-policy">Refund policy</a>
+      </p>
     </div>
   );
 }

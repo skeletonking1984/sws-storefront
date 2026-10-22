@@ -576,7 +576,7 @@ function Hero() {
             </Link>
           </div>
           <div className="hero-trust-row">
-            <EtsyRatingBadge />
+            <EtsyRatingBadge href="#home-reviews" />
             <span className="hero-trust-sep" aria-hidden="true">
               ·
             </span>
@@ -1072,6 +1072,7 @@ function TrustBand({homeReviews}) {
   return (
     <section
       className="home-sec home-trust"
+      id="home-reviews"
       aria-labelledby="home-reviews-heading"
     >
       <SectionHead
@@ -1093,15 +1094,10 @@ function TrustBand({homeReviews}) {
           </div>
         ))}
       </div>
-      <a
-        href={SHOP_RATING.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="home-reviews-link"
-      >
-        {SHOP_RATING.average.toFixed(2)} stars from {SHOP_RATING.count} Etsy
-        reviews →
-      </a>
+      <p className="home-reviews-link">
+        {SHOP_RATING.average.toFixed(2)} stars from{' '}
+        {SHOP_RATING.count.toLocaleString('en-US')} Etsy reviews
+      </p>
       <WorksWithStrip />
     </section>
   );

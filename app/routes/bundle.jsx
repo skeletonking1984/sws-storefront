@@ -4,6 +4,7 @@ import {ogImageBundleJpg as bundleOgImage} from '~/lib/cdnAssets';
 import {BundleBuilder} from '~/components/BundleBuilder';
 import topSellers from '~/data/top-sellers.json';
 import bundleKits from '~/data/bundle-kits.json';
+import {interleaveNewest, isNewProduct} from '~/lib/newest';
 // Server only: the full review text. The loader picks a few short ones and
 // sends only those to the page.
 import etsyReviewsData from '~/data/etsy-reviews.json';
@@ -39,7 +40,8 @@ export async function loader({context}) {
   ]);
 
   const rank = new Map((topSellers.handles || []).map((h, i) => [h, i]));
-  const items = (widgets?.products?.nodes || [])
+  const now = Date.now();
+  const ranked = (widgets?.products?.nodes || [])
     .map((p) => {
       const v = p.variants?.nodes?.[0];
       const price = Number(v?.price?.amount || 0);
@@ -55,6 +57,8 @@ export async function loader({context}) {
         variantId: v.id,
         price,
         top: rank.has(p.handle) ? rank.get(p.handle) : null,
+        createdAt: p.createdAt || null,
+        isNew: isNewProduct(p.createdAt, now),
       };
     })
     .filter(Boolean)
@@ -64,6 +68,9 @@ export async function loader({context}) {
       if (b.top !== null) return 1;
       return a.title.localeCompare(b.title);
     });
+  // Best sellers alone buried every new widget under the ranked list, so
+  // alternate them with the newest (createdAt) instead.
+  const items = interleaveNewest(ranked, (w) => w.top !== null);
 
   const byId = new Map(items.map((w) => [w.id, w]));
   const kitProducts = new Map(
@@ -131,6 +138,7 @@ const WIDGETS_QUERY = `#graphql
           handle
           title
           productType
+          createdAt
           featuredImage { url altText width height }
           variants(first: 1) {
             nodes { id availableForSale price { amount currencyCode } }

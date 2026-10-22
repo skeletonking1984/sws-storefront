@@ -23,13 +23,17 @@ export const SHOP_STATS = {
   favoriteCount: etsyShopStats.shop.favoriteCount,
 };
 
-export function EtsyRatingBadge({compact = false}) {
+/*
+ * `href` jumps to the reviews on THIS page. It used to open Etsy in a new
+ * tab, which sat beside the price on every product page and sent the buyer
+ * to a second store mid decision (2026-10-22 conversion pass). The rating
+ * is still stated as text; it just no longer leaves the site.
+ */
+export function EtsyRatingBadge({compact = false, href = '#shop-reviews'}) {
   const fullStars = Math.round(SHOP_RATING.average);
   return (
     <a
-      href={SHOP_RATING.url}
-      target="_blank"
-      rel="noopener noreferrer"
+      href={href}
       className={`etsy-rating${compact ? ' etsy-rating-compact' : ''}`}
     >
       <span className="etsy-rating-stars" aria-hidden="true">
@@ -38,8 +42,8 @@ export function EtsyRatingBadge({compact = false}) {
         )}
       </span>
       <span className="etsy-rating-text">
-        {SHOP_RATING.average.toFixed(2)} Etsy rating ({SHOP_RATING.count}{' '}
-        reviews)
+        {SHOP_RATING.average.toFixed(2)} Etsy rating (
+        {SHOP_RATING.count.toLocaleString('en-US')} reviews)
       </span>
     </a>
   );

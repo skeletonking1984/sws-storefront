@@ -1870,9 +1870,30 @@ button.reset:hover:not(:has(> *)) {
   margin-top: 0.25rem;
 }
 
-.cart-subtotal {
+/* Label left, amount right. With no gap the drawer read "Subtotal$29.99". */
+.cart-subtotal,
+.cart-discount-line,
+.cart-total {
   align-items: center;
   display: flex;
+  justify-content: space-between;
+}
+
+.cart-subtotal dd,
+.cart-discount-line dd,
+.cart-total dd {
+  margin: 0;
+}
+
+.cart-checkout-trust {
+  color: var(--sws-sub);
+  font-size: 0.82rem;
+  margin: 0.6rem 0 0;
+  text-align: center;
+}
+
+.cart-checkout-trust a {
+  color: var(--sws-holo-1);
 }
 /*
 * --------------------------------------------------
@@ -2922,9 +2943,6 @@ button.reset:hover:not(:has(> *)) {
   text-decoration: none;
 }
 
-.home-reviews-link:hover {
-  color: var(--sws-holo-1);
-}
 
 .works-with {
   margin-top: 1.5rem;
@@ -4161,23 +4179,116 @@ button.reset:hover:not(:has(> *)) {
   flex-direction: column;
   gap: 0.6rem;
   min-width: 0;
-  order: -2;
+  /* Same order as .product-heading, which comes first in the source, so on a
+     phone it reads: name, price, value line, rating. It used to be -2 (price
+     above the name) because the name ran four lines and pushed the price off
+     the first screen; the name is two lines now, so the order a buyer expects
+     fits (Demon Samurai at 390x844: name y=440, price y=520). */
+  order: -1;
   @media (min-width: 45em) {
     order: 0;
   }
 }
 
+/* Price first on a phone, the rating as a smaller line under it. */
+@media (max-width: 44.99em) {
+  .product-buybox .product-price,
+  .product-buybox .product-price-value,
+  .product-buybox .product-price-note {
+    order: -1;
+  }
+
+  .product-buybox .etsy-rating {
+    font-size: 0.82rem;
+  }
+}
+
 /*
-  The full keyword title, kept on the page under the name. It is the string
-  buyers recognise from Etsy search and it holds the words the h1 gave up,
-  so it stays visible rather than being dropped or hidden from crawlers.
+* --------------------------------------------------
+* components/ProductTrust
+* --------------------------------------------------
+* Sits under the buy button on desktop. On a phone the button itself is
+* pinned to the bottom of the screen, so the row moves up under the name
+* (order -1, after .product-heading in source order) where it is read
+* before the buyer reaches for that button.
 */
-.product-title-full {
-  color: var(--sws-sub);
-  font-size: 0.82rem;
-  line-height: 1.4;
+.product-trust {
+  display: grid;
+  gap: 0.4rem;
+  list-style: none;
   margin: 0;
-  overflow-wrap: break-word;
+  padding: 0;
+  @media (max-width: 44.99em) {
+    order: -1;
+  }
+}
+
+.product-trust li {
+  align-items: baseline;
+  color: var(--sws-text);
+  display: flex;
+  font-size: 0.88rem;
+  gap: 0.5rem;
+  line-height: 1.4;
+}
+
+/* Green = good: these are reassurances, never errors. */
+.product-trust-icon {
+  color: var(--sws-holo-5);
+  flex-shrink: 0;
+  font-weight: 800;
+}
+
+.product-trust a {
+  color: var(--sws-holo-1);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/*
+* --------------------------------------------------
+* components/ProductIncluded
+* --------------------------------------------------
+*/
+.product-included {
+  border: 1px solid var(--sws-border);
+  border-radius: 16px;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  @media (min-width: 45em) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    margin-top: 2.5rem;
+    padding: 1.5rem 1.75rem;
+  }
+}
+
+.product-included-heading {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0 0 0.6rem;
+}
+
+.product-included-list,
+.product-included-steps {
+  color: var(--sws-sub);
+  display: grid;
+  font-size: 0.92rem;
+  gap: 0.45rem;
+  line-height: 1.45;
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.product-included-list li::marker {
+  color: var(--sws-holo-5);
+}
+
+.product-included-steps li::marker {
+  color: var(--sws-holo-1);
+  font-weight: 800;
 }
 
 /*
@@ -4285,6 +4396,19 @@ button.reset:hover:not(:has(> *)) {
   @media (min-width: 45em) {
     flex: 1;
     order: 0;
+  }
+}
+
+/*
+  A phone lands on the demo clip, which is 16:9, inside a 1:1 box: measured
+  on production at 390x844 (2026-10-22) that was ~85px of empty band above
+  and below the clip, and it pushed the price to y=636 and the name to
+  y=689 on every video-first PDP. Sizing the box to the clip on phones gives
+  that space back to the buy box. Images keep the square frame.
+*/
+.product-gallery-main-video {
+  @media (max-width: 44.99em) {
+    aspect-ratio: var(--video-ratio, 16 / 9);
   }
 }
 
@@ -4860,9 +4984,6 @@ button.reset:hover:not(:has(> *)) {
   width: fit-content;
 }
 
-.etsy-review-summary:hover {
-  color: var(--sws-accent-2);
-}
 
 .etsy-review-summary-number {
   font-size: 1.8rem;
@@ -5044,15 +5165,10 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .product-reviews-link {
-  color: var(--sws-holo-1);
+  color: var(--sws-sub);
   display: block;
   font-size: 0.9rem;
   margin-top: 1rem;
-  text-decoration: none;
-}
-
-.product-reviews-link:hover {
-  color: var(--sws-holo-3);
 }
 
 .product-price-on-sale,
@@ -5080,6 +5196,46 @@ button.reset:hover:not(:has(> *)) {
 .product-price-on-sale s {
   color: var(--sws-sub);
   opacity: 0.8;
+}
+
+/* The sale block sits inside .product-price, which is already the pill.
+   Styling both drew a pill inside a pill on every discounted product. */
+.product-price > .product-price-on-sale {
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+/* A kit's compare-at is the sum of its widgets, so it is a value line, not a
+   struck-through "was" price. Plain, quiet, under the price. */
+.product-price-value,
+.product-price-note {
+  color: var(--sws-text);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.product-price-value {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.3em;
+}
+
+.product-price-value > div {
+  font-weight: 800;
+}
+
+/* Green = good: a real saving off the product's own compare-at price. */
+.product-price-save {
+  align-items: baseline;
+  color: var(--sws-holo-5);
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 800;
+  gap: 0.25em;
+  white-space: nowrap;
 }
 
 .product-options h5 {

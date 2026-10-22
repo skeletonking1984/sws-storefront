@@ -28,6 +28,7 @@ export const BUNDLE_PLATFORMS = [
 const FILTERS = [
   {id: 'all', label: 'All'},
   {id: 'top', label: 'Top sellers'},
+  {id: 'new', label: 'New'},
   {id: 'chat', label: 'Chat'},
   {id: 'goal', label: 'Goal'},
 ];
@@ -97,6 +98,7 @@ export function BundleBuilder({items, curated, reviews, rating}) {
 
   const shown = items.filter((w) => {
     if (filter === 'top' && w.top === null) return false;
+    if (filter === 'new' && !w.isNew) return false;
     if (filter === 'chat' && !/chat/i.test(w.type)) return false;
     if (filter === 'goal' && !/goal/i.test(w.type)) return false;
     if (q && !w.title.toLowerCase().includes(q.trim().toLowerCase()))
@@ -245,6 +247,8 @@ export function BundleBuilder({items, curated, reviews, rating}) {
                       ) : null}
                       {w.top !== null && w.top < 12 ? (
                         <em className="bb-badge">Top seller</em>
+                      ) : w.isNew ? (
+                        <em className="bb-badge new">New</em>
                       ) : null}
                       <i className="bb-check" aria-hidden="true">
                         {on ? '✓' : '+'}
@@ -283,7 +287,11 @@ export function BundleBuilder({items, curated, reviews, rating}) {
             })}
           </ul>
           {shown.length === 0 ? (
-            <p className="bb-empty">No widgets match that search.</p>
+            <p className="bb-empty">
+              {filter === 'new' && !q
+                ? 'No widgets added in the last 30 days.'
+                : 'No widgets match that search.'}
+            </p>
           ) : null}
         </section>
 
@@ -540,16 +548,11 @@ export function ReviewSnippets({reviews, rating, wide = false}) {
   return (
     <div className={wide ? 'bb-revs wide' : 'bb-revs'}>
       {rating ? (
-        <a
-          className="bb-rating"
-          href={rating.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <p className="bb-rating">
           <span aria-hidden="true">★★★★★</span>{' '}
           {Number(rating.average).toFixed(2)} from{' '}
           {Number(rating.count).toLocaleString('en-US')} Etsy reviews
-        </a>
+        </p>
       ) : null}
       <ul>
         {reviews.map((r) => (

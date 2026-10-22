@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
   Form,
   Link,
@@ -9,6 +9,12 @@ import {
 import {Money, useAnalytics} from '@shopify/hydrogen';
 import {ResponsiveImage} from '~/components/ResponsiveImage';
 import {PlatformIcon} from '~/components/PlatformIcon';
+import {
+  SETUP_HANDLES,
+  StreamSetups,
+  cleanSetupId,
+  setupPrefill,
+} from '~/components/StreamSetups';
 import {
   BUDGET_OPTIONS,
   FIELD_LIMITS,
@@ -125,7 +131,9 @@ const HOW_IT_WORKS = [
   },
 ];
 
-// Only the platforms we have actually shipped for.
+// Only the platforms we have actually shipped for. Several shop products
+// also list TikTok, but no custom commission has shipped for it and the
+// form's platform list has no TikTok or Ko-fi option, so they stay off here.
 const WORKS_ON = ['Twitch', 'Kick', 'YouTube'];
 
 const PROOF_QUERY = `#graphql
@@ -147,6 +155,53 @@ const PROOF_QUERY = `#graphql
     p2: product(handle: $h2) { ...CommissionProof }
   }
 `;
+
+// Real products behind the "Full stream setups" showcase. Only the fire
+// sword needs media (its demo loop); the others just need to exist so a
+// product link is never shown for a missing or unpublished handle.
+const SETUP_QUERY = `#graphql
+  query StreamSetupProducts(
+    $blade: String!
+    $jar: String!
+    $parlour: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    blade: product(handle: $blade) {
+      handle
+      featuredImage { url }
+      media(first: 10) {
+        nodes {
+          ... on Video {
+            sources { url mimeType width }
+          }
+        }
+      }
+    }
+    jar: product(handle: $jar) { handle }
+    parlour: product(handle: $parlour) { handle }
+  }
+`;
+
+/** Smallest mp4 for phones, a 720p one for wide stages. */
+function pickBladeVideo(blade) {
+  if (!blade) return null;
+  const mp4s = (blade.media?.nodes || [])
+    .flatMap((m) => m.sources || [])
+    .filter((s) => s.mimeType === 'video/mp4' && s.width)
+    .sort((a, b) => a.width - b.width);
+  const sd = mp4s.find((s) => s.width >= 640) || mp4s[0];
+  const hd = mp4s.find((s) => s.width >= 1200) || null;
+  const poster = blade.featuredImage?.url
+    ? `${blade.featuredImage.url}${blade.featuredImage.url.includes('?') ? '&' : '?'}width=960`
+    : null;
+  return {
+    handle: blade.handle,
+    sd: sd?.url || null,
+    hd: hd?.url || null,
+    poster,
+  };
+}
 
 export const meta = ({matches}) => {
   const origin = getOrigin(matches);
@@ -197,6 +252,24 @@ export async function loader({request, context}) {
   const url = new URL(request.url);
 
   let tiles = [];
+  let setupProducts = {blade: null, jar: null, parlour: null};
+  const setupQuery = context.storefront
+    .query(SETUP_QUERY, {
+      variables: SETUP_HANDLES,
+      cache: context.storefront.CacheLong(),
+    })
+    .then((data) => {
+      setupProducts = {
+        blade: pickBladeVideo(data?.blade),
+        jar: data?.jar?.handle || null,
+        parlour: data?.parlour?.handle || null,
+      };
+    })
+    .catch((error) => {
+      // Showcase still renders from code; only product links and the fire
+      // video drop out.
+      console.error('[custom-widgets] setup products failed', error);
+    });
   try {
     const data = await context.storefront.query(PROOF_QUERY, {
       variables: {
@@ -224,8 +297,13 @@ export async function loader({request, context}) {
     console.error('[custom-widgets] proof tiles failed', error);
   }
 
+  await setupQuery;
+
   return {
     tiles,
+    setupProducts,
+    // "Request this setup" without JS lands here as ?setup=<id>#inquiry.
+    setup: cleanSetupId(url.searchParams.get('setup')),
     // Read from the landing URL, so they arrive in the form even with JS off.
     utm: pickUtm(url.searchParams),
     oppref: cleanOppref(url.searchParams.get('oppref')),
@@ -319,7 +397,15 @@ export async function action({request, context}) {
 }
 
 export default function CustomWidgetsPage() {
-  const {tiles, utm: landingUtm, oppref: landingOppref} = useLoaderData();
+  const {
+    tiles,
+    setupProducts,
+    setup,
+    utm: landingUtm,
+    oppref: landingOppref,
+  } = useLoaderData();
+  const messageRef = useRef(null);
+  const prefillRef = useRef(setupPrefill(setup));
   const result = useActionData();
   const navigation = useNavigation();
   const {publish} = useAnalytics();
@@ -370,6 +456,28 @@ export default function CustomWidgetsPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
+
+  // "Request this setup": prefill the message with the chosen kit, unless
+  // the visitor has already written their own, then take them to the form.
+  const requestSetup = (id) => {
+    const field = messageRef.current;
+    const text = setupPrefill(id);
+    if (field && (!field.value.trim() || field.value === prefillRef.current)) {
+      field.value = text;
+      prefillRef.current = text;
+    }
+    const form = document.getElementById('inquiry');
+    const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)')
+      .matches;
+    form?.scrollIntoView({
+      behavior: smooth ? 'smooth' : 'auto',
+      block: 'start',
+    });
+    if (field) {
+      field.focus({preventScroll: true});
+      field.setSelectionRange(field.value.length, field.value.length);
+    }
+  };
 
   const mailtoHref =
     failed && result.reason !== 'invalid' ? buildMailtoHref(values) : null;
@@ -452,6 +560,8 @@ export default function CustomWidgetsPage() {
           </div>
         </header>
 
+        <StreamSetups products={setupProducts} onRequest={requestSetup} />
+
         {tiles.length > 0 && (
           <section className="cw-section" id="work" aria-labelledby="cw-work-h">
             <h2 id="cw-work-h">Our own work</h2>
@@ -526,9 +636,8 @@ export default function CustomWidgetsPage() {
                 <>
                   <h3>We already have your request.</h3>
                   <p>
-                    {values.email
-                      ? `You sent one a few minutes ago, so we did not send a second. We will email ${values.email} with a quote and a first sketch.`
-                      : 'You sent one a few minutes ago, so we did not send a second. We will email you with a quote and a first sketch.'}
+                    You sent one a few minutes ago, so we did not send a second.{' '}
+                    {"We'll email you a quote and a first sketch."}
                   </p>
                   <p>
                     Need to add something, or think this is a mistake? Write to{' '}
@@ -541,11 +650,7 @@ export default function CustomWidgetsPage() {
               ) : (
                 <>
                   <h3>Got it, thank you.</h3>
-                  <p>
-                    {values.email
-                      ? `We will email ${values.email} with a quote and a first sketch.`
-                      : 'We will email you with a quote and a first sketch.'}
-                  </p>
+                  <p>{"We'll email you a quote and a first sketch."}</p>
                   <p>
                     Anything to add? Reply to that email, or write to{' '}
                     <a href={`mailto:${brand.supportEmail}`}>
@@ -563,7 +668,7 @@ export default function CustomWidgetsPage() {
                   id="cw-name"
                   name="name"
                   type="text"
-                  autoComplete="name"
+                  autoComplete="off"
                   maxLength={FIELD_LIMITS.name}
                   required
                   defaultValue={values.name}
@@ -576,7 +681,7 @@ export default function CustomWidgetsPage() {
                   id="cw-email"
                   name="email"
                   type="email"
-                  autoComplete="email"
+                  autoComplete="off"
                   maxLength={FIELD_LIMITS.email}
                   required
                   defaultValue={values.email}
@@ -633,12 +738,13 @@ export default function CustomWidgetsPage() {
                 wide
               >
                 <textarea
+                  ref={messageRef}
                   id="cw-message"
                   name="message"
                   rows={6}
                   maxLength={FIELD_LIMITS.message}
                   required
-                  defaultValue={values.message}
+                  defaultValue={values.message ?? prefillRef.current}
                   placeholder="A chat box in my channel's colors, a goal bar shaped like a sword, an alert for new subs..."
                   aria-invalid={fieldErrors.message ? 'true' : undefined}
                 />

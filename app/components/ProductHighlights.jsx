@@ -172,7 +172,8 @@ export function ProductHighlights({
       )}
       <p className="product-highlights-label">What you get</p>
       <ul className="product-highlights-list">
-        <li>⚡ Instant digital download after purchase</li>
+        {/* "Instant download" is said once, in the trust row under the
+            buy button (ProductTrust), not twice in one card. */}
         <li>
           🎨{' '}
           {customizable

@@ -1,5 +1,6 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {ResponsiveImage} from '~/components/ResponsiveImage';
+import {cdnImageUrl} from '~/lib/shopifyImage';
 import {subjectFromTitle} from '~/lib/productName';
 
 /**
@@ -53,9 +54,43 @@ export function ProductGallery({media, title, smallScreen = false}) {
   });
   const active = items[activeIndex];
 
+  /*
+    The clip's <source> elements are rendered only after the window `load`
+    event (2026-10-22). Lighthouse mobile on production put LCP at 9.0 to
+    9.2s on three PDPs with the autoplay <video> as the LCP element, and the
+    2.5 to 3MB mp4 was the largest request on every one: it downloaded in
+    parallel with the CSS, fonts and JS the first paint needed. With no
+    source in the server HTML the poster (sized and preloaded) paints first
+    and the clip starts as soon as the page has loaded, still selected and
+    still autoplaying, which keeps the 2026-09-15 "video first, playing on
+    landing" call. The autoPlay attribute stays on the element, so this is
+    not the no-autoPlay approach that Chrome's autoplay policy paused.
+  */
+  const [videoReady, setVideoReady] = useState(false);
+  const videoRef = useRef(null);
+  useEffect(() => {
+    if (document.readyState === 'complete') {
+      setVideoReady(true);
+      return undefined;
+    }
+    const onLoad = () => setVideoReady(true);
+    window.addEventListener('load', onLoad, {once: true});
+    return () => window.removeEventListener('load', onLoad);
+  }, []);
+  // <source> children added after the element exists are not picked up
+  // until load() is called. With autoPlay set, load() starts playback.
+  useEffect(() => {
+    if (videoReady) videoRef.current?.load();
+  }, [videoReady, activeIndex]);
+
   if (!items.length) {
     return <div className="product-gallery-main product-gallery-empty" />;
   }
+
+  // Landscape clip only: a square or portrait clip keeps the square frame,
+  // which is already the shorter box for it on a phone.
+  const videoRatio =
+    active?.__typename === 'Video' ? landscapeRatio(active.sources) : null;
 
   const goTo = (index) => {
     setActiveIndex((index + items.length) % items.length);
@@ -80,12 +115,15 @@ export function ProductGallery({media, title, smallScreen = false}) {
               non-empty alt would make a screen reader read the same thing
               twice. The SEO-relevant alt is on the main image below.
             */}
+            {/* 72px rail, 160 covers it at 2x. The bare CDN URL was the full
+                original (often 2000px) for every thumb, 15+ per product. */}
             <img
-              src={
+              src={cdnImageUrl(
                 item.__typename === 'Video'
                   ? item.previewImage?.url
-                  : item.image?.url
-              }
+                  : item.image?.url,
+                160,
+              )}
               alt=""
               aria-hidden="true"
               loading="lazy"
@@ -99,7 +137,10 @@ export function ProductGallery({media, title, smallScreen = false}) {
         ))}
       </div>
 
-      <div className="product-gallery-main">
+      <div
+        className={`product-gallery-main${videoRatio ? ' product-gallery-main-video' : ''}`}
+        style={videoRatio ? {'--video-ratio': videoRatio} : undefined}
+      >
         {items.length > 1 && (
           <button
             type="button"
@@ -111,24 +152,42 @@ export function ProductGallery({media, title, smallScreen = false}) {
           </button>
         )}
 
+        {active?.__typename === 'Video' && active.previewImage?.url ? (
+          /* The preload scanner fetches <img src> early but not a video
+             poster, so the LCP frame waited behind the JS. A preload link is
+             honoured in <body> too (React 18 does not hoist it). */
+          <link
+            rel="preload"
+            as="image"
+            href={cdnImageUrl(active.previewImage.url, 800)}
+            fetchPriority="high"
+          />
+        ) : null}
         {active?.__typename === 'Video' ? (
           <video
             key={active.id}
+            ref={videoRef}
             controls
             autoPlay
             loop
             muted
             playsInline
-            poster={active.previewImage?.url}
+            /* The poster is what paints first on landing (the clip is the
+               active item), so it is the PDP's LCP candidate. Unsized it
+               was the full original frame; 800 covers a 390px phone at 2x
+               and the desktop column. */
+            poster={cdnImageUrl(active.previewImage?.url, 800)}
             className="product-gallery-video"
           >
-            {orderVideoSources(active.sources, smallScreen).map((source) => (
-              <source
-                key={source.url}
-                src={source.url}
-                type={source.mimeType}
-              />
-            ))}
+            {videoReady
+              ? orderVideoSources(active.sources, smallScreen).map((source) => (
+                  <source
+                    key={source.url}
+                    src={source.url}
+                    type={source.mimeType}
+                  />
+                ))
+              : null}
           </video>
         ) : active?.image ? (
           // No aspectRatio prop here on purpose: Hydrogen's <Image> adds a
@@ -208,6 +267,19 @@ function orderVideoSources(sources, smallScreen = false) {
   const fits = mp4s.filter((s) => (s.height || 0) <= MOBILE_MAX_HEIGHT);
   const rest = mp4s.filter((s) => (s.height || 0) > MOBILE_MAX_HEIGHT);
   return [...fits, ...rest, ...streams];
+}
+
+/**
+ * "1920 / 1080" from the largest mp4 rendition, or null when the clip is not
+ * wider than tall or carries no dimensions.
+ * @param {Array<{width?: number, height?: number}> | undefined} sources
+ */
+function landscapeRatio(sources) {
+  const best = (sources ?? [])
+    .filter((s) => s.width && s.height)
+    .sort((a, b) => b.height - a.height)[0];
+  if (!best || best.width <= best.height) return null;
+  return `${best.width} / ${best.height}`;
 }
 
 /**
