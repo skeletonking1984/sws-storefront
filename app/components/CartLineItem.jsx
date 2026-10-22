@@ -20,7 +20,7 @@ import {subjectFromTitle} from '~/lib/productName';
  */
 export function CartLineItem({layout, line, childrenMap}) {
   const {id, merchandise} = line;
-  const {product, title, image, selectedOptions} = merchandise;
+  const {product, image, selectedOptions} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
   const lineItemChildren = childrenMap[id];
