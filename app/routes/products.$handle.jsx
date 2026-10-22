@@ -14,6 +14,8 @@ import {ProductForm} from '~/components/ProductForm';
 import {MobileStickyAddToCart} from '~/components/MobileStickyAddToCart';
 import {ProductHighlights} from '~/components/ProductHighlights';
 import {ShareRow} from '~/components/ShareRow';
+import {ProductTrust} from '~/components/ProductTrust';
+import {ProductIncluded} from '~/components/ProductIncluded';
 import {articleFontPreload} from '~/lib/articleFont';
 import {ProductItem} from '~/components/ProductItem';
 import {EtsyRatingBadge} from '~/components/EtsyRating';
@@ -201,12 +203,13 @@ async function loadCriticalData({context, params, request}) {
   // rather than in the component so the delivery table stays server side,
   // and built from the loader's own selected variant price so the sentence
   // and the price shown next to it come from the same response.
+  const delivery = byHandleWithAlias(deliveryFacts.products, handle) || null;
   const answerBlock = buildAnswerBlock({
     name: product.seo?.title || product.title,
     productType: product.productType,
     platforms: parseWorksWith(product.worksWith?.value),
     price: product.selectedOrFirstAvailableVariant?.price,
-    delivery: byHandleWithAlias(deliveryFacts.products, handle) || null,
+    delivery,
     noAccount: (product.tags || []).includes('no-account'),
   });
 
@@ -214,6 +217,11 @@ async function loadCriticalData({context, params, request}) {
     product,
     productReviews,
     answerBlock,
+    // Only this product's two delivery facts reach the client, for the
+    // "What's included" block. Same lookup the answer block uses.
+    delivery: delivery
+      ? {archives: delivery.archives ?? 0, setupDoc: delivery.setupDoc ?? null}
+      : null,
     primaryCategoryHandle,
     /*
       Which video rendition this request gets, decided here because it
@@ -351,6 +359,7 @@ export default function Product() {
     faq,
     productReviews,
     answerBlock,
+    delivery,
     smallScreen,
     primaryCategoryHandle,
   } = useLoaderData();
@@ -754,9 +763,20 @@ export default function Product() {
             selectedVariant={selectedVariant}
             buttonRef={addToCartButtonRef}
           />
+          <ProductTrust
+            reviewsHref={
+              showsProductReviews ? '#product-reviews' : '#shop-reviews'
+            }
+          />
           <ShareRow title={title} />
         </div>
       </div>
+      <ProductIncluded
+        delivery={delivery}
+        platforms={parseWorksWith(worksWith?.value)}
+        productType={product.productType}
+        noAccount={(product.tags || []).includes('no-account')}
+      />
       <MobileStickyAddToCart
         targetRef={addToCartButtonRef}
         price={selectedVariant?.price}

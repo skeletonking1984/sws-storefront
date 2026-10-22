@@ -4179,6 +4179,94 @@ button.reset:hover:not(:has(> *)) {
 
 /*
 * --------------------------------------------------
+* components/ProductTrust
+* --------------------------------------------------
+* Sits under the buy button on desktop. On a phone the button itself is
+* pinned to the bottom of the screen, so the row moves up under the name
+* (order -1, after .product-heading in source order) where it is read
+* before the buyer reaches for that button.
+*/
+.product-trust {
+  display: grid;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  @media (max-width: 44.99em) {
+    order: -1;
+  }
+}
+
+.product-trust li {
+  align-items: baseline;
+  color: var(--sws-text);
+  display: flex;
+  font-size: 0.88rem;
+  gap: 0.5rem;
+  line-height: 1.4;
+}
+
+/* Green = good: these are reassurances, never errors. */
+.product-trust-icon {
+  color: var(--sws-holo-5);
+  flex-shrink: 0;
+  font-weight: 800;
+}
+
+.product-trust a {
+  color: var(--sws-holo-1);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/*
+* --------------------------------------------------
+* components/ProductIncluded
+* --------------------------------------------------
+*/
+.product-included {
+  border: 1px solid var(--sws-border);
+  border-radius: 16px;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  @media (min-width: 45em) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    margin-top: 2.5rem;
+    padding: 1.5rem 1.75rem;
+  }
+}
+
+.product-included-heading {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0 0 0.6rem;
+}
+
+.product-included-list,
+.product-included-steps {
+  color: var(--sws-sub);
+  display: grid;
+  font-size: 0.92rem;
+  gap: 0.45rem;
+  line-height: 1.45;
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.product-included-list li::marker {
+  color: var(--sws-holo-5);
+}
+
+.product-included-steps li::marker {
+  color: var(--sws-holo-1);
+  font-weight: 800;
+}
+
+/*
+* --------------------------------------------------
 * components/MobileStickyAddToCart
 * --------------------------------------------------
 */
