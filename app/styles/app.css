@@ -1830,8 +1830,9 @@ button.reset:hover:not(:has(> *)) {
     margin-top: 0;
   }
 
+  /* Clears the fixed bar: price line + 48px buttons + padding + safe area. */
   .product {
-    padding-bottom: 5.5rem;
+    padding-bottom: calc(8rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -1856,6 +1857,11 @@ button.reset:hover:not(:has(> *)) {
   display: flex;
 }
 
+/* Phone-only price line of the fixed bar; the desktop buy box has its own. */
+.product-buy-actions-price {
+  display: none;
+}
+
 .buy-now-button {
   font-size: 1.05rem;
 }
@@ -1870,13 +1876,29 @@ button.reset:hover:not(:has(> *)) {
     background: var(--sws-card-solid);
     border-top: 3px solid var(--sws-ink);
     bottom: 0;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 0.6rem;
     left: 0;
     padding: 0.6rem 0.75rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
     position: fixed;
     right: 0;
     z-index: 5;
+  }
+
+  .product-buy-actions-price {
+    align-items: center;
+    display: flex;
+    flex: 0 0 100%;
+  }
+
+  .product-buy-actions-price .product-price,
+  .product-buy-actions-price .product-price-on-sale {
+    font-size: 1.05rem;
+    padding: 0.25rem 0.75rem;
+  }
+
+  .product-buy-actions-price .product-price > .product-price-on-sale {
+    padding: 0;
   }
 
   .product-buy-actions > form {

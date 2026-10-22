@@ -2,6 +2,8 @@ import {Link, useNavigate} from 'react-router';
 import {AddToCartButton} from './AddToCartButton';
 import {BuyNowButton} from './BuyNowButton';
 import {useAside} from './Aside';
+import {ProductPrice} from './ProductPrice';
+import {compareAtIsValueSum} from '~/lib/price';
 
 /**
  * @param {{
@@ -104,9 +106,19 @@ export function ProductForm({
       })}
       {/* Buy now is the primary action, Add to cart the secondary one. On
           phones this row is the fixed bar at the bottom of the screen (see
-          .product-buy-actions in app.css). Sold out shows only the disabled
-          Add to cart, as before. */}
+          .product-buy-actions in app.css), and it also carries the price of
+          the selected variant so price and both buttons are on screen
+          without scrolling. That price is hidden on desktop, where the buy
+          box already shows it. Sold out shows only the disabled Add to cart,
+          as before. */}
       <div className="product-buy-actions">
+        <div className="product-buy-actions-price" aria-hidden="true">
+          <ProductPrice
+            price={selectedVariant?.price}
+            compareAtPrice={selectedVariant?.compareAtPrice}
+            compareAtIsValue={compareAtIsValueSum(product.productType)}
+          />
+        </div>
         {available ? (
           <BuyNowButton selectedVariant={selectedVariant} product={product} />
         ) : null}
