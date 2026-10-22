@@ -1,15 +1,23 @@
 import {Link, useNavigate} from 'react-router';
 import {AddToCartButton} from './AddToCartButton';
+import {BuyNowButton} from './BuyNowButton';
 import {useAside} from './Aside';
 
 /**
  * @param {{
  *   productOptions: MappedProductOptions[];
  *   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
+ *   product: {id: string; title: string; handle: string; productType?: string};
  *   buttonRef?: {current: HTMLButtonElement | null};
  * }}
  */
-export function ProductForm({productOptions, selectedVariant, buttonRef}) {
+export function ProductForm({
+  productOptions,
+  selectedVariant,
+  product,
+  buttonRef,
+}) {
+  const available = Boolean(selectedVariant?.availableForSale);
   const navigate = useNavigate();
   const {open} = useAside();
   return (
@@ -94,26 +102,36 @@ export function ProductForm({productOptions, selectedVariant, buttonRef}) {
           </div>
         );
       })}
-      <AddToCartButton
-        buttonRef={buttonRef}
-        disabled={!selectedVariant || !selectedVariant.availableForSale}
-        onClick={() => {
-          open('cart');
-        }}
-        lines={
-          selectedVariant
-            ? [
-                {
-                  merchandiseId: selectedVariant.id,
-                  quantity: 1,
-                  selectedVariant,
-                },
-              ]
-            : []
-        }
-      >
-        {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
-      </AddToCartButton>
+      {/* Buy now is the primary action, Add to cart the secondary one. On
+          phones this row is the fixed bar at the bottom of the screen (see
+          .product-buy-actions in app.css). Sold out shows only the disabled
+          Add to cart, as before. */}
+      <div className="product-buy-actions">
+        {available ? (
+          <BuyNowButton selectedVariant={selectedVariant} product={product} />
+        ) : null}
+        <AddToCartButton
+          buttonRef={buttonRef}
+          disabled={!available}
+          variant={available ? 'ghost' : 'primary'}
+          onClick={() => {
+            open('cart');
+          }}
+          lines={
+            selectedVariant
+              ? [
+                  {
+                    merchandiseId: selectedVariant.id,
+                    quantity: 1,
+                    selectedVariant,
+                  },
+                ]
+              : []
+          }
+        >
+          {available ? 'Add to cart' : 'Sold out'}
+        </AddToCartButton>
+      </div>
     </div>
   );
 }

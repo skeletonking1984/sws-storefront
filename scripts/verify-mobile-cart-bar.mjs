@@ -1,5 +1,5 @@
 /**
- * Is the mobile Add to cart bar actually pinned to the bottom of the screen?
+ * Is the mobile Buy now / Add to cart bar actually pinned to the bottom of the screen?
  *
  * Why, 2026-10-03. fd498d3 (2026-09-27) reordered backdrop-filter so the
  * minifier finally kept the blur in Chrome. The blur landed on the PDP buy
@@ -55,8 +55,11 @@ const DESKTOP = {width: 1280, height: 900};
 /* Runs in the page. Returns a list of failure strings. */
 async function measurePhone() {
   const fails = [];
-  const b = document.querySelector('.add-to-cart-button');
-  if (!b) return ['no .add-to-cart-button on the page'];
+  // Since Buy now (2026-10-22) the fixed bar is the .product-buy-actions row
+  // holding Buy now and Add to cart, not the lone Add to cart button.
+  const b = document.querySelector('.product-buy-actions');
+  if (!b) return ['no .product-buy-actions bar on the page'];
+  if (!b.querySelector('.add-to-cart-button')) return ['no .add-to-cart-button in the bar'];
   const vh = innerHeight;
   const vw = document.documentElement.clientWidth;
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -74,9 +77,12 @@ async function measurePhone() {
   if (Math.abs(r.width - vw) > 1) {
     fails.push(`button is ${Math.round(r.width)}px wide, viewport is ${vw}px`);
   }
-  const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
-  if (!hit || !b.contains(hit)) {
-    fails.push(`centre of the button hits ${hit ? hit.tagName + '.' + hit.className : 'nothing'}, not the button`);
+  for (const btn of b.querySelectorAll('button')) {
+    const br = btn.getBoundingClientRect();
+    const hit = document.elementFromPoint(br.x + br.width / 2, br.y + br.height / 2);
+    if (!hit || !btn.contains(hit)) {
+      fails.push(`centre of ${btn.className} hits ${hit ? hit.tagName + '.' + hit.className : 'nothing'}, not the button`);
+    }
   }
   for (let e = b.parentElement; e && e !== document.documentElement; e = e.parentElement) {
     const s = getComputedStyle(e);
@@ -106,10 +112,10 @@ async function measurePhone() {
 }
 
 async function measureDesktop() {
-  const b = document.querySelector('.add-to-cart-button');
-  if (!b) return ['no .add-to-cart-button on the page'];
-  return getComputedStyle(b).position === 'fixed'
-    ? ['button is position:fixed on desktop width']
+  const b = document.querySelector('.product-buy-actions');
+  if (!b) return ['no .product-buy-actions bar on the page'];
+  return [b, ...b.querySelectorAll('button')].some((e) => getComputedStyle(e).position === 'fixed')
+    ? ['buy actions are position:fixed on desktop width']
     : [];
 }
 
@@ -125,7 +131,7 @@ async function checkHandle(browser, handle, {inject} = {}) {
     await page.setViewport(PHONE);
     const res = await page.goto(url, {waitUntil: 'networkidle2', timeout: 45000});
     if (!res || res.status() !== 200) return [`${handle}: responded ${res?.status()}`];
-    await page.waitForSelector('.add-to-cart-button', {timeout: 15000}).catch(() => {});
+    await page.waitForSelector('.product-buy-actions', {timeout: 15000}).catch(() => {});
     if (inject) await page.addStyleTag({content: inject});
     for (const f of await page.evaluate(measurePhone)) out.push(`${handle} [phone]: ${f}`);
     await page.setViewport(DESKTOP);

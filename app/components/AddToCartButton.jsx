@@ -9,6 +9,7 @@ import {AnnotatedCartForm} from '~/components/AnnotatedCartForm';
  *   lines: Array<OptimisticCartLineInput>;
  *   onClick?: () => void;
  *   buttonRef?: {current: HTMLButtonElement | null};
+ *   variant?: 'primary' | 'ghost';
  * }}
  */
 export function AddToCartButton({
@@ -18,6 +19,7 @@ export function AddToCartButton({
   lines,
   onClick,
   buttonRef,
+  variant = 'primary',
 }) {
   return (
     // Declarative WebMCP. This is the buy action on every product page, and
@@ -41,7 +43,7 @@ export function AddToCartButton({
           <button
             ref={buttonRef}
             type="submit"
-            className="add-to-cart-button sws-btn sws-btn-primary"
+            className={`add-to-cart-button sws-btn sws-btn-${variant}`}
             onClick={onClick}
             disabled={disabled ?? fetcher.state !== 'idle'}
           >
