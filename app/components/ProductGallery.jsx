@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {ResponsiveImage} from '~/components/ResponsiveImage';
 import {cdnImageUrl} from '~/lib/shopifyImage';
 import {subjectFromTitle} from '~/lib/productName';
@@ -53,6 +53,35 @@ export function ProductGallery({media, title, smallScreen = false}) {
     return firstVideo === -1 ? 0 : firstVideo;
   });
   const active = items[activeIndex];
+
+  /*
+    The clip's <source> elements are rendered only after the window `load`
+    event (2026-10-22). Lighthouse mobile on production put LCP at 9.0 to
+    9.2s on three PDPs with the autoplay <video> as the LCP element, and the
+    2.5 to 3MB mp4 was the largest request on every one: it downloaded in
+    parallel with the CSS, fonts and JS the first paint needed. With no
+    source in the server HTML the poster (sized and preloaded) paints first
+    and the clip starts as soon as the page has loaded, still selected and
+    still autoplaying, which keeps the 2026-09-15 "video first, playing on
+    landing" call. The autoPlay attribute stays on the element, so this is
+    not the no-autoPlay approach that Chrome's autoplay policy paused.
+  */
+  const [videoReady, setVideoReady] = useState(false);
+  const videoRef = useRef(null);
+  useEffect(() => {
+    if (document.readyState === 'complete') {
+      setVideoReady(true);
+      return undefined;
+    }
+    const onLoad = () => setVideoReady(true);
+    window.addEventListener('load', onLoad, {once: true});
+    return () => window.removeEventListener('load', onLoad);
+  }, []);
+  // <source> children added after the element exists are not picked up
+  // until load() is called. With autoPlay set, load() starts playback.
+  useEffect(() => {
+    if (videoReady) videoRef.current?.load();
+  }, [videoReady, activeIndex]);
 
   if (!items.length) {
     return <div className="product-gallery-main product-gallery-empty" />;
@@ -137,6 +166,7 @@ export function ProductGallery({media, title, smallScreen = false}) {
         {active?.__typename === 'Video' ? (
           <video
             key={active.id}
+            ref={videoRef}
             controls
             autoPlay
             loop
@@ -149,13 +179,15 @@ export function ProductGallery({media, title, smallScreen = false}) {
             poster={cdnImageUrl(active.previewImage?.url, 800)}
             className="product-gallery-video"
           >
-            {orderVideoSources(active.sources, smallScreen).map((source) => (
-              <source
-                key={source.url}
-                src={source.url}
-                type={source.mimeType}
-              />
-            ))}
+            {videoReady
+              ? orderVideoSources(active.sources, smallScreen).map((source) => (
+                  <source
+                    key={source.url}
+                    src={source.url}
+                    type={source.mimeType}
+                  />
+                ))
+              : null}
           </video>
         ) : active?.image ? (
           // No aspectRatio prop here on purpose: Hydrogen's <Image> adds a
