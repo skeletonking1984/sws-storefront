@@ -4522,6 +4522,22 @@ button.reset:hover:not(:has(> *)) {
   width: 14px;
 }
 
+/* PDP "works with" row: official marks in brand colour at 16px, so every
+   chip shares one size and one baseline. */
+.product-platform-badge {
+  line-height: 1;
+}
+
+.product-platform-badge .platform-icon {
+  fill: var(--platform-color, currentColor);
+  height: 16px;
+  width: 16px;
+}
+
+.platform-icon-img {
+  object-fit: contain;
+}
+
 .platform-icon-monogram {
   align-items: center;
   background: var(--sws-accent-2);
