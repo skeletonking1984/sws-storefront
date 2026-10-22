@@ -13,6 +13,7 @@ import {PlatformIcon} from '~/components/PlatformIcon';
 import {findVideoMedia, pickBestMp4Source} from '~/lib/video';
 import {hasRealDiscount} from '~/lib/price';
 import {brand} from '~/lib/brand.config';
+import {subjectFromTitle} from '~/lib/productName';
 
 /**
  * True on devices that support a real `:hover` (mouse/trackpad). Touch
@@ -460,8 +461,11 @@ export function ProductItem({
         Styling moved to `.product-item-title` so the level can vary without
         the card changing size.
       */}
+      {/* The name, not the Etsy keyword string: the same cleaner as the PDP
+          h1. At 390px the raw title ran three lines on every card and
+          pushed the price below the card's own image (2026-10-22). */}
       <CardHeading level={headingLevel} className="product-item-title">
-        {product.title}
+        {subjectFromTitle(product.title) || product.title}
       </CardHeading>
       {/* Real units, real window, or nothing. Shown only above a floor because
           "3 sold" reads as nobody buys this, which is the opposite of proof,
