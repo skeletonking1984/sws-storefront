@@ -245,10 +245,10 @@ export function BundleBuilder({items, curated, reviews, rating}) {
                           fallbackWidth={400}
                         />
                       ) : null}
-                      {w.isNew ? (
-                        <em className="bb-badge new">New</em>
-                      ) : w.top !== null && w.top < 12 ? (
+                      {w.top !== null && w.top < 12 ? (
                         <em className="bb-badge">Top seller</em>
+                      ) : w.isNew ? (
+                        <em className="bb-badge new">New</em>
                       ) : null}
                       <i className="bb-check" aria-hidden="true">
                         {on ? '✓' : '+'}
