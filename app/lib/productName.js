@@ -43,6 +43,16 @@ const TITLE_TAILS = [
 ];
 
 /**
+ * The word a product NAME ends on. Used to tell "Demon Samurai Stream Overlay
+ * Pack, Animated Katana Goal Bar, Multistream Chat, Alerts" (the first comma
+ * clause is the whole name, the rest is feature keywords) from "Water, Fire,
+ * Nature & Cloud Liquid Filling Goal Widget" (a comma inside the name, where
+ * the first clause is just "Water").
+ */
+const NAME_ENDS_ON =
+  /\b(pack|kit|bundle|widgets?|overlay|decorations?|alerts?|transitions|stingers|emotes|tracker|timer|wheel)$/i;
+
+/**
  * @param {string | null | undefined} title
  * @returns {string}
  */
@@ -53,6 +63,12 @@ export function subjectFromTitle(title) {
   s = s.split(/\s*[|•·]\s*/)[0];
   s = s.split(/\s+[-–]\s+/)[0];
   s = s.split(/\s*[(]/)[0];
+  // "Matcha Scrapbook Chat Widget: Cottagecore Twitch" and "... Widgets:
+  // Transparent Neon Glow Theme". Only when what is left still reads as a name.
+  s = s.replace(/^(.{8,}?)\s*:\s.*$/, '$1');
+  // "Cute Peach Glass Goal Widget-Cute Minimal Customizable ...": a hyphen with
+  // no spaces, right after the product noun. "Multi-Goal Slider" is untouched.
+  s = s.replace(/\b(widgets?|pack|kit|overlay|decorations?|alerts?)-\S.*$/i, '$1');
   for (const tail of TITLE_TAILS) s = s.replace(tail, '');
   const clauses = s.split(/\s*,\s*/);
   while (
@@ -60,6 +76,15 @@ export function subjectFromTitle(title) {
     PLATFORM_WORD.test(clauses[clauses.length - 1])
   ) {
     clauses.pop();
+  }
+  // The first clause is the whole name when it ends on a product noun and
+  // has at least two words: the clauses after it are feature keywords.
+  if (
+    clauses.length > 1 &&
+    /\s/.test(clauses[0].trim()) &&
+    NAME_ENDS_ON.test(clauses[0].trim())
+  ) {
+    clauses.length = 1;
   }
   s = clauses
     .join(', ')
