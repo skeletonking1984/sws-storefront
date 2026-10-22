@@ -58,6 +58,11 @@ export function ProductGallery({media, title, smallScreen = false}) {
     return <div className="product-gallery-main product-gallery-empty" />;
   }
 
+  // Landscape clip only: a square or portrait clip keeps the square frame,
+  // which is already the shorter box for it on a phone.
+  const videoRatio =
+    active?.__typename === 'Video' ? landscapeRatio(active.sources) : null;
+
   const goTo = (index) => {
     setActiveIndex((index + items.length) % items.length);
   };
@@ -103,7 +108,10 @@ export function ProductGallery({media, title, smallScreen = false}) {
         ))}
       </div>
 
-      <div className="product-gallery-main">
+      <div
+        className={`product-gallery-main${videoRatio ? ' product-gallery-main-video' : ''}`}
+        style={videoRatio ? {'--video-ratio': videoRatio} : undefined}
+      >
         {items.length > 1 && (
           <button
             type="button"
@@ -227,6 +235,19 @@ function orderVideoSources(sources, smallScreen = false) {
   const fits = mp4s.filter((s) => (s.height || 0) <= MOBILE_MAX_HEIGHT);
   const rest = mp4s.filter((s) => (s.height || 0) > MOBILE_MAX_HEIGHT);
   return [...fits, ...rest, ...streams];
+}
+
+/**
+ * "1920 / 1080" from the largest mp4 rendition, or null when the clip is not
+ * wider than tall or carries no dimensions.
+ * @param {Array<{width?: number, height?: number}> | undefined} sources
+ */
+function landscapeRatio(sources) {
+  const best = (sources ?? [])
+    .filter((s) => s.width && s.height)
+    .sort((a, b) => b.height - a.height)[0];
+  if (!best || best.width <= best.height) return null;
+  return `${best.width} / ${best.height}`;
 }
 
 /**

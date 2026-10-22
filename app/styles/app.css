@@ -4373,6 +4373,19 @@ button.reset:hover:not(:has(> *)) {
   }
 }
 
+/*
+  A phone lands on the demo clip, which is 16:9, inside a 1:1 box: measured
+  on production at 390x844 (2026-10-22) that was ~85px of empty band above
+  and below the clip, and it pushed the price to y=636 and the name to
+  y=689 on every video-first PDP. Sizing the box to the clip on phones gives
+  that space back to the buy box. Images keep the square frame.
+*/
+.product-gallery-main-video {
+  @media (max-width: 44.99em) {
+    aspect-ratio: var(--video-ratio, 16 / 9);
+  }
+}
+
 .product-gallery-main img,
 .product-gallery-video {
   border-radius: 16px;

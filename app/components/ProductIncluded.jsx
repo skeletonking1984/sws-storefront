@@ -79,7 +79,10 @@ export function ProductIncluded({
   ];
 
   return (
-    <section className="product-included" aria-label="What's included and setup">
+    <section
+      className="product-included"
+      aria-label="What's included and setup"
+    >
       <div className="product-included-col">
         <h2 className="product-included-heading">What&rsquo;s included</h2>
         <ul className="product-included-list">
