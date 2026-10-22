@@ -54,6 +54,7 @@ import etsyReviewsData from '~/data/etsy-reviews.json';
 import deliveryFacts from '~/data/product-delivery.json';
 import {buildAnswerBlock} from '~/lib/answerBlock';
 import {parseWorksWith} from '~/lib/platforms';
+import {compareAtIsValueSum, hasRealDiscount} from '~/lib/price';
 import {subjectFromTitle} from '~/lib/productName';
 import {byHandleWithAlias} from '~/lib/handleAliases';
 
@@ -745,8 +746,21 @@ export default function Product() {
             <ProductPrice
               price={selectedVariant?.price}
               compareAtPrice={selectedVariant?.compareAtPrice}
+              compareAtIsValue={compareAtIsValueSum(product.productType)}
               showSavings
             />
+            {/* The slot under the price: a real saving or a kit's value when
+                there is one, otherwise the one pricing fact every product
+                shares (the answer block above says the same: a one-time
+                price, no subscription). Nothing here is a discount claim. */}
+            {hasRealDiscount(
+              selectedVariant?.price,
+              selectedVariant?.compareAtPrice,
+            ) ? null : (
+              <p className="product-price-note">
+                One-time price, no subscription
+              </p>
+            )}
           </div>
           <ProductHighlights
             description={description}
@@ -776,6 +790,7 @@ export default function Product() {
         targetRef={addToCartButtonRef}
         price={selectedVariant?.price}
         compareAtPrice={selectedVariant?.compareAtPrice}
+        compareAtIsValue={compareAtIsValueSum(product.productType)}
         available={Boolean(selectedVariant?.availableForSale)}
       />
       <div className="product-description">

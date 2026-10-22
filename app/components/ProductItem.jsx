@@ -11,7 +11,7 @@ import {
 } from '~/lib/platforms';
 import {PlatformIcon} from '~/components/PlatformIcon';
 import {findVideoMedia, pickBestMp4Source} from '~/lib/video';
-import {hasRealDiscount} from '~/lib/price';
+import {compareAtIsValueSum, hasRealDiscount} from '~/lib/price';
 import {brand} from '~/lib/brand.config';
 import {subjectFromTitle} from '~/lib/productName';
 
@@ -169,10 +169,11 @@ export function ProductItem({
   // already shows. Missing or non-discounting compareAtPrice never renders
   // -- see app/lib/price.js.
   const compareAtPrice = product.compareAtPriceRange?.minVariantPrice;
-  const onSale = hasRealDiscount(
-    product.priceRange?.minVariantPrice,
-    compareAtPrice,
-  );
+  // A kit's compare-at is the sum of its widgets, not a past price, so the
+  // card never strikes it through (the PDP says "value if bought separately").
+  const onSale =
+    hasRealDiscount(product.priceRange?.minVariantPrice, compareAtPrice) &&
+    !compareAtIsValueSum(product.productType);
 
   const videoMedia = findVideoMedia(product.media?.nodes);
   const videoSource = videoMedia && pickBestMp4Source(videoMedia.sources);

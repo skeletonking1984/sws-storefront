@@ -4179,7 +4179,12 @@ button.reset:hover:not(:has(> *)) {
   flex-direction: column;
   gap: 0.6rem;
   min-width: 0;
-  order: -2;
+  /* Same order as .product-heading, which comes first in the source, so on a
+     phone it reads: name, price, value line, rating. It used to be -2 (price
+     above the name) because the name ran four lines and pushed the price off
+     the first screen; the name is two lines now, so the order a buyer expects
+     fits (Demon Samurai at 390x844: name y=440, price y=520). */
+  order: -1;
   @media (min-width: 45em) {
     order: 0;
   }
@@ -4187,7 +4192,9 @@ button.reset:hover:not(:has(> *)) {
 
 /* Price first on a phone, the rating as a smaller line under it. */
 @media (max-width: 44.99em) {
-  .product-buybox .product-price {
+  .product-buybox .product-price,
+  .product-buybox .product-price-value,
+  .product-buybox .product-price-note {
     order: -1;
   }
 
@@ -5197,6 +5204,27 @@ button.reset:hover:not(:has(> *)) {
   background: none;
   border: 0;
   padding: 0;
+}
+
+/* A kit's compare-at is the sum of its widgets, so it is a value line, not a
+   struck-through "was" price. Plain, quiet, under the price. */
+.product-price-value,
+.product-price-note {
+  color: var(--sws-text);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.product-price-value {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.3em;
+}
+
+.product-price-value > div {
+  font-weight: 800;
 }
 
 /* Green = good: a real saving off the product's own compare-at price. */

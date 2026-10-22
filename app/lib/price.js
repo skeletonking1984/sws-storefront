@@ -23,6 +23,21 @@ export function hasRealDiscount(price, compareAtPrice) {
 }
 
 /**
+ * True when a product's compare-at price is NOT a price the product used to
+ * sell for, so it must not be drawn as a struck-through "was" price or a
+ * "Save $X".
+ *
+ * Stream kits are productType "Bundle". Their compare-at is the sum of the
+ * individual widgets' own prices (Spooky Stream Kit: $29.99 against $100.50,
+ * checked 2026-10-22; the kit itself has never sold at $100.50). That figure
+ * is honest as "value if bought separately" and as nothing else.
+ * @param {string | null | undefined} productType
+ */
+export function compareAtIsValueSum(productType) {
+  return (productType || '').trim().toLowerCase() === 'bundle';
+}
+
+/**
  * A cart line only carries a per-unit `compareAtAmountPerQuantity`, but the
  * line's own `cost.totalAmount` is already quantity x price. To show a
  * strikethrough total next to it (rather than a per-unit price next to a

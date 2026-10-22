@@ -4,7 +4,7 @@ import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
-import {computeLineCompareAtTotal} from '~/lib/price';
+import {computeLineCompareAtTotal, compareAtIsValueSum} from '~/lib/price';
 import {subjectFromTitle} from '~/lib/productName';
 
 /**
@@ -66,6 +66,7 @@ export function CartLineItem({layout, line, childrenMap}) {
           <ProductPrice
             price={line?.cost?.totalAmount}
             compareAtPrice={computeLineCompareAtTotal(line)}
+            compareAtIsValue={compareAtIsValueSum(product.productType)}
           />
           {visibleOptions.length > 0 && (
             <ul className="cart-line-options">
