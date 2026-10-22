@@ -772,6 +772,7 @@ export default function Product() {
           <ProductForm
             productOptions={productOptions}
             selectedVariant={selectedVariant}
+            product={product}
             buttonRef={addToCartButtonRef}
           />
           {/* The shop rating line only when the badge above shows this

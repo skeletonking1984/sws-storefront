@@ -1939,6 +1939,21 @@ export type BundleKitsQuery = {
   }>;
 };
 
+export type BuyNowCartCreateMutationVariables = StorefrontAPI.Exact<{
+  input: StorefrontAPI.CartInput;
+  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
+  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
+}>;
+
+export type BuyNowCartCreateMutation = {
+  cartCreate?: StorefrontAPI.Maybe<{
+    cart?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Cart, 'id' | 'checkoutUrl'>>;
+    userErrors: Array<
+      Pick<StorefrontAPI.CartUserError, 'field' | 'message' | 'code'>
+    >;
+  }>;
+};
+
 export type MoneyProductItemFragment = Pick<
   StorefrontAPI.MoneyV2,
   'amount' | 'currencyCode'
@@ -3308,6 +3323,10 @@ interface GeneratedMutationTypes {
   '#graphql\n  mutation NewsletterSignup($input: CustomerCreateInput!) {\n    customerCreate(input: $input) {\n      customer {\n        id\n      }\n      customerUserErrors {\n        code\n        field\n        message\n      }\n    }\n  }\n': {
     return: NewsletterSignupMutation;
     variables: NewsletterSignupMutationVariables;
+  };
+  '#graphql\n  mutation BuyNowCartCreate(\n    $input: CartInput!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    cartCreate(input: $input) {\n      cart {\n        id\n        checkoutUrl\n      }\n      userErrors {\n        field\n        message\n        code\n      }\n    }\n  }\n': {
+    return: BuyNowCartCreateMutation;
+    variables: BuyNowCartCreateMutationVariables;
   };
 }
 
