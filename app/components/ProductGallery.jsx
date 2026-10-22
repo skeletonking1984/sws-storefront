@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {ResponsiveImage} from '~/components/ResponsiveImage';
+import {cdnImageUrl} from '~/lib/shopifyImage';
 import {subjectFromTitle} from '~/lib/productName';
 
 /**
@@ -80,12 +81,15 @@ export function ProductGallery({media, title, smallScreen = false}) {
               non-empty alt would make a screen reader read the same thing
               twice. The SEO-relevant alt is on the main image below.
             */}
+            {/* 72px rail, 160 covers it at 2x. The bare CDN URL was the full
+                original (often 2000px) for every thumb, 15+ per product. */}
             <img
-              src={
+              src={cdnImageUrl(
                 item.__typename === 'Video'
                   ? item.previewImage?.url
-                  : item.image?.url
-              }
+                  : item.image?.url,
+                160,
+              )}
               alt=""
               aria-hidden="true"
               loading="lazy"
@@ -111,6 +115,17 @@ export function ProductGallery({media, title, smallScreen = false}) {
           </button>
         )}
 
+        {active?.__typename === 'Video' && active.previewImage?.url ? (
+          /* The preload scanner fetches <img src> early but not a video
+             poster, so the LCP frame waited behind the JS. A preload link is
+             honoured in <body> too (React 18 does not hoist it). */
+          <link
+            rel="preload"
+            as="image"
+            href={cdnImageUrl(active.previewImage.url, 800)}
+            fetchPriority="high"
+          />
+        ) : null}
         {active?.__typename === 'Video' ? (
           <video
             key={active.id}
@@ -119,7 +134,11 @@ export function ProductGallery({media, title, smallScreen = false}) {
             loop
             muted
             playsInline
-            poster={active.previewImage?.url}
+            /* The poster is what paints first on landing (the clip is the
+               active item), so it is the PDP's LCP candidate. Unsized it
+               was the full original frame; 800 covers a 390px phone at 2x
+               and the desktop column. */
+            poster={cdnImageUrl(active.previewImage?.url, 800)}
             className="product-gallery-video"
           >
             {orderVideoSources(active.sources, smallScreen).map((source) => (
