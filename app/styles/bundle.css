@@ -38,6 +38,7 @@
 .bb-img { position: relative; display: block; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: var(--sws-bg-alt); }
 .bb-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .bb-badge { position: absolute; left: 6px; top: 6px; font-style: normal; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: var(--radius-pill); background: var(--sws-cream); color: var(--sws-ink); }
+.bb-badge.new { background: var(--sws-holo-1); color: var(--sws-ink); }
 .bb-check { position: absolute; right: 6px; top: 6px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 900; background: rgba(11, 7, 19, .75); border: 1px solid var(--sws-border-strong); }
 .bb-card.on .bb-check { background: var(--sws-holo-4); border-color: transparent; color: #fff; }
 .bb-name { font-weight: 700; font-size: 14px; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.5em; }

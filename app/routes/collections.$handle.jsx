@@ -19,6 +19,7 @@ import {CHAT_WIDGETS_COLLECTION} from '~/lib/collectionHandles';
 import {logoWebp as logo} from '~/lib/cdnAssets';
 import {brand} from '~/lib/brand.config';
 import {TIERS} from '~/lib/bundle';
+import {isNewProduct, mixInNewest} from '~/lib/newest';
 
 /**
  * Collections that show the "Build your own bundle" callout above the grid
@@ -130,11 +131,21 @@ async function loadCriticalData({context, params, request}) {
     throw redirect('/collections');
   }
 
-  const [{collection}] = await Promise.all([
+  // First page only: the default (Admin) sort buried every new product, so
+  // mix the last 30 days' products into page one. Later pages stay as is.
+  const firstPage =
+    !paginationVariables.startCursor && !paginationVariables.endCursor;
+  const now = Date.now();
+  const [{collection}, newest] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
       variables: {handle, ...paginationVariables},
       // Add other queries here, so that they are loaded in parallel
     }),
+    firstPage
+      ? storefront
+          .query(COLLECTION_NEWEST_QUERY, {variables: {handle}})
+          .catch(() => null)
+      : null,
   ]);
 
   if (!collection) {
@@ -146,8 +157,19 @@ async function loadCriticalData({context, params, request}) {
   // The API handle might be localized, so redirect to the localized handle
   redirectIfHandleIsLocalized(request, {handle, data: collection});
 
+  const fresh = (newest?.collection?.products?.nodes ?? []).filter((p) =>
+    isNewProduct(p.createdAt, now),
+  );
+  if (fresh.length) {
+    collection.products = {
+      ...collection.products,
+      nodes: mixInNewest(collection.products.nodes, fresh),
+    };
+  }
+
   return {
     collection,
+    now,
   };
 }
 
@@ -163,7 +185,7 @@ function loadDeferredData() {
 
 export default function Collection() {
   /** @type {LoaderReturnData} */
-  const {collection} = useLoaderData();
+  const {collection, now} = useLoaderData();
   const rootData = useRouteLoaderData('root');
   const origin = rootData?.origin || brand.origin;
   const [searchTerm, setSearchTerm] = useState('');
@@ -230,6 +252,8 @@ export default function Collection() {
       }
     : null;
 
+  const shownIds = new Set();
+
   return (
     <div className="collection">
       <script
@@ -268,9 +292,12 @@ export default function Collection() {
         resourcesClassName="products-grid"
       >
         {({node: product, index}) => {
-          if (!matchesSearch(product)) {
+          // Page one carries mixed-in new products; skip them if a later
+          // page brings the same product again.
+          if (!matchesSearch(product) || shownIds.has(product.id)) {
             return null;
           }
+          shownIds.add(product.id);
           const showFreeChatCard =
             SHOW_FREE_CHAT_GRID_CARD &&
             index === 0 &&
@@ -291,6 +318,7 @@ export default function Collection() {
                 listId={collection.handle}
                 listName={collection.title}
                 index={index}
+                badge={isNewProduct(product.createdAt, now) ? 'New' : undefined}
               />
             </>
           );
@@ -347,6 +375,7 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
     handle
     title
     productType
+    createdAt
     worksWith: metafield(namespace: "custom", key: "works_with") { value }
     tags
     gifSupport: metafield(namespace: "custom", key: "gif_support") { value }
@@ -433,6 +462,23 @@ const COLLECTION_QUERY = `#graphql
           hasNextPage
           endCursor
           startCursor
+        }
+      }
+    }
+  }
+`;
+
+const COLLECTION_NEWEST_QUERY = `#graphql
+  ${PRODUCT_ITEM_FRAGMENT}
+  query CollectionNewest(
+    $handle: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    collection(handle: $handle) {
+      products(first: 12, sortKey: CREATED, reverse: true) {
+        nodes {
+          ...ProductItem
         }
       }
     }
