@@ -749,6 +749,7 @@ export default function Product() {
             <ProductPrice
               price={selectedVariant?.price}
               compareAtPrice={selectedVariant?.compareAtPrice}
+              showSavings
             />
           </div>
           <ProductHighlights
@@ -763,11 +764,9 @@ export default function Product() {
             selectedVariant={selectedVariant}
             buttonRef={addToCartButtonRef}
           />
-          <ProductTrust
-            reviewsHref={
-              showsProductReviews ? '#product-reviews' : '#shop-reviews'
-            }
-          />
+          {/* The shop rating line only when the badge above shows this
+              product's own reviews; otherwise the badge already says it. */}
+          <ProductTrust showShopRating={showsProductReviews} />
           <ShareRow title={title} />
         </div>
       </div>

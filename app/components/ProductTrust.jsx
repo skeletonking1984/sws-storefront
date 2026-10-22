@@ -22,9 +22,9 @@ import {brand} from '~/lib/brand.config';
  *   promise for a broken widget, not a blanket money back guarantee.
  * - the support address: brand.supportEmail
  *
- * @param {{reviewsHref?: string}} props
+ * @param {{showShopRating?: boolean}} props
  */
-export function ProductTrust({reviewsHref = '#shop-reviews'}) {
+export function ProductTrust({showShopRating = true}) {
   return (
     <ul className="product-trust" aria-label="Before you buy">
       <li>
@@ -33,15 +33,17 @@ export function ProductTrust({reviewsHref = '#shop-reviews'}) {
         </span>
         Instant download after checkout
       </li>
-      <li>
-        <span className="product-trust-icon" aria-hidden="true">
-          ✓
-        </span>
-        <a href={reviewsHref}>
-          {SHOP_RATING.average.toFixed(2)} stars from{' '}
-          {SHOP_RATING.count.toLocaleString('en-US')} Etsy reviews
-        </a>
-      </li>
+      {showShopRating ? (
+        <li>
+          <span className="product-trust-icon" aria-hidden="true">
+            ✓
+          </span>
+          <span>
+            Shop rating {SHOP_RATING.average.toFixed(2)} stars from{' '}
+            {SHOP_RATING.count.toLocaleString('en-US')} Etsy reviews
+          </span>
+        </li>
+      ) : null}
       <li>
         <span className="product-trust-icon" aria-hidden="true">
           ✓

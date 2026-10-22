@@ -42,8 +42,8 @@ export function EtsyRatingBadge({compact = false, href = '#shop-reviews'}) {
         )}
       </span>
       <span className="etsy-rating-text">
-        {SHOP_RATING.average.toFixed(2)} Etsy rating ({SHOP_RATING.count}{' '}
-        reviews)
+        {SHOP_RATING.average.toFixed(2)} Etsy rating (
+        {SHOP_RATING.count.toLocaleString('en-US')} reviews)
       </span>
     </a>
   );

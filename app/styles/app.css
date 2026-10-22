@@ -1870,9 +1870,30 @@ button.reset:hover:not(:has(> *)) {
   margin-top: 0.25rem;
 }
 
-.cart-subtotal {
+/* Label left, amount right. With no gap the drawer read "Subtotal$29.99". */
+.cart-subtotal,
+.cart-discount-line,
+.cart-total {
   align-items: center;
   display: flex;
+  justify-content: space-between;
+}
+
+.cart-subtotal dd,
+.cart-discount-line dd,
+.cart-total dd {
+  margin: 0;
+}
+
+.cart-checkout-trust {
+  color: var(--sws-sub);
+  font-size: 0.82rem;
+  margin: 0.6rem 0 0;
+  text-align: center;
+}
+
+.cart-checkout-trust a {
+  color: var(--sws-holo-1);
 }
 /*
 * --------------------------------------------------
@@ -4175,6 +4196,27 @@ button.reset:hover:not(:has(> *)) {
   line-height: 1.4;
   margin: 0;
   overflow-wrap: break-word;
+  /* One line on a phone: it repeats the name above it, and at three lines
+     it pushed the trust row off the first screen. The full string stays in
+     the DOM for crawlers and screen readers. */
+  @media (max-width: 44.99em) {
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+  }
+}
+
+/* Price first on a phone, the rating as a smaller line under it. */
+@media (max-width: 44.99em) {
+  .product-buybox .product-price {
+    order: -1;
+  }
+
+  .product-buybox .etsy-rating {
+    font-size: 0.82rem;
+  }
 }
 
 /*
@@ -5170,6 +5212,25 @@ button.reset:hover:not(:has(> *)) {
 .product-price-on-sale s {
   color: var(--sws-sub);
   opacity: 0.8;
+}
+
+/* The sale block sits inside .product-price, which is already the pill.
+   Styling both drew a pill inside a pill on every discounted product. */
+.product-price > .product-price-on-sale {
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+/* Green = good: a real saving off the product's own compare-at price. */
+.product-price-save {
+  align-items: baseline;
+  color: var(--sws-holo-5);
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 800;
+  gap: 0.25em;
+  white-space: nowrap;
 }
 
 .product-options h5 {
