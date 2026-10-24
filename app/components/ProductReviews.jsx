@@ -135,8 +135,8 @@ export function ProductReviews({data}) {
         {data.reviews.length
           ? 'Real reviews left on this widget\u2019s Etsy listing, most recent first.'
           : data.count === 1
-            ? 'One verified Etsy buyer rated this widget and left no written review.'
-            : `${data.count} verified Etsy buyers rated this widget and left no written review.`}
+            ? 'One verified Etsy buyer rated this widget. See the reviews on Etsy.'
+            : `${data.count} verified Etsy buyers rated this widget. See the reviews on Etsy.`}
       </p>
 
       <div className="product-reviews-grid">
